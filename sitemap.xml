@@ -23,6 +23,26 @@
   </url>
   
   <url>
+    <loc>https://rmorita-stat.github.io/my-page/post/</loc>
+    <lastmod>2020-05-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/post/practice/</loc>
+    <lastmod>2020-05-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/tags/</loc>
+    <lastmod>2020-05-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/tags/%E7%B7%B4%E7%BF%92/</loc>
+    <lastmod>2020-05-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://rmorita-stat.github.io/my-page/categories/</loc>
     <lastmod>2014-09-28T00:00:00+00:00</lastmod>
   </url>
@@ -38,11 +58,6 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/</loc>
-    <lastmod>2014-09-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/my-page/about/</loc>
     <lastmod>2014-04-09T00:00:00+00:00</lastmod>
   </url>
@@ -53,12 +68,12 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/</loc>
+    <loc>https://rmorita-stat.github.io/my-page/pages/</loc>
     <lastmod>2014-04-09T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/pages/</loc>
+    <loc>https://rmorita-stat.github.io/my-page/</loc>
     <lastmod>2014-04-09T00:00:00+00:00</lastmod>
   </url>
   
@@ -124,11 +139,6 @@
   
   <url>
     <loc>https://rmorita-stat.github.io/my-page/post/introduction-aux-modeles-hugo/</loc>
-    <lastmod>2014-04-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/</loc>
     <lastmod>2014-04-02T00:00:00+00:00</lastmod>
   </url>
   
