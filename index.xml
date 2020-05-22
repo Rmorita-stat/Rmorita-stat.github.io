@@ -55,15 +55,6 @@ We&amp;rsquo;ll start with creating a new site with a very basic template.</desc
     
     <item>
       <title>About</title>
-      <link>https://rmorita-stat.github.io/my-page/about/</link>
-      <pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/my-page/about/</guid>
-      <description>はじめまして。 R.moritaです。 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計学・ロードバイク・古墳が好きです。 私は昔か</description>
-    </item>
-    
-    <item>
-      <title>About</title>
       <link>https://rmorita-stat.github.io/my-page/pages/about/</link>
       <pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate>
       
@@ -72,9 +63,18 @@ We&amp;rsquo;ll start with creating a new site with a very basic template.</desc
     </item>
     
     <item>
+      <title>このブログについて</title>
+      <link>https://rmorita-stat.github.io/my-page/about/</link>
+      <pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/about/</guid>
+      <description>はじめまして。 R.moritaです。 洛中で6年間大学生活を過ごし、今は難波の地で働いています。 統計学・ロードバイク・古墳が好きです。 私は昔か</description>
+    </item>
+    
+    <item>
       <title>practice</title>
       <link>https://rmorita-stat.github.io/my-page/post/practice/</link>
-      <pubDate>Wed, 20 May 2020 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 20 May 2020 03:46:15 +0900</pubDate>
       
       <guid>https://rmorita-stat.github.io/my-page/post/practice/</guid>
       <description>導入 甲長120 - 189センチメートル[7]。最大体重916キログラムと現生するカメ目最大種[3][7]。骨質と鱗からなる甲羅は発達せず、皮膚</description>
