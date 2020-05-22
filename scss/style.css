@@ -479,7 +479,7 @@ h1, h2, h3, h4 {
     margin: 2.5vmin;
     overflow: hidden;
     border-radius: 4px;
-    background-color: #e6e6e6; }
+    background-color: #deb887; }
     @media screen and (max-width: 800px) {
       .main-profile .main-profile__avatar {
         width: 19vmin;
