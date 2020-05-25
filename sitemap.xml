@@ -3,18 +3,8 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/creating-a-new-theme/</loc>
-    <lastmod>2014-09-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/my-page/posts/creating-a-new-theme/</loc>
     <lastmod>2014-09-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/migrate-from-jekyll/</loc>
-    <lastmod>2014-03-10T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -44,46 +34,16 @@
   
   <url>
     <loc>https://rmorita-stat.github.io/my-page/post/</loc>
-    <lastmod>2020-05-20T03:46:15+09:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/practice/</loc>
-    <lastmod>2020-05-20T03:46:15+09:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/</loc>
-    <lastmod>2020-05-20T03:46:15+09:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/%E7%B7%B4%E7%BF%92/</loc>
-    <lastmod>2020-05-20T03:46:15+09:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/categories/</loc>
     <lastmod>2014-09-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/creation-dun-nouveau-theme/</loc>
-    <lastmod>2014-09-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/categories/hugo/</loc>
-    <lastmod>2014-09-28T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/goisforlovers/</loc>
-    <lastmod>2014-04-02T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://rmorita-stat.github.io/my-page/posts/goisforlovers/</loc>
+    <lastmod>2014-04-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/categories/</loc>
     <lastmod>2014-04-02T00:00:00+00:00</lastmod>
   </url>
   
@@ -98,22 +58,7 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/debuter-avec-hugo/</loc>
-    <lastmod>2014-04-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/hugoisforlovers/</loc>
-    <lastmod>2014-04-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/my-page/posts/hugoisforlovers/</loc>
-    <lastmod>2014-04-02T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/categories/go/</loc>
     <lastmod>2014-04-02T00:00:00+00:00</lastmod>
   </url>
   
@@ -138,7 +83,7 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/introduction-aux-modeles-hugo/</loc>
+    <loc>https://rmorita-stat.github.io/my-page/tags/</loc>
     <lastmod>2014-04-02T00:00:00+00:00</lastmod>
   </url>
   
@@ -153,13 +98,11 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/categories/jekyll/</loc>
-    <lastmod>2014-03-10T00:00:00+00:00</lastmod>
+    <loc>https://rmorita-stat.github.io/my-page/post/200523/</loc>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/migrer-vers-hugo-depuis-jekyll/</loc>
-    <lastmod>2014-03-10T00:00:00+00:00</lastmod>
+    <loc>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</loc>
   </url>
   
 </urlset>

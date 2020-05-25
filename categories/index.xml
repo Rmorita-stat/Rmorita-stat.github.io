@@ -6,19 +6,10 @@
     <description>Recent content in Categories on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sun, 28 Sep 2014 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 02 Apr 2014 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/my-page/categories/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Hugo</title>
-      <link>https://rmorita-stat.github.io/my-page/categories/hugo/</link>
-      <pubDate>Sun, 28 Sep 2014 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/my-page/categories/hugo/</guid>
-      <description></description>
-    </item>
     
     <item>
       <title>Development</title>
@@ -30,29 +21,11 @@
     </item>
     
     <item>
-      <title>Go</title>
-      <link>https://rmorita-stat.github.io/my-page/categories/go/</link>
-      <pubDate>Wed, 02 Apr 2014 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/my-page/categories/go/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>golang</title>
       <link>https://rmorita-stat.github.io/my-page/categories/golang/</link>
       <pubDate>Wed, 02 Apr 2014 00:00:00 +0000</pubDate>
       
       <guid>https://rmorita-stat.github.io/my-page/categories/golang/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Jekyll</title>
-      <link>https://rmorita-stat.github.io/my-page/categories/jekyll/</link>
-      <pubDate>Mon, 10 Mar 2014 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/my-page/categories/jekyll/</guid>
       <description></description>
     </item>
     
