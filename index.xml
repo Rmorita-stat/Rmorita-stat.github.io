@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SUCRE HECACHA</title>
+    <link>https://rmorita-stat.github.io/my-page/</link>
+    <description>Recent content on SUCRE HECACHA</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Fri, 22 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://rmorita-stat.github.io/my-page/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>About</title>
+      <link>https://rmorita-stat.github.io/my-page/pages/about/</link>
+      <pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/pages/about/</guid>
+      <description>はじめまして。 R.moritaです。 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計学・ロードバイク・古墳が好きです。 私は昔か</description>
+    </item>
+    
+    <item>
+      <title>このブログについて</title>
+      <link>https://rmorita-stat.github.io/my-page/about/</link>
+      <pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/about/</guid>
+      <description>はじめまして。 R.moritaです。 洛中で6年間大学生活を過ごし、今は難波の地で働いています。 統計学・ロードバイク・古墳が好きです。 私は昔か</description>
+    </item>
+    
+    <item>
+      <title>multinom()を使った多項ロジスティック回帰</title>
+      <link>https://rmorita-stat.github.io/my-page/post/multinom/multimon/</link>
+      <pubDate>Thu, 23 May 2019 21:13:14 -0500</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/post/multinom/multimon/</guid>
+      <description>はじめに 回帰に関する記事です。本記事では多項ロジスティック回帰について扱います。 多項ロジスティック回帰(multinomial logisti</description>
+    </item>
+    
+  </channel>
+</rss>
