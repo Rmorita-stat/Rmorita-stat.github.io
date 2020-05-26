@@ -1,0 +1,163 @@
+---
+title: "multinom()を使った多項ロジスティック回帰"
+author: "R.morita"
+date: 2019-07-23T21:13:14-05:00
+tags: ["回帰"]
+output:
+  html_document:
+    latex_engine: "pdflatex"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# はじめに
+
+**回帰**に関する記事です。本記事では**多項ロジスティック回帰**について扱います。
+
+多項ロジスティック回帰(multinomial logisticregression)は3つ以上の値をとる名義尺度\\(Y \\)を従属変数とし、説明変数\\(X\\)から\\(Y \\)のそれぞれの値をとる確率を説明しようとする回帰手法です。
+
+今、$Y = (y_1,\ldots,y_n,\ldots, y_N)^T$、$X = (x_1,\ldots, x_n,\ldots, x_N)^T$とし、さらに
+$x_n = (x_{1n},\ldots,x_{dn},\ldots, x_{Dn})$とします。ここでNはサンプルサイズ、Dは説明変数の次元です。
+
+\\(Y\\)のとる値が2値のみの場合は**ロジスティック回帰**と呼ばれます。これはリンク関数としてロジスティック関数が用いられますが、一方で\\(Y\\)がとることのできる値の数が$K\ge3$のとき多項ロジスティック回帰が用いられ、この場合**ソフトマックス関数**が用いられます。
+
+多項ロジスティック回帰のモデル式は以下の通りです。
+
+$$ \mu_n = \overrightarrow{a} + \overrightarrow{b_1}x_{1n} + \cdots + \overrightarrow{b_d}x_{dn} + \cdots + \overrightarrow{b_D}x_{Dn} $$
+$$ \theta_n = softmax(\mu_n) $$
+$$ Y_n \sim Categorical(theta_n) $$
+
+ここで$\mu = (\mu_1,\ldots,\mu_n,\ldots,\mu_N)$、$\theta = (\theta_1,\ldots,\theta_n,\ldots, \theta_N)$です。
+$\mu_n, \theta_n,\overrightarrow{a},\overrightarrow{b_1},\ldots,\overrightarrow{b_D}$は長さKのベクトルです。<br>$\mu$は一般化線形モデルの枠組みでは線形予測子と呼ばれる部分で、ここではK個の線形予測子が準備される形です。
+
+ソフトマックス関数は下記式で与えられます。
+
+$$ softmax(\mu_n) = \left(\cfrac{exp(\mu_{1n})}{\sum_{k=1}^K \exp(\mu_{kn})}\cdots\cfrac{exp(\mu_{Kn})}{\sum_{k=1}^K \exp(\mu_{kn})} \right) $$ 
+
+ソフトマックス関数は各要素が(0,1)の範囲をとり合計1になる長さ$K$のベクトルであり、カテゴリカル分布に与える確率ベクトルとして用います。最終的には$Y_n$が$\theta_n$を確率ベクトルとしてもつカテゴリカル分布に従うと仮定することになります。
+
+なお、上記のモデルそのままでは$\mu$の$K$個の要素が識別不可能であるため$Y$がとりうる$K$個の値それぞれにに対応させることができません。そのため$\mu$の$K$個の要素を識別できるように$\mu_{1k}$の値を0にしてやる必要があります($k$は0からKの度の値でも構いません)。すなわち$a_{k}=b_{1k}=\ldots=b_{Dk}=0$とします。よってパラメータ数は$(D+1)*(K-1)$となります。
+
+
+本記事は[こちらのページ](https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/)参考に作成しました。内容的には残念ながらほとんど同じです。つまりただ真似してやってみただけです…。
+
+# データの入手と内容の確認
+
+SPSS、Stata等に蓄積されているデータをダウンロードするためのパッケージ**foreign()**を使ってデータを入手し、簡単に内容を確認しておきます。
+
+```{r warning = FALSE, results = "markup"}
+library(foreign)
+ml <- read.dta("https://stats.idre.ucla.edu/stat/data/hsbdemo.dta")
+head(ml)
+with(ml, table(ses, prog))
+with(ml, do.call(rbind, tapply(write, prog, function(x) c(M=mean(x), SD=sd(x)))))
+```
+
+このデータは200人の生徒について、性別等の属性や受賞数、読み書きの力を得点化したもの等がまとめられています。
+
+今回は、general、academic、vocationの3つの授業プログラムの中から生徒が選択したプログラムの種類(prog)を従属変数とし、ses(経済的位置の3段階分類)、write(書く力を得点化したもの)を説明変数と設定します。
+
+sesとprogのクロス集計表を見ると、いずれもsesにおいてもacademicが人気ですがses=highの子には特にacademicが人気なようです。
+
+write毎のprogの平均、標準偏差を確認すると、やはりacademicを選んだ生徒は書く力が若干高いようです。
+
+# 分析手法の検討
+
+分析の目的は生徒の属性や能力が選択するプログラムにどのように影響してくるかを把握することですが、今回適用する多項ロジスティック回帰の他にいくつか別の手法も考えられます。
+
+**・順序ロジスティック回帰**
+
+従属変数を順序データと解釈するモデルです。従属変数を\\(Y = (1,2,...,k)\\)といった順序型変数とみなしたとき、このモデルから得られる結果は
+　　
+$$P_{(y_n=2,...,K)} \sim Binomial(q_{1n}),　 q_n = inverselogit(\vec{a} + b_{1}x_{1n} + b_{2}x_{2n} +\ldots + b_{D}x_{Dn})$$
+$$P_{(y_n=3,...,K)} \sim Binomial(q_{2n}),　 q_n = inverselogit(\vec{a} + b_{1}x_{1n} + b_{2}x_{2n} +\ldots + b_{D}x_{Dn})$$
+$$\ldots$$
+$$P_{(y_n=K)} \sim Binomial(q_{(K-1)n}),　 q_n = inverselogit(\vec{a} + b_{1}x_{1n} + b_{2}x_{2n} +\ldots + b_{D}x_{Dn})$$
+
+のk-1個の確率に関する回帰式となります。
+
+今回のデータでは説明変数が通常の授業(general)、アカデミックな授業(academic)、職を持つための授業(vocation、高専のようなイメージ？)といった内容のものであるため、順序型データとはみなさないこととします。
+
+**・従属変数を2値に統合し、通常のロジスティック回帰を行う**
+
+多項ロジスティック回帰は得られる結果の解釈が難しいという欠点があるため、より解釈がし易いようにデータを簡略化し、通常のロジスティック回帰に持ち込む方法です。今回の例ではacademicを選択する確率に着目し、generalとvocationを一つにまとめる、といったことが考えられます。
+
+ここでは3つの授業を選択する確率同士の間に説明変数を介してどのような関係があるのかを把握することを選択し、多項ロジスティック回帰を選びます。
+
+# 分析の実行
+
+nnetパッケージのmultinom()を用いて分析していきます。nnetは最尤法を用いて単層のニュートラルネットワークを実行するためのパッケージで、multinom()は単層のニュートラルネットワークを介して多項対数線形モデルを行う関数です。$x_n$に着目したとき、単層のニュートラルネットワークのK個の中間層を
+
+$$中間層k = exp(\overrightarrow{a_k} + \overrightarrow{b_{1k}}x_{1n} + \cdots + \overrightarrow{b_{dk}}x_{dn} + \cdots + \overrightarrow{b_{Dk}}x_{Dn})　k=1,\ldots,K$$
+、出力層を
+
+
+$$\left(\cfrac{exp(中間層1)}{\sum_{k=1}^K \ 中間層k}  \cdots\cfrac{exp(中間層K)}{\sum_{k=1}^K \ 中間層k}    \right)$$
+
+としてやれば多項ロジスティック回帰モデルと等価になる(はず…ニュートラルネットはよく知りません)ですので、中身はそのような形になっているものと思われます。
+
+$\mu$のK個の要素を識別可能とするため、下記の実行では$\mu_{academic}=0$としています。<br>
+またmultinom()はp値を出力してくれないので、両側Z検定を行いp値を算出します。
+
+```{r ml, warning=FALSE}
+library(nnet)
+#academicを基準に設定
+ml$prog2 <- relevel(ml$prog, ref = "academic") 
+test <- multinom(formula = prog2 ~ ses + write, data=ml)
+summary(test)
+```
+```{r  warning=FALSE}
+#両側Z検定の実行
+z <- summary(test)$coefficients/summary(test)$standard.errors
+p <- (1 - pnorm(abs(z),0,1))
+p
+```
+
+結果は下記式に帰着します($^{***}$：0.1%有意,$^{**}$：1%有意,$^{***}$：5%有意)。
+
+$$\cfrac{P(prog=general)}{P(prog=academic)} = exp(2.85^{*} + -0.53(ses=middle) -1.16^*(ses=high) - 0.06^{***}write)$$
+
+$$\cfrac{P(prog=vocation)}{P(prog=academic)} = exp(5.22^{***} + -0.29(ses=middle) +0.98(ses=high) - 0.11^{***}write)$$
+
+上記の結果は、generalを選択する確率とacademicを選択する確率のオッズ比
+
+$$\cfrac{P(prog=general)}{P(prog=academic)}$$
+
+に着目した場合を例として、下記式のようにwriteの値が1増えるとオッズ比は0.94倍になる、というよう解釈できます。
+
+$$\begin{eqnarray}\cfrac{\cfrac{P(prog=general(write=x+1))}{P(prog=academic(write=x+1))}}{\cfrac{P(prog=general(write=x))}{P(prog=academic(write=x))}} &=& \cfrac{exp(2.85  -0.53(ses=middle) -1.16(ses=high) - 0.06(write=x+1)}{exp(2.85 -0.53(ses=middle)-1.16(ses=high)-0.06(write=x))} \\
+&=& exp(-0.06) \\ 
+&\fallingdotseq&  0.94   \end{eqnarray} $$
+
+ロジスティック回帰のモデルはこのようにオッズ比からの解釈が容易な点が特徴です。
+
+# 結果の描画
+
+結果の描画を行います。ses,writeの値が1組与えられた時の予測値はpredict()関数で算出できます(信頼区間を求めようとしたら\\(nnet::predict()\\)は\\(predict="confidence"\\)が使えませんでした…残念)。<br>
+以下では予測値の算出を行っていますが、今回のモデルは人間に分かりやすいように設計されたモデルであるため、予測用のモデルではないことに注意してください。
+
+```{r pressure, warning=FALSE}
+library(reshape2)
+library(ggplot2)
+library(RColorBrewer)
+#予測値を計算する点を準備
+dwite <- data.frame(ses = rep(c("low","middle","high"),each = 41), write = rep(c(30:70),3))
+#predict()関数で予測値を計算し、予測を行う点dwiteと結合
+pp.wite <- cbind(dwite, predict(test, newdata=dwite, type="probs", se = T))
+#縦長データに変換し、ggplot()で描画
+lpp <- melt(pp.wite, id.vars = c("ses","write"),value.name = "probability")
+cols = brewer.pal(3,"Dark2")
+p0 <- ggplot(data=lpp,aes(x=write, y=probability,colour=ses)) + geom_line() + facet_grid(variable ~.) + theme_bw(base_size=11) +
+  theme(legend.position = "bottom") + scale_color_manual(values=cols) + labs(title="With multinom")
+p0
+```
+
+# まとめ
+
+本記事では多項ロジスティック回帰モデルについて説明しました。<br>
+多項ロジスティック回帰は3つ以上の値をとる名義尺度\\(Y \\)を従属変数とし、説明変数\\(X\\)から\\(Y \\)のそれぞれの値をとる確率を説明しようとする回帰手法です。
+
+また多項ロジスティック回帰自体は予測用のモデルではなく、あくまで解釈の為のモデルであることがポイントです。<br>
+本モデルを応用した予測用のモデルは今後の記事で紹介したいと思います。
