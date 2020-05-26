@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="/my-page/images/logo2.png" />
+    <link rel="apple-touch-icon" href="/my-page/images/logo2.png"><link rel="stylesheet" href="/my-page/scss/style.css">
+    
+    <link rel="stylesheet" href="/my-page/scss/monokai-sublime.min.css">
+    <script src="/my-page/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="/scss/highlight.css">
+    
+    <link rel="stylesheet" href="/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="/my-page/"><img src="/my-page/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/post" >BLOG</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2019.07.23 21:13 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">multinom()を使った多項ロジスティック回帰</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            
+
+
+<div id="はじめに" class="section level1">
+<h1>はじめに</h1>
+<p><strong>回帰</strong>に関する記事です。本記事では<strong>多項ロジスティック回帰</strong>について扱います。</p>
+<p>多項ロジスティック回帰(multinomial logisticregression)は3つ以上の値をとる名義尺度\(Y \)を従属変数とし、説明変数\(X\)から\(Y \)のそれぞれの値をとる確率を説明しようとする回帰手法です。</p>
+<p>今、<span class="math inline">\(Y = (y_1,\ldots,y_n,\ldots, y_N)^T\)</span>、<span class="math inline">\(X = (x_1,\ldots, x_n,\ldots, x_N)^T\)</span>とし、さらに
+<span class="math inline">\(x_n = (x_{1n},\ldots,x_{dn},\ldots, x_{Dn})\)</span>とします。ここでNはサンプルサイズ、Dは説明変数の次元です。</p>
+<p>\(Y\)のとる値が2値のみの場合は<strong>ロジスティック回帰</strong>と呼ばれます。これはリンク関数としてロジスティック関数が用いられますが、一方で\(Y\)がとることのできる値の数が<span class="math inline">\(K\ge3\)</span>のとき多項ロジスティック回帰が用いられ、この場合<strong>ソフトマックス関数</strong>が用いられます。</p>
+<p>多項ロジスティック回帰のモデル式は以下の通りです。</p>
+<p><span class="math display">\[ \mu_n = \overrightarrow{a} + \overrightarrow{b_1}x_{1n} + \cdots + \overrightarrow{b_d}x_{dn} + \cdots + \overrightarrow{b_D}x_{Dn} \]</span>
+<span class="math display">\[ \theta_n = softmax(\mu_n) \]</span>
+<span class="math display">\[ Y_n \sim Categorical(theta_n) \]</span></p>
+<p>ここで<span class="math inline">\(\mu = (\mu_1,\ldots,\mu_n,\ldots,\mu_N)\)</span>、<span class="math inline">\(\theta = (\theta_1,\ldots,\theta_n,\ldots, \theta_N)\)</span>です。
+<span class="math inline">\(\mu_n, \theta_n,\overrightarrow{a},\overrightarrow{b_1},\ldots,\overrightarrow{b_D}\)</span>は長さKのベクトルです。<br><span class="math inline">\(\mu\)</span>は一般化線形モデルの枠組みでは線形予測子と呼ばれる部分で、ここではK個の線形予測子が準備される形です。</p>
+<p>ソフトマックス関数は下記式で与えられます。</p>
+<p><span class="math display">\[ softmax(\mu_n) = \left(\cfrac{exp(\mu_{1n})}{\sum_{k=1}^K \exp(\mu_{kn})}\cdots\cfrac{exp(\mu_{Kn})}{\sum_{k=1}^K \exp(\mu_{kn})} \right) \]</span></p>
+<p>ソフトマックス関数は各要素が(0,1)の範囲をとり合計1になる長さ<span class="math inline">\(K\)</span>のベクトルであり、カテゴリカル分布に与える確率ベクトルとして用います。最終的には<span class="math inline">\(Y_n\)</span>が<span class="math inline">\(\theta_n\)</span>を確率ベクトルとしてもつカテゴリカル分布に従うと仮定することになります。</p>
+<p>なお、上記のモデルそのままでは<span class="math inline">\(\mu\)</span>の<span class="math inline">\(K\)</span>個の要素が識別不可能であるため<span class="math inline">\(Y\)</span>がとりうる<span class="math inline">\(K\)</span>個の値それぞれにに対応させることができません。そのため<span class="math inline">\(\mu\)</span>の<span class="math inline">\(K\)</span>個の要素を識別できるように<span class="math inline">\(\mu_{1k}\)</span>の値を0にしてやる必要があります(<span class="math inline">\(k\)</span>は0からKの度の値でも構いません)。すなわち<span class="math inline">\(a_{k}=b_{1k}=\ldots=b_{Dk}=0\)</span>とします。よってパラメータ数は<span class="math inline">\((D+1)*(K-1)\)</span>となります。</p>
+<p>本記事は<a href="https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/">こちらのページ</a>参考に作成しました。内容的には残念ながらほとんど同じです。つまりただ真似してやってみただけです…。</p>
+</div>
+<div id="データの入手と内容の確認" class="section level1">
+<h1>データの入手と内容の確認</h1>
+<p>SPSS、Stata等に蓄積されているデータをダウンロードするためのパッケージ<strong>foreign()</strong>を使ってデータを入手し、簡単に内容を確認しておきます。</p>
+<pre class="r"><code>library(foreign)
+ml &lt;- read.dta(&quot;https://stats.idre.ucla.edu/stat/data/hsbdemo.dta&quot;)
+head(ml)</code></pre>
+<pre><code>##    id female    ses schtyp     prog read write math science socst       honors
+## 1  45 female    low public vocation   34    35   41      29    26 not enrolled
+## 2 108   male middle public  general   34    33   41      36    36 not enrolled
+## 3  15   male   high public vocation   39    39   44      26    42 not enrolled
+## 4  67   male    low public vocation   37    37   42      33    32 not enrolled
+## 5 153   male middle public vocation   39    31   40      39    51 not enrolled
+## 6  51 female   high public  general   42    36   42      31    39 not enrolled
+##   awards cid
+## 1      0   1
+## 2      0   1
+## 3      0   1
+## 4      0   1
+## 5      0   1
+## 6      0   1</code></pre>
+<pre class="r"><code>with(ml, table(ses, prog))</code></pre>
+<pre><code>##         prog
+## ses      general academic vocation
+##   low         16       19       12
+##   middle      20       44       31
+##   high         9       42        7</code></pre>
+<pre class="r"><code>with(ml, do.call(rbind, tapply(write, prog, function(x) c(M=mean(x), SD=sd(x)))))</code></pre>
+<pre><code>##                 M       SD
+## general  51.33333 9.397775
+## academic 56.25714 7.943343
+## vocation 46.76000 9.318754</code></pre>
+<p>このデータは200人の生徒について、性別等の属性や受賞数、読み書きの力を得点化したもの等がまとめられています。</p>
+<p>今回は、general、academic、vocationの3つの授業プログラムの中から生徒が選択したプログラムの種類(prog)を従属変数とし、ses(経済的位置の3段階分類)、write(書く力を得点化したもの)を説明変数と設定します。</p>
+<p>sesとprogのクロス集計表を見ると、いずれもsesにおいてもacademicが人気ですがses=highの子には特にacademicが人気なようです。</p>
+<p>write毎のprogの平均、標準偏差を確認すると、やはりacademicを選んだ生徒は書く力が若干高いようです。</p>
+</div>
+<div id="分析手法の検討" class="section level1">
+<h1>分析手法の検討</h1>
+<p>分析の目的は生徒の属性や能力が選択するプログラムにどのように影響してくるかを把握することですが、今回適用する多項ロジスティック回帰の他にいくつか別の手法も考えられます。</p>
+<p><strong>・順序ロジスティック回帰</strong></p>
+<p>従属変数を順序データと解釈するモデルです。従属変数を\(Y = (1,2,…,k)\)といった順序型変数とみなしたとき、このモデルから得られる結果は
+　　
+<span class="math display">\[P_{(y_n=2,...,K)} \sim Binomial(q_{1n}),　 q_n = inverselogit(\vec{a} + b_{1}x_{1n} + b_{2}x_{2n} +\ldots + b_{D}x_{Dn})\]</span>
+<span class="math display">\[P_{(y_n=3,...,K)} \sim Binomial(q_{2n}),　 q_n = inverselogit(\vec{a} + b_{1}x_{1n} + b_{2}x_{2n} +\ldots + b_{D}x_{Dn})\]</span>
+<span class="math display">\[\ldots\]</span>
+<span class="math display">\[P_{(y_n=K)} \sim Binomial(q_{(K-1)n}),　 q_n = inverselogit(\vec{a} + b_{1}x_{1n} + b_{2}x_{2n} +\ldots + b_{D}x_{Dn})\]</span></p>
+<p>のk-1個の確率に関する回帰式となります。</p>
+<p>今回のデータでは説明変数が通常の授業(general)、アカデミックな授業(academic)、職を持つための授業(vocation、高専のようなイメージ？)といった内容のものであるため、順序型データとはみなさないこととします。</p>
+<p><strong>・従属変数を2値に統合し、通常のロジスティック回帰を行う</strong></p>
+<p>多項ロジスティック回帰は得られる結果の解釈が難しいという欠点があるため、より解釈がし易いようにデータを簡略化し、通常のロジスティック回帰に持ち込む方法です。今回の例ではacademicを選択する確率に着目し、generalとvocationを一つにまとめる、といったことが考えられます。</p>
+<p>ここでは3つの授業を選択する確率同士の間に説明変数を介してどのような関係があるのかを把握することを選択し、多項ロジスティック回帰を選びます。</p>
+</div>
+<div id="分析の実行" class="section level1">
+<h1>分析の実行</h1>
+<p>nnetパッケージのmultinom()を用いて分析していきます。nnetは最尤法を用いて単層のニュートラルネットワークを実行するためのパッケージで、multinom()は単層のニュートラルネットワークを介して多項対数線形モデルを行う関数です。<span class="math inline">\(x_n\)</span>に着目したとき、単層のニュートラルネットワークのK個の中間層を</p>
+<p><span class="math display">\[中間層k = exp(\overrightarrow{a_k} + \overrightarrow{b_{1k}}x_{1n} + \cdots + \overrightarrow{b_{dk}}x_{dn} + \cdots + \overrightarrow{b_{Dk}}x_{Dn})　k=1,\ldots,K\]</span>
+、出力層を</p>
+<p><span class="math display">\[\left(\cfrac{exp(中間層1)}{\sum_{k=1}^K \ 中間層k}  \cdots\cfrac{exp(中間層K)}{\sum_{k=1}^K \ 中間層k}    \right)\]</span></p>
+<p>としてやれば多項ロジスティック回帰モデルと等価になる(はず…ニュートラルネットはよく知りません)ですので、中身はそのような形になっているものと思われます。</p>
+<p><span class="math inline">\(\mu\)</span>のK個の要素を識別可能とするため、下記の実行では<span class="math inline">\(\mu_{academic}=0\)</span>としています。<br>
+またmultinom()はp値を出力してくれないので、両側Z検定を行いp値を算出します。</p>
+<pre class="r"><code>library(nnet)
+#academicを基準に設定
+ml$prog2 &lt;- relevel(ml$prog, ref = &quot;academic&quot;) 
+test &lt;- multinom(formula = prog2 ~ ses + write, data=ml)</code></pre>
+<pre><code>## # weights:  15 (8 variable)
+## initial  value 219.722458 
+## iter  10 value 179.982880
+## final  value 179.981726 
+## converged</code></pre>
+<pre class="r"><code>summary(test)</code></pre>
+<pre><code>## Call:
+## multinom(formula = prog2 ~ ses + write, data = ml)
+## 
+## Coefficients:
+##          (Intercept)  sesmiddle    seshigh      write
+## general     2.852198 -0.5332810 -1.1628226 -0.0579287
+## vocation    5.218260  0.2913859 -0.9826649 -0.1136037
+## 
+## Std. Errors:
+##          (Intercept) sesmiddle   seshigh      write
+## general     1.166441 0.4437323 0.5142196 0.02141097
+## vocation    1.163552 0.4763739 0.5955665 0.02221996
+## 
+## Residual Deviance: 359.9635 
+## AIC: 375.9635</code></pre>
+<pre class="r"><code>#両側Z検定の実行
+z &lt;- summary(test)$coefficients/summary(test)$standard.errors
+p &lt;- (1 - pnorm(abs(z),0,1))
+p</code></pre>
+<pre><code>##           (Intercept) sesmiddle    seshigh        write
+## general  7.238305e-03 0.1147190 0.01186928 3.409451e-03
+## vocation 3.649650e-06 0.2703765 0.04947488 1.588023e-07</code></pre>
+<p>結果は下記式に帰着します(<span class="math inline">\(^{***}\)</span>：0.1%有意,<span class="math inline">\(^{**}\)</span>：1%有意,<span class="math inline">\(^{***}\)</span>：5%有意)。</p>
+<p><span class="math display">\[\cfrac{P(prog=general)}{P(prog=academic)} = exp(2.85^{*} + -0.53(ses=middle) -1.16^*(ses=high) - 0.06^{***}write)\]</span></p>
+<p><span class="math display">\[\cfrac{P(prog=vocation)}{P(prog=academic)} = exp(5.22^{***} + -0.29(ses=middle) +0.98(ses=high) - 0.11^{***}write)\]</span></p>
+<p>上記の結果は、generalを選択する確率とacademicを選択する確率のオッズ比</p>
+<p><span class="math display">\[\cfrac{P(prog=general)}{P(prog=academic)}\]</span></p>
+<p>に着目した場合を例として、下記式のようにwriteの値が1増えるとオッズ比は0.94倍になる、というよう解釈できます。</p>
+<p><span class="math display">\[\begin{eqnarray}\cfrac{\cfrac{P(prog=general(write=x+1))}{P(prog=academic(write=x+1))}}{\cfrac{P(prog=general(write=x))}{P(prog=academic(write=x))}} &amp;=&amp; \cfrac{exp(2.85  -0.53(ses=middle) -1.16(ses=high) - 0.06(write=x+1)}{exp(2.85 -0.53(ses=middle)-1.16(ses=high)-0.06(write=x))} \\
+&amp;=&amp; exp(-0.06) \\ 
+&amp;\fallingdotseq&amp;  0.94   \end{eqnarray} \]</span></p>
+<p>ロジスティック回帰のモデルはこのようにオッズ比からの解釈が容易な点が特徴です。</p>
+</div>
+<div id="結果の描画" class="section level1">
+<h1>結果の描画</h1>
+<p>結果の描画を行います。ses,writeの値が1組与えられた時の予測値はpredict()関数で算出できます(信頼区間を求めようとしたら\(nnet::predict()\)は\(predict=“confidence”\)が使えませんでした…残念)。<br>
+以下では予測値の算出を行っていますが、今回のモデルは人間に分かりやすいように設計されたモデルであるため、予測用のモデルではないことに注意してください。</p>
+<pre class="r"><code>library(reshape2)
+library(ggplot2)
+library(RColorBrewer)
+#予測値を計算する点を準備
+dwite &lt;- data.frame(ses = rep(c(&quot;low&quot;,&quot;middle&quot;,&quot;high&quot;),each = 41), write = rep(c(30:70),3))
+#predict()関数で予測値を計算し、予測を行う点dwiteと結合
+pp.wite &lt;- cbind(dwite, predict(test, newdata=dwite, type=&quot;probs&quot;, se = T))
+#縦長データに変換し、ggplot()で描画
+lpp &lt;- melt(pp.wite, id.vars = c(&quot;ses&quot;,&quot;write&quot;),value.name = &quot;probability&quot;)
+cols = brewer.pal(3,&quot;Dark2&quot;)
+p0 &lt;- ggplot(data=lpp,aes(x=write, y=probability,colour=ses)) + geom_line() + facet_grid(variable ~.) + theme_bw(base_size=11) +
+  theme(legend.position = &quot;bottom&quot;) + scale_color_manual(values=cols) + labs(title=&quot;With multinom&quot;)
+p0</code></pre>
+<p><img src="/my-page/post/200523/200523_files/figure-html/pressure-1.png" width="672" /></p>
+</div>
+<div id="まとめ" class="section level1">
+<h1>まとめ</h1>
+<p>本記事では多項ロジスティック回帰モデルについて説明しました。<br>
+多項ロジスティック回帰は3つ以上の値をとる名義尺度\(Y \)を従属変数とし、説明変数\(X\)から\(Y \)のそれぞれの値をとる確率を説明しようとする回帰手法です。</p>
+<p>また多項ロジスティック回帰自体は予測用のモデルではなく、あくまで解釈の為のモデルであることがポイントです。<br>
+本モデルを応用した予測用のモデルは今後の記事で紹介したいと思います。</p>
+</div>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="/my-page/tags/%E5%9B%9E%E5%B8%B0">回帰</a></span>
+        
+        
+    </div>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計、ロードバイク、古墳が好きです。 </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="/my-page/post/goisforlovers/goisforlovers/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2014.04.02 00:00 </div>
+            <div class="pn-el__2"> (Hu)go Template Primer </div>
+        </div>
+    </a>
+    
+    
+</div>
+
+<footer>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  "HTML-CSS": {
+    availableFonts: ["TeX"]
+  }
+  });
+</script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2020
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="/my-page/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
