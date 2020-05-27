@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Pages on SUCRE HECACHA</title>
-    <link>https://github.com/Rmorita-stat/my_page.git/pages/</link>
+    <link>https://github.com/Rmorita-stat/my-page.git/pages/</link>
     <description>Recent content in Pages on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Fri, 22 May 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://github.com/Rmorita-stat/my_page.git/pages/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://github.com/Rmorita-stat/my-page.git/pages/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>About</title>
-      <link>https://github.com/Rmorita-stat/my_page.git/pages/about/</link>
+      <link>https://github.com/Rmorita-stat/my-page.git/pages/about/</link>
       <pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://github.com/Rmorita-stat/my_page.git/pages/about/</guid>
+      <guid>https://github.com/Rmorita-stat/my-page.git/pages/about/</guid>
       <description>はじめまして。 R.moritaです。 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計学・ロードバイク・古墳が好きです。 私は昔か</description>
     </item>
     
