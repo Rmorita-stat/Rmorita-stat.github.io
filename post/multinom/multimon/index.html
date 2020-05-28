@@ -115,7 +115,7 @@ $$
 \therefore~~ \mu_{nk}=0~~~(n=1,\ldots,N)
 $$</p>
 <p>と基準とした要素を0に固定してやる必要があります($k$は0から$K$のどの値でも構いません)。よってパラメータ数は$(D+1)(K−1)$となります。</p>
-<p>本記事は<a href="https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/">こちらのページ</a>参考に作成しました。内容的にはほとんど同じで、つまりただ真似してやってみただけです…。</p>
+<p>本記事は<a href="https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/">こちらのページ</a>を参考に作成しました。内容的にはほとんど同じで、つまりただ真似してやってみただけです…。</p>
 <h1 id="データの入手と内容の確認">データの入手と内容の確認</h1>
 <p>SPSS、Stata等に蓄積されているデータをダウンロードするためのパッケージ<strong>foreign</strong>を使ってデータを入手し、簡単に内容を確認しておきます。</p>
 <pre><code>library(foreign)
@@ -180,7 +180,7 @@ $$
 \left(\cfrac{exp(中間層1)}{\sum_{k=1}^K \ 中間層k}  \cdots\cfrac{exp(中間層K)}{\sum_{k=1}^K \ 中間層k}\right)
 $$</p>
 <p>としてやれば多項ロジスティック回帰モデルと等価になる(はず…ニュートラルネットはよく知りません)ですので、中身はそのような形になっているものと思われます。</p>
-<p><em>μ</em>のK個の要素を識別可能とするため、下記の実行では$\mu_{academic}=0$としています。
+<p>$\mu$のK個の要素を識別可能とするため、下記の実行では$\mu_{academic}=0$としています。
 <!-- raw HTML omitted --><br>
 またmultinom()はp値を出力してくれないので、両側Z検定を行いp値を算出します。</p>
 <pre><code>library(nnet)
@@ -228,32 +228,46 @@ p
 <p>$$\cfrac{P(prog=general)}{P(prog=academic)}$$</p>
 <p>に着目した場合、下記式のようにwriteの値が1増えるとオッズ比は0.94倍になる、というよう解釈できます。
 $$
-\begin{eqnarray}
-\cfrac{\cfrac{P(prog=general(write=x+1))}{P(prog=academic(write=x+1))}}{\cfrac{P(prog=general(write=x))}{P(prog=academic(write=x))}} &amp;=&amp;
-\cfrac{exp(2.85 - 0.53(ses=middle) - 1.16(ses=high) - 0.06(write=x+1)}{exp(2.85 - 0.53(ses=middle) - 1.16(ses=high) - 0.06(write=x))} \ &amp;=&amp;  exp(-0.06) \ &amp;\fallingdotseq&amp;  0.94   \end{eqnarray}
+\cfrac{\cfrac{P(prog=general(write=x+1))}{P(prog=academic(write=x+1))}}{\cfrac{P(prog=general(write=x))}{P(prog=academic(write=x))}}
+= \cfrac{exp(2.85 - 0.53(ses=middle) - 1.16(ses=high) - 0.06(write=x+1)}{exp(2.85 - 0.53(ses=middle) - 1.16(ses=high) - 0.06(write=x))}
+$$
+$$
+=  exp(-0.06)
+\fallingdotseq  0.94
 $$</p>
 <p>ロジスティック回帰のモデルは、このように、基準に設定した値を分母としたオッズ比からの解釈がしやすい点が特徴です。</p>
-<p>そのほかの有意であった係数について確認しておくと、</p>
+<p>そのほかの係数について確認しておくと、</p>
 <ul>
 <li>
-<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$はwriteの値が1増加すると$exp(-0.11)\fallingdotseq0.89$倍になる</p>
+<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$はwriteの値が1増加すると$exp(-0.11)\fallingdotseq0.89$倍になる(有意)</p>
 </li>
 <li>
-<p>$\cfrac{P(prog=general)}{P(prog=academic)}$は$ses=high$のとき、$ses=middle$、$ses=low$の時よりそれぞれ$exp(-1.16)\fallingdotseq0.31$、$exp(-1.16-(-0.53))\fallingdotseq0.53$倍の値をとる</p>
+<p>$\cfrac{P(prog=general)}{P(prog=academic)}$は$ses=high$のとき、$ses=low$の時の$exp(-1.16)\fallingdotseq0.31$倍の値をとる(有意)</p>
+</li>
+<li>
+<p>$\cfrac{P(prog=general)}{P(prog=academic)}$は$ses=middle$のとき、$ses=low$の時の$exp(-0.53)\fallingdotseq0.59$倍の値をとる。ただしこの値は1である可能性を捨てきれない</p>
+</li>
+<li>
+<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$は$ses=high$のとき、$ses=low$の時の$exp(-0.98)\fallingdotseq0.38$倍の値をとる。ただしこの値は1である可能性を捨てきれない</p>
+</li>
+<li>
+<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$は$ses=high$のとき、$ses=low$の時の$exp(-0.29)\fallingdotseq0.74$倍の値をとる。ただしこの値は1である可能性を捨てきれない</p>
 </li>
 </ul>
-<p>ということが推測されます。</p>
-<p>後者については下記式から確認できます。</p>
-<p>$$\begin{eqnarray}\cfrac{\cfrac{P(prog=general(ses=high))}{P(prog=academic(ses=high))}}{\cfrac{P(prog=general(ses=low))}{P(prog=academic(ses=low))}} &amp;=&amp; \cfrac{exp(2.85 - 0.53\times0 - 1.16\times1 - 0.06(write)}{exp(2.85 - 0.53\times0 - 1.16\times0 - 0.06(write))} \<br>
-&amp;=&amp; exp(-1.16) \<br>
-&amp;\fallingdotseq&amp;  0.31   \end{eqnarray} $$</p>
-<p>$$\begin{eqnarray}\cfrac{\cfrac{P(prog=general(ses=high))}{P(prog=academic(ses=high))}}{\cfrac{P(prog=general(ses=middle))}{P(prog=academic(ses=middle))}} &amp;=&amp; \cfrac{exp(2.85 - 0.53\times0 - 1.16\times1 - 0.06(write)}{exp(2.85 - 0.53\times1 - 1.16\times0 - 0.06(write))} \<br>
-&amp;=&amp; exp(-1.16-(0.53)) \<br>
-&amp;\fallingdotseq&amp;  0.53   \end{eqnarray} $$</p>
+<p>といった結果が得られています。</p>
+<p>二番目の項目($\cfrac{P(prog=general)}{P(prog=academic)}$と$ses=high,ses=low$の関係)については下記式から確認できます。</p>
+<p>$$
+\cfrac{\cfrac{P(prog=general(ses=high))}{P(prog=academic(ses=high))}}{\cfrac{P(prog=general(ses=low))}{P(prog=academic(ses=low))}} 
+= \cfrac{exp(2.85 - 0.53\times0 - 1.16\times1 - 0.06(write)}{exp(2.85 - 0.53\times0 - 1.16\times0 - 0.06(write))} 
+$$
+$$
+= exp(-1.16)
+\fallingdotseq 0.31
+$$</p>
 <h1 id="結果の描画">結果の描画</h1>
 <p>結果の描画を行います。ses,writeの値が1組与えられた時の予測値は<code>predict()</code>関数で算出できます(信頼区間を求めようとしたら<code>nnet::predict()</code>は<code>predict=“confidence&quot;</code>が使えませんでした…残念)。
 <!-- raw HTML omitted --><br>
-以下では予測値の算出を行っていますが、今回のモデルは人間に分かりやすいように設計されたモデルであるため、予測用のモデルではないことに注意してください。</p>
+以下では予測値の算出を行っていますが、今回のモデルは解釈しやすいように設計されたモデルです。予測用のモデルにが欲しいなら更なる改良モデルが存在します。</p>
 <pre><code>library(reshape2)
 library(ggplot2)
 library(RColorBrewer)
@@ -269,7 +283,8 @@ p0 &lt;- ggplot(data=lpp,aes(x=write, y=probability,colour=ses)) + geom_line() +
 p0
 </code></pre>
 <p><img src="/my-page/post/multinom/multinom.png" alt="aai"></p>
-<p>図の全体的な傾向と前節で確認した内容おおむね一致しているように見えます。</p>
+<p>上図では3つの授業が選ばれる確率を別々に描画しています。同じ色の線がとる確率値の割をとると1になります。
+図の全体的な傾向と前節で確認した内容に不一致は見られないようです。</p>
 <h1 id="まとめ">まとめ</h1>
 <p>本記事では多項ロジスティック回帰モデルについて説明しました。
 <!-- raw HTML omitted --><br>
