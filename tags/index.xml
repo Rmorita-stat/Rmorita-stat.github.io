@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on SUCRE HECACHA</title>
-    <link>https://github.com/Rmorita-stat/my-page.git/tags/</link>
+    <link>https://rmorita-stat.github.io/my-page/tags/</link>
     <description>Recent content in Tags on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Thu, 23 May 2019 21:13:14 -0500</lastBuildDate>
     
-	<atom:link href="https://github.com/Rmorita-stat/my-page.git/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://rmorita-stat.github.io/my-page/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>回帰</title>
-      <link>https://github.com/Rmorita-stat/my-page.git/tags/%E5%9B%9E%E5%B8%B0/</link>
+      <link>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</link>
       <pubDate>Thu, 23 May 2019 21:13:14 -0500</pubDate>
       
-      <guid>https://github.com/Rmorita-stat/my-page.git/tags/%E5%9B%9E%E5%B8%B0/</guid>
+      <guid>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</guid>
       <description></description>
     </item>
     
