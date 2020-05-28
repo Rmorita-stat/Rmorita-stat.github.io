@@ -6,7 +6,7 @@
     <description>Recent content in Posts on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Wed, 27 May 2020 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Sun, 28 Sep 2014 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/my-page/post/index.xml" rel="self" type="application/rss+xml" />
     
@@ -19,15 +19,6 @@
       <guid>https://rmorita-stat.github.io/my-page/post/creating-a-new-theme/creating-a-new-theme/</guid>
       <description>Introduction This tutorial will show you how to create a simple theme in Hugo. I assume that you are familiar with HTML, the bash command line, and that you are comfortable using Markdown to format content. I&amp;rsquo;ll explain how Hugo uses templates and how you can organize your templates to create a theme. I won&amp;rsquo;t cover using CSS to style your theme.
 We&amp;rsquo;ll start with creating a new site with a very basic template.</description>
-    </item>
-    
-    <item>
-      <title>multinom()を使った多項ロジスティック回帰</title>
-      <link>https://rmorita-stat.github.io/my-page/post/multinom/multimon/</link>
-      <pubDate>Wed, 27 May 2020 21:13:14 -0500</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/my-page/post/multinom/multimon/</guid>
-      <description>はじめに 回帰に関する記事です。本記事では多項ロジスティック回帰について扱います。 多項ロジスティック回帰(multinomial logisti</description>
     </item>
     
   </channel>
