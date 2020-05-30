@@ -3,17 +3,32 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/multinom/multimon/</loc>
-    <lastmod>2020-05-27T21:13:14-05:00</lastmod>
+    <loc>https://rmorita-stat.github.io/my-page/post/creating-a-new-theme/creating-a-new-theme/</loc>
+    <lastmod>2014-09-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://rmorita-stat.github.io/my-page/post/</loc>
-    <lastmod>2020-05-27T21:13:14-05:00</lastmod>
+    <lastmod>2020-05-29T23:13:14-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/tags/rstan/</loc>
+    <lastmod>2020-05-29T23:13:14-05:00</lastmod>
   </url>
   
   <url>
     <loc>https://rmorita-stat.github.io/my-page/tags/</loc>
+    <lastmod>2020-05-29T23:13:14-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/post/bayesintroduction/bayesintroduction/</loc>
+    <lastmod>2020-05-29T23:13:14-05:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/post/multinom/multimon/</loc>
     <lastmod>2020-05-27T21:13:14-05:00</lastmod>
   </url>
   

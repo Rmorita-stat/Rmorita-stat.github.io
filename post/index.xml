@@ -6,10 +6,29 @@
     <description>Recent content in Posts on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Wed, 27 May 2020 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Fri, 29 May 2020 23:13:14 -0500</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/my-page/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Creating a New Theme</title>
+      <link>https://rmorita-stat.github.io/my-page/post/creating-a-new-theme/creating-a-new-theme/</link>
+      <pubDate>Sun, 28 Sep 2014 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/post/creating-a-new-theme/creating-a-new-theme/</guid>
+      <description>Introduction This tutorial will show you how to create a simple theme in Hugo. I assume that you are familiar with HTML, the bash command line, and that you are comfortable using Markdown to format content. I&amp;rsquo;ll explain how Hugo uses templates and how you can organize your templates to create a theme. I won&amp;rsquo;t cover using CSS to style your theme.
+We&amp;rsquo;ll start with creating a new site with a very basic template.</description>
+    </item>
+    
+    <item>
+      <title>ベイズ統計モデリング入門</title>
+      <link>https://rmorita-stat.github.io/my-page/post/bayesintroduction/bayesintroduction/</link>
+      <pubDate>Fri, 29 May 2020 23:13:14 -0500</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/post/bayesintroduction/bayesintroduction/</guid>
+      <description>はじめに 本記事では今後の記事でも頻繁に扱う予定のベイズ統計について理解してもらうため、その理論を簡単に説明します。 本記事の構成は以下の通りで</description>
+    </item>
     
     <item>
       <title>multinom()を使った多項ロジスティック回帰</title>
