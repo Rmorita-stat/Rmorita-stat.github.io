@@ -161,11 +161,12 @@ with(ml, do.call(rbind, tapply(write, prog, function(x) c(M=mean(x), SD=sd(x))))
 <h5 id="順序ロジスティック回帰">順序ロジスティック回帰</h5>
 <p>従属変数を順序データと解釈するモデルです。従属変数を$(Y =1,2,\ldots,k)$といった順序型の変数とみなしたとき、このモデルから得られる結果は
 　　
-$$P_{(y_n=2,&hellip;,K)} \sim Binomial(q_{1n}),　 q_n = inverselogit(\vec{a} + b_{1}x_{n1} + b_{2}x_{n2} +\ldots + b_{D}x_{nD})$$
-$$P_{(y_n=3,&hellip;,K)} \sim Binomial(q_{2n}),　 q_n = inverselogit(\vec{a} + b_{1}x_{n1} + b_{2}x_{n2} +\ldots + b_{D}x_{nD})$$
+$$P_{(y_n=2,&hellip;,K)} \sim Binomial(q_{1n}),　 q_n = inverselogit(a_1 + b_{1}x_{n1} + b_{2}x_{n2} +\ldots + b_{D}x_{nD})$$
+$$P_{(y_n=3,&hellip;,K)} \sim Binomial(q_{2n}),　 q_n = inverselogit(a_2 + b_{1}x_{n1} + b_{2}x_{n2} +\ldots + b_{D}x_{nD})$$
 $$\ldots$$
-$$P_{(y_n=K)} \sim Binomial(q_{(K-1)n}),　 q_n = inverselogit(\vec{a} + b_{1}x_{n1} + b_{2}x_{n2} +\ldots + b_{D}x_{nD})$$</p>
+$$P_{(y_n=K)} \sim Binomial(q_{(K-1)n}),　 q_n = inverselogit(a_{K-1} + b_{1}x_{n1} + b_{2}x_{n2} +\ldots + b_{D}x_{nD})$$</p>
 <p>のk-1個の確率に関する回帰式となります。</p>
+<p>上記モデルでは、$Y$を一つの順序型変数とみなすという設定に合わせ、解釈上の都合から(?)切片項以外の係数を全回帰式で同一としています。</p>
 <p>今回のデータでは説明変数が通常の授業(general)、アカデミックな授業(academic)、職を持つための授業(vocation、高専のようなイメージ？)といった内容のものであるため、順序型データとはみなさないこととします。</p>
 <h5 id="従属変数を2値に統合し通常のロジスティック回帰を行う">従属変数を2値に統合し、通常のロジスティック回帰を行う</h5>
 <p>多項ロジスティック回帰は得られる結果の解釈が難しいという欠点があるため、より解釈がし易いようにデータを簡略化し、通常のロジスティック回帰に持ち込む方法です。今回の例ではacademicを選択する確率に着目し、generalとvocationを一つにまとめる、といったことが考えられます。</p>
@@ -222,8 +223,8 @@ p
 ## vocation 3.649650e-06 0.2703765 0.04947488 1.588023e-07
 </code></pre>
 <p>結果は下記式に帰着します($^{***}$：0.1%有意、$^{**}$：1%有意、$^{*}$：5%有意)。</p>
-<p>$$\cfrac{P(prog=general)}{P(prog=academic)} = exp(2.85^{*}-0.53(ses=middle) -1.16^*(ses=high) - 0.06^{***}write)$$</p>
-<p>$$\cfrac{P(prog=vocation)}{P(prog=academic)} = exp(5.22^{***}-0.29(ses=middle) +0.98(ses=high) - 0.11^{***}write)$$</p>
+<p>$$\cfrac{P(prog=general)}{P(prog=academic)} = exp(2.85^{***}-0.53(ses=middle) -1.16^*(ses=high) - 0.06^{***}write)$$</p>
+<p>$$\cfrac{P(prog=vocation)}{P(prog=academic)} = exp(5.22^{***}-0.29(ses=middle) -0.98^*(ses=high) - 0.11^{***}write)$$</p>
 <p>上記の結果は、generalを選択する確率とacademicを選択する確率のオッズ比</p>
 <p>$$\cfrac{P(prog=general)}{P(prog=academic)}$$</p>
 <p>に着目した場合、下記式のようにwriteの値が1増えるとオッズ比は0.94倍になる、というよう解釈できます。
@@ -239,19 +240,19 @@ $$</p>
 <p>そのほかの係数について確認しておくと、</p>
 <ul>
 <li>
-<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$はwriteの値が1増加すると$exp(-0.11)\fallingdotseq0.89$倍になる(有意)</p>
+<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$はwriteの値が1増加すると$exp(-0.11)\fallingdotseq0.89$倍になる(有意)。</p>
 </li>
 <li>
-<p>$\cfrac{P(prog=general)}{P(prog=academic)}$は$ses=high$のとき、$ses=low$の時の$exp(-1.16)\fallingdotseq0.31$倍の値をとる(有意)</p>
+<p>$\cfrac{P(prog=general)}{P(prog=academic)}$は$ses=high$のとき、$ses=low$の時の$exp(-1.16)\fallingdotseq0.31$倍の値をとる(有意)。</p>
+</li>
+<li>
+<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$は$ses=high$のとき、$ses=low$の時の$exp(-0.98)\fallingdotseq0.38$倍の値をとる(有意)。</p>
 </li>
 <li>
 <p>$\cfrac{P(prog=general)}{P(prog=academic)}$は$ses=middle$のとき、$ses=low$の時の$exp(-0.53)\fallingdotseq0.59$倍の値をとる。ただしこの値は1である可能性を捨てきれない</p>
 </li>
 <li>
-<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$は$ses=high$のとき、$ses=low$の時の$exp(-0.98)\fallingdotseq0.38$倍の値をとる。ただしこの値は1である可能性を捨てきれない</p>
-</li>
-<li>
-<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$は$ses=high$のとき、$ses=low$の時の$exp(-0.29)\fallingdotseq0.74$倍の値をとる。ただしこの値は1である可能性を捨てきれない</p>
+<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$は$ses=middle$のとき、$ses=low$の時の$exp(-0.29)\fallingdotseq0.74$倍の値をとる。ただしこの値は1である可能性を捨てきれない</p>
 </li>
 </ul>
 <p>といった結果が得られています。</p>
