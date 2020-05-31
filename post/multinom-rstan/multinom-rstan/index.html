@@ -179,7 +179,7 @@ model{
   }
 }
 
-//generated quantitiesブロック：生成量を定義 ここでは予測値とオッズ比の変量exp(b_raw)を生成
+//generated quantitiesブロック：生成量を定義 ここでは確率に関する予測値mu_newとオッズ比の変量exp(b)を生成
 generated quantities{
   matrix[D, K-1] ratio;//オッズ比の変量
   vector[K] pred[N_new];//予測点において各programが選ばれる確率
@@ -212,6 +212,8 @@ $$
 <p>$$
 P(y[n] = 1(academic)) = \cfrac{1}{\sum_{k=1}^K \exp(mu[n,k])}
 $$</p>
+<p>また、上記の実装ではパラメータのbに事前分布を指定していませんが、Stanでは事前分布を指定しない場合、十分に幅の広い一様分布が自動で設定されます。
+<!-- raw HTML omitted -->そのため、パラメータに関する事前の設定要件が無い場合は、事前分布に何も指定しなくても無情報事前分布が設定されるため問題ありません。</p>
 <p>model1に基づいてサンプリングを命令するコードは以下のようになります。</p>
 <pre><code>#(run_model1)
 library(rstan)
@@ -292,7 +294,7 @@ fit0
 <!-- raw HTML omitted --> <br>
 Stanが自己相関等から判断した実行サンプルサイズです。ある書籍には分布の推定・統計量の算出のために100程度以上あることが望ましいと紹介されています。
 <!-- raw HTML omitted -->  <br>
-標本自己相関がラグを大きくしてもなかなか減衰しない場合、MCMCサンプルは過去の値に長く依存しており、不変分布である事後分布に関する推論には効率が悪い、ということのようです。Stan開発者は<a href="https://mc-stan.org/docs/2_21/reference-manual/effective-sample-size-section.html">こちらのページ</a>でn-effの定義をしています。私もまだちゃんと読んでいないのでいつか読みます。</p>
+標本自己相関がラグを大きくしてもなかなか減衰しない場合、MCMCサンプルは過去の値に長く依存しており、不変分布である事後分布に関する推論には効率が悪い、ということのようです。Stan開発者は<a href="https://mc-stan.org/docs/2_21/reference-manual/effective-sample-size-section.html">こちらのページ</a>でn-effの定義をしています。私もまだちゃんと読んでいないのでいつか読みたいです。</p>
 <p><strong>Rhat($\hat{R}$)</strong>
 <!-- raw HTML omitted --> <br>
 こちらはMCMCが収束したかを表す一つの指標です。
@@ -340,6 +342,18 @@ fit0
 ## b[4,1]          -0.06    0.00   0.02   -0.10   -0.07   -0.06   -0.04   -0.02
 ## b[4,2]          -0.12    0.00   0.02   -0.16   -0.13   -0.12   -0.10   -0.08
 </code></pre>
+<p>事後分布の代表値とし上の中央値(50%列の値)も用いられますが、ここでは最尤法による結果との整合性を確認するためMAP推定値も算出してみます。
+事後分布のMAP推定値が最尤推定による結果と理論的に一致することについては<a href="https://rmorita-stat.github.io/my-page/post/multinom/multimon/">以前の記事</a>を参照してください。</p>
+<pre><code>b_MAP &lt;- apply(posterior_fit0_2$b, c(2,3), function(x){
+mode_x &lt;- density(x)$x[which.max(density(x)$y)]
+})
+colnames(b_MAP) &lt;- c(&quot;general&quot;,&quot;vocation&quot;)
+t(b_MAP)
+
+##           Intercept  sesmiddle   seshigh       write
+##  general   2.898204 -0.5127911 -1.224067 -0.05841702
+##  vocation  5.059521  0.2740113 -1.028054 -0.11497210
+</code></pre>
 <p>一方、以前の記事でmultinom()を用いて同じ分析を行った結果が以下です。</p>
 <pre><code>## Call:
 ## multinom(formula = prog2 ~ ses + write, data = ml)
@@ -366,8 +380,8 @@ p
 ## general  7.238305e-03 0.1147190 0.01186928 3.409451e-03
 ## vocation 3.649650e-06 0.2703765 0.04947488 1.588023e-07
 </code></pre>
-<p>MCMCサンプルの中央値(50%区間)とmultinom()による結果のcoefficients:を比較してみると、おおよそ一致していることがわかります。多少のずれはモンテカルロ誤差などの影響の範囲内です。
-このことから、最尤推定に基づく方法とベイズ統計に基づく方法の整合性が確認できました。</p>
+<p>事後分布のMAP推定値とmultinom()による結果のcoefficients:を比較してみると、おおよそ一致していることがわかります。多少のずれはモンテカルロ誤差などの影響の範囲内と考えます。
+このことから、最尤推定に基づく方法とベイズ統計からのアプローチの整合性が確認できました。</p>
 <p>multinom()の際には有意差検定を実行していましたので、今回もパラメータが0より大きい(小さい)確率(<strong>Bayesian p-value</strong>)を算出しておきます。</p>
 <pre><code>posterior_fit0_2 &lt;- rstan::extract(fit0)
 
@@ -376,14 +390,12 @@ p_coef &lt;- apply(posterior_fit0_2$b,c(2,3), function(x){
 })
 rownames(p_coef) &lt;- c(&quot;Intercept&quot;,&quot;sesmiddle&quot;,&quot;seshigh&quot;,&quot;write&quot;)
 colnames(p_coef) &lt;- c(&quot;general&quot;,&quot;vocation&quot;)
-p_coef
+t(p_coef)
 
 ##            
-##             general vocation
-##   Intercept 0.99325   1.0000
-##   sesmiddle 0.11125   0.7455
-##   seshigh   0.00900   0.0410
-##   write     0.00150   0.0000
+##           Intercept sesmiddle seshigh  write
+##  general    0.99325   0.11125   0.009 0.0015
+##  vocation   1.00000   0.74550   0.041 0.0000
 </code></pre>
 <p>以上の結果の解釈はmultinom()の時より直感的で、例えば$b_{14}$に着目すると、</p>
 <ul>
@@ -481,7 +493,7 @@ p0 &lt;- ggplot() + theme_bw(base_size=11) + mapply(
 },list(data.frame(data_point, facet=&quot;academic&quot;),data.frame(data_point, facet=&quot;general&quot;),data.frame(data_point, facet=&quot;vocation&quot;)),
   list(4,5,6)) +
   facet_grid(facet~.) + scale_colour_manual(values=cols) + scale_fill_manual(values=cols) +
-  theme(legend.position = &quot;bottom&quot;) + ylab(&quot;&quot;) + labs(title = &quot;With Rstan&quot;)
+  theme(legend.position = &quot;bottom&quot;) + ylab(&quot;Probability&quot;) + labs(title = &quot;With Rstan&quot;)
 
 p0
 </code></pre>
