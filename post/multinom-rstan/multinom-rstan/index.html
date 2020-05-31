@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/my-page/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/my-page/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/style.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/monokai-sublime.min.css">
+    <script src="https://rmorita-stat.github.io/my-page/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://rmorita-stat.github.io/my-page/"><img src="https://rmorita-stat.github.io/my-page/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/post" >BLOG</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2020.05.31 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">rstanを使った多項ロジスティック回帰</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <h1 id="はじめに">はじめに</h1>
+<p><strong>回帰</strong>に関する記事です。本記事では<a href="https://rmorita-stat.github.io/my-page/post/multinom/multimon/">以前の記事</a>で扱った多項ロジスティック回帰を<strong>rstan</strong>で実行します。</p>
+<h5 id="モデルの確認">モデルの確認</h5>
+<p>以前の記事でも紹介した多項ロジスティック回帰モデルの一般式を再掲します。
+<!-- raw HTML omitted --><br>
+従属変数$Y$、説明変数$X$について、$Y = (y_1,\ldots,y_n,\ldots, y_N)^T$、$X = (x_1,\ldots, x_n,\ldots, x_N)^T$とし、さらに
+$x_n = (x_{1n},\ldots,x_{dn},\ldots, x_{Dn})$としたとき、多項ロジスティック回帰のモデル式は以下になります。$N$はサンプルサイズ、$D$は説明変数の次元です。</p>
+<p>$$
+\mu_n = \overrightarrow{a} + \overrightarrow{b_1}x_{n1} + \cdots + \overrightarrow{b_d}x_{nd} + \cdots + \overrightarrow{b_D}x_{nD}
+$$
+$$
+\theta_n = softmax(\mu_n)
+$$
+$$
+y_n \sim Categorical(\theta_n)
+$$
+$$
+(n=1,\ldots,N)
+$$</p>
+<p>ここで
+$$
+\mu=(\mu_1,\ldots,\mu_n,\ldots,\mu_N)
+$$
+$$
+\theta=(\theta_1,\ldots,\theta_n,\ldots,\theta_N)
+$$</p>
+<p>$\mu_n, \theta_n,\overrightarrow{a},\overrightarrow{b_1},\ldots,\overrightarrow{b_D}$は長さ$K$のベクトルです。</p>
+<h1 id="データの入手整形">データの入手・整形</h1>
+<p><a href="https://rmorita-stat.github.io/my-page/post/multinom/multimon/">以前の記事</a>でも扱ったデータを用います。今回もprog(200人の生徒がgeneral、vocation、academicの3つの授業から選んだ授業)を従属変数とし、ses(家庭の経済状況)、write(書く力)を従属変数とします。</p>
+<p>以下の通りStanに指定するデータに整形していきます。</p>
+<pre><code>library(makedummies)
+library(tidyr)
+library(dplyr)
+library(foreign)
+
+ml &lt;- read.dta(&quot;https://stats.idre.ucla.edu/stat/data/hsbdemo.dta&quot;)
+
+## progの3引数を数字に置き換えるための表を作成
+progid &lt;- c(1,2,3)
+names(progid) &lt;- c(&quot;academic&quot;,&quot;general&quot;,&quot;vocation&quot;)
+
+## makedummies()はsesに対してダミー変数を作成するために使用
+## interceptは切片項
+d &lt;- ml %&gt;% cbind(makedummies::makedummies(ml,basal_level = F, col = &quot;ses&quot;)) %&gt;% 
+  mutate(progid = progid[paste(prog)]) %&gt;% select(c(ses_middle, ses_high, write, progid)) %&gt;% 
+  cbind(intercept=rep(1,nrow(ml)))
+
+head(d,10)
+
+##    ses_middle ses_high write progid intercept
+## 1           0        0    35      3         1
+## 2           1        0    33      2         1
+## 3           0        1    39      3         1
+## 4           0        0    37      3         1
+## 5           1        0    31      3         1
+## 6           0        1    36      2         1
+## 7           1        0    36      3         1
+## 8           1        0    31      3         1
+## 9           1        0    41      3         1
+## 10          1        0    37      3         1
+</code></pre>
+<p>ここで、本データ用に設定したモデル式における係数の呼称を以下の通り定義しておきます。</p>
+<p>$$\cfrac{P(prog=general)}{P(prog=academic)} = exp(b_{11} + b_{21}(ses=middle) + b_{31}(ses=high) + b_{41}write)$$</p>
+<p>$$\cfrac{P(prog=vocation)}{P(prog=academic)} = exp(b_{12} + b_{22}(ses=middle) + b_{32}(ses=high) + b_{42}write)$$</p>
+<h1 id="stanによる多項ロジスティック回帰の実装">Stanによる多項ロジスティック回帰の実装</h1>
+<p>多項ロジスティック回帰を実行するStanコードは以下のようになります。</p>
+<pre><code>//(model1.stan)
+//dataブロック：データを指定
+data{
+  int&lt;lower=2&gt; K; //カテゴリ数
+  int&lt;lower=1&gt; N; //サンプルサイズ
+  int&lt;lower=1&gt; D; //データ項目数+切片項の数（１）
+  int&lt;lower=1, upper=K&gt; y[N]; //prog
+  matrix[N,D] x; //説明変数と切片項
+  int N_new; //予測点の数
+  matrix[N_new,D] x_new; //予測点群
+}
+
+//transformed dataブロック：新しくデータを生成 ここではmuの区別化の為の0ベクトルを生成
+transformed data{
+  vector[D] Zeros;
+  Zeros = rep_vector(0, D);
+}
+
+//parameterブロック：パラメータを定義
+parameters{
+  matrix[D, K-1] b;
+}
+
+//transformed parameterブロック：parameterブロックで指定したパラメータを変形 ここでは0ベクトルと結合
+transformed parameters{
+  matrix[D,K] beta;
+  beta = append_col(Zeros, b);
+}
+
+//modelブロック：モデルを定義
+model{
+  matrix[N,K] mu;
+  mu = x * beta;
+  for(n in 1:N){
+    y[n] ~ categorical_logit(mu[n]);
+  }
+}
+
+//generated quantitiesブロック：生成量を定義 ここでは予測値とオッズ比の変量exp(b_raw)を生成
+generated quantities{
+  matrix[D, K-1] ratio;//オッズ比の変量
+  vector[K] pred[N_new];//予測点において各programが選ばれる確率
+  matrix[N_new, K] mu_new;
+  mu_new = x_new * beta;
+  for(n in 1:N_new){
+    pred[n,] = softmax(mu_new[n,]);
+  }
+  ratio = exp(b);
+}
+</code></pre>
+<p>parameterブロックで指定した係数$b$の行番号・列番号の組み合わせが、先ほど定義したモデル式における係数の修飾番号に一致します。例えば、$b[1,2]$はモデル式における$b_{12}$に対応します。</p>
+<p><code>Categorical_logit()</code>はStanに実装された便利な関数で、Stan内部でsoftmaxを実行してくれます。
+つまり、<code>y[n] ~ categorical_logit(mu[n]')</code>と<code>y[n] ~ Categorical(softmax(mu[n]'))</code>はともに以下に示す処理を実行してくれます。</p>
+<p>$$y[n] \sim Categorical(softmax(mu[n]))$$</p>
+<p>(注：上に示した実装ではコード表現の都合上<code>categorical_logit()</code>と<code>softmax()</code>の引数をそれぞれ<code>mu[n]</code>、<code>mu_new[n,]</code>としていますが、<code>softmax()</code>は列ベクトルにしか対応していないので、実装では必ずベクトルや行列を転置させる命令である<code>'</code>を引数の後ろにつけてください！)</p>
+<p>この部分についてもう少し補足すると、
+$$
+P(y[n] = 1) = softmax(mu[n,])[1]
+$$
+$$
+P(y[n] = 2) = softmax(mu[n,2])[2]
+$$
+$$
+P(y[n] = 3) = softmax(mu[n,3])[3]
+$$
+という関係になっています。
+ここでは$beta[,1] = 0$とすることで$mu[,1] = 0$とし、
+またデータの整形において$academic \rightarrow 1,~~~general \rightarrow 2,~~~vocation \rightarrow 3$としているので、以下の通り$P(y[n] = 1(academic))$について固定・基準化していることになります。</p>
+<p>$$
+P(y[n] = 1(academic)) = \cfrac{1}{\sum_{k=1}^K \exp(mu[n,k])}
+$$</p>
+<p>model1に基づいてサンプリングを命令するコードは以下のようになります。</p>
+<pre><code>#(run_model1)
+library(rstan)
+x &lt;- d[,c(5,1,2,3)] 
+y &lt;- d[,&quot;progid&quot;]
+K &lt;- 3
+N &lt;- nrow(x)
+D &lt;- ncol(x)
+x_new &lt;- data.frame(rep(1,123),c(rep(0,41),rep(1,41),rep(0,41)),c(rep(0,82),rep(1,41)), write = rep(c(30:70),3))
+N_new &lt;- nrow(x_new)
+
+fit0 &lt;- stan(file = &quot;model1.stan&quot;, data = list(x=x,y=y,K=K,N=N,D=D,x_new=x_new,N_new=N_new), seed=123, war=500, iter=1500, chains = 4)
+</code></pre>
+<p><code>rstan::stan()</code>の引数について説明しておきます。</p>
+<ul>
+<li>file：stanファイルを指定</li>
+<li>data：必要なデータをリスト型で指定</li>
+<li>war： warm up期間を指定</li>
+<li>iter：waru up期間を含んだchainの長さ(iteration)を指定</li>
+<li>chain：chain数を指定</li>
+<li>seed：乱数の種類を指定</li>
+</ul>
+<p>$x_{new}$はパラメータのMCMCサンプルにもとづいて
+$$
+P(y[n_{new}]=1),~P(y[n_{new}]=2),~P(y[n_{new}]=3),~~~~n_{new}=1,\ldots,N_{new}
+$$
+の予測値を算出する際に、説明変数$x$がとる組み合わせを指定したものです。
+<!-- raw HTML omitted -->
+予測値は、MCMCでは生成量のサンプリングとして扱うため、generated quantitiesブロックで指定することになります。</p>
+<h1 id="mcmcの収束の確認">MCMCの収束の確認</h1>
+<p>MCMCの実行後、まずはちゃんと収束していることを確認する必要があります。
+以下ではモデルの係数についてtracsplotを描画し、収束の確認を行います。</p>
+<pre><code>library(ggmcmc)
+library(bayesplot)
+posterior_fit0_1 &lt;- rstan::extract(fit0, inc_warmup=TRUE, permuted=FALSE)
+color_scheme_set(&quot;mix-blue-pink&quot;)
+p &lt;- mcmc_trace(posterior_fit0_1, regex_pars = c(&quot;b&quot;), n_warmup = 500,
+                facet_args = list(ncol = 2))+ theme_bw(base_size=12) + theme(legend.position = &quot;bottom&quot;)
+p
+</code></pre>
+<p><img src="/my-page/post/multinom-rstan/fit0_mcmc_trace.png" alt=""></p>
+<p>どの係数も早い段階で一つの値に収束しているようです。ここではwarm upを500に設定していますが、十分すぎるwarm up であることが確認できます。</p>
+<p>MCMCの収束を確認する方法はtracsplotを用いた視覚的な判断だけでなく、数値基準も用意されています。</p>
+<pre><code>options(max.print = 80)
+fit0
+
+## Inference for Stan model: model1.
+## 4 chains, each with iter=1500; warmup=500; thin=1; 
+## post-warmup draws per chain=1000, total post-warmup draws=4000.
+## 
+##                  mean se_mean     sd    2.5%     25%     50%     75%   97.5%
+## b[1,1]           2.89    0.03   1.16    0.62    2.11    2.90    3.66    5.12
+## b[1,2]           5.36    0.03   1.13    3.17    4.61    5.32    6.14    7.57
+## b[2,1]          -0.54    0.01   0.45   -1.41   -0.83   -0.53   -0.24    0.33
+## b[2,2]           0.32    0.01   0.48   -0.64    0.00    0.31    0.64    1.28
+## b[3,1]          -1.19    0.01   0.52   -2.27   -1.53   -1.19   -0.84   -0.19
+## b[3,2]          -1.01    0.01   0.59   -2.21   -1.40   -1.00   -0.61    0.12
+## b[4,1]          -0.06    0.00   0.02   -0.10   -0.07   -0.06   -0.04   -0.02
+## b[4,2]          -0.12    0.00   0.02   -0.16   -0.13   -0.12   -0.10   -0.08
+##               n_eff Rhat
+## b[1,1]         2022    1
+## b[1,2]         1934    1
+## b[2,1]         2701    1
+## b[2,2]         2579    1
+## b[3,1]         2835    1
+## b[3,2]         2514    1
+## b[4,1]         2122    1
+## b[4,2]         1978    1
+##  [ reached getOption(&quot;max.print&quot;) -- 759 行を無視しました ] 
+## 
+## Samples were drawn using NUTS(diag_e) at Sun May 31 00:51:09 2020.
+## For each parameter, n_eff is a crude measure of effective sample size,
+## and Rhat is the potential scale reduction factor on split chains (at 
+## convergence, Rhat=1).
+</code></pre>
+<p>R console上でfit0の中身を確認すると、各MCMCサンプルの要約統計量の他にn-eff、Rhatが出力されます。</p>
+<p><strong>n-eff</strong>
+<!-- raw HTML omitted --> <br>
+Stanが自己相関等から判断した実行サンプルサイズです。ある書籍には分布の推定・統計量の算出のために100程度以上あることが望ましいと紹介されています。
+<!-- raw HTML omitted -->  <br>
+標本自己相関がラグを大きくしてもなかなか減衰しない場合、MCMCサンプルは過去の値に長く依存しており、不変分布である事後分布に関する推論には効率が悪い、ということのようです。Stan開発者は<a href="https://mc-stan.org/docs/2_21/reference-manual/effective-sample-size-section.html">こちらのページ</a>でn-effの定義をしています。私もまだちゃんと読んでいないのでいつか読みます。</p>
+<p><strong>Rhat($\hat{R}$)</strong>
+<!-- raw HTML omitted --> <br>
+こちらはMCMCが収束したかを表す一つの指標です。
+<!-- raw HTML omitted -->  <br>
+Rhatについては少し詳しく紹介しておきます。
+<!-- raw HTML omitted --><br>
+いまchain数を$M$、iterationを$n$とし、chain毎に$n$個の標本$\theta^{(i,t)}$を発生させたとします$(i=1,2,\ldots,M,~~t=1,2,\ldots,n)$。
+<!-- raw HTML omitted --> <br>
+このとき、$g(\theta^{(i,t)})$の分散$\sigma_g^2$は、</p>
+<p>$$
+\tilde{\sigma}^2_{BW} = \cfrac{(n-1)\tilde{\sigma}^2_w + \tilde{\sigma}^2_B}{n}
+$$
+$$
+\tilde{\sigma}^2_{W} = \cfrac{1}{M} \sum_{i=1}^M s^2_{g_i}, ~~~~ 
+s^2_{g_i} = \cfrac{\sum_{t=1}^n ((g(\theta^{(i,t)}))-\bar{g}_i)^2}{n-1}
+$$
+$$
+\tilde{\sigma}^2_B = n\cfrac{\sum_{i=1}^M (\bar{g}_i-\check{g})}{M-1},~~~~
+\bar{g}_i = \cfrac{1}{n}\sum_{t=1}^n g(\theta^{(i,t)}),~~~~
+\check{g} = \cfrac{1}{M} \sum^M_{i=1} \bar{g}_i
+$$</p>
+<p>の$\tilde{\sigma}^2_{BW},~ \tilde{\sigma}^2_{W}, ~ \tilde{\sigma}^2_B$のいずれでも推定できます。</p>
+<p>MCMC標本の自己相関が高く、不変分布である事後分布への収束が遅い場合、$s^2_{g_i}$(=1chain内の不偏分散)は真の分散$\sigma^2_g$よりも小さくなり、したがって$\tilde{\sigma}^2_{W}$($s^2_{g_i}$の平均)も小さくなります。
+<!-- raw HTML omitted -->  <br>
+一方、各連鎖の動きが緩慢で事後分布の一部でしかサンプリングされていないときは、$\tilde{\sigma}^2_B/n$(=各chainの標本平均の不偏分散)が大きくなり、したがって$\tilde{\sigma}^2_B$も大きくなります。</p>
+<p>そこで、下記式で$\hat{R}$を定義すると、$\hat{R}$が1に近いかどうかでMCMCの収束を判断することが出来ます。Galman(1996)は$\hat{R}$が1.1~1.2以下になれば収束したと実用上考えてよいとしているそうです。</p>
+<p>$$
+\hat{R} = \cfrac{\tilde{\sigma}^2_{BW}}{\tilde{\sigma}^2_{W}}
+$$</p>
+<p>今回は全係数でRhatが1ですので、MCMCは収束したと判断します。</p>
+<h1 id="結果の確認モデルの係数に着目">結果の確認(モデルの係数に着目)</h1>
+<p>R console上でfit0の中身を確認したとき、係数の要約統計量が以下のように算出されていました。</p>
+<pre><code>options(max.print = 80)
+fit0
+
+## ～省略～
+## 
+##                  mean se_mean     sd    2.5%     25%     50%     75%   97.5%
+## b[1,1]           2.89    0.03   1.16    0.62    2.11    2.90    3.66    5.12
+## b[1,2]           5.36    0.03   1.13    3.17    4.61    5.32    6.14    7.57
+## b[2,1]          -0.54    0.01   0.45   -1.41   -0.83   -0.53   -0.24    0.33
+## b[2,2]           0.32    0.01   0.48   -0.64    0.00    0.31    0.64    1.28
+## b[3,1]          -1.19    0.01   0.52   -2.27   -1.53   -1.19   -0.84   -0.19
+## b[3,2]          -1.01    0.01   0.59   -2.21   -1.40   -1.00   -0.61    0.12
+## b[4,1]          -0.06    0.00   0.02   -0.10   -0.07   -0.06   -0.04   -0.02
+## b[4,2]          -0.12    0.00   0.02   -0.16   -0.13   -0.12   -0.10   -0.08
+</code></pre>
+<p>一方、以前の記事でmultinom()を用いて同じ分析を行った結果が以下です。</p>
+<pre><code>## Call:
+## multinom(formula = prog2 ~ ses + write, data = ml)
+## 
+## Coefficients:
+##          (Intercept)  sesmiddle    seshigh      write
+## general     2.852198 -0.5332810 -1.1628226 -0.0579287
+## vocation    5.218260  0.2913859 -0.9826649 -0.1136037
+## 
+## Std. Errors:
+##          (Intercept) sesmiddle   seshigh      write
+## general     1.166441 0.4437323 0.5142196 0.02141097
+## vocation    1.163552 0.4763739 0.5955665 0.02221996
+## 
+## Residual Deviance: 359.9635 
+## AIC: 375.9635
+
+## 両側Z検定の実行
+z &lt;- summary(test)$coefficients/summary(test)$standard.errors
+p &lt;- (1 - pnorm(abs(z),0,1))
+p
+
+##           (Intercept) sesmiddle    seshigh        write
+## general  7.238305e-03 0.1147190 0.01186928 3.409451e-03
+## vocation 3.649650e-06 0.2703765 0.04947488 1.588023e-07
+</code></pre>
+<p>MCMCサンプルの中央値(50%区間)とmultinom()による結果のcoefficients:を比較してみると、おおよそ一致していることがわかります。多少のずれはモンテカルロ誤差などの影響の範囲内です。
+このことから、最尤推定に基づく方法とベイズ統計に基づく方法の整合性が確認できました。</p>
+<p>multinom()の際には有意差検定を実行していましたので、今回もパラメータが0より大きい(小さい)確率(<strong>Bayesian p-value</strong>)を算出しておきます。</p>
+<pre><code>posterior_fit0_2 &lt;- rstan::extract(fit0)
+
+p_coef &lt;- apply(posterior_fit0_2$b,c(2,3), function(x){
+  sum(x &gt; 0)/length(x)
+})
+rownames(p_coef) &lt;- c(&quot;Intercept&quot;,&quot;sesmiddle&quot;,&quot;seshigh&quot;,&quot;write&quot;)
+colnames(p_coef) &lt;- c(&quot;general&quot;,&quot;vocation&quot;)
+p_coef
+
+##            
+##             general vocation
+##   Intercept 0.99325   1.0000
+##   sesmiddle 0.11125   0.7455
+##   seshigh   0.00900   0.0410
+##   write     0.00150   0.0000
+</code></pre>
+<p>以上の結果の解釈はmultinom()の時より直感的で、例えば$b_{14}$に着目すると、</p>
+<ul>
+<li>$b_{14}$は95%の確率で-0.10から-0.02の値をとる。また中央値は-0.06である。</li>
+<li>$b_{14}$が0よりも大きい確率は0.15%である</li>
+</ul>
+<p>というように解釈できます。</p>
+<p><strong>multinom()の時と比べてずっと分かりやすくないですか？？＞🐢</strong></p>
+<p>全結果を数式で表現しておきます(Bayesian p-valueに基づいて$^{***}$：0.1%有意、$^{**}$：1%有意、$^{*}$：5%有意)。</p>
+<p>$$
+\cfrac{P(prog=general)}{P(prog=academic)} = exp(2.90^{***}-0.53(ses=middle) -1.19^{**}(ses=high) - 0.06^{**}write)
+$$</p>
+<p>$$
+\cfrac{P(prog=vocation)}{P(prog=academic)} = exp(5.32^{***}-0.31(ses=middle); -1.00^{*}(ses=high) - 0.12^{***}write)
+$$</p>
+<h1 id="結果の確認オッズ比の変量に着目">結果の確認(オッズ比の変量に着目)</h1>
+<p>オッズ比の変量(例えば、$\cfrac{P(prog=general)}{P(prog=academic)}$)についても確認しておきます。こちらは事後分布の要約統計量ではなく、事後分布自体を視覚的に見てみることにします。また通常切片項は解釈に用いないため、図の描画では割愛します。</p>
+<pre><code>plot_title &lt;- ggtitle(&quot;Posterior distribution&quot;, &quot;with medians and 95% intervals&quot;)
+
+mcmc_areas(as.matrix(fit0),
+           pars = c(&quot;ratio[2,1]&quot;,&quot;ratio[3,1]&quot;,&quot;ratio[4,1]&quot;,&quot;ratio[2,2]&quot;,&quot;ratio[3,2]&quot;,&quot;ratio[4,2]&quot;),prob=0.95, area_method = &quot;equal height&quot;) +
+           plot_title+ theme_bw(base_size=12)
+</code></pre>
+<p><img src="/my-page/post/multinom-rstan/fit0_mcmc_density.png" alt=""></p>
+<p>上図の事後分布に表現された中央値、95%信頼区間を下で算出しておきます。</p>
+<pre><code>ratio_median &lt;- apply(posterior_fit0_2$ratio, c(2,3), median)
+ratio_quant &lt;- apply(posterior_fit0_2$ratio, c(2,3), quantile, prob=c(0.025, 0.975))
+ratio_general &lt;- rbind(ratio_median[,1], ratio_quant[,,1])
+ratio_vocation &lt;- rbind(ratio_median[,2],ratio_quant[,,2])
+rownames(ratio_general) &lt;- rownames(ratio_vocation) &lt;- c(&quot;median&quot;,&quot;2.5%&quot;,&quot;97.5%&quot;)
+colnames(ratio_general) &lt;- colnames(ratio_vocation) &lt;-  c(&quot;Intercept&quot;,&quot;sesmiddle&quot;,&quot;seshigh&quot;,&quot;write&quot;)
+ratio_odds &lt;- list(general = ratio_general, vocation=ratio_vocation)
+
+show(ratio_odds)
+
+## $general
+##        Intercept sesmiddle   seshigh     write
+## median  18.08714 0.5897972 0.3041684 0.9428201
+## 2.5%     1.85266 0.2434086 0.1037669 0.9051025
+## 97.5%  166.69899 1.3964119 0.8242418 0.9836004
+## 
+## $vocation
+##         Intercept sesmiddle   seshigh     write
+## median  204.48713  1.369324 0.3678701 0.8901682
+## 2.5%     23.69682  0.527517 0.1092642 0.8515944
+## 97.5%  1940.58136  3.594567 1.1219872 0.9260589
+</code></pre>
+<p>上図で一番目立つ$ratio[2,2]$に着目すると、これは$exp(b_{22})$ですので、
+$$
+\cfrac{\cfrac{P(prog=vocation(ses=middle))}{P(prog=academic(ses=middle))}}{\cfrac{P(prog=vocation(ses=low))}{P(prog=academic(ses=low))}} 
+$$
+の事後分布を表現しています。
+事後分布は95%ベイズ信頼区間内に1を含んでいますし、比較的幅が広い分布ですので、確信をもってこうだといえる結果が得られていないことがわかります。</p>
+<p>一方で、$ratio[3,1]=exp(b_{21})$は幅が比較的狭く、95%ベイズ信頼区間内に1が含まれていません。このことから、
+$$
+\cfrac{\cfrac{P(prog=general(ses=high))}{P(prog=academic(ses=high))}}{\cfrac{P(prog=general(ses=low))}{P(prog=academic(ses=low))}} 
+$$
+はより確信をもって1以下の代表値(MAP推定値や中央値)付近をとる、ということができます。</p>
+<p>このように、ベイズ統計ではパラメータや求めたい値のとりうる分布を推定することができ、大変便利です。</p>
+<h1 id="結果の描画">結果の描画</h1>
+<p>最後に結果(確率に関する予測値の分布)の描画を行います。以下では各programが選ばれる確率を、事後分布の中央値を予測値として、50%ベイズ信頼区間とともに示しています。</p>
+<pre><code>library(ggplot2)
+library(RColorBrewer)
+
+p25 &lt;- apply(posterior_fit0_2$pred, c(2,3), quantile, prob=c(0.25))
+p50 &lt;- apply(posterior_fit0_2$pred, c(2,3), median)
+p75 &lt;- apply(posterior_fit0_2$pred, c(2,3), quantile, prob=c(0.75))
+colnames(p25) &lt;- paste0(c(&quot;academic&quot;,&quot;general&quot;,&quot;vocation&quot;),&quot;_p25&quot;)
+colnames(p50) &lt;- paste0(c(&quot;academic&quot;,&quot;general&quot;,&quot;vocation&quot;),&quot;_p50&quot;)
+colnames(p75) &lt;- paste0(c(&quot;academic&quot;,&quot;general&quot;,&quot;vocation&quot;),&quot;_p75&quot;)
+data1 &lt;- data.frame(ses = rep(c(&quot;low&quot;,&quot;middle&quot;,&quot;high&quot;),each = 41), write = x_new[,-c(1:3)],y=p50[,&quot;academic_p50&quot;], ymax=p75[,&quot;academic_p75&quot;],
+                    ymin=p25[,&quot;academic_p25&quot;], facet=&quot;academic&quot;)
+data2 &lt;- data.frame(ses = rep(c(&quot;low&quot;,&quot;middle&quot;,&quot;high&quot;),each = 41), write = x_new[,-c(1:3)],y=p50[,&quot;general_p50&quot;], ymax=p75[,&quot;general_p75&quot;],
+                    ymin=p25[,&quot;general_p25&quot;], facet=&quot;general&quot;)
+data3 &lt;- data.frame(ses = rep(c(&quot;low&quot;,&quot;middle&quot;,&quot;high&quot;),each = 41), write = x_new[,-c(1:3)],y=p50[,&quot;vocation_p50&quot;], ymax=p75[,&quot;vocation_p75&quot;],
+                    ymin=p25[,&quot;vocation_p25&quot;], facet=&quot;vocation&quot;)
+
+
+cols = RColorBrewer::brewer.pal(3,&quot;Dark2&quot;)
+
+data_point &lt;- ml %&gt;% cbind(makedummies::makedummies(ml,basal_level = T, col = &quot;prog&quot;)) %&gt;% 
+  select(c(ses, write, prog, prog_academic, prog_general, prog_vocation))
+
+p0 &lt;- ggplot() + theme_bw(base_size=11) + mapply(
+  function(data){
+    geom_ribbon(data=data, aes(x=write, ymax=ymax, ymin=ymin, fill=ses), alpha=0.5) 
+  },list(data1,data2,data3)
+) +mapply(
+  function(data){
+    geom_line(data=data,aes(x=write, y=y, colour=ses)) 
+  },list(data1,data2,data3)
+) + mapply(
+  function(data,n){
+  geom_jitter(data=data,aes(x=write, y=data[,n], colour=ses),height=0.1, width=0, size=0.8)
+},list(data.frame(data_point, facet=&quot;academic&quot;),data.frame(data_point, facet=&quot;general&quot;),data.frame(data_point, facet=&quot;vocation&quot;)),
+  list(4,5,6)) +
+  facet_grid(facet~.) + scale_colour_manual(values=cols) + scale_fill_manual(values=cols) +
+  theme(legend.position = &quot;bottom&quot;) + ylab(&quot;&quot;) + labs(title = &quot;With Rstan&quot;)
+
+p0
+</code></pre>
+<p><img src="/my-page/post/multinom-rstan/fit0_mcmc_res.png" alt=""></p>
+<p>multinom()による分析の際に描画した図を下に載せますが、この2つの結果はほぼ一致していることがわかります。</p>
+<p><img src="/my-page/post/multinom-rstan/multinom.png" alt=""></p>
+<h1 id="まとめ">まとめ</h1>
+<p>本記事では多項ロジスティック回帰をRstanを用いて実行し、最尤法(multinom())による結果との比較を行い、ネイマン・ピアソン型統計とベイズ信頼区間統計の違いを確認しました。</p>
+<p>両者がやっていることは実質的には変わりありませんが、解釈の違いなどについては実感できたかと思います。</p>
+<p>次回の記事では、今回の実装にさらに改良を加え、予測用のモデルを構築したいと思います。</p>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0">回帰</a></span>
+        
+        <span><a href="https://rmorita-stat.github.io/my-page/tags/rstan">rstan</a></span>
+        
+        
+    </div>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計、ロードバイク、古墳が好きです。 </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://rmorita-stat.github.io/my-page/post/bayesintroduction/bayesintroduction/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.05.29 23:50 </div>
+            <div class="pn-el__2"> ベイズ統計モデリング入門 </div>
+        </div>
+    </a>
+    
+    
+</div>
+
+<footer>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  "HTML-CSS": {
+    availableFonts: ["TeX"]
+  }
+  });
+</script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2020
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://rmorita-stat.github.io/my-page/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+

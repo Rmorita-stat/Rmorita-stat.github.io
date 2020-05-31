@@ -6,10 +6,19 @@
     <description>Recent content in rstan on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Fri, 29 May 2020 23:50:14 -0500</lastBuildDate>
+    <lastBuildDate>Sun, 31 May 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/my-page/tags/rstan/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>rstanを使った多項ロジスティック回帰</title>
+      <link>https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/</link>
+      <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/</guid>
+      <description>はじめに 回帰に関する記事です。本記事では以前の記事で扱った多項ロジスティック回帰をrstanで実行します。 モデルの確認 以前の記事でも紹介した</description>
+    </item>
     
     <item>
       <title>ベイズ統計モデリング入門</title>
