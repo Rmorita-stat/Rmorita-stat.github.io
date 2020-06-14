@@ -355,7 +355,12 @@ GP_L &lt;- function(x, y, par, kernel){
 <p>$$
 p(Y^{\star}|X^{\star},\mathcal{D}) = MultiNormal(k_{\star}^T K^{-1}Y,k_{\star\star}-k_{\star}^{T}K^{-1}k_{\star})
 $$</p>
-<p>ここで$\mathcal{D}$は観測値$Y$、$X$の$N$個のペア、$Y^{\star}$、$X^{\star}$はそれぞれ予測値のベクトルと予測したい点の行列です。</p>
+<p>ここで$\mathcal{D}$は観測値$Y$、$X$の$N$個のペア、$Y^{\star}=(y_1^{\star},\ldots,y_M^{\star})$、$X^{\star}=(x_1^{\star}, \ldots, x_M^{\star})$はそれぞれ予測値と特徴ベクトル空間における予測したい点の$M$個のペアです。$k_{\star}$、$k_{\star\star}$はそれぞれ
+$$
+k_{\star}(n,m) = k(x_n,x_m^{\star})~~~(n=1,\ldots,N,m=1,\ldots,M) \\<br>
+k_{\star\star}(m_1,m_2) = k(x_{m1}{\star},x_{m2}^{\star})~~~(m_1=1,\ldots,N, m_2=1,\ldots,M)
+$$</p>
+<p>を要素に持つカーネル行列です。</p>
 <pre><code># 予測値の算出のための関数定義
 # 返り値は各予測点の平均と共分散行列
 my_predict &lt;- function(x_test, x_train, y_train, kernel, par){
