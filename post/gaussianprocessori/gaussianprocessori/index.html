@@ -240,19 +240,19 @@ GP_sim &lt;- function(kernel, par){
 }
 </code></pre>
 <h5 id="ガウスカーネルのシミュレーション">ガウスカーネルのシミュレーション</h5>
-<p>前の節で紹介したガウスカーネルのシミュレーションです。
+<p>前の節で紹介したガウスカーネルのシミュレーションです。改めてガウスカーネルを再定義します。
 <!-- raw HTML omitted -->  <br>
-ガウスカーネルは、下のようにrateパラメータ$\theta$、shapeパラメータ$\rho$を設定する流儀もあるようですが、以降ではshapeパラメータのみ考え、$\rho=1$とした場合のシミュレーションをします。</p>
+ガウスカーネルは、下のようにrateパラメータ$\theta$、shapeパラメータ$\rho$をもちます。ここでは$\theta$、$\rho$ともに１とした場合のシミュレーションをします。</p>
 <p>$$
 k(x,x_{'}) = \theta exp\left(-\cfrac{(x-x^{'})^2}{\rho}\right)
 $$</p>
 <pre><code>## ガウスカーネルの定義 kernel_cov()で使用できるように、引数は(x1,x2,par)でないといけない
 ## カーネルのハイパーパラメータはすべてparで指定する
 Gaussian_kernel &lt;- function(x1, x2, par){
-  return(exp(-(x1 - x2)^2/par[1]))
+  return(par[1]*exp(-(x1 - x2)^2/par[2]))
 }
 
-GP_sim(Gaussian_kernel, par=1)
+GP_sim(Gaussian_kernel, par=c(1,1))
 </code></pre>
 <p><img src="/my-page/post/gaussianprocessori/sim_1.png" alt=""></p>
 <p>ガウスカーネルをカーネル関数に設定したガウス過程は、無限回微分可能な滑らかな曲線になるそうです。</p>
@@ -386,12 +386,12 @@ my_predict &lt;- function(x_test, x_train, y_train, kernel, par){
 <h5 id="ガウスカーネルを使った回帰">ガウスカーネルを使った回帰</h5>
 <p>上で定義した関数を使い、カーネル関数にガウスカーネルを設定して回帰を実行してみます。</p>
 <pre><code>#自作関数GP_L()を使って尤度を計算 尤度を最大化するハイパーパラメータを推定 
-res_optim1 &lt;- exp(optim(par=c(0,0),fn=GP_L,kernel=Gaussian_kernel, x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)$par)
+res_optim1 &lt;- exp(optim(par=c(0,0,0),fn=GP_L,kernel=Gaussian_kernel, x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)$par)
 
 par &lt;- exp(res_optim1$par)
 # 推定したパラメータの値を確認
 par
-## [1] 0.19549540 0.04619606
+## [1] 1.55308949 0.22898734 0.04299662
 
 #自作関数my_predict()を使って予測分布の平均・ 共分散行列を求める
 pre &lt;- my_predict(x_test = seq(-2.0,2.0,0.01),x_train=x, y_train=y, kernel=Gaussian_kernel,par=par)
@@ -401,11 +401,15 @@ library(ggplot2)
 p &lt;- ggplot() + theme_bw(base_size=11) + 
   geom_line(data=data.frame(x=seq(-2.0,2.0,0.01),y=pre[[1]]),aes(x=x,y=y))
 p &lt;- p + geom_point(data=data.frame(x=x,y=y),aes(x=x,y=y))
-p &lt;- p + geom_ribbon(data=data.frame(x=seq(-2.0,2.0,0.01),ymin=pre[[1]]-2*diag(pre[[2]]), ymax=pre[[1]]+2*diag(pre[[2]])),
+p &lt;- p + geom_ribbon(data=data.frame(x=seq(-2.0,2.0,0.01),ymin=pre[[1]]-2*sqrt(diag(pre[[2]])), ymax=pre[[1]]+2*sqrt(diag(pre[[2]]))),
                      aes(x=x,ymax=ymax,ymin=ymin),fill=&quot;blue&quot;,alpha=0.5)
 p
 </code></pre>
 <p><img src="/my-page/post/gaussianprocessori/res_1.png" alt=""></p>
+<p>最適化したカーネル関数は以下になります。$\delta(x,x^{'})$はクロネッカーのデルタと呼ばれ、$x=x^{'}$のとき、つまりカーネル行列の対角成分にときのみ1を、それ以外は0を返す関数です。</p>
+<p>$$
+k(x,x_{'}) = 1.553exp\left(-\cfrac{(x-x^{'})^2}{0.229}\right) + 0.043\delta(x,x^{'})
+$$</p>
 <p>青い領域はガウス事後分布の$\pm2\sigma$の誤差範囲を示します。
 <!-- raw HTML omitted -->  <br>
 これまた不思議な予測曲線が得られました。結果を観察すると、観測値の乏しい範囲では誤差範囲が広く推定されており、期待値も平均($=0$)に近づくようになっています。</p>
@@ -435,12 +439,16 @@ library(ggplot2)
 p &lt;- ggplot() + theme_bw(base_size=11) + 
   geom_line(data=data.frame(x=seq(-2.0,2.0,0.01),y=pre[[1]]),aes(x=x,y=y))
 p &lt;- p + geom_point(data=data.frame(x=x,y=y),aes(x=x,y=y))
-p &lt;- p + geom_ribbon(data=data.frame(x=seq(-2.0,2.0,0.01),ymin=pre[[1]]-2*diag(pre[[2]]), ymax=pre[[1]]+2*diag(pre[[2]])),
+p &lt;- p + geom_ribbon(data=data.frame(x=seq(-2.0,2.0,0.01),ymin=pre[[1]]-2*sqrt(diag(pre[[2]])), ymax=pre[[1]]+2*sqrt(diag(pre[[2]]))),
                      aes(x=x,ymax=ymax,ymin=ymin),fill=&quot;blue&quot;,alpha=0.5)
 p
 </code></pre>
 <p><img src="/my-page/post/gaussianprocessori/res_2.png" alt=""></p>
 <p><strong>It&rsquo;s so brilliant</strong>&gt;🐢</p>
+<p>最適化したカーネル関数は以下になります。</p>
+<p>$$
+k(x,x_{'}) = 0.111exp\left(-\cfrac{(x-x^{'})^2}{0.027}\right) + 0.469x^T x^{'} + 0.047\delta(x,x^{'})
+$$</p>
 <p>タイムが短縮される全体的な傾向が線形カーネルでとらえるとともに、細かい変動をガウスカーネルで表現できています。</p>
 <p>勾配法の初期値を変えるとどうなるでしょう。</p>
 <pre><code>res_optim3 &lt;- (optim(par=c(0,0.4,0,0),fn=GP_L,kernel=Gaussian_plus_Linear_kernel,
@@ -452,6 +460,10 @@ par
 ~省略~
 </code></pre>
 <p><img src="/my-page/post/gaussianprocessori/res_3.png" alt=""></p>
+<p>最適化したカーネル関数は以下になります。</p>
+<p>$$
+k(x,x_{'}) = 0.223exp\left(-\cfrac{(x-x^{'})^2}{2.811}\right) + 0.509x^T x^{'} + 0.098\delta(x,x^{'})
+$$</p>
 <p>ハイパーパラメータの値が変化し、結果も全く異なります。勾配法によるハイパーパラメータ推定では初期値によって結果が異なることも多く、局所最適解が多い場合はその傾向が強いです。
 <!-- raw HTML omitted -->  <br>
 このような場合、MCMCで推定すると大域的局所解に近づいてくれます。</p>
