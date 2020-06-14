@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>ガウス過程入門</title>
+      <link>https://rmorita-stat.github.io/my-page/post/gaussian-process/gaussian-process/</link>
+      <pubDate>Sun, 14 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/post/gaussian-process/gaussian-process/</guid>
+      <description>はじめに 今までに幾度かテーマにしていますが、回帰とよばれる問題があります。 例えば、車の速度とブレーキをかけてから車が止まるまでの距離について</description>
+    </item>
+    
+    <item>
       <title>rstanを使った多項ロジスティック回帰</title>
       <link>https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/</link>
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
@@ -54,15 +63,6 @@
       
       <guid>https://rmorita-stat.github.io/my-page/about/</guid>
       <description>R.moritaです。 洛中で6年間大学生活を過ごし、今は大阪で働いています。 統計学・ロードバイク・古墳巡りが好きです。 私は昔から一つのものに</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://rmorita-stat.github.io/my-page/post/gaussian-process/gaussian-process/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/my-page/post/gaussian-process/gaussian-process/</guid>
-      <description>はじめに 今までに幾度かテーマにしていますが、回帰とよばれる問題があります。 例えば、車の速度とブレーキをかけてから車が止まるまでの距離について</description>
     </item>
     
   </channel>

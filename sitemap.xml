@@ -4,7 +4,27 @@
   
   <url>
     <loc>https://rmorita-stat.github.io/my-page/post/</loc>
-    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/tags/</loc>
+    <lastmod>2020-06-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/</loc>
+    <lastmod>2020-06-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/post/gaussian-process/gaussian-process/</loc>
+    <lastmod>2020-06-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</loc>
+    <lastmod>2020-06-14T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -14,16 +34,6 @@
   
   <url>
     <loc>https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/</loc>
-    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/</loc>
-    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</loc>
     <lastmod>2020-05-31T00:00:00+00:00</lastmod>
   </url>
   
@@ -55,10 +65,6 @@
   <url>
     <loc>https://rmorita-stat.github.io/my-page/about/</loc>
     <lastmod>2020-05-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/gaussian-process/gaussian-process/</loc>
   </url>
   
   <url>

@@ -6,10 +6,28 @@
     <description>Recent content in Tags on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sun, 31 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 14 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/my-page/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ガウス過程</title>
+      <link>https://rmorita-stat.github.io/my-page/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/</link>
+      <pubDate>Sun, 14 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>回帰</title>
+      <link>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</link>
+      <pubDate>Sun, 14 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>rstan</title>
@@ -17,15 +35,6 @@
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://rmorita-stat.github.io/my-page/tags/rstan/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>回帰</title>
-      <link>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</link>
-      <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</guid>
       <description></description>
     </item>
     
