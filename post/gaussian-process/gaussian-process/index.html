@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/my-page/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/my-page/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/style.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/monokai-sublime.min.css">
+    <script src="https://rmorita-stat.github.io/my-page/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://rmorita-stat.github.io/my-page/"><img src="https://rmorita-stat.github.io/my-page/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/post" >BLOG</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 0001.01.01 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title"></h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <h1 id="はじめに">はじめに</h1>
+<p>今までに幾度かテーマにしていますが、回帰とよばれる問題があります。</p>
+<p>例えば、車の速度とブレーキをかけてから車が止まるまでの距離について、データから両者の関係を把握したい、というような場合。最も単純な関係式でこの目的を果たそうとする場合、一般には単回帰が用いられるでしょう。</p>
+<p>$$
+\mu_n = ax_n + b \\<br>
+y_n \sim Normal(\mu_n, \sigma) \\<br>
+n=1, \ldots, N
+$$</p>
+<p>$Y$は目的変数(説明変数によって説明される変数)、$X$は説明変数(目的変数を説明する変数)、それぞれ$Y=(y_1, \ldots, y_n, \ldots, y_N)$、$X=(x_1, \ldots, x_n, \ldots, x_N)$です。
+<img src="/my-page/post/Gaussian-Process/plot1.png" alt="aai"></p>
+<p>こんな需要もあるかもしれません。
+上のモデルより少し難しいモデルですが、$X$、$Y$ともに非負の実数であることから、$Y$がガンマ分布に従うとし、リンク関数を$log$とした場合。
+$$
+\mu_n = exp(ax_n + b) \\<br>
+y_n \sim Gamma(\mu_n, \alpha, \beta)
+$$</p>
+<p><img src="/my-page/post/Gaussian-Process/plot2.png" alt="aai"></p>
+<p>上記の内容について理解が追い付かない場合は、<a href="https://cpp-learning.com/glm/">こちらのサイト</a>などを覗いてみてください。分かりやすくまとめられています。</p>
+<p>分析の目的が変数間の関係把握であるならば、上述のモデルで事足りる場合も多いと思います。しかし「将来得られる可能性のある任意の値$X_{new}$に対応する$Y_{new}$の値を予測したい」というような場合、話は変わってきます。</p>
+<p>これまでに得られたデータ$X$、$Y$の組から将来得られるデータ$X_{new}$に対応する$Y_{new}$の値を予測するとなると、より観測データにフィットできる柔軟なモデルを構築することが理想です(ただし過学習には要注意)。</p>
+<p>今回は、上記のような期待に応えるモデルとして<strong>ガウス過程</strong>を取り上げ、
+データに対し柔軟な回帰曲線を得られるようにすることを最終目標とします。</p>
+<p>参考図書は<a href="https://www.kspub.co.jp/book/detail/1529267.html">こちら</a>です。
+<a href="https://matsueushi.github.io/posts/gp-parameter-estimation/">こちらのブログ</a>も大いに参考にさせていただきました。RもいいですがJuliaも面白そうです。影響を受けてJuliaの参考書を買ってしまいました。</p>
+<h1 id="ガウス過程の定義">ガウス過程の定義</h1>
+<h5 id="ガウス過程の導出">ガウス過程の導出</h5>
+<p>ガウス過程について特にわかりやすいと思った参考図書の記載を抜粋してガウス過程について説明します。</p>
+<p>この節の理解には多変量正規分布($MultiNormal$)の理解が必要です。多変量正規分布については参考図書などを見て適宜補完してください。</p>
+<p>以下の線形回帰モデルを考えます。</p>
+<p>特徴ベクトルの要素数を$H$とします。
+<!-- raw HTML omitted -->  <br>
+特徴ベクトルとは機械学習分野の用語で、変換処理によって抽出されるデータの特徴を指します。
+<!-- raw HTML omitted -->  <br>
+$\phi(x)$は説明変数$X$の要素$x$に関する特徴ベクトルです。</p>
+<p>$$
+\phi(x) = (\phi_1(x), \phi_2(x), \phi_3(x), \ldots, \phi_H(x))
+$$</p>
+<p>$w$は各特徴の重みです。</p>
+<p>$$
+w = (w_1, w_2,w_3, \ldots, w_H)
+$$</p>
+<p>$\hat{y}$を目的変数$Y$の要素$y$についての予測値とすると、</p>
+<p>$$
+\hat{y} = w^T\phi(x)　\tag{1}
+$$</p>
+<p>とおけます。
+<!-- raw HTML omitted -->  <br>
+さらに式(1)を$(\hat{y}_1,x_1), \ldots, (\hat{y}_N,x_N)$についてまとめると、</p>
+<p>$$
+\left(
+\begin{array}{ccc}
+\hat{y}_1 \\<br>
+\hat{y}_2 \\<br>
+\vdots \\<br>
+\hat{y}_N
+\end{array}
+\right) = 
+\left(
+\begin{array}{ccc}
+\phi_1(x_1) &amp; \phi_2(x_1) &amp; \cdots &amp; \phi_H(x_1) \\<br>
+\phi_1(x_2) &amp; \phi_2(x_2) &amp; \cdots &amp; \phi_H(x_2) \\<br>
+\cdots &amp; \cdots &amp; \ddots &amp; \cdots \\<br>
+\phi_1(x_N) &amp; \phi_2(x_N) &amp; \cdots &amp; \phi_H(x_N) 
+\end{array}
+\right)
+\left(
+\begin{array}{ccc}
+w_1 \\<br>
+w_2 \\<br>
+\vdots \\<br>
+w_H
+\end{array}
+\right) \tag{2}
+$$</p>
+<p>とおけます。
+ここで$\phi_{nh} = \phi_{h}(x_n)$を要素に持つ計画行列(統計モデルの基底関数についての行列)$\Phi$を使うと、式(2)は</p>
+<p>$$
+\hat{Y} = \Phi w　\tag{3}
+$$</p>
+<p>とまとめられます。</p>
+<p>式(3)を使えば、基底関数を自由に設定したり、基底関数の次元を増やすことでほとんど任意の形の関数が表現できそうです。しかし、$x$が高次元であるほど基底関数の数を多く設定する必要があり、そうなるとパラメータ$w$もどんどん増えていってしまい、最終的にはパラメータ$w$の推定が不可能なほどになってしまいそうです。</p>
+<p>そこで、パラメータwの<strong>周辺化消去</strong>(期待値をとって積分消去)を考えます。</p>
+<p>$w$が平均0、分散$\lambda^2I$の互いに独立な正規分布に従うと仮定し、重み$w$が特定の基底関数に偏り、過学習に陥りにくいように設定します。</p>
+<p>$$
+w \sim MultiNormal(0, \lambda^2I) \tag{4}
+$$</p>
+<p>これによって$w$の期待値を仮定し、周辺化消去を行うのですが、その過程は省略し、結果のみを以下に書きます。</p>
+<p>$$
+Y \sim MultiNormal(0, \lambda^2\Phi\Phi^T) \tag{5}
+$$</p>
+<p><strong>式(5)がガウス過程の定義式</strong>です。これは式(3)と基本的に同じ機能をもつため、式(3)と同様、ほとんどどんな形でも表現できそうです。ただし、線形回帰モデル式(3)にあったパラメータ$w$が積分消去されているため、$x$の次元がいくら高くなっても推定するパラメータは増えず、$y$の分布はデータ数$N$に依存する共分散行列$\lambda^2\Phi\Phi^T$のみによって決定します。さらに式(3)からの変形で式(4)をかませているため、過学習に陥る可能性が抑えられています。</p>
+<h5 id="ガウス過程の直感的な性質">ガウス過程の直感的な性質</h5>
+<p>ガウス過程の性質を決定する共分散行列について見ていきます。</p>
+<p>$$
+K = \lambda^2\Phi\Phi^T
+$$</p>
+<p>とおくと、この$(n, n^{'})$要素は</p>
+<p>$$
+k_{nn^{'}} = \lambda^2\phi(x_n)^T\phi(x_{n^{'}})
+$$</p>
+<p>なので、これは$x_{n}$と$x_{n^{'}}$の特徴ベクトル$\phi(x_{n})$と$\phi(x_{n^{'}})$の内積の$\lambda^2$倍です。多変量正規分布において２変数の共分散が大きいとき、両者の相関が高いということなので、２変数の平均値が同値かつ共分散が大きいとき、両者は似た値をとりやすくなります。
+<!-- raw HTML omitted -->  <br>
+つまり、$x_{n}$と$x_{n^{'}}$が設定した特徴ベクトル空間において似ている場合、対応する$y_{n}$と$y_{n^{'}}$も似た値が出力されやすくなります。このように、説明変数$x$が似ていれば目的変数の予測値$y$も似た値となる、というのがガウス過程の性質になります。</p>
+<h5 id="カーネル関数">カーネル関数</h5>
+<p>$$
+k_{nn^{'}} = \phi(x_n)^T\phi(x_{n^{'}})　\tag{6}
+$$</p>
+<p>これを特徴ベクトルから計算しようとすると、複雑な計算が要求されます。そうではなく、式(6)を計算するための関数として、<strong>カーネル関数</strong>を用います。また、カーネル関数を用いて内積を計算することを<strong>カーネルトリック</strong>と呼びます。</p>
+<p>カーネル関数は、何らかの無限次元の特徴ベクトル空間における２点の内積を表現できる、という特徴をもつ関数で、それぞれに異なる無限次元特徴ベクトルを定義する様々なカーネル関数があります。</p>
+<p>例えば、カーネル関数の１種、ガウスカーネル</p>
+<p>$$
+k(x,x_{'}) = exp(-a(x-x^{'})^2)
+$$</p>
+<p>の場合、</p>
+<p>$$
+exp(-a(x-x^{'}))^2 = \phi(x)^{T}\phi(x^{'})
+$$</p>
+<p>となる特徴ベクトルは、第$r$成分が</p>
+<p>$$
+\phi_r(x) = \left(\cfrac{4a}{\pi}\right)^{\cfrac{1}{4}}exp(-2a(x-r)^2) 
+$$</p>
+<p>となります($r=-\infty, \ldots, \infty$)。</p>
+<p>これは、
+$$
+\int_{-\infty}^{\infty} \phi_r(x)\phi_r(x^{'}) dr = exp(-a(x-x^{'}))^2
+$$</p>
+<p>を証明することで確認できます。証明は<a href="https://mathwords.net/gausskernel">こちらのサイト</a>で見れます。</p>
+<p>なお、通常のパラメータとは設定目的の異なる、モデルの複雑さを決定するパラメータはハーパーパラメータ(超母数)などと呼ばれます。以降、カーネル関数のパラメータもハイパーパラメータと呼ぶことにします。</p>
+<h1 id="ガウス過程のシミュレーション">ガウス過程のシミュレーション</h1>
+<p>ガウス過程の概要を確認したので、ガウス過程に従う確率変数がどのような挙動をするのか、いくつかのカーネル関数を例に見てみます。</p>
+<p>シミュレーションの前に、カーネル行列($K$のこと)を作成する関数と、シミュレーションのための関数を定義しておきます。</p>
+<pre><code># カーネル行列を作成する関数を定義
+# 引数 kernel：この後に定義するカーネル関数を指定 x：トレーニングデータ 
+# 引数 par:kernelが要求するハイパーパラメータ delta：誤差の要素。ハイパーパラメータとは別で指定することにした
+kernel_cov &lt;- function(kernel, x,par, delta){
+  NL &lt;- length(x)
+  Sigma &lt;- matrix(NA, nrow=NL, ncol=NL)
+  for(i in 1:(NL-1)){
+    Sigma[i,i] &lt;- kernel(x[i],x[i],par) + delta
+    for(j in (i+1):NL){
+      Sigma[i,j] &lt;- kernel(x[i],x[j],par)
+      Sigma[j,i] &lt;- Sigma[i,j]
+    }
+  }
+  Sigma[NL,NL] &lt;- kernel(x[NL],x[NL],par) + delta
+  return(Sigma)
+}
+
+# シミュレーションのための自作関数を定義
+GP_sim &lt;- function(kernel, par){
+  p &lt;- ggplot() + theme_bw(base_size = 11)
+  i &lt;- 0
+  xs = seq(-4,4,0.05)
+  repeat{
+    i &lt;- i + 1
+    if(i == 5) break
+    p &lt;- p + geom_line(data=data.frame(x = xs,
+                                       y = MASS::mvrnorm(1, mu=rep(0,length(xs)),
+                                                         kernel_cov(kernel=kernel,x=xs, par=par,delta=1e-8))),
+                       aes(x=x,y=y), colour=as.factor(i))
+  }
+  plot(p)
+}
+</code></pre>
+<h5 id="ガウスカーネルのシミュレーション">ガウスカーネルのシミュレーション</h5>
+<p>前の節で紹介したガウスカーネルのシミュレーションです。
+<!-- raw HTML omitted -->  <br>
+ガウスカーネルは、下のようにrateパラメータ$\theta$、shapeパラメータ$\rho$を設定する流儀もあるようですが、以降ではshapeパラメータのみ考え、$\rho=1$とした場合のシミュレーションをします。</p>
+<p>$$
+k(x,x_{'}) = \theta exp\left(-\cfrac{(x-x^{'})^2}{\rho}\right)
+$$</p>
+<pre><code>## ガウスカーネルの定義 kernel_cov()で使用できるように、引数は(x1,x2,par)でないといけない
+## カーネルのハイパーパラメータはすべてparで指定する
+Gaussian_kernel &lt;- function(x1, x2, par){
+  return(exp(-(x1 - x2)^2/par[1]))
+}
+
+GP_sim(Gaussian_kernel, par=1)
+</code></pre>
+<p><img src="/my-page/post/Gaussian-Process/sim_1.png" alt=""></p>
+<p>ガウスカーネルをカーネル関数に設定したガウス過程は、無限回微分可能な滑らかな曲線になるそうです。</p>
+<h5 id="線形カーネルのシミュレーション">線形カーネルのシミュレーション</h5>
+<p>線形カーネルは、ハイパーパラメータを持たないカーネル関数です。</p>
+<p>$$
+k(x,x_{'}) = x^T x^{'}
+$$</p>
+<p>線形カーネルは、$\phi(x)=x$としているので、これを式(1)に代入すると、$x$の中に定数項$x_0=1$が含まれているとした場合、通常の重回帰と等価であることが分かります。</p>
+<pre><code>## 線形カーネルを定義。ハイパーパラメータは無し
+linear_kernel &lt;- function(x1,x2,par){
+  return(1 + t(x1)%*%x2)
+}
+
+GP_sim(linear_kernel, par=NULL)
+</code></pre>
+<p><img src="/my-page/post/Gaussian-Process/sim_2.png" alt=""></p>
+<p>シミュレーションでも直線が引けることが確認できます。</p>
+<h5 id="matern3カーネルのシミュレーション">Matern3カーネルのシミュレーション</h5>
+<p>Maternカーネルは、ガウスカーネルの無限回微分可能という前提がモデル化において強すぎるという主張から提案されたカーネルです。</p>
+<p>$$
+k_v(x,x^{'}) = \cfrac{2^{1-\upsilon}}{\Gamma(\upsilon)} \left( \cfrac{\sqrt{2\upsilon}r}{\upsilon} \right)^2 K_v \left( \cfrac{\sqrt{2\upsilon}r}{\upsilon} \right) ~~~ (r=|x-x^{'}|)
+$$</p>
+<p>Maternカーネルを用いたガウス過程から生成される関数は、「$\upsilon$以下の最大の整数」回分微分可能で、$\upsilon$は$\cfrac{3}{2},\cfrac{5}{2} $などが使われ、それぞれMatern3、Matern5と呼ばれるようです。</p>
+<p>Matern3カーネルは以下のようになります。</p>
+<p>$$
+k_{3/2}(x,x^{'}) = \left(1 + \cfrac{\sqrt{3}r}{\theta} \right) exp\left( -\cfrac{\sqrt{3}r}{\theta} \right)
+$$</p>
+<p>このMatern3カーネルを$\theta=1$としてシミュレーションしてみます。</p>
+<pre><code># Matern3カーネルを定義
+Matern3_kernel &lt;- function(x1,x2, par){
+  return((1 + sqrt(3)*abs(x1-x2)/par[1])*exp(-sqrt(3)*abs(x1-x2)/par[2]))
+}
+
+GP_sim(Matern3_kernel,par=c(1,1))
+</code></pre>
+<p><img src="/my-page/post/Gaussian-Process/sim_3.png" alt=""></p>
+<p>ガウスカーネルと比べていびつな曲線になっていることが分かります。</p>
+<h5 id="ガウスカーネルと線形カーネルの結合">ガウスカーネルと線形カーネルの結合</h5>
+<p>カーネル関数は組み合わせて使うことも可能です。
+ここではガウスカーネルと線形カーネルを組み合わせてみます。</p>
+<p>$$
+k(x,x_{'}) = \theta_1 exp\left(-\cfrac{(x-x^{'})^2}{\rho}\right) + \theta_2x^T x^{'}
+$$</p>
+<p>上の式において、$\theta_1=0.8, \theta_2=2, \rho=0.07$としたときのシミュレーションです。</p>
+<pre><code># ガウスカーネル＋線形カーネルの定義
+Gaussian_plus_Linear_kernel &lt;- function(x1,x2,par){
+  return(par[1] * exp(-(x1 - x2)^2/par[2]) + par[3] * (1 + t(x1)%*%x2))
+}
+
+GP_sim(Gaussian_plus_Linear_kernel,c(0.8,0.07,2))
+</code></pre>
+<p><img src="/my-page/post/Gaussian-Process/sim_4.png" alt=""></p>
+<p>ガウスカーネルと線形カーネルがうまく組み合わさっていることが分かります。</p>
+<h1 id="実際に回帰パラメータ推定を実行">実際に回帰・パラメータ推定を実行</h1>
+<p>ひととおりシミュレーションしたので実践です。
+まずは参考図書と同じ、陸上男子100mの世界記録のデータを準備します。$x$は世界記録更新日、$y$は世界記録のタイムです。</p>
+<pre><code># データの準備
+x &lt;- as.Date(x=c(&quot;1964/10/15&quot;,&quot;1968/6/20&quot;,&quot;1968/10/13&quot;,&quot;1968/10/14&quot;,&quot;1983/7/3&quot;,&quot;1987/8/30&quot;,&quot;1988/8/17&quot;,
+                 &quot;1988/9/24&quot;,&quot;1991/7/14&quot;,&quot;1991/8/25&quot;,&quot;1994/7/6&quot;,&quot;1996/7/27&quot;,&quot;1999/6/16&quot;,&quot;2002/9/14&quot;,
+                 &quot;2005/6/14&quot;,&quot;2006/5/12&quot;,&quot;2006/6/11&quot;,&quot;2006/8/18&quot;,&quot;2007/9/9&quot;,&quot;2008/5/31&quot;,&quot;2008/8/16&quot;,&quot;2009/8/16&quot;))
+y &lt;- c(10.06,10.03,10.02,9.95,9.93,9.93,9.93,9.92,9.9,9.86,9.85,9.84,9.79,9.78,9.77,9.77,9.77,9.77,9.74,9.72,9.69,9.58)
+
+# 標準化
+x &lt;- (as.numeric(x)-mean(as.numeric(x)))/sd(as.numeric(x))
+y &lt;- (y-mean(y))/sd(y)
+
+library(ggplot2)
+p &lt;- ggplot(data=data.frame(x=x,y=y), aes(x=x,y=y)) + theme_bw(base_size=11) + geom_point()
+p
+</code></pre>
+<p><img src="/my-page/post/Gaussian-Process/data_plot.png" alt=""></p>
+<p>分析にあたって、まずはハイパーパラメータの最適な値を推定します。
+<!-- raw HTML omitted -->推定方法にはハイパーパラメータを少しずつ変えてその事後分布を推定するMCMCも使えますが、ここでは計算量の少ない効率的な方法として<strong>勾配法</strong>を用います。
+簡略化のため、ガウス過程のハイパーパラメータを$\theta=(\theta_1, \theta_2,\ldots)$とまとめておき、カーネル行列も$K_{\theta}$とします。
+確率変数$Y$がガウス過程$GP(0,K_\theta)$に従うと仮定したとき、観測値に対する尤度は、</p>
+<p>$$
+p(Y|X,\theta) = MultiNormal(Y|o,K_{\theta}) = 
+\cfrac{1}{(2\pi)^{N/2}} \cfrac{1}{|K_{\theta}|^{1/2}} exp\left(\cfrac{1}{2}Y^TK_{\theta}^{-1}Y\right)
+$$</p>
+<p>対数尤度は、</p>
+<p>$$
+log(Y|X,\theta)~~ = ~~ -\cfrac{N}{2}log(2\pi)-\cfrac{1}{2}log|K_{\theta}|-\cfrac{1}{2}Y^TK_{\theta}^{-1}Y~~
+\propto~~ -log|K_{\theta}|-Y^TK_{\theta}^{-1}Y +(定数) \tag{7}　
+$$</p>
+<p>です。
+式(7)を最大にする$\theta$を求め、ハイパーパラメータの最適な値とします。
+<!-- raw HTML omitted -->  <br>
+式(7)を計算する自作関数を以下で定義します。</p>
+<pre><code># ガウス過程モデルの尤度を計算する関数を定義
+
+GP_L &lt;- function(x, y, par, kernel){
+  return(-log(det(kernel_cov(kernel=kernel,x=x,par=exp(par[-length(par)]),delta=exp(par[length(par)]))))
+         -t(y)%*%
+           solve(kernel_cov(kernel=kernel,x=x,par=exp(par[-length(par)]), delta=exp(par[length(par)])))%*%y)
+}
+</code></pre>
+<p>式(7)を最大にする$\theta$は、Rの汎用最適化関数の<code>optim()</code>を使います。参考図書では式(7)を$\theta$の各ハイパーパラメータで偏微分した式が紹介されています。<code>optim()</code>では引数<code>gr</code>で一階偏微分関数を指定でき、簡単に定義できるなら明示的に指定した方が良いのですが、指定しなくても勝手に微分してくれるので今回は横着します。</p>
+<p>参考図書には、以下のガウス過程の予測分布の公式が記載されていますので、この公式に倣って予測分布を計算する自作関数を定義します。</p>
+<p>$$
+p(Y^{\star}|X^{\star},\mathcal{D}) = MultiNormal(k_{\star}^T K^{-1}Y,k_{\star\star}-k_{\star}^{T}K^{-1}k_{\star})
+$$</p>
+<p>ここで$\mathcal{D}$は観測値$Y$、$X$の$N$個のペア、$Y^{\star}$、$X^{\star}$はそれぞれ予測値のベクトルと予測したい点の行列です。</p>
+<pre><code># 予測値の算出のための関数定義
+# 返り値は各予測点の平均と共分散行列
+my_predict &lt;- function(x_test, x_train, y_train, kernel, par){
+  kernel_cov_star &lt;- function(x1,x2,par,kernel){
+    NL &lt;- length(x1)
+    ML &lt;- length(x2)
+    Sigma &lt;- matrix(NA, nrow=NL, ncol=ML)
+    for(i in 1:NL){
+      for(j in 1:ML){
+        Sigma[i,j] &lt;- kernel(x1=x1[i], x2=x2[j],par=par[-length(par)])
+      }
+    }
+    return(Sigma)
+  }
+  K &lt;- kernel_cov(kernel=kernel,x=x_train, par=par[-length(par)], delta=par[length(par)])
+  k_star &lt;- kernel_cov_star(kernel=kernel, x1=x_train, x2=x_test,par=par)
+  k_2star &lt;- kernel_cov(kernel=kernel, x=x_test, par=par[-length(par)], delta=par[length(par)])
+  mu &lt;- t(k_star) %*% solve(K) %*% y_train
+  sigma &lt;- k_2star - t(k_star) %*% solve(K) %*% k_star
+  return(list(mu, sigma))
+}
+</code></pre>
+<h5 id="ガウスカーネルを使った回帰">ガウスカーネルを使った回帰</h5>
+<p>上で定義した関数を使い、カーネル関数にガウスカーネルを設定して回帰を実行してみます。</p>
+<pre><code>#自作関数GP_L()を使って尤度を計算 尤度を最大化するハイパーパラメータを推定 
+res_optim1 &lt;- exp(optim(par=c(0,0),fn=GP_L,kernel=Gaussian_kernel, x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)$par)
+
+par &lt;- exp(res_optim1$par)
+# 推定したパラメータの値を確認
+par
+## [1] 0.19549540 0.04619606
+
+#自作関数my_predict()を使って予測分布の平均・ 共分散行列を求める
+pre &lt;- my_predict(x_test = seq(-2.0,2.0,0.01),x_train=x, y_train=y, kernel=Gaussian_kernel,par=par)
+
+# 結果の描画
+library(ggplot2)
+p &lt;- ggplot() + theme_bw(base_size=11) + 
+  geom_line(data=data.frame(x=seq(-2.0,2.0,0.01),y=pre[[1]]),aes(x=x,y=y))
+p &lt;- p + geom_point(data=data.frame(x=x,y=y),aes(x=x,y=y))
+p &lt;- p + geom_ribbon(data=data.frame(x=seq(-2.0,2.0,0.01),ymin=pre[[1]]-2*diag(pre[[2]]), ymax=pre[[1]]+2*diag(pre[[2]])),
+                     aes(x=x,ymax=ymax,ymin=ymin),fill=&quot;blue&quot;,alpha=0.5)
+p
+</code></pre>
+<p><img src="/my-page/post/Gaussian-Process/res_1.png" alt=""></p>
+<p>青い領域はガウス事後分布の$\pm2\sigma$の誤差範囲を示します。
+<!-- raw HTML omitted -->  <br>
+これまた不思議な予測曲線が得られました。結果を観察すると、観測値の乏しい範囲では誤差範囲が広く推定されており、期待値も平均($=0$)に近づくようになっています。</p>
+<p>ハリボーはこう考えました。</p>
+<p><strong>データの少ない部分は曖昧に推定するというのは、現実的な判断じゃあないか</strong>&gt;🦔</p>
+<p>しかしかめきちはこう言っています。</p>
+<p><strong>将来世界記録のタイムが伸びるという推定はあまりにもおかしいかめ</strong>🐢</p>
+<h5 id="ガウスカーネル線形カーネルで回帰">ガウスカーネル＋線形カーネルで回帰</h5>
+<p>かめきちの意見を踏まえ、カーネル関数でガウスカーネルと線形カーネルを組み合わせてみます。</p>
+<pre><code># ガウスカーネル＋線形カーネを使って回帰
+
+# 自作関数GP_L()を使って尤度を計算 尤度を最大化するハイパーパラメータを推定 
+res_optim2 &lt;- exp(optim(par=c(0,0,0,0),fn=GP_L,kernel=Gaussian_plus_Linear_kernel,
+                 x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)$par)
+
+par &lt;- exp(res_optim2$par)
+# 推定したパラメータの値を確認
+par
+## [1] 0.11098682 0.02720031 0.46865763 0.04742707
+
+# 自作関数my_predict()を使って予測分布の平均・ 共分散行列を求める
+pre &lt;- my_predict(x_test = seq(-2.0,2.0,0.01),x_train=x, y_train=y,
+                  kernel = Gaussian_plus_Linear_kernel,par=par)
+
+# 結果の描画
+library(ggplot2)
+p &lt;- ggplot() + theme_bw(base_size=11) + 
+  geom_line(data=data.frame(x=seq(-2.0,2.0,0.01),y=pre[[1]]),aes(x=x,y=y))
+p &lt;- p + geom_point(data=data.frame(x=x,y=y),aes(x=x,y=y))
+p &lt;- p + geom_ribbon(data=data.frame(x=seq(-2.0,2.0,0.01),ymin=pre[[1]]-2*diag(pre[[2]]), ymax=pre[[1]]+2*diag(pre[[2]])),
+                     aes(x=x,ymax=ymax,ymin=ymin),fill=&quot;blue&quot;,alpha=0.5)
+p
+</code></pre>
+<p><img src="/my-page/post/Gaussian-Process/res_2.png" alt=""></p>
+<p>It&rsquo;s so brilliant!&gt;🐢</p>
+<p>タイムが短縮される全体的な傾向が線形カーネルでとらえるとともに、細かい変動をガウスカーネルで表現できています。</p>
+<p>勾配法の初期値を変えるとどうなるでしょう。</p>
+<pre><code>res_optim3 &lt;- (optim(par=c(0,0.4,0,0),fn=GP_L,kernel=Gaussian_plus_Linear_kernel,
+                 x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;))
+par = exp(res_optim3$par)
+par
+## [1] 0.22313442 2.81135418 0.50883359 0.09808983
+
+~省略~
+</code></pre>
+<p><img src="/my-page/post/Gaussian-Process/res_3.png" alt=""></p>
+<p>ハイパーパラメータの値が変化し、結果も全く異なります。勾配法によるハイパーパラメータ推定では初期値によって結果が異なることも多く、局所最適解が多い場合はその傾向が強いです。
+<!-- raw HTML omitted -->  <br>
+このような場合、MCMCで推定すると大域的局所解に近づいてくれます。</p>
+<h5 id="情報量基準の確認">情報量基準の確認</h5>
+<p>モデルの良さを表す数値的指標として、各種の<strong>情報量基準</strong>が提案されています。
+ここでは、以下で定義される<strong>AIC</strong>を計算してみます。
+(AICは正しい使い方というのがあるようで私はAICを誤用しているかもしれません。誤りがあればご指摘を！)</p>
+<p>$$
+AIC = -2最大対数尤度＋2自由パラメータの個数
+$$</p>
+<pre><code>#optim()で対数尤度にマイナスをかけているので、ここでは対数尤度にマイナスをかけない
+my_AIC &lt;- function(res_optim){
+  return(2*res_optim$value+2*length(res_optim$par))
+}
+c(my_AIC(res_optim1), my_AIC(res_optim2), my_AIC(res_optim3))
+## [1] 31.29391 47.53959 42.41676
+</code></pre>
+<p>AICは、小さい値をとるモデルほど良いモデルと考えます。結果を見ると、一番初めのガウスカーネルを使ったモデルが最もAICが小さいです。また、ガウスカーネル・線形カーネルの２モデルの比較では、後のモデルの方がAICが小さいです。</p>
+<p>これらの結果から、ガウスカーネルを使ったモデルが最も良いモデルであることが示唆されますが、AICはほかのモデルを完全否定するものではないので、最終的にどのモデルを選択するかは技術者判断と言えます。</p>
+<p>私としては最後の結果を支持したいところです…。</p>
+<h1 id="まとめ">まとめ</h1>
+<p>今回はガウス過程について説明しました。ガウス過程は理論が難しいですが、結果が合理的で、黒魔術かと疑ってしまうような技術です。
+<!-- raw HTML omitted -->  <br>
+その応用範囲も広く、空間統計の分野では割と以前から活用されていたようです。また構造計算で利用される有限要素法においてもデータを完璧に補間するモデルとして広く利用されているそうです。</p>
+<p>私はこれまで以下の活用方法を確認しています。</p>
+<ul>
+<li>一般化線形モデルの線形予測子をガウス過程に置き換え、柔軟なモデルに豹変させる</li>
+<li>空間統計において空間的自己相関を考慮したモデルを構築する</li>
+</ul>
+<p>ちなみにガウス過程を一般化線形モデルに活用したりするような場合、事後分布は単純なガウス分布ではないため、MCMC等の近似推論法が必要となります。<strong>私の大好きなMCMCです。</strong></p>
+<p>また、大規模データに対しガウス過程を含むモデルを素直に計算すると、計算量が膨大となってしまいます。そのため、様々な近似手法が提案されているようです。参考図書の後半でその近似手法が述べられているので今後勉強したいと思っています。</p>
+<p>ガウス過程の活用例も今後の記事で紹介できればと思っています。楽しみ。</p>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+    </div>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計、ロードバイク、古墳が好きです。 </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    
+    <a class="next" href="https://rmorita-stat.github.io/my-page/post/multinom/multimon/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.05.27 21:13 </div>
+            <div class="pn-el__2"> multinom()を使った多項ロジスティック回帰 </div>
+        </div>
+    </a>
+    
+</div>
+
+<footer>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  "HTML-CSS": {
+    availableFonts: ["TeX"]
+  }
+  });
+</script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2020
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://rmorita-stat.github.io/my-page/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
