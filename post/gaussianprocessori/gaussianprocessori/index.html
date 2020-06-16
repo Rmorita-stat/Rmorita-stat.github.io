@@ -386,7 +386,7 @@ my_predict &lt;- function(x_test, x_train, y_train, kernel, par){
 <h5 id="ガウスカーネルを使った回帰">ガウスカーネルを使った回帰</h5>
 <p>上で定義した関数を使い、カーネル関数にガウスカーネルを設定して回帰を実行してみます。</p>
 <pre><code>#自作関数GP_L()を使って尤度を計算 尤度を最大化するハイパーパラメータを推定 
-res_optim1 &lt;- exp(optim(par=c(0,0,0),fn=GP_L,kernel=Gaussian_kernel, x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)$par)
+res_optim1 &lt;- optim(par=c(0,0,0),fn=GP_L,kernel=Gaussian_kernel, x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)
 
 par &lt;- exp(res_optim1$par)
 # 推定したパラメータの値を確認
@@ -422,8 +422,8 @@ $$</p>
 <pre><code># ガウスカーネル＋線形カーネを使って回帰
 
 # 自作関数GP_L()を使って尤度を計算 尤度を最大化するハイパーパラメータを推定 
-res_optim2 &lt;- exp(optim(par=c(0,0,0,0),fn=GP_L,kernel=Gaussian_plus_Linear_kernel,
-                 x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)$par)
+res_optim2 &lt;- optim(par=c(0,0,0,0),fn=GP_L,kernel=Gaussian_plus_Linear_kernel,
+                 x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)
 
 par &lt;- exp(res_optim2$par)
 # 推定したパラメータの値を確認
@@ -451,8 +451,8 @@ k(x,x_{'}) = 0.111exp\left(-\cfrac{(x-x^{'})^2}{0.027}\right) + 0.469x^T x^{'} +
 $$</p>
 <p>タイムが短縮される全体的な傾向が線形カーネルでとらえるとともに、細かい変動をガウスカーネルで表現できています。</p>
 <p>勾配法の初期値を変えるとどうなるでしょう。</p>
-<pre><code>res_optim3 &lt;- (optim(par=c(0,0.4,0,0),fn=GP_L,kernel=Gaussian_plus_Linear_kernel,
-                 x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;))
+<pre><code>res_optim3 &lt;- optim(par=c(0,0.4,0,0),fn=GP_L,kernel=Gaussian_plus_Linear_kernel,
+                 x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)
 par = exp(res_optim3$par)
 par
 ## [1] 0.22313442 2.81135418 0.50883359 0.09808983
