@@ -106,19 +106,19 @@ $$</p>
 <p>以下の線形回帰モデルを考えます。</p>
 <p>特徴ベクトルの要素数を$H$とします。
 <!-- raw HTML omitted -->  <br>
-特徴ベクトルとは機械学習分野の用語で、変換処理によって抽出されるデータの特徴を指します。
+特徴ベクトルとは機械学習分野の用語で、変換処理によって抽出されるデータの特徴を要素に持つベクトルです。
 <!-- raw HTML omitted -->  <br>
-$\phi(x)$は説明変数$X$の要素$x$に関する特徴ベクトルです。</p>
+$\phi(x)$は説明変数群$X$(機械学習分野では入力と呼びます)の要素$x$に関する特徴ベクトルです。</p>
 <p>$$
 \phi(x) = (\phi_1(x), \phi_2(x), \phi_3(x), \ldots, \phi_H(x))
 $$</p>
 <p>$w$は各特徴の重みです。</p>
 <p>$$
-w = (w_1, w_2,w_3, \ldots, w_H)
+w = (w_1, w_2,w_3, \ldots, w_H)^T
 $$</p>
 <p>$\hat{y}$を目的変数$Y$の要素$y$についての予測値とすると、</p>
 <p>$$
-\hat{y} = w^T\phi(x)　\tag{1}
+\hat{y} = \phi(x)w　\tag{1}
 $$</p>
 <p>とおけます。
 <!-- raw HTML omitted -->  <br>
@@ -342,7 +342,7 @@ $$</p>
 式(7)を最大にする$\theta$を求め、ハイパーパラメータの最適な値とします。
 <!-- raw HTML omitted -->  <br>
 式(7)を計算する自作関数を以下で定義します。</p>
-<pre><code># ガウス過程モデルの尤度を計算する関数を定義
+<pre><code># ガウス過程モデルの対数尤度に比例する値を計算する関数を定義
 
 GP_L &lt;- function(x, y, par, kernel){
   return(-log(det(kernel_cov(kernel=kernel,x=x,par=exp(par[-length(par)]),delta=exp(par[length(par)]))))
@@ -385,7 +385,7 @@ my_predict &lt;- function(x_test, x_train, y_train, kernel, par){
 </code></pre>
 <h5 id="ガウスカーネルを使った回帰">ガウスカーネルを使った回帰</h5>
 <p>上で定義した関数を使い、カーネル関数にガウスカーネルを設定して回帰を実行してみます。</p>
-<pre><code>#自作関数GP_L()を使って尤度を計算 尤度を最大化するハイパーパラメータを推定 
+<pre><code>#自作関数GP_L()を使って対数尤度を計算 対数尤度を最大化するハイパーパラメータを推定 
 res_optim1 &lt;- optim(par=c(0,0,0),fn=GP_L,kernel=Gaussian_kernel, x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)
 
 par &lt;- exp(res_optim1$par)
@@ -474,13 +474,20 @@ $$</p>
 <p>$$
 AIC = -2最大対数尤度＋2自由パラメータの個数
 $$</p>
-<pre><code>#optim()で対数尤度にマイナスをかけているので、ここでは対数尤度にマイナスをかけない
-my_AIC &lt;- function(res_optim){
-  return(2*res_optim$value+2*length(res_optim$par))
+<pre><code># optim()で対数尤度にマイナスをかけているので、ここでは対数尤度にマイナスをかけない
+# optim()で最大化したGP_L()は、実際の対数尤度ではなく対数尤度に比例する値なので、ここで正確な対数尤度を計算する
+my_AIC &lt;- function(res_optim, x){
+  return(2*(res_optim$value/2 + length(x)/2 * log(2*pi))+2*length(res_optim$par))
 }
-c(my_AIC(res_optim1), my_AIC(res_optim2), my_AIC(res_optim3))
-## [1] 31.29391 47.53959 42.41676
+cat(sprintf(&quot;AIC of \n res1 = %.3f\n res2 = %.3f\n res3 = %.3f&quot;,my_AIC(res_optim1,x), my_AIC(res_optim2,x), my_AIC(res_optim3,x)))
+
+## AIC of 
+##  res1 = 60.507
+##  res2 = 68.203
+##  res3 = 65.642
 </code></pre>
+<blockquote>
+</blockquote>
 <p>AICは、小さい値をとるモデルほど良いモデルと考えます。結果を見ると、一番初めのガウスカーネルを使ったモデルが最もAICが小さいです。また、ガウスカーネル・線形カーネルの２モデルの比較では、後のモデルの方がAICが小さいです。</p>
 <p>これらの結果から、ガウスカーネルを使ったモデルが最も良いモデルであることが示唆されますが、AICはほかのモデルを完全否定するものではないので、最終的にどのモデルを選択するかは技術者判断と言えます。</p>
 <p>私としては最後の結果を支持したいところです…。</p>
