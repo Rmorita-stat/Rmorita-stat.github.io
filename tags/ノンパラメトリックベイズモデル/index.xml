@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ノンパラメトリックベイズモデル on SUCRE HECACHA</title>
+    <link>https://rmorita-stat.github.io/my-page/tags/%E3%83%8E%E3%83%B3%E3%83%91%E3%83%A9%E3%83%A1%E3%83%88%E3%83%AA%E3%83%83%E3%82%AF%E3%83%99%E3%82%A4%E3%82%BA%E3%83%A2%E3%83%87%E3%83%AB/</link>
+    <description>Recent content in ノンパラメトリックベイズモデル on SUCRE HECACHA</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Sun, 28 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://rmorita-stat.github.io/my-page/tags/%E3%83%8E%E3%83%B3%E3%83%91%E3%83%A9%E3%83%A1%E3%83%88%E3%83%AA%E3%83%83%E3%82%AF%E3%83%99%E3%82%A4%E3%82%BA%E3%83%A2%E3%83%87%E3%83%AB/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>多項ロジスティック回帰・ガウス過程モデル</title>
+      <link>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</link>
+      <pubDate>Sun, 28 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</guid>
+      <description>はじめに 回帰に関する記事です。 以前の記事では、対象が3つ以上のクラスに分類されるとき、それぞれのクラスに属する確率を予測するモデルである多項</description>
+    </item>
+    
+  </channel>
+</rss>

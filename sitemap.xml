@@ -4,32 +4,42 @@
   
   <url>
     <loc>https://rmorita-stat.github.io/my-page/post/</loc>
-    <lastmod>2020-06-14T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/tags/rstan/</loc>
+    <lastmod>2020-06-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://rmorita-stat.github.io/my-page/tags/</loc>
-    <lastmod>2020-06-14T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://rmorita-stat.github.io/my-page/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/</loc>
-    <lastmod>2020-06-14T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/tags/%E3%83%8E%E3%83%B3%E3%83%91%E3%83%A9%E3%83%A1%E3%83%88%E3%83%AA%E3%83%83%E3%82%AF%E3%83%99%E3%82%A4%E3%82%BA%E3%83%A2%E3%83%87%E3%83%AB/</loc>
+    <lastmod>2020-06-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</loc>
+    <lastmod>2020-06-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</loc>
+    <lastmod>2020-06-28T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://rmorita-stat.github.io/my-page/post/gaussianprocessori/gaussianprocessori/</loc>
     <lastmod>2020-06-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</loc>
-    <lastmod>2020-06-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/rstan/</loc>
-    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
