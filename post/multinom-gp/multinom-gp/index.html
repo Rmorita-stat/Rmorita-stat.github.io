@@ -855,8 +855,8 @@ generated quantities{
 <p><code>transformed parameters{}</code>ブロックでは、<code>linear_kernel</code>として式$(36)$第1項の部分（線形カーネル）の$\theta_1$を除いた部分を、<code>distance_L2_01_kernel</code>として式$(36)$第2項の$\theta_2$を除いた部分を作成しています。また<code>distance_L2_01_kernel</code>は、<code>distance_L2</code>として$\sum_{i=1}^{I}(x_{im}-x_{in})^2$を、<code>distance_01_kernel</code>として$\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]$をそれぞれ作成し、それらを式$(36)$に従って合成することで作成しています。</p>
 <p>ハイパーパラメータの事前分布の設定はかなり苦戦しました。最終的に以下の事前分布を採用しています。</p>
 <p>$$
-\theta_1 \sim Student_t(4,1,2) ~~~\theta_1 \geq 1\\<br>
-\theta_2 \sim Student_t(4,1,2) ~~~\theta_2 \geq 1\\<br>
+\theta_1 \sim Student\verb|_|t(4,1,2) ~~~\theta_1 \geq 1\\<br>
+\theta_2 \sim Student\verb|_|t(4,1,2) ~~~\theta_2 \geq 1\\<br>
 \rho \sim invGamma(0.1,0.1) \\<br>
 c \sim Normal(0,0.1)~~~0 \leq c \leq 0.9 
 $$</p>
