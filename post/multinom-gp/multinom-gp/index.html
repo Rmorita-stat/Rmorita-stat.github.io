@@ -858,9 +858,14 @@ generated quantities{
 \theta_1 \sim Student_t(4,1,2) ~~~\theta_1 \geq 1\\<br>
 \theta_2 \sim Student_t(4,1,2) ~~~\theta_2 \geq 1\\<br>
 \rho \sim invGamma(0.1,0.1) \\<br>
-c \sim truncatedNormal(0,0.1)~~~0 \leq c \leq 0.9 
+c \sim Normal(0,0.1)~~~0 \leq c \leq 0.9 
 $$</p>
-<p>様々な事前分布を試していたのですが、ガウスカーネルにおいて、shapeパラメータ$\rho$とrateパラメータ$\theta$の比が重要なようで、shapeパラメータに比べてrateパラメータが十分大きいと、出力値の変化の傾きが小さくなり、式$(1)$の誤差項を捉えてくれなくなってしまいます。Stanマニュアルにも以下の記載があります。</p>
+<p>$\theta_1$、$\theta_2$については弱情報事前分布として、自由度4、期待値1、スケールパラメータ1の半t分布を採用しています。
+<!-- raw HTML omitted -->  <br>
+$\rho$については、Stanマニュアルを参照して、0付近の値を避けることができつつも小さな値にとがった山を持ち、かつ十分大きな値にも対応可能な逆ガンマ分布を採用しています。
+<!-- raw HTML omitted -->  <br>
+$c$については、0付近の値をとることが想定されるため、期待値0、標準偏差0.1の切断正規分布を採用しています。</p>
+<p>様々な事前分布を試していたのですが、ガウスカーネルにおいて、shapeパラメータ$\rho$とrateパラメータ$\theta$の比が重要なようで、shapeパラメータに比べてrateパラメータが十分大きいと、出力値の変化の傾きが小さくなり、式$(1)$の誤差項を捉えてくれなくなってしまいます。この点についてはStanマニュアルにも以下の記載があります。</p>
 <blockquote>
 <p>Perhaps most importantly, the parameter $\rho$ and $\alpha$ are weakly identified Zhang(2004). The ratio of the rwo parameters is well-identified&hellip;</p>
 </blockquote>
@@ -872,7 +877,7 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 fit_cate2 &lt;- stan(file=&quot;model3.stan&quot;, data=data, pars = c(&quot;pred&quot;,&quot;rho&quot;,&quot;theta&quot;,&quot;C&quot;), warmup = 400, iter = 1500, chains=4, seed=1234)
 </code></pre>
-<p>計算に掛った時間は確かおよそ9800秒でした。2時間以上かかっていますね。PCもうなり声をあげていたので冷却対策など必要かもしれません。</p>
+<p>計算にかかったた時間は確かおよそ9800秒でした。2時間以上かかっていますね。PCもうなり声をあげていたので冷却対策など必要かもしれません。</p>
 <p>ハイパーパラメータの事後分布は以下のようになります。</p>
 <pre><code>posterior_fit0_2 &lt;- rstan::extract(fit_cate2)
 library(bayesplot)
@@ -906,7 +911,9 @@ p &lt;- gridExtra::grid.arrange(g1,g2,ncol=1, top=&quot;Posterior distribution o
 <h1 id="まとめ">まとめ</h1>
 <p>今回はガウス過程を多項ロジスティック回帰に取り込んだモデルの実装を行いました。その過程で、ガウス過程潜在変数モデルやカテゴリカルデータを取り入れたガウス過程等、なかなか厄介なものも導入しています。</p>
 <p>この記事で、以前に述べたガウス過程の活用方法の１つ目(下記)を紹介した形です。</p>
-<p>. 一般化線形モデルの線形予測子をガウス過程に置き換え、柔軟なモデルに豹変させる</p>
+<ul>
+<li>一般化線形モデルの線形予測子をガウス過程に置き換え、柔軟なモデルに豹変させる</li>
+</ul>
 <p>多項ロジスティック回帰の記事も3つ目になりましたが、これで最後になります。最近はアウトプットに力を注いでいて投稿頻度も多かったですが、今後暫くはインプットに集中したいと考えており、投稿しない月が続くかもしれません。</p>
 <p>Enjoy Stan!</p>
 
