@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>多変量解析 on SUCRE HECACHA</title>
+    <link>https://rmorita-stat.github.io/my-page/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90/</link>
+    <description>Recent content in 多変量解析 on SUCRE HECACHA</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    
+	<atom:link href="https://rmorita-stat.github.io/my-page/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>対応分析の同時付置にベイズ信頼区間をもたせる</title>
+      <link>https://rmorita-stat.github.io/my-page/post/correspbayes/corresp-bayes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/post/correspbayes/corresp-bayes/</guid>
+      <description>はじめに この記事はStan Advent calendar の記事ですか？ この記事では多変量解析の手法の一つである対応分析を取り上げます。 対応分析は多変量のカテゴリカルデ</description>
+    </item>
+    
+  </channel>
+</rss>

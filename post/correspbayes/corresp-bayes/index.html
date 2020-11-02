@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/my-page/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/my-page/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/style.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/monokai-sublime.min.css">
+    <script src="https://rmorita-stat.github.io/my-page/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://rmorita-stat.github.io/my-page/"><img src="https://rmorita-stat.github.io/my-page/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/post" >BLOG</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 0001.01.01 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">対応分析の同時付置にベイズ信頼区間をもたせる</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <h1 id="はじめに">はじめに</h1>
+<p>この記事はStan Advent calendar の記事ですか？</p>
+<p>この記事では多変量解析の手法の一つである<strong>対応分析</strong>を取り上げます。</p>
+<p>対応分析は多変量のカテゴリカルデータに用いられる分析で、クロス集計表の結果を視覚的に表現するためによく使用される統計的手法です。</p>
+<p>実は対応分析は私の修士研究で使用した解析手法なのですが、対応分析の付置はデータ数に依存しないことから、座標を得るだけでその信頼性が確認できないところに当時問題を感じていました。</p>
+<p>大学を卒業してからベイズ統計に関心を持ち、ある程度勉強したところで当時のことを思い出し、<strong>rstan</strong>を使ってこの問題に取り組もうと思ったのが本記事の執筆動機です。</p>
+<p>本記事の構成は以下の通りとします。</p>
+<ul>
+<li>
+<p>対応分析の導入</p>
+</li>
+<li>
+<p>付置の信頼性について</p>
+</li>
+<li>
+<p>モデルの説明</p>
+</li>
+<li>
+<p>結果と考察</p>
+</li>
+<li>
+<p>おまけ～私も相撲に参加してみた～</p>
+<p>smo_data &lt;- matrix(data=c(15,15,0,0,1,0,1,19,9,7,12,1,3,3,4,22,0,11,2,0,4,
+14,3,11,3,1,1,6,24,7,5,5,0,0,2,30,2,6,2,2,0,2,
+11,13,5,6,2,1,4,25,8,10,7,5,3,1,13,31,3,3,0,2,3,
+8,2,19,3,2,0,4,28,8,8,2,1,0,7,9,3,14,11,2,0,4,
+5,3,12,11,4,0,7,7,1,18,0,1,0,11,12,6,1,12,7,2,2,
+25,2,11,3,1,0,1,16,4,18,3,0,0,5,23,2,6,5,1,0,2,
+7,17,2,16,3,0,1,2,8,1,11,1,0,2),byrow=TRUE, ncol=7)</p>
+<p>colnames(smo_data) &lt;- c(&ldquo;寄り&rdquo;,&ldquo;押し&rdquo;,&ldquo;投げ&rdquo;,&ldquo;引き&rdquo;,&ldquo;送り&rdquo;,&ldquo;突き&rdquo;,&ldquo;その他&rdquo;)
+rownames(smo_data) &lt;- c(&ldquo;小錦&rdquo;,&ldquo;琴錦&rdquo;,&ldquo;貴闘力&rdquo;,&ldquo;霧島&rdquo;,&ldquo;栃ノ和歌&rdquo;,&ldquo;水戸錦&rdquo;,&ldquo;若ノ花&rdquo;,&ldquo;貴ノ花&rdquo;,&ldquo;武蔵丸&rdquo;,
+&ldquo;大翔山&rdquo;,&ldquo;安芸ノ島&rdquo;,&ldquo;三杉里&rdquo;,&ldquo;旭道山&rdquo;,&ldquo;舞の海&rdquo;,&ldquo;寺尾&rdquo;,&ldquo;琴の若&rdquo;,&ldquo;貴ノ浪&rdquo;,
+&ldquo;琴富士&rdquo;,&ldquo;隆三杉&rdquo;,&ldquo;春日富士&rdquo;)</p>
+<p>data{
+int&lt;lower=0&gt; Sum; //全観測数の和
+int&lt;lower=0&gt; N; //分割表の列数（列数&lt;行数とする）
+int&lt;lower=N&gt; M; // 分割表の行数
+int d[M,N]; //分割表
+}</p>
+<p>transformed data{
+matrix[M,N] d_numeric; //分割表。確率行列を作成するためにint型の分割表は使えない
+vector[N] eigenvalues_X; //観測値に対する対応分析の結果（固有値）
+matrix[N,N] eigenvectors_X; //観測値に対する対応分析の結果（固有ベクトル）
+vector[M] p_i; //行ごとの観測値全体に占める割合
+vector[N] p_j; //列ごとの観測値全体に占める割合
+matrix[M,M] P_I;
+matrix[N,N] P_J;
+matrix[N,N] sq_P_J;
+matrix[M,N] P_IJ;
+matrix[M,N] X; //主成分分析の対象となる行列</p>
+<pre><code>for(i in 1:M){
+  for(j in 1:N){
+    d_numeric[i,j] = d[i,j];
+  }
+}
+  
+for(i in 1:M){
+  p_i[i] = sum(d_numeric[i,]) / Sum;
+}
+  
+for(j in 1:N){
+  p_j[j] = sum(d_numeric[,j])/Sum;
+}
+    
+P_I = diag_matrix(p_i);
+  
+P_J = diag_matrix(p_j);
+    
+sq_P_J = diag_matrix(sqrt(p_j));
+    
+P_IJ = d_numeric / Sum;
+  
+{
+  matrix[N,N] Sigma; //Xの分散共分散行列
+  X = inverse(P_I) * P_IJ * inverse(sq_P_J);
+    
+  {
+    matrix[M,N] X_bar;
+    for(n in 1:N){
+      X_bar[,n] = rep_vector(mean(X[,n]),M);
+    }
+    Sigma = (X - X_bar)' * P_I * (X - X_bar); 
+  }
+    
+  //行列Xの主成分分析を実行
+  eigenvalues_X = eigenvalues_sym(Sigma);
+  eigenvectors_X = eigenvectors_sym(Sigma);
+}
+</code></pre>
+<p>}</p>
+<p>parameters{
+simplex[N] theta[M];
+}</p>
+<p>model {
+//モデル部分
+for(i in 1:M){
+d[i,] ~ multinomial(theta[i]);
+}
+//事前分布
+for(i in 1:M){
+theta[i] ~ dirichlet(p_j);
+}
+}</p>
+<p>generated quantities{
+vector[M] Z_EST[2]; //求めたい座標（期待値）
+vector[M] Z_RNG[2]; //求めたい座標（事後分布からの乱数生成）
+vector[N] Z_star[2]; //列変数の座標(事後分布によらない)</p>
+<pre><code>//Z_starを計算する
+{
+  vector[M] Z_ori[2]; //観測値から計算した行変数の座標
+  for(i in 1:M){
+    Z_ori[1,i] = X[i] * eigenvectors_X[,N];
+    Z_ori[2,i] = X[i] * eigenvectors_X[,(N-1)];
+  }
+  Z_star[1,] = 1/sqrt(eigenvalues_X[N]) * inverse(P_J) * P_IJ' * Z_ori[1,];
+  Z_star[2,] = 1/sqrt(eigenvalues_X[(N-1)]) * inverse(P_J) * P_IJ' * Z_ori[2,];
+}
+  
+//期待値の座標を計算
+{
+  matrix[M,N] P_IJ_EST;
+  int d_RNG[M,N];
+  matrix[M,N] d_numeric_RNG;
+  matrix[M,N] P_IJ_RNG;
+  matrix[N,N] sq_P_J_EST;
+  matrix[N,N] sq_P_J_RNG;
+  matrix[M,N] X_EST;
+  matrix[M,N] X_RNG;
+    
+  //以降は1MCMC・行毎に必要な操作
+  for(i in 1:M){
+      
+    //着目する行によってP_IJは異なる
+    for(m in 1:M){
+      //P_IJの生成
+      if(m==i){
+        P_IJ_EST[m,] = (theta[i] * (sum(d[i,])) / Sum)'; //対象の行のみ観測数期待値を用いる
+      }else{
+        P_IJ_EST[m,] = d_numeric[m,] / Sum;
+        }
+    }
+      
+    //着目する行によってP_Jも異なる
+    {
+      vector[N] sq_p_j_EST;
+      for(n in 1:N){
+        sq_p_j_EST[n] = sqrt(sum(P_IJ_EST[,n]));
+      }
+      sq_P_J_EST = diag_matrix(sq_p_j_EST);
+    }
+      
+    X_EST = inverse(P_I) * P_IJ_EST * inverse(sq_P_J_EST);
+      
+    Z_EST[1,i] = X_EST[i] * eigenvectors_X[,N];
+    Z_EST[2,i] = X_EST[i] * eigenvectors_X[,(N-1)];
+  }
+    
+  //事後分布から乱数生成したときの座標を計算
+  for(i in 1:M){
+      
+    for(m in 1:M){
+      //P_IJの生成
+      if(m==i){
+        d_RNG[m,] = multinomial_rng(theta[m],sum(d[m,]));
+      }else{
+        d_RNG[m,] = d[m,];
+        }
+    }
+      
+    for(m in 1:M){
+      for(n in 1:N){
+        d_numeric_RNG[m,n] = d_RNG[m,n];
+      }
+    }
+      
+    P_IJ_RNG = d_numeric_RNG / Sum;
+      
+    {
+      vector[N] sq_p_j_RNG;
+      for(n in 1:N){
+        sq_p_j_RNG[n] = sqrt(sum(P_IJ_RNG[,n]));
+      }
+      sq_P_J_RNG = diag_matrix(sq_p_j_RNG);
+    }
+      
+    X_RNG = inverse(P_I) * P_IJ_RNG * inverse(sq_P_J_RNG);
+      
+    Z_RNG[1,i] = X_RNG[i] * eigenvectors_X[,N];
+    Z_RNG[2,i] = X_RNG[i] * eigenvectors_X[,(N-1)];
+  }
+}
+</code></pre>
+<p>}</p>
+<p>library(rstan)
+N &lt;- sum(smo_data)
+m &lt;- nrow(smo_data)
+n &lt;- ncol(smo_data)
+data &lt;- list(Sum=N, N=n, M=m, d=smo_data)</p>
+<p>rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+fit &lt;- stan(file=&quot;model.stan&rdquo;, data=data, chains = 4, iter=1300, warmup = 300)</p>
+<p>posterior &lt;- as.matrix(fit)
+plot_title &lt;- ggtitle(&ldquo;Posterior distributions&rdquo;,
+&ldquo;with medians and 50% intervals&rdquo;)
+mcmc_areas(posterior,
+pars = c(&ldquo;theta[3,1]&quot;,&ldquo;theta[3,2]&quot;,&ldquo;theta[3,3]&quot;,&ldquo;theta[3,4]&quot;,&ldquo;theta[3,5]&quot;,
+&ldquo;theta[3,6]&quot;,&ldquo;theta[3,7]&quot;),
+prob = 0.5, area_method = &ldquo;scaled height&rdquo;) + plot_title</p>
+<p>library(tidyr)
+library(dplyr)
+library(stringr)
+library(tibble)</p>
+<p>fit %&gt;% rstan::extract() %&gt;% data.frame() %&gt;% 
+select(starts_with(&ldquo;Z_EST&rdquo;)) %&gt;% pivot_longer(everything(), names_to=&quot;key&rdquo;, values_to = &ldquo;val&rdquo;) %&gt;% 
+mutate(dim=as.numeric(str_sub(key, start=7,end=7)),
+target=as.numeric(str_sub(key,start=9, end=10)),
+key=NULL) %&gt;% group_by(target, dim) %&gt;% nest() %&gt;% 
+pivot_wider(names_from = dim, values_from = data) %&gt;% unnest() %&gt;% group_by(target) %&gt;% 
+rename(X=val, Y=val1) %&gt;% summarise_all(funs(MAP=MAP(.),lower=quantile(., 0.25),upper=quantile(.,0.75))) %&gt;% arrange(target) %&gt;% 
+mutate(target=factor(1:20,
+labels=c(&ldquo;小錦&rdquo;,&ldquo;琴錦&rdquo;,&ldquo;貴闘力&rdquo;,&ldquo;霧島&rdquo;,&ldquo;栃ノ和歌&rdquo;,&ldquo;水戸錦&rdquo;,&ldquo;若ノ花&rdquo;,&ldquo;貴ノ花&rdquo;,&ldquo;武蔵丸&rdquo;,
+&ldquo;大翔山&rdquo;,&ldquo;安芸ノ島&rdquo;,&ldquo;三杉里&rdquo;,&ldquo;旭道山&rdquo;,&ldquo;舞の海&rdquo;,&ldquo;寺尾&rdquo;,&ldquo;琴の若&rdquo;,&ldquo;貴ノ浪&rdquo;,
+&ldquo;琴富士&rdquo;,&ldquo;隆三杉&rdquo;,&ldquo;春日富士&rdquo;))) -&gt; plot_row_EST.df</p>
+<p>fit3 %&gt;% rstan::extract() %&gt;% data.frame() %&gt;% 
+select(starts_with(&ldquo;Z_star&rdquo;)) %&gt;% pivot_longer(everything(), names_to=&quot;key&rdquo;, values_to = &ldquo;val&rdquo;) %&gt;% 
+mutate(dim=str_sub(key, start=8,end=8),
+target=str_sub(key,start=10, end=10),
+key=NULL) %&gt;% group_by(target, dim) %&gt;% nest() %&gt;% 
+pivot_wider(names_from = dim, values_from = data) %&gt;% unnest() %&gt;% group_by(target) %&gt;% 
+rename(X=val, Y=val1) %&gt;% summarise_all(funs(mean=mean(.))) %&gt;% 
+mutate(target=factor(1:7,
+label=c(&ldquo;寄り&rdquo;,&ldquo;押し&rdquo;,&ldquo;投げ&rdquo;,&ldquo;引き&rdquo;,&ldquo;送り&rdquo;,&ldquo;突き&rdquo;,&ldquo;その他&rdquo;))) -&gt; plot_Z_star.df</p>
+<p>fit3 %&gt;% rstan::extract() %&gt;% data.frame() %&gt;% 
+select(starts_with(&ldquo;Z_EST&rdquo;)) %&gt;% pivot_longer(everything(), names_to=&quot;key&rdquo;, values_to = &ldquo;val&rdquo;) %&gt;% 
+mutate(dim=as.numeric(str_sub(key, start=7,end=7)),
+target=str_sub(key,start=9, end=10),
+key=NULL) %&gt;% group_by(target, dim) %&gt;% nest() %&gt;% 
+pivot_wider(names_from = dim, values_from = data) %&gt;% unnest() %&gt;% 
+rename(X=val, Y=val1) %&gt;% ungroup() %&gt;% mutate(target=factor(target,levels=1:20,
+labels=c(&ldquo;小錦&rdquo;,&ldquo;琴錦&rdquo;,&ldquo;貴闘力&rdquo;,&ldquo;霧島&rdquo;,&ldquo;栃ノ和歌&rdquo;,&ldquo;水戸錦&rdquo;,&ldquo;若ノ花&rdquo;,&ldquo;貴ノ花&rdquo;,&ldquo;武蔵丸&rdquo;,
+&ldquo;大翔山&rdquo;,&ldquo;安芸ノ島&rdquo;,&ldquo;三杉里&rdquo;,&ldquo;旭道山&rdquo;,&ldquo;舞の海&rdquo;,&ldquo;寺尾&rdquo;,&ldquo;琴の若&rdquo;,&ldquo;貴ノ浪&rdquo;,
+&ldquo;琴富士&rdquo;,&ldquo;隆三杉&rdquo;,&ldquo;春日富士&rdquo;)))-&gt; plot_row_EST_range.df</p>
+<h1 id="est_plot">EST_plot</h1>
+<p>p &lt;- ggplot() +
+theme_light(base_size=11) + guides(alpha=FALSE) +
+stat_density_2d(data=plot_row_EST_range.df, aes(x=X, y=Y, alpha=..nlevel.., fill=target), geom=&quot;polygon&rdquo;, bins=7,) +
+geom_errorbar(data=plot_row_EST.df, aes(x=X_MAP, y=Y_MAP,ymin=Y_lower, ymax=Y_upper),col=&quot;grey30&rdquo;, width=0.1,alpha=1) +
+geom_errorbarh(data=plot_row_EST.df, aes(y=Y_MAP,xmin=X_lower, xmax=X_upper,),col=&quot;grey30&rdquo;, height=0.1,alpha=1) +
+geom_point(data=plot_Z_star.df, aes(x=X_mean, y=Y_mean),size=2, shape=17) +
+geom_point(data=plot_row_EST.df, aes(x=X_MAP, y=Y_MAP,fill=target),shape=21,size=2) + 
+geom_text_repel(data=plot_row_EST.df,aes(x=X_MAP,y=Y_MAP,label=target)) +
+geom_text_repel(data=plot_Z_star.df, aes(x=X_mean, y=Y_mean, label=target)) +
+labs(title=&quot;Correspondence Analysis with Bayesian 50% confidence intervas &amp; density&rdquo;, x=&quot;dim1&rdquo;, y=&quot;dim2&rdquo;) +
+theme(legend.title = element_blank()) +
+scale_fill_manual(values=mycol) +
+scale_alpha_continuous(range=c(0.1,0.5))</p>
+<p>smo_data &lt;- matrix(data=c(15,15,0,0,1,0,1,19,9,7,12,1,3,3,4,22,0,11,2,0,4,
+14,3,11,3,1,1,6,24,7,5,5,0,0,2,30,2,6,2,2,0,2,
+11,13,5,6,2,1,4,25,8,10,7,5,3,1,13,31,3,3,0,2,3,
+8,2,19,3,2,0,4,28,8,8,2,1,0,7,9,3,14,11,2,0,4,
+5,3,12,11,4,0,7,7,1,18,0,1,0,11,12,6,1,12,7,2,2,
+25,2,11,3,1,0,1,16,4,18,3,0,0,5,23,2,6,5,1,0,2,
+7,17,2,16,3,0,1,2,8,1,11,1,0,2,
+3,0,1,5,0,0,2),byrow=TRUE, ncol=7)
+colnames(smo_data) &lt;- c(&ldquo;寄り&rdquo;,&ldquo;押し&rdquo;,&ldquo;投げ&rdquo;,&ldquo;引き&rdquo;,&ldquo;送り&rdquo;,&ldquo;突き&rdquo;,&ldquo;その他&rdquo;)
+rownames(smo_data) &lt;- c(&ldquo;小錦&rdquo;,&ldquo;琴錦&rdquo;,&ldquo;貴闘力&rdquo;,&ldquo;霧島&rdquo;,&ldquo;栃ノ和歌&rdquo;,&ldquo;水戸錦&rdquo;,&ldquo;若ノ花&rdquo;,&ldquo;貴ノ花&rdquo;,&ldquo;武蔵丸&rdquo;,
+&ldquo;大翔山&rdquo;,&ldquo;安芸ノ島&rdquo;,&ldquo;三杉里&rdquo;,&ldquo;旭道山&rdquo;,&ldquo;舞の海&rdquo;,&ldquo;寺尾&rdquo;,&ldquo;琴の若&rdquo;,&ldquo;貴ノ浪&rdquo;,
+&ldquo;琴富士&rdquo;,&ldquo;隆三杉&rdquo;,&ldquo;春日富士&rdquo;,&ldquo;R.morita&rdquo;)</p>
+</li>
+</ul>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://rmorita-stat.github.io/my-page/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90">多変量解析</a></span>
+        
+        <span><a href="https://rmorita-stat.github.io/my-page/tags/rstan">rstan</a></span>
+        
+        
+    </div>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計、ロードバイク、古墳が好きです。 </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    
+    <a class="next" href="https://rmorita-stat.github.io/my-page/post/multinom/multinom/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.05.27 21:13 </div>
+            <div class="pn-el__2"> multinom()を使った多項ロジスティック回帰 </div>
+        </div>
+    </a>
+    
+</div>
+
+<footer>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  "HTML-CSS": {
+    availableFonts: ["TeX"]
+  }
+  });
+</script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2020
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://rmorita-stat.github.io/my-page/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+

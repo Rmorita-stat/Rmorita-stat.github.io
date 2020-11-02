@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>情報量基準 on SUCRE HECACHA</title>
-    <link>https://rmorita-stat.github.io/my-page/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/</link>
+    <link>https://rmorita-stat.com/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/</link>
     <description>Recent content in 情報量基準 on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Sat, 03 Oct 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://rmorita-stat.github.io/my-page/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://rmorita-stat.com/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>モデリングと情報量基準その１～モデリングとは？～</title>
-      <link>https://rmorita-stat.github.io/my-page/post/modeling/waic/</link>
+      <link>https://rmorita-stat.com/post/modeling/waic/</link>
       <pubDate>Sat, 03 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/modeling/waic/</guid>
+      <guid>https://rmorita-stat.com/post/modeling/waic/</guid>
       <description>はじめに 少しご無沙汰してしまい、また読者様から重くないやつを定期的にと助言いただきましたので、少し短めの投稿を記事作成のリハビリもかねてして</description>
     </item>
     

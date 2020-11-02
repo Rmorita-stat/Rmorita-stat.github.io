@@ -2,48 +2,48 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>回帰 on SUCRE HECACHA</title>
-    <link>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</link>
+    <link>https://rmorita-stat.com/tags/%E5%9B%9E%E5%B8%B0/</link>
     <description>Recent content in 回帰 on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Sat, 11 Jul 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://rmorita-stat.com/tags/%E5%9B%9E%E5%B8%B0/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>多項ロジスティック回帰・ガウス過程モデル</title>
-      <link>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</link>
+      <link>https://rmorita-stat.com/post/multinom-gp/multinom-gp/</link>
       <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</guid>
+      <guid>https://rmorita-stat.com/post/multinom-gp/multinom-gp/</guid>
       <description>はじめに 回帰に関する記事です。 以前の記事では、対象が3つ以上のクラスに分類されるとき、それぞれのクラスに属する確率を予測するモデルである多項</description>
     </item>
     
     <item>
       <title>ガウス過程入門</title>
-      <link>https://rmorita-stat.github.io/my-page/post/gaussianprocessori/gaussianprocessori/</link>
+      <link>https://rmorita-stat.com/post/gaussianprocessori/gaussianprocessori/</link>
       <pubDate>Sun, 14 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/gaussianprocessori/gaussianprocessori/</guid>
+      <guid>https://rmorita-stat.com/post/gaussianprocessori/gaussianprocessori/</guid>
       <description>はじめに 今までに幾度かテーマにしていますが、回帰とよばれる問題があります。 例えば、車の速度とブレーキをかけてから車が止まるまでの距離について</description>
     </item>
     
     <item>
       <title>rstanを使った多項ロジスティック回帰</title>
-      <link>https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/</link>
+      <link>https://rmorita-stat.com/post/multinom-rstan/multinom-rstan/</link>
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/</guid>
+      <guid>https://rmorita-stat.com/post/multinom-rstan/multinom-rstan/</guid>
       <description>はじめに 回帰に関する記事です。本記事では以前の記事で扱った多項ロジスティック回帰をrstanで実行します。 モデルの確認 以前の記事でも紹介した</description>
     </item>
     
     <item>
       <title>multinom()を使った多項ロジスティック回帰</title>
-      <link>https://rmorita-stat.github.io/my-page/post/multinom/multinom/</link>
+      <link>https://rmorita-stat.com/post/multinom/multinom/</link>
       <pubDate>Wed, 27 May 2020 21:13:14 -0500</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/multinom/multinom/</guid>
+      <guid>https://rmorita-stat.com/post/multinom/multinom/</guid>
       <description>はじめに 回帰に関する記事です。本記事では多項ロジスティック回帰について扱います。 多項ロジスティック回帰(multinomial logisti</description>
     </item>
     
