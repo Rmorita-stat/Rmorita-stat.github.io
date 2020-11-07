@@ -164,7 +164,7 @@ $$</p>
 <p>となります。</p>
 <p>…いや冗談だろう、$X$の分散共分散行列は</p>
 <p>$$
-Σ = \cfrac{1}{Sum}\left(X-\bar{X}\right)^T\left(X-\bar{X}\right) \tag{4&rsquo;}
+Σ = \cfrac{1}{N}\left(X-\bar{X}\right)^T\left(X-\bar{X}\right) \tag{4&rsquo;}
 $$</p>
 <p>だろ、とはじパタで主成分分析を学んだ私は思ったのですが、$P_{I} = f_{i.}/Sum$であることを踏まえると、分割表で集計された1つのセルを1観測値とするのではなく、1つの観測事象を1観測値としたときの分散共分散行列を計算する、というような計算をしているっぽいです。錚々たる専門家集団から査読・Acceptされたであろう参考論文にそう書かれているので、ここでは$(4)$式を正としましょう…</p>
 <p>とにかく、$(4)$式の$\Sigma$について固有値問題を解いて、得られた固有値を最大固有値から順に$\lambda_{1},\lambda_{2}\ldots,\lambda_{N}$、これらに対応する固有ベクトルを順に$l_1,l_2,\ldots,l_N$とします。これらを用いて、第$k$主成分ベクトルによる項目$I$の数量化スコア$z_{k} = (z_{1k}, \ldots, z_{Nk})$を計算します。</p>
@@ -283,7 +283,6 @@ cat(paste(sprintf(&quot;\nContribution Rate of dim%.f: %.3f&quot;, 1:6,X_pca$val
 library(ggplot2)
 library(ggrepel)
 
-#分散考慮の付置図
 p &lt;- ggplot() + theme_light(base_size=11) +
   geom_point(data=data.frame(x=rikishi_axis1, y=rikishi_axis2), aes(x=x,y=y), shape=1, col=&quot;red&quot;) +
   geom_point(data=data.frame(x=waza_axis1, y=waza_axis2), aes(x=x,y=y), shape=2, col=&quot;blue&quot;) +
@@ -355,7 +354,7 @@ p
 <p>行項目、列項目に対する主成分分析の結果のうち、得られた次元数が少ない方を次元の数とする、ということなのだが、$min(m,n)$とはならないのは何故？ <a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:7" role="doc-endnote">
-<p>RのCAパッケージなどを使った整合確認は今後の自分に課す課題にします。参考論文における結果と異なるのであやしい気がする… <a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p>RのFactoMineR::CAパッケージなどを使った整合確認は今後の自分に課す課題にします。参考論文における結果と異なるのであやしい気がする…←確認しました。今回の結果とFactoMineR::CAの結果はほぼ一致します。座標に関して言えば小数点第3位程度まで一致しました <a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>
