@@ -26,7 +26,7 @@
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
       
       <guid>https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/</guid>
-      <description>はじめに 回帰に関する記事です。本記事では以前の記事で扱った多項ロジスティック回帰をrstanで実行します。 モデルの確認 以前の記事でも紹介した</description>
+      <description>はじめに 回帰に関する記事です。本記事では以前の記事で扱った多項ロジスティック回帰をrstanで実行します。 本記事の構成は以下の通りとします。</description>
     </item>
     
     <item>

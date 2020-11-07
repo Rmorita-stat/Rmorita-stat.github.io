@@ -77,7 +77,25 @@
         <article id="content">
             <h1 id="はじめに">はじめに</h1>
 <p><strong>回帰</strong>に関する記事です。本記事では<a href="https://rmorita-stat.github.io/my-page/post/multinom/multimon/">以前の記事</a>で扱った多項ロジスティック回帰を<strong>rstan</strong>で実行します。</p>
-<h5 id="モデルの確認">モデルの確認</h5>
+<p>本記事の構成は以下の通りとします。</p>
+<!-- raw HTML omitted -->
+<ul>
+<li><a href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB">はじめに</a></li>
+<li><a href="#%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E7%A2%BA%E8%AA%8D">モデルの確認</a></li>
+<li><a href="#%E3%83%87%E3%83%BC%E3%82%BF%E3%81%AE%E5%85%A5%E6%89%8B%E3%83%BB%E6%95%B4%E5%BD%A2">データの入手・整形</a></li>
+<li><a href="#stan%E3%81%AB%E3%82%88%E3%82%8B%E5%A4%9A%E9%A0%85%E3%83%AD%E3%82%B8%E3%82%B9%E3%83%86%E3%82%A3%E3%83%83%E3%82%AF%E5%9B%9E%E5%B8%B0%E3%81%AE%E5%AE%9F%E8%A3%85">Stanによる多項ロジスティック回帰の実装</a></li>
+<li><a href="#%E7%B5%90%E6%9E%9C%E3%81%AE%E7%A2%BA%E8%AA%8D">結果の確認</a>
+<ul>
+<li><a href="#mcmc%E3%81%AE%E5%8F%8E%E6%9D%9F%E3%81%AE%E7%A2%BA%E8%AA%8D">MCMCの収束の確認</a></li>
+<li><a href="#%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E4%BF%82%E6%95%B0%E3%81%AB%E7%9D%80%E7%9B%AE">モデルの係数に着目</a></li>
+<li><a href="#%E3%82%AA%E3%83%83%E3%82%BA%E6%AF%94%E3%81%AE%E5%A4%89%E9%87%8F%E3%81%AB%E7%9D%80%E7%9B%AE">オッズ比の変量に着目</a></li>
+</ul>
+</li>
+<li><a href="#%E7%B5%90%E6%9E%9C%E3%81%AE%E6%8F%8F%E7%94%BB">結果の描画</a></li>
+<li><a href="#%E3%81%BE%E3%81%A8%E3%82%81">まとめ</a></li>
+</ul>
+<!-- raw HTML omitted -->
+<h1 id="モデルの確認">モデルの確認</h1>
 <p>以前の記事でも紹介した多項ロジスティック回帰モデルの一般式を再掲します。
 <!-- raw HTML omitted --><br>
 従属変数$Y$、説明変数$X$について、$Y = (y_1,\ldots,y_n,\ldots, y_N)^T$、$X = (x_1,\ldots, x_n,\ldots, x_N)^T$とし、さらに
@@ -118,8 +136,8 @@ names(progid) &lt;- c(&quot;academic&quot;,&quot;general&quot;,&quot;vocation&qu
 
 ## makedummies()はsesに対してダミー変数を作成するために使用
 ## interceptは切片項
-d &lt;- ml %&gt;% cbind(makedummies::makedummies(ml,basal_level = F, col = &quot;ses&quot;)) %&gt;% 
-  mutate(progid = progid[paste(prog)]) %&gt;% select(c(ses_middle, ses_high, write, progid)) %&gt;% 
+d &lt;- ml %&gt;% cbind(makedummies::makedummies(ml,basal_level = F, col = &quot;ses&quot;)) %&gt;%
+  mutate(progid = progid[paste(prog)]) %&gt;% select(c(ses_middle, ses_high, write, progid)) %&gt;%
   cbind(intercept=rep(1,nrow(ml)))
 
 head(d,10)
@@ -217,7 +235,7 @@ $$</p>
 <p>model1に基づいてサンプリングを命令するコードは以下のようになります。</p>
 <pre><code>#(run_model1)
 library(rstan)
-x &lt;- d[,c(5,1,2,3)] 
+x &lt;- d[,c(5,1,2,3)]
 y &lt;- d[,&quot;progid&quot;]
 K &lt;- 3
 N &lt;- nrow(x)
@@ -243,7 +261,8 @@ $$
 の予測値を算出する際に、説明変数$x$がとる組み合わせを指定したものです。
 <!-- raw HTML omitted -->
 予測値は、MCMCでは生成量のサンプリングとして扱うため、generated quantitiesブロックで指定することになります。</p>
-<h1 id="mcmcの収束の確認">MCMCの収束の確認</h1>
+<h1 id="結果の確認">結果の確認</h1>
+<h2 id="mcmcの収束の確認">MCMCの収束の確認</h2>
 <p>MCMCの実行後、まずはちゃんと収束していることを確認する必要があります。
 以下ではモデルの係数についてtracsplotを描画し、収束の確認を行います。</p>
 <pre><code>library(ggmcmc)
@@ -261,9 +280,9 @@ p
 fit0
 
 ## Inference for Stan model: model1.
-## 4 chains, each with iter=1500; warmup=500; thin=1; 
+## 4 chains, each with iter=1500; warmup=500; thin=1;
 ## post-warmup draws per chain=1000, total post-warmup draws=4000.
-## 
+##
 ##                  mean se_mean     sd    2.5%     25%     50%     75%   97.5%
 ## b[1,1]           2.89    0.03   1.16    0.62    2.11    2.90    3.66    5.12
 ## b[1,2]           5.36    0.03   1.13    3.17    4.61    5.32    6.14    7.57
@@ -282,11 +301,11 @@ fit0
 ## b[3,2]         2514    1
 ## b[4,1]         2122    1
 ## b[4,2]         1978    1
-##  [ reached getOption(&quot;max.print&quot;) -- 759 行を無視しました ] 
-## 
+##  [ reached getOption(&quot;max.print&quot;) -- 759 行を無視しました ]
+##
 ## Samples were drawn using NUTS(diag_e) at Sun May 31 00:51:09 2020.
 ## For each parameter, n_eff is a crude measure of effective sample size,
-## and Rhat is the potential scale reduction factor on split chains (at 
+## and Rhat is the potential scale reduction factor on split chains (at
 ## convergence, Rhat=1).
 </code></pre>
 <p>R console上でfit0の中身を確認すると、各MCMCサンプルの要約統計量の他にn-eff、Rhatが出力されます。</p>
@@ -308,7 +327,7 @@ Rhatについては少し詳しく紹介しておきます。
 \tilde{\sigma}^2_{BW} = \cfrac{(n-1)\tilde{\sigma}^2_w + \tilde{\sigma}^2_B}{n}
 $$
 $$
-\tilde{\sigma}^2_{W} = \cfrac{1}{M} \sum_{i=1}^M s^2_{g_i}, ~~~~ 
+\tilde{\sigma}^2_{W} = \cfrac{1}{M} \sum_{i=1}^M s^2_{g_i}, ~~~~
 s^2_{g_i} = \cfrac{\sum_{t=1}^n ((g(\theta^{(i,t)}))-\bar{g}_i)^2}{n-1}
 $$
 $$
@@ -325,13 +344,13 @@ $$</p>
 \hat{R} = \cfrac{\tilde{\sigma}^2_{BW}}{\tilde{\sigma}^2_{W}}
 $$</p>
 <p>今回は全係数でRhatが1ですので、MCMCは収束したと判断します。</p>
-<h1 id="結果の確認モデルの係数に着目">結果の確認(モデルの係数に着目)</h1>
+<h2 id="モデルの係数に着目">モデルの係数に着目</h2>
 <p>R console上でfit0の中身を確認したとき、係数の要約統計量が以下のように算出されていました。</p>
 <pre><code>options(max.print = 80)
 fit0
 
 ## ～省略～
-## 
+##
 ##                  mean se_mean     sd    2.5%     25%     50%     75%   97.5%
 ## b[1,1]           2.89    0.03   1.16    0.62    2.11    2.90    3.66    5.12
 ## b[1,2]           5.36    0.03   1.13    3.17    4.61    5.32    6.14    7.57
@@ -357,18 +376,18 @@ t(b_MAP)
 <p>一方、以前の記事でmultinom()を用いて同じ分析を行った結果が以下です。</p>
 <pre><code>## Call:
 ## multinom(formula = prog2 ~ ses + write, data = ml)
-## 
+##
 ## Coefficients:
 ##          (Intercept)  sesmiddle    seshigh      write
 ## general     2.852198 -0.5332810 -1.1628226 -0.0579287
 ## vocation    5.218260  0.2913859 -0.9826649 -0.1136037
-## 
+##
 ## Std. Errors:
 ##          (Intercept) sesmiddle   seshigh      write
 ## general     1.166441 0.4437323 0.5142196 0.02141097
 ## vocation    1.163552 0.4763739 0.5955665 0.02221996
-## 
-## Residual Deviance: 359.9635 
+##
+## Residual Deviance: 359.9635
 ## AIC: 375.9635
 
 ## 両側Z検定の実行
@@ -412,7 +431,7 @@ $$</p>
 <p>$$
 \cfrac{P(prog=vocation)}{P(prog=academic)} = exp(5.32^{***}-0.31(ses=middle); -1.00^{*}(ses=high) - 0.12^{***}write)
 $$</p>
-<h1 id="結果の確認オッズ比の変量に着目">結果の確認(オッズ比の変量に着目)</h1>
+<h2 id="オッズ比の変量に着目">オッズ比の変量に着目</h2>
 <p>オッズ比の変量(説明変数が変化すると、オッズ比は何倍になるか)についても確認しておきます。こちらは事後分布の要約統計量ではなく、事後分布自体を視覚的に見てみることにします。また通常切片項は解釈に用いないため、図の描画では割愛します。</p>
 <pre><code>plot_title &lt;- ggtitle(&quot;Posterior distribution&quot;, &quot;with medians and 95% intervals&quot;)
 
@@ -437,7 +456,7 @@ show(ratio_odds)
 ## median  18.08714 0.5897972 0.3041684 0.9428201
 ## 2.5%     1.85266 0.2434086 0.1037669 0.9051025
 ## 97.5%  166.69899 1.3964119 0.8242418 0.9836004
-## 
+##
 ## $vocation
 ##         Intercept sesmiddle   seshigh     write
 ## median  204.48713  1.369324 0.3678701 0.8901682
@@ -446,13 +465,13 @@ show(ratio_odds)
 </code></pre>
 <p>上図で一番目立つ$ratio[2,2]$に着目すると、これは$exp(b_{22})$ですので、
 $$
-\cfrac{\cfrac{P(prog=vocation(ses=middle))}{P(prog=academic(ses=middle))}}{\cfrac{P(prog=vocation(ses=low))}{P(prog=academic(ses=low))}} 
+\cfrac{\cfrac{P(prog=vocation(ses=middle))}{P(prog=academic(ses=middle))}}{\cfrac{P(prog=vocation(ses=low))}{P(prog=academic(ses=low))}}
 $$
 の事後分布を表現しています。
 事後分布は95%ベイズ信頼区間内に1を含んでいますし、比較的幅が広い分布ですので、確信をもってこうだといえる結果が得られていないことがわかります。</p>
 <p>一方で、$ratio[3,1]=exp(b_{21})$は幅が比較的狭く、95%ベイズ信頼区間内に1が含まれていません。このことから、
 $$
-\cfrac{\cfrac{P(prog=general(ses=high))}{P(prog=academic(ses=high))}}{\cfrac{P(prog=general(ses=low))}{P(prog=academic(ses=low))}} 
+\cfrac{\cfrac{P(prog=general(ses=high))}{P(prog=academic(ses=high))}}{\cfrac{P(prog=general(ses=low))}{P(prog=academic(ses=low))}}
 $$
 はより確信をもって1以下の代表値(MAP推定値や中央値)付近をとる、ということができます。</p>
 <p>このように、ベイズ統計ではパラメータや求めたい値のとりうる分布を推定することができ、大変便利です。</p>
@@ -477,16 +496,16 @@ data3 &lt;- data.frame(ses = rep(c(&quot;low&quot;,&quot;middle&quot;,&quot;high
 
 cols = RColorBrewer::brewer.pal(3,&quot;Dark2&quot;)
 
-data_point &lt;- ml %&gt;% cbind(makedummies::makedummies(ml,basal_level = T, col = &quot;prog&quot;)) %&gt;% 
+data_point &lt;- ml %&gt;% cbind(makedummies::makedummies(ml,basal_level = T, col = &quot;prog&quot;)) %&gt;%
   select(c(ses, write, prog, prog_academic, prog_general, prog_vocation))
 
 p0 &lt;- ggplot() + theme_bw(base_size=11) + mapply(
   function(data){
-    geom_ribbon(data=data, aes(x=write, ymax=ymax, ymin=ymin, fill=ses), alpha=0.5) 
+    geom_ribbon(data=data, aes(x=write, ymax=ymax, ymin=ymin, fill=ses), alpha=0.5)
   },list(data1,data2,data3)
 ) +mapply(
   function(data){
-    geom_line(data=data,aes(x=write, y=y, colour=ses)) 
+    geom_line(data=data,aes(x=write, y=y, colour=ses))
   },list(data1,data2,data3)
 ) + mapply(
   function(data,n){

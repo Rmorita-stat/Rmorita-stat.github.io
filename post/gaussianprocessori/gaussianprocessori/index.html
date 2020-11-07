@@ -99,8 +99,37 @@ $$</p>
 データに対し柔軟な回帰曲線を得られるようにすることを最終目標とします。</p>
 <p>参考図書は<a href="https://www.kspub.co.jp/book/detail/1529267.html">こちら</a>です。
 <a href="https://matsueushi.github.io/posts/gp-parameter-estimation/">こちらのブログ</a>も大いに参考にさせていただきました。RもいいですがJuliaも面白そうです。影響を受けてJuliaの参考書を買ってしまいました。</p>
+<p>本記事の構成は以下の通りです。</p>
+<!-- raw HTML omitted -->
+<ul>
+<li><a href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB">はじめに</a></li>
+<li><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E3%81%AE%E5%AE%9A%E7%BE%A9">ガウス過程の定義</a>
+<ul>
+<li><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E3%81%AE%E5%B0%8E%E5%87%BA">ガウス過程の導出</a></li>
+<li><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E3%81%AE%E7%9B%B4%E6%84%9F%E7%9A%84%E3%81%AA%E6%80%A7%E8%B3%AA">ガウス過程の直感的な性質</a></li>
+<li><a href="#%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB%E9%96%A2%E6%95%B0">カーネル関数</a></li>
+</ul>
+</li>
+<li><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E3%81%AE%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3">ガウス過程のシミュレーション</a>
+<ul>
+<li><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB%E3%81%AE%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3">ガウスカーネルのシミュレーション</a></li>
+<li><a href="#%E7%B7%9A%E5%BD%A2%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB%E3%81%AE%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3">線形カーネルのシミュレーション</a></li>
+<li><a href="#matern3%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB%E3%81%AE%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3">Matern3カーネルのシミュレーション</a></li>
+<li><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB%E3%81%A8%E7%B7%9A%E5%BD%A2%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB%E3%81%AE%E7%B5%90%E5%90%88">ガウスカーネルと線形カーネルの結合</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%9F%E9%9A%9B%E3%81%AB%E5%9B%9E%E5%B8%B0%E3%83%BB%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF%E6%8E%A8%E5%AE%9A%E3%82%92%E5%AE%9F%E8%A1%8C">実際に回帰・パラメータ推定を実行</a>
+<ul>
+<li><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%9F%E5%9B%9E%E5%B8%B0">ガウスカーネルを使った回帰</a></li>
+<li><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB%EF%BC%8B%E7%B7%9A%E5%BD%A2%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB%E3%81%A7%E5%9B%9E%E5%B8%B0">ガウスカーネル＋線形カーネルで回帰</a></li>
+<li><a href="#%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96%E3%81%AE%E7%A2%BA%E8%AA%8D">情報量基準の確認</a></li>
+</ul>
+</li>
+<li><a href="#%E3%81%BE%E3%81%A8%E3%82%81">まとめ</a></li>
+</ul>
+<!-- raw HTML omitted -->
 <h1 id="ガウス過程の定義">ガウス過程の定義</h1>
-<h5 id="ガウス過程の導出">ガウス過程の導出</h5>
+<h2 id="ガウス過程の導出">ガウス過程の導出</h2>
 <p>ガウス過程について特にわかりやすいと思った参考図書の記載を抜粋してガウス過程について説明します。</p>
 <p>この節の理解には多変量正規分布($MultiNormal$)の理解が必要です。多変量正規分布については参考図書などを見て適宜補完してください。</p>
 <p>以下の線形回帰モデルを考えます。</p>
@@ -131,13 +160,13 @@ $$</p>
 \vdots \\<br>
 \hat{y}_N
 \end{array}
-\right) = 
+\right) =
 \left(
 \begin{array}{ccc}
 \phi_1(x_1) &amp; \phi_2(x_1) &amp; \cdots &amp; \phi_H(x_1) \\<br>
 \phi_1(x_2) &amp; \phi_2(x_2) &amp; \cdots &amp; \phi_H(x_2) \\<br>
 \cdots &amp; \cdots &amp; \ddots &amp; \cdots \\<br>
-\phi_1(x_N) &amp; \phi_2(x_N) &amp; \cdots &amp; \phi_H(x_N) 
+\phi_1(x_N) &amp; \phi_2(x_N) &amp; \cdots &amp; \phi_H(x_N)
 \end{array}
 \right)
 \left(
@@ -166,7 +195,7 @@ $$</p>
 Y \sim MultiNormal(0, \lambda^2\Phi\Phi^T) \tag{5}
 $$</p>
 <p><strong>式(5)がガウス過程を定義する式</strong>です。これは式(3)と基本的に同じ機能をもつため、式(3)と同様、ほとんどどんな形でも表現できそうです。ただし、線形回帰モデル式(3)にあったパラメータ$w$が積分消去されているため、$x$の次元がいくら高くなっても推定するパラメータは増えず、$y$の分布はデータ数$N$に依存する共分散行列$\lambda^2\Phi\Phi^T$のみによって決定します。さらに式(3)からの変形で式(4)をかませているため、過学習に陥る可能性が抑えられています。</p>
-<h5 id="ガウス過程の直感的な性質">ガウス過程の直感的な性質</h5>
+<h2 id="ガウス過程の直感的な性質">ガウス過程の直感的な性質</h2>
 <p>ガウス過程の性質を決定する共分散行列について見ていきます。</p>
 <p>$$
 K = \lambda^2\Phi\Phi^T
@@ -178,7 +207,7 @@ $$</p>
 <p>なので、これは$x_{n}$と$x_{n^{'}}$の特徴ベクトル$\phi(x_{n})$と$\phi(x_{n^{'}})$の内積の$\lambda^2$倍です。多変量正規分布において２変数の共分散が大きいとき、両者の相関が高いということなので、２変数の平均値が同値かつ共分散が大きいとき、両者は似た値をとりやすくなります。
 <!-- raw HTML omitted -->  <br>
 つまり、$x_{n}$と$x_{n^{'}}$が設定した特徴ベクトル空間において似ている場合、対応する$y_{n}$と$y_{n^{'}}$も似た値が出力されやすくなります。このように、説明変数$x$が似ていれば目的変数の予測値$y$も似た値となる、というのがガウス過程の性質になります。</p>
-<h5 id="カーネル関数">カーネル関数</h5>
+<h2 id="カーネル関数">カーネル関数</h2>
 <p>$$
 k_{nn^{'}} = \phi(x_n)^T\phi(x_{n^{'}})　\tag{6}
 $$</p>
@@ -194,7 +223,7 @@ exp(-a(x-x^{'}))^2 = \phi(x)^{T}\phi(x^{'})
 $$</p>
 <p>となる特徴ベクトルは、第$r$成分が</p>
 <p>$$
-\phi_r(x) = \left(\cfrac{4a}{\pi}\right)^{\cfrac{1}{4}}exp(-2a(x-r)^2) 
+\phi_r(x) = \left(\cfrac{4a}{\pi}\right)^{\cfrac{1}{4}}exp(-2a(x-r)^2)
 $$</p>
 <p>となります($r$は実数で、$r=-\infty, \ldots, \infty$)。</p>
 <p>これは、
@@ -207,7 +236,7 @@ $$</p>
 <p>ガウス過程の概要を確認したので、ガウス過程に従う確率変数がどのような挙動をするのか、いくつかのカーネル関数を例に見てみます。</p>
 <p>シミュレーションの前に、カーネル行列($K$のこと)を作成する関数と、シミュレーションのための関数を定義しておきます。</p>
 <pre><code># カーネル行列を作成する関数を定義
-# 引数 kernel：この後に定義するカーネル関数を指定 x：トレーニングデータ 
+# 引数 kernel：この後に定義するカーネル関数を指定 x：トレーニングデータ
 # 引数 par:kernelが要求するハイパーパラメータ delta：誤差の要素。ハイパーパラメータとは別で指定することにした
 kernel_cov &lt;- function(kernel, x,par, delta){
   NL &lt;- length(x)
@@ -239,7 +268,7 @@ GP_sim &lt;- function(kernel, par){
   plot(p)
 }
 </code></pre>
-<h5 id="ガウスカーネルのシミュレーション">ガウスカーネルのシミュレーション</h5>
+<h2 id="ガウスカーネルのシミュレーション">ガウスカーネルのシミュレーション</h2>
 <p>前の節で紹介したガウスカーネルのシミュレーションです。改めてガウスカーネルを再定義します。
 <!-- raw HTML omitted -->  <br>
 ガウスカーネルは、下のようにrateパラメータ$\theta$、shapeパラメータ$\rho$をもちます。ここでは$\theta$、$\rho$ともに１とした場合のシミュレーションをします。</p>
@@ -256,7 +285,7 @@ GP_sim(Gaussian_kernel, par=c(1,1))
 </code></pre>
 <p><img src="/my-page/post/gaussianprocessori/sim_1.png" alt=""></p>
 <p>ガウスカーネルをカーネル関数に設定したガウス過程は、無限回微分可能な滑らかな曲線になるそうです。</p>
-<h5 id="線形カーネルのシミュレーション">線形カーネルのシミュレーション</h5>
+<h2 id="線形カーネルのシミュレーション">線形カーネルのシミュレーション</h2>
 <p>線形カーネルは、ハイパーパラメータを持たないカーネル関数です。</p>
 <p>$$
 k(x,x_{'}) = x^T x^{'}
@@ -271,7 +300,7 @@ GP_sim(linear_kernel, par=NULL)
 </code></pre>
 <p><img src="/my-page/post/gaussianprocessori/sim_2.png" alt=""></p>
 <p>シミュレーションでも直線が引けることが確認できます。</p>
-<h5 id="matern3カーネルのシミュレーション">Matern3カーネルのシミュレーション</h5>
+<h2 id="matern3カーネルのシミュレーション">Matern3カーネルのシミュレーション</h2>
 <p>Maternカーネルは、ガウスカーネルの無限回微分可能という前提がモデル化において強すぎるという主張から提案されたカーネルです。</p>
 <p>$$
 k_v(x,x^{'}) = \cfrac{2^{1-\upsilon}}{\Gamma(\upsilon)} \left( \cfrac{\sqrt{2\upsilon}r}{\upsilon} \right)^2 K_v \left( \cfrac{\sqrt{2\upsilon}r}{\upsilon} \right) ~~~ (r=|x-x^{'}|)
@@ -291,7 +320,7 @@ GP_sim(Matern3_kernel,par=c(1,1))
 </code></pre>
 <p><img src="/my-page/post/gaussianprocessori/sim_3.png" alt=""></p>
 <p>ガウスカーネルと比べていびつな曲線になっていることが分かります。</p>
-<h5 id="ガウスカーネルと線形カーネルの結合">ガウスカーネルと線形カーネルの結合</h5>
+<h2 id="ガウスカーネルと線形カーネルの結合">ガウスカーネルと線形カーネルの結合</h2>
 <p>カーネル関数は組み合わせて使うことも可能です。
 ここではガウスカーネルと線形カーネルを組み合わせてみます。</p>
 <p>$$
@@ -330,7 +359,7 @@ p
 簡略化のため、ガウス過程のハイパーパラメータを$\theta=(\theta_1, \theta_2,\ldots)$とまとめておき、カーネル行列も$K_{\theta}$とします。
 確率変数$Y$がガウス過程$GP(0,K_\theta)$に従うと仮定したとき、観測値に対する尤度は、</p>
 <p>$$
-p(Y|X,\theta) = MultiNormal(Y|o,K_{\theta}) = 
+p(Y|X,\theta) = MultiNormal(Y|o,K_{\theta}) =
 \cfrac{1}{(2\pi)^{N/2}} \cfrac{1}{|K_{\theta}|^{1/2}} exp\left(\cfrac{1}{2}Y^TK_{\theta}^{-1}Y\right)
 $$</p>
 <p>対数尤度は、</p>
@@ -383,9 +412,9 @@ my_predict &lt;- function(x_test, x_train, y_train, kernel, par){
   return(list(mu, sigma))
 }
 </code></pre>
-<h5 id="ガウスカーネルを使った回帰">ガウスカーネルを使った回帰</h5>
+<h2 id="ガウスカーネルを使った回帰">ガウスカーネルを使った回帰</h2>
 <p>上で定義した関数を使い、カーネル関数にガウスカーネルを設定して回帰を実行してみます。</p>
-<pre><code>#自作関数GP_L()を使って対数尤度を計算 対数尤度を最大化するハイパーパラメータを推定 
+<pre><code>#自作関数GP_L()を使って対数尤度を計算 対数尤度を最大化するハイパーパラメータを推定
 res_optim1 &lt;- optim(par=c(0,0,0),fn=GP_L,kernel=Gaussian_kernel, x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)
 
 par &lt;- exp(res_optim1$par)
@@ -398,7 +427,7 @@ pre &lt;- my_predict(x_test = seq(-2.0,2.0,0.01),x_train=x, y_train=y, kernel=Ga
 
 # 結果の描画
 library(ggplot2)
-p &lt;- ggplot() + theme_bw(base_size=11) + 
+p &lt;- ggplot() + theme_bw(base_size=11) +
   geom_line(data=data.frame(x=seq(-2.0,2.0,0.01),y=pre[[1]]),aes(x=x,y=y))
 p &lt;- p + geom_point(data=data.frame(x=x,y=y),aes(x=x,y=y))
 p &lt;- p + geom_ribbon(data=data.frame(x=seq(-2.0,2.0,0.01),ymin=pre[[1]]-2*sqrt(diag(pre[[2]])), ymax=pre[[1]]+2*sqrt(diag(pre[[2]]))),
@@ -417,11 +446,11 @@ $$</p>
 <p><strong>データの少ない部分は曖昧に推定するというのは、現実的な判断じゃあないか</strong>&gt;🦔</p>
 <p>しかしかめきちはこう言っています。</p>
 <p><strong>将来世界記録のタイムが伸びるという推定はあまりにもおかしいかめ</strong>&gt;🐢</p>
-<h5 id="ガウスカーネル線形カーネルで回帰">ガウスカーネル＋線形カーネルで回帰</h5>
+<h2 id="ガウスカーネル線形カーネルで回帰">ガウスカーネル＋線形カーネルで回帰</h2>
 <p>かめきちの意見を踏まえ、カーネル関数でガウスカーネルと線形カーネルを組み合わせてみます。</p>
 <pre><code># ガウスカーネル＋線形カーネを使って回帰
 
-# 自作関数GP_L()を使って尤度を計算 尤度を最大化するハイパーパラメータを推定 
+# 自作関数GP_L()を使って尤度を計算 尤度を最大化するハイパーパラメータを推定
 res_optim2 &lt;- optim(par=c(0,0,0,0),fn=GP_L,kernel=Gaussian_plus_Linear_kernel,
                  x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)
 
@@ -436,7 +465,7 @@ pre &lt;- my_predict(x_test = seq(-2.0,2.0,0.01),x_train=x, y_train=y,
 
 # 結果の描画
 library(ggplot2)
-p &lt;- ggplot() + theme_bw(base_size=11) + 
+p &lt;- ggplot() + theme_bw(base_size=11) +
   geom_line(data=data.frame(x=seq(-2.0,2.0,0.01),y=pre[[1]]),aes(x=x,y=y))
 p &lt;- p + geom_point(data=data.frame(x=x,y=y),aes(x=x,y=y))
 p &lt;- p + geom_ribbon(data=data.frame(x=seq(-2.0,2.0,0.01),ymin=pre[[1]]-2*sqrt(diag(pre[[2]])), ymax=pre[[1]]+2*sqrt(diag(pre[[2]]))),
@@ -467,7 +496,7 @@ $$</p>
 <p>ハイパーパラメータの値が変化し、結果も全く異なります。勾配法によるハイパーパラメータ推定では初期値によって結果が異なることも多く、局所最適解が多い場合はその傾向が強いです。
 <!-- raw HTML omitted -->  <br>
 このような場合、MCMCで推定すると大域的局所解に近づいてくれます。</p>
-<h5 id="情報量基準の確認">情報量基準の確認</h5>
+<h2 id="情報量基準の確認">情報量基準の確認</h2>
 <p>モデルの良さを表す数値的指標として、各種の<strong>情報量基準</strong>が提案されています。
 ここでは、以下で定義される<strong>AIC</strong>を計算してみます。
 (AICは正しい使い方というのがあるようで私はAICを誤用しているかもしれません。誤りがあればご指摘を！)</p>
@@ -481,7 +510,7 @@ my_AIC &lt;- function(res_optim, x){
 }
 cat(sprintf(&quot;AIC of \n res1 = %.3f\n res2 = %.3f\n res3 = %.3f&quot;,my_AIC(res_optim1,x), my_AIC(res_optim2,x), my_AIC(res_optim3,x)))
 
-## AIC of 
+## AIC of
 ##  res1 = 60.507
 ##  res2 = 68.203
 ##  res3 = 65.642
