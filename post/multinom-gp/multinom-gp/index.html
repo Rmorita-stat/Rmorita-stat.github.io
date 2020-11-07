@@ -176,28 +176,28 @@ $$</p>
   real x[N];
   vector[N] y;
 }
-    
+
 transformed data{
   real delta = 1e-9;
 }
-    
+
 parameters {
   real&lt;lower=0&gt; rho;
   real&lt;lower=0&gt; alpha;
   real&lt;lower=0&gt; sigma;
   vector[N] eta;
 }
-    
+
 model {
   vector[N] f;
   {
     matrix[N, N] L_K;
     matrix[N, N] K = cov_exp_quad(x, alpha, rho);
-    
+
     // diagonal elements
     for (n in 1:N)
       K[n, n] = K[n, n] + delta;
-    
+
     L_K = cholesky_decompose(K);
     f = L_K * eta;
   }
@@ -240,7 +240,7 @@ parameters{
 transformed parameters{
   vector[N]&lt;lower=0, upper=1&gt; p;
   ...
-  p = mu + f; 
+  p = mu + f;
   ...
 }
 ...
@@ -263,7 +263,7 @@ y_1^* \\<br>
 y_M^*
 \end{array}
 \right) \sim Normal \left(\vec{0},
-\left( 
+\left(
 \begin{array}{ccc}
 \mathrm{K} &amp; \mathrm{k}^* \\<br>
 \mathrm{k}^{*T} &amp; \mathrm{k}^{**}  \\<br>
@@ -289,7 +289,7 @@ $\mathrm{w}= (\mathrm{x}^T, z_1) = (\mathrm{x}^T, u)$($u = 1,\ldots,m_1$)にお�
 \begin{array}{ccc}
 \epsilon_1(\mathrm{x}) \\<br>
 \vdots \\<br>
-\epsilon_{m_1}(\mathrm{x}) 
+\epsilon_{m_1}(\mathrm{x})
 \end{array}
 \right) \tag{13}
 $$</p>
@@ -305,7 +305,7 @@ $$</p>
 \begin{array}{ccc}
 a_1 \\<br>
 \vdots \\<br>
-a_{m1} 
+a_{m1}
 \end{array}
 \right) \tag{15}
 $$</p>
@@ -331,19 +331,19 @@ $$</p>
 <p>が成り立ちます($zm,zn = 1, \ldots,m1$)。</p>
 <p>ここで、$\tau_{r,s} = a^T_ra_s$($r=zm, s=zn, r,s=1,\ldots,m_1,$)とおくと、半正定値行列$\mathrm{T} = \mathrm{A}\mathrm{A}^T$は、</p>
 <p>$$
-\mathrm{T} = \mathrm{A}\mathrm{A}^t = 
+\mathrm{T} = \mathrm{A}\mathrm{A}^t =
 \left(
 \begin{array}{ccc}
 a_1 \\<br>
 \vdots \\<br>
-a_{m1} 
+a_{m1}
 \end{array}
 \right)
 \left(
 \begin{array}{ccc}
 a_1 &amp;
 \ldots &amp;
-a_{m1} 
+a_{m1}
 \end{array}
 \right)=
 \left(
@@ -461,7 +461,7 @@ $$</p>
 <p>$\Theta$は1行の要素の和をとると1になるので、各要素が$(-\infty,\infty)$の値をとる$(N×K)$行列$\mathrm{P}=(\mathrm{p}_1,\ldots,\mathrm{p}_K)$を導入し、下記のようにします。</p>
 <p>ここで、$(p_{k1},\ldots,p_{kN})^T=\mathrm{p}_k~~(k=1,\ldots,K)$です。</p>
 <p>$$
-(\theta_{1n},\ldots,\theta_{Kn})^T = softmax(\mathrm{P}_n^T)~~~(n=1,\ldots,N) \tag{30} 
+(\theta_{1n},\ldots,\theta_{Kn})^T = softmax(\mathrm{P}_n^T)~~~(n=1,\ldots,N) \tag{30}
 $$</p>
 <p>ここで$(p_{1n},p_{2n},\ldots,p_{Kn})=\mathrm{P}_n$です。</p>
 <p>ガウス過程で推定する対象は、上記モデルの$\mathrm{P}$になります。多項ロジスティック回帰では、出力が任意の特定の値をとる確率を固定する必要があったので、それを踏まえて下記のようにおきます。</p>
@@ -545,7 +545,7 @@ transformed data{
   }
   for(n in 1:N1) x_i[n] = x1_i[n];  
   for(n in 1:N2) x_i[N1+n] = x2_i[n];
-  
+
 
 }
 
@@ -558,7 +558,7 @@ parameters{
 transformed parameters{
   vector[N] f[(K-1)];
   row_vector[K] p[N]; //ソフトマックス関数に投げる値
-  
+
   //この中でカーネル関数を定義、ガウス過程の関数fを作成
   {
     matrix[N,N] L_K[(K-1)];
@@ -566,7 +566,7 @@ transformed parameters{
     matrix[N,N]isotropic_correlation_kernel = rep_matrix(0,N,N);//初期値を0に設定。
     matrix[N,N] kernel_matrix[(K-1)];
     matrix[max(M),max(M)] PDUDE[J];
-    
+
     //compound symmetric correlation matrix を作成
     for(j in 1:J){
       for(n in 1:(max(M)-1)){
@@ -578,8 +578,8 @@ transformed parameters{
       }
       PDUDE[j][max(M),max(M)] = 1;
     }
-    
-    
+
+
     //isotropic_correlation_kernelを生成
     for(j in 1:J){
       for(n in 1:N){
@@ -588,7 +588,7 @@ transformed parameters{
         }
       }
     }
-    
+
     //linear_kernel_matrixを生成。切片項はisotropic_correlation_kernelで捉えることにした
     for(n in 1:N){
       for(m in1:N){
@@ -607,7 +607,7 @@ transformed parameters{
       f[k] = L_K[k] * eta[k];
     }
   }
-  
+
   // pの作成 1列目は0に固定 2列目以降に独立のガウス過程を指定
   for(n in 1:N){
      p[n,1] = 0;
@@ -621,7 +621,7 @@ model{
   //事前分布
   theta ~ student_t(4,0,2);
   C ~ normal(0,0.1);
-  
+
   //モデル部分
   for(k in 1:(K-1)){
     for(n in 1:N){
@@ -631,7 +631,7 @@ model{
   for(n in 1:N1){
     y[n] ~ categorical_logit(p[n]');
   }
-  
+
 }
 
 generated quantities{
@@ -665,7 +665,7 @@ library(makedummies)
 library(tidyr)
 library(dplyr)
 
-d2 &lt;- ml %&gt;% mutate(sesid = sesid[paste(ses)]) %&gt;% 
+d2 &lt;- ml %&gt;% mutate(sesid = sesid[paste(ses)]) %&gt;%
   mutate(progid = progid[paste(prog)]) %&gt;% mutate(write=(write-mean(write))/sd(write)) %&gt;% select(c(sesid, write, progid))
 
 #x1:入力点
@@ -736,7 +736,7 @@ transformed data{
   }
   for(n in 1:N1) x_i[n] = x1_i[n];  
   for(n in 1:N2) x_i[N1+n] = x2_i[n];
-  
+
   //inv_Iの作成
   for(n in 1:(max(M)-1)){
     inv_I[n,n] = 0;
@@ -759,34 +759,34 @@ parameters{
 transformed parameters{
   vector[N] f[(K-1)];
   row_vector[K] p[N]; //ソフトマックス関数に投げる値
-  
-  
+
+
   //この中でカーネル関数を定義、ガウス過程に従う関数fを作成
   {
     matrix[N,N] L_K[(K-1)]; //カーネル行列をコレスキー分解した行列L。（出力がとる値）-1の数だけ準備する
     matrix[N,N]linear_kernel; //線形カーネル
     matrix[N,N]distance_L2_01_kernel; //。ガウスカーネル×isotropic correlation カーネル。logスケールでL2距離と0-1距離の成分を含んでいる
     matrix[N,N] kernel_matrix[(K-1)]; //最終的に作成するカーネル関数
-    
-    
+
+
     //linear_kernelを生成
     for(n in 1:N){
       for(m in1:N){
         linear_kernel[n,m] = dot_product(x_i[n],x_i[m]);
       }
     }
-    
+
     //distanceL2_01_kernelを生成
     {
       matrix[N,N] distance_L2; //L2距離
       matrix[N,N] distance_01 = rep_matrix(0,N,N); //inv_Iに依存した0-1距離
-      
+
       for(n in 1:N){
         for(m in 1:N){
           distance_L2[n,m] = dot_self((x_i[n]-x_i[m]) ./ rho);
         }
       }
-      
+
       for(j in 1:J){
         for(n in 1:N){
           for(m in 1:N){
@@ -794,15 +794,15 @@ transformed parameters{
           }
         }
       }
-      
+
       for(n in 1:N){
         for(m in 1:N){
           distance_L2_01_kernel[n,m] = exp(-0.5 * distance_L2[n,m] -distance_01[n,m]);
         }
       }
     }
-    
-    
+
+
     //kernel_matrixを作成
     for(k in 1:(K-1)){
       kernel_matrix[k] = theta[1] * linear_kernel + theta[2] * distance_L2_01_kernel;
@@ -810,13 +810,13 @@ transformed parameters{
         kernel_matrix[k][n,n] += delta;
       }
     }
-    
+
     for(k in 1:(K-1)){
       L_K[k] = cholesky_decompose(kernel_matrix[k]);
       f[k] = L_K[k] * eta[k];
     }
   }
-  
+
   // pの作成 1列目は0に固定 2列目以降に独立のガウス過程を指定
   for(n in 1:N){
      p[n,1] = 0;
@@ -831,7 +831,7 @@ model{
   theta ~ student_t(4,1,2);
   rho ~ inv_gamma(0.1, 0.1);
   C ~ normal(0, 0.1);
-  
+
   //モデル部分
   for(k in 1:(K-1)){
     for(n in 1:N){
@@ -841,7 +841,7 @@ model{
   for(n in 1:N1){
     y[n] ~ categorical_logit(p[n]');
   }
-  
+
 }
 
 generated quantities{
@@ -857,8 +857,8 @@ generated quantities{
 <p>$$
 \theta_1 \sim Student\verb|_|t(4,1,2) ~~~\theta_1 \geq 1\\<br>
 \theta_2 \sim Student\verb|_|t(4,1,2) ~~~\theta_2 \geq 1\\<br>
-\rho \sim invGamma(0.1,0.1) \\<br>
-c \sim Normal(0,0.1)~~~0 \leq c \leq 0.9 
+\rho \sim invGamma(0.1,0.1)~~~0 \leq \rho \leq 0.9  \\<br>
+c \sim Normal(0,0.1)
 $$</p>
 <p>$\theta_1$、$\theta_2$については弱情報事前分布として、自由度4、期待値1、スケールパラメータ1の半t分布を採用しています。
 <!-- raw HTML omitted -->  <br>
@@ -888,7 +888,7 @@ p1 &lt;- mcmc_areas(as.matrix(fit_cate2),
 p2 &lt;- mcmc_areas(as.matrix(fit_cate2),
                 regex_pars = c(&quot;C&quot;,&quot;rho&quot;),prob=0.95, area_method = &quot;equal height&quot;) +
   scale_y_discrete(labels=c(&quot;c&quot;,&quot;rho&quot;)) +
-   theme_bw(base_size=12) 
+   theme_bw(base_size=12)
 library(gridExtra)
 
 g1 &lt;- ggplot_gtable(ggplot_build(p1))

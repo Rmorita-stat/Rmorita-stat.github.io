@@ -6,10 +6,19 @@
     <description>Recent content in Posts on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sat, 03 Oct 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 07 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/my-page/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>対応分析について</title>
+      <link>https://rmorita-stat.github.io/my-page/post/correspondenceanalysis/correspondenceanalysis/</link>
+      <pubDate>Sat, 07 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/post/correspondenceanalysis/correspondenceanalysis/</guid>
+      <description>はじめに この記事はStan Advent calendar12月12日にエントリーしている記事（未投稿）を補完するために先に作成した記事になります。 この記</description>
+    </item>
     
     <item>
       <title>モデリングと情報量基準その１～モデリングとは？～</title>

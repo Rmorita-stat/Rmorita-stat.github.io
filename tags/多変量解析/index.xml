@@ -6,17 +6,18 @@
     <description>Recent content in 多変量解析 on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
+    <lastBuildDate>Sat, 07 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/my-page/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>対応分析の同時付置にベイズ信頼区間をもたせる</title>
-      <link>https://rmorita-stat.github.io/my-page/post/correspbayes/corresp-bayes/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>対応分析について</title>
+      <link>https://rmorita-stat.github.io/my-page/post/correspondenceanalysis/correspondenceanalysis/</link>
+      <pubDate>Sat, 07 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/correspbayes/corresp-bayes/</guid>
-      <description>はじめに この記事はStan Advent calendar の記事ですか？ この記事では多変量解析の手法の一つである対応分析を取り上げます。 対応分析は多変量のカテゴリカルデ</description>
+      <guid>https://rmorita-stat.github.io/my-page/post/correspondenceanalysis/correspondenceanalysis/</guid>
+      <description>はじめに この記事はStan Advent calendar12月12日にエントリーしている記事（未投稿）を補完するために先に作成した記事になります。 この記</description>
     </item>
     
   </channel>
