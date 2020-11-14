@@ -6,7 +6,7 @@
     <description>Recent content in 回帰 on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sat, 11 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 12 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,18 +14,27 @@
     <item>
       <title>多項ロジスティック回帰・ガウス過程モデル</title>
       <link>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</link>
-      <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 12 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</guid>
       <description>はじめに 回帰に関する記事です。 以前の記事では、対象が3つ以上のクラスに分類されるとき、それぞれのクラスに属する確率を予測するモデルである多項</description>
     </item>
     
     <item>
+      <title>ガウス過程モデルの応用</title>
+      <link>https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/</link>
+      <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/</guid>
+      <description>はじめに 特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、前回の記事ではガウス過程回帰について取り</description>
+    </item>
+    
+    <item>
       <title>ガウス過程入門</title>
-      <link>https://rmorita-stat.github.io/my-page/post/gaussianprocessori/gaussianprocessori/</link>
+      <link>https://rmorita-stat.github.io/my-page/post/gaussianprocess/gaussianprocess/</link>
       <pubDate>Sun, 14 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/gaussianprocessori/gaussianprocessori/</guid>
+      <guid>https://rmorita-stat.github.io/my-page/post/gaussianprocess/gaussianprocess/</guid>
       <description>はじめに 今までに幾度かテーマにしていますが、回帰とよばれる問題があります。 例えば、車の速度とブレーキをかけてから車が止まるまでの距離について</description>
     </item>
     

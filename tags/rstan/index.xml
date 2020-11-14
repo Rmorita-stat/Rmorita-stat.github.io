@@ -6,7 +6,7 @@
     <description>Recent content in rstan on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sat, 11 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 12 Jul 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/my-page/tags/rstan/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,10 +14,19 @@
     <item>
       <title>多項ロジスティック回帰・ガウス過程モデル</title>
       <link>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</link>
-      <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 12 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</guid>
       <description>はじめに 回帰に関する記事です。 以前の記事では、対象が3つ以上のクラスに分類されるとき、それぞれのクラスに属する確率を予測するモデルである多項</description>
+    </item>
+    
+    <item>
+      <title>ガウス過程モデルの応用</title>
+      <link>https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/</link>
+      <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/</guid>
+      <description>はじめに 特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、前回の記事ではガウス過程回帰について取り</description>
     </item>
     
     <item>
@@ -36,6 +45,15 @@
       
       <guid>https://rmorita-stat.github.io/my-page/post/bayesintroduction/bayesintroduction/</guid>
       <description>はじめに 本記事では今後の記事でも頻繁に扱う予定のベイズ統計について理解してもらうため、その理論を簡単に説明します。 本記事の構成は以下の通りで</description>
+    </item>
+    
+    <item>
+      <title>対応分析の同時付置にベイズ信頼区間をもたせる</title>
+      <link>https://rmorita-stat.github.io/my-page/post/corresp-and-bayes/corresp-and-bayes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/my-page/post/corresp-and-bayes/corresp-and-bayes/</guid>
+      <description>はじめに この記事はStan Advent calendar12月12日にエントリーしている記事です。 この記事では多変量解析の一つである対応分析を題材にしま</description>
     </item>
     
   </channel>

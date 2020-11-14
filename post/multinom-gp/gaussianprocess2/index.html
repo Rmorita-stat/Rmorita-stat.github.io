@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/my-page/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/my-page/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/style.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/monokai-sublime.min.css">
+    <script src="https://rmorita-stat.github.io/my-page/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://rmorita-stat.github.io/my-page/"><img src="https://rmorita-stat.github.io/my-page/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/post" >BLOG</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/my-page/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2020.07.11 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">多ガウス過程モデルを自在に扱う</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <h1 id="はじめに">はじめに</h1>
+<p>特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、<a href="https://rmorita-stat.github.io/my-page/post/gaussianprocess/gaussianprocess/">前回の記事</a>では<strong>ガウス過程</strong>回帰について取り上げました。</p>
+<p>本記事ではガウス過程をさらに深堀りし、Stanなどでガウス過程を自在に扱うための土台を固めたいと思います。</p>
+<p>本記事の構成は以下の通りとします。特に以下2章は力を入れました。
+「<a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E6%BD%9C%E5%9C%A8%E5%A4%89%E6%95%B0%E3%83%A2%E3%83%87%E3%83%AB">ガウス過程潜在変数モデル</a>」の内容はStanの実装でガウス過程を様々なモデルに活用するために不可欠です。是非身に着けるべき！<br>
+「<a href="#%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%82%AB%E3%83%AB%E3%81%AA%E5%A4%89%E6%95%B0%E3%82%92%E7%94%A8%E3%81%84%E3%81%9F%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB">カテゴリカルな変数を用いたカーネル</a>」では名義尺度が変数として含まれる場合にもガウス過程で対応できるようにするための方法を説明しています。これも様々なデータにガウス過程を活用するための土台となるはず！</p>
+<!-- raw HTML omitted -->
+<ul>
+<li><a href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB">はじめに</a></li>
+<li><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E3%81%AE%E5%B0%8E%E5%85%A5">ガウス過程の導入</a></li>
+<li><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E6%BD%9C%E5%9C%A8%E5%A4%89%E6%95%B0%E3%83%A2%E3%83%87%E3%83%AB">ガウス過程潜在変数モデル</a>
+<ul>
+<li><a href="#%E5%A4%9A%E5%A4%89%E9%87%8F%E6%AD%A3%E8%A6%8F%E5%88%86%E5%B8%83%E3%81%AE%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AA%E3%83%B3%E3%82%B0">多変量正規分布のサンプリング</a></li>
+<li><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E6%BD%9C%E5%9C%A8%E5%A4%89%E6%95%B0%E3%83%A2%E3%83%87%E3%83%AB%E3%81%A8%E3%81%AF">ガウス過程潜在変数モデルとは</a></li>
+<li><a href="#stan%E3%81%A7%E3%81%AE%E5%AE%9F%E8%A3%85">Stanでの実装</a></li>
+</ul>
+</li>
+<li><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E3%81%AE%E4%BA%88%E6%B8%AC%E5%88%86%E5%B8%83">ガウス過程の予測分布</a></li>
+<li><a href="#%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%82%AB%E3%83%AB%E3%81%AA%E5%A4%89%E6%95%B0%E3%82%92%E7%94%A8%E3%81%84%E3%81%9F%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB">カテゴリカルな変数を用いたカーネル</a>
+<ul>
+<li><a href="#%E8%B3%AA%E7%9A%84%E5%A4%89%E6%95%B0%E3%81%8C1%E3%81%A4%E3%81%AE%E5%A0%B4%E5%90%88">質的変数が1つの場合</a></li>
+<li><a href="#%E8%B3%AA%E7%9A%84%E5%A4%89%E6%95%B0%E3%81%8C2%E3%81%A4%E4%BB%A5%E4%B8%8A%E3%81%AE%E5%A0%B4%E5%90%88">質的変数が2つ以上の場合</a></li>
+<li><a href="#%E5%88%B6%E7%B4%84%E3%81%AE%E3%81%82%E3%82%8Bpdude">制約のあるPDUDE</a></li>
+</ul>
+</li>
+<li><a href="#%E3%81%BE%E3%81%A8%E3%82%81">まとめ</a></li>
+</ul>
+<!-- raw HTML omitted -->
+<h1 id="ガウス過程の導入">ガウス過程の導入</h1>
+<p>まず、ガウス過程を用いたモデルについて一般化しておきます。
+<!-- raw HTML omitted -->  <br>
+入力の要素数を数を$I$とし、入力データの1サンプルを$\mathrm{x} = (x_1, \ldots, x_I)^T$と表記し、全入力を$N × I$行列$\mathrm{X}$を用いて$\mathrm{X} = (\mathrm{x_1}, \ldots, \mathrm{x_N})^T$とおきます。また出力データを$\mathrm{y} = (y_1, \ldots, y_N)^T$とおきます。</p>
+<p>ガウス過程モデルの一般式は以下になります。</p>
+<p>$$
+y(\mathrm{x}) = \mathrm{\beta}\mathrm{f}(\mathrm{x}) + \epsilon(\mathrm{x}) \tag{1}
+$$</p>
+<p>ここで$\mathrm{f} = (f_1(\mathrm{x}), \ldots, f_l(\mathrm{x}))$、$\mathrm{\beta} = (\beta_1, \ldots, \beta_l )$はそれぞれ、ガウス過程モデルとは別で設定された特徴ベクトルとその重みです。これらはガウス過程を適用する以前からデータにあてはめられたモデルになります。</p>
+<p>$\epsilon(\mathrm{x})$は右辺第一項のモデルで説明しきれなかった残差としての扱いですが、この残差がガウス過程に従うと仮定します。ガウス過程モデルは得られたデータに柔軟に近づこうとする挙動をとりますので、この性質を利用して右辺第一項で説明できなかった部分をガウス過程で補おうという目論見です。</p>
+<p>全入力が共通の標準偏差$\sigma$をもつように設定しておくと、</p>
+<p>$$
+\epsilon(\mathrm{x}) \sim   Normal(0, \sigma^2\mathrm{K}) \tag{2}
+$$</p>
+<p>上式では$\epsilon$が残差を説明するものであることから多変量正規分布の平均を0としています。また分散共分散行列$\mathrm{K}$は、ハイパーパラメータ${\phi}$を持つカーネル関数$k_{\phi}(\mathrm{x}_m, \mathrm{x}_n)$を要素に持つ$N$×$N$行列です($m,n = 1,\ldots,N$)。</p>
+<p>$$
+\mathrm{K}(m,n) = k_{\phi}(\epsilon(\mathrm{x}_m), \epsilon(\mathrm{x}_n)) \tag{3}
+$$</p>
+<p>各入力の標準偏差を$\sigma$で設定している為、$\mathrm{K}$の$(m,n)$成分は、$\epsilon(\mathrm{x}_m)$と$\epsilon(\mathrm{x}_n)$の相関に等しくなり、</p>
+<p>$$
+k_{\phi}(\epsilon(\mathrm{x}_m), \epsilon(\mathrm{x}_n)) = cor(\epsilon(\mathrm{x}_m), \epsilon(\mathrm{x}_n)) \tag{4}
+$$</p>
+<p>となります。</p>
+<p>ガウス過程では、カーネル関数によって$\mathrm{x}_m$と$\mathrm{x}_n$の距離を定める空間を決定し、入力$\mathrm{x}_m$と$\mathrm{x}_n$の距離によって出力$\epsilon(\mathrm{x}_m)$と$\epsilon(\mathrm{x}_n)$の近さを決定します。また、カーネル関数によって決まる値は、$cor(\epsilon(\mathrm{x}_m),\epsilon(\mathrm{x}_n))$と解釈することができる、ということです。</p>
+<h1 id="ガウス過程潜在変数モデル">ガウス過程潜在変数モデル</h1>
+<h2 id="多変量正規分布のサンプリング">多変量正規分布のサンプリング</h2>
+<p>$(2)$式で用いられる多変量正規分布について、ランダムにサンプルを得る方法を紹介します。</p>
+<p>平均0、分散共分散行列$\Sigma$の多変量正規分布からのサンプルを得る場合、まず</p>
+<p>$$
+\mathrm{\Sigma} = \mathrm{L}\mathrm{L}^T \tag{5}
+$$</p>
+<p>を満たす行列$L$を求めます。$(4)$式のような行列の分解は<strong>コレスキー分解</strong>と呼ばれます。</p>
+<p>次に、標準正規分布からの乱数$\mathrm{x} = (x_1, \ldots, x_N)$を生成します。</p>
+<p>$$
+x_n \sim Normal(0,1) ~~~ (n = 1, \ldots, N) \tag{6}
+$$</p>
+<p>$\mathrm{y} = \mathrm{L}\mathrm{x}$の分布は、</p>
+<p>$$
+p(\mathrm{x}) = \cfrac{1}{(\sqrt{2\pi}^N \sqrt{det\Sigma})}exp\left(-\cfrac{1}{2}(\mathrm{x}^T \mathrm{I}^{-1} \mathrm{x}) \right)  \propto exp\left(-\cfrac{1}{2}\mathrm{x}^T\mathrm{I}^{-1}\mathrm{x}\right) \tag{7}
+$$</p>
+<p>に$\mathrm{x} = \mathrm{L}^{-1}\mathrm{y}$を代入すると、変数変換による空間の単位当たり面積の変動を調整するヤコビアン$|\partial{\mathrm{y}}/\partial{\mathrm{x}}|$は定数だから、</p>
+<p>$$
+p(\mathrm{Lx})  \propto exp\left(-\cfrac{1}{2}\left(\mathrm{L}^{-1}\mathrm{y}\right)^T \mathrm{I}^{-1}\mathrm{L}^{-1}\mathrm{y}\right)
+\left|\cfrac{\partial{\mathrm{y}}}{\partial{\mathrm{x}}}\right|
+= exp\left(-\cfrac{1}{2}\mathrm{y}^{-1}\left(\mathrm{L}^{-1}\right)^T\mathrm{L}^{-1}\mathrm{y}\right)
+= exp\left(-\cfrac{1}{2}\mathrm{y}^{-1}\left(\mathrm{L}\mathrm{L}^T\right)^{-1}\mathrm{y}\right)
+= exp\left(-\cfrac{1}{2}\mathrm{y}^T\mathrm{\Sigma}^{-1}\mathrm{y}\right) \tag{8}
+$$</p>
+<p>となります。</p>
+<p>このことから、$Normal(0,\Sigma)$に従う乱数を生成するには、標準正規分布に従う$\mathrm{x}$をランダムに生成し、$y=\mathrm{Lx}$と変換すればよいと分かります。</p>
+<h2 id="ガウス過程潜在変数モデルとは">ガウス過程潜在変数モデルとは</h2>
+<p>モデルの残差$\epsilon(\mathrm{x})$がガウス過程に従うとした$(2)$式を、先ほど紹介した多変量正規分布の乱数生成法を用いて変形すると、</p>
+<p>$$
+\mathrm{K} = \mathrm{L}\mathrm{L}^T
+$$
+$$
+\eta_n \sim Normal(0,1) \tag{9}
+$$
+$$
+\epsilon({\mathrm{x}_n}) = \mathrm{L}\eta_n
+$$</p>
+<p>となります。
+このように、潜在変数$w_n$を用いたガウス過程は、<strong>ガウス過程潜在変数モデル</strong>(Latent variable GP)と呼ばれ、出力が正規分布でないとき等に有用です。</p>
+<h2 id="stanでの実装">Stanでの実装</h2>
+<p>以下、<a href="https://mc-stan.org/docs/2_22/stan-users-guide/fit-gp-section.html">Stanマニュアル</a>を引用してLatent variable GPの実装について軽く触れておきます。</p>
+<p>Latent variable GPのStanでの実装は以下のようになります。</p>
+<pre><code>data{
+  int&lt;lower=1&gt; N;
+  real x[N];
+  vector[N] y;
+}
+
+transformed data{
+  real delta = 1e-9;
+}
+
+parameters {
+  real&lt;lower=0&gt; rho;
+  real&lt;lower=0&gt; alpha;
+  real&lt;lower=0&gt; sigma;
+  vector[N] eta;
+}
+
+model {
+  vector[N] f;
+  {
+    matrix[N, N] L_K;
+    matrix[N, N] K = cov_exp_quad(x, alpha, rho);
+
+    // diagonal elements
+    for (n in 1:N)
+      K[n, n] = K[n, n] + delta;
+
+    L_K = cholesky_decompose(K);
+    f = L_K * eta;
+  }
+  eta ~ std_normal();
+  y ~ normal(f, sigma);
+}
+</code></pre>
+<p>ここで、<code>K = cov_exp_quad(x, alpha, rho)</code>はガウスカーネルをつくる便利な関数で、</p>
+<p>$$
+\mathrm{K}(m,n) =k_{\alpha, \rho}(\epsilon(\mathrm{x}_m),\epsilon(\mathrm{x}_n))
+=\alpha^2exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(\mathrm{x}_{m,i}-\mathrm{x}_{n,i})^2\right)  \tag{10}
+$$</p>
+<p>を要素に持つカーネル行列$\mathrm{K}$を作成してくれます。</p>
+<p>また、<code>for (n in 1:N) K[n, n] = K[n, n] + delta;</code>とすることで、カーネル行列の対角要素に微小な値を加えていますが、こうすることでカーネル行列の逆行列の計算を安定化させています。また、コレスキー分解はその対象が正定値行列であることが必須ですが、対角要素に微小量を加えることで、その行列が正定値行列であることを保証することができます。</p>
+<p>式$(9)$の3式の計算は、それぞれ<code>L_K = cholesky_decompose(K);</code>、<code>eta ~ std_normal();</code>、<code>f = L_K * eta;</code>と指定しています。</p>
+<p>上のコードでは、残差ではなく出力$\mathrm{y}$の平均値が$\mathrm{f} \sim Normal(0, \mathrm{K}_{\phi})$に従うと設定し、<code>y ~ Normal(f, sigma)</code>とすることで、平均$\mathrm{f}$の正規分布に従うと設定していますが、この部分をポアソン分布等他の分布にすることで、様々なモデルを構築することが出来ます。</p>
+<p>例えば、0か1のみをとる出力$\mathrm{y}$にベルヌーイ分布を仮定し、$y_n=1$となる確率$\mathrm{p} = (p_1, \dots, p_N)$を、入力$\mathrm{x}_n$のガウス過程を用いて説明する場合、</p>
+<p>$$
+\mathrm{y} \sim Binomial(\mathrm{p})
+$$
+$$
+\mathrm{p} = inverselogit(\mathrm{f})　\tag{11}
+$$
+$$
+\mathrm{f} \sim Normal(\mu, \mathrm{K})
+$$</p>
+<p>と表現でき、これをStanで実行する場合、以下のようになります。</p>
+<pre><code>data{
+  int&lt;lower=1&gt; N;
+  real x[N];
+  vector[N] y;
+  ...
+}
+
+parameters{
+  real mu; //muはpの期待値 観測データが近くに無い場合に漸近する値
+  ...
+}
+
+transformed parameters{
+  vector[N]&lt;lower=0, upper=1&gt; p;
+  ...
+  p = mu + f;
+  ...
+}
+...
+model {
+  mu ~ std_normal()
+  ...
+  y ~ bernoulli(p);
+}
+</code></pre>
+<h1 id="ガウス過程の予測分布">ガウス過程の予測分布</h1>
+<p>ガウス過程モデルにおいて、入力$\mathrm{X}$に含まれない値$\mathrm{X}^* = (\mathrm{x}^*_1,\ldots,\mathrm{x}_N^*)$に対応する出力の値$\mathrm{y}^* = (y^*_1, \ldots, y^*_M)$を予測したい場合、$\mathrm{y}$と$\mathrm{y}^*$の同時分布を次のようにすればよいです。</p>
+<p>$$
+\left(
+\begin{array}{ccc}
+y_1 \\<br>
+\vdots \\<br>
+y_N \\<br>
+y_1^* \\<br>
+\vdots \\<br>
+y_M^*
+\end{array}
+\right) \sim Normal \left(\vec{0},
+\left(
+\begin{array}{ccc}
+\mathrm{K} &amp; \mathrm{k}^* \\<br>
+\mathrm{k}^{*T} &amp; \mathrm{k}^{**}  \\<br>
+\end{array}
+\right)\right) \tag{12}
+$$</p>
+<p>ここで、$\mathrm{k}^*(n,m) = k_{\phi}(\mathrm{x}_n, \mathrm{x}^*_m)$、$\mathrm{k}^{**}(m,m) = k_{\phi}(\mathrm{x}_m^*, \mathrm{x}^*_m)$です。</p>
+<h1 id="カテゴリカルな変数を用いたカーネル">カテゴリカルな変数を用いたカーネル</h1>
+<p>今回対象にするデータについて、writeは量的変数でしたが、sesは連続的な値をとらず、絶対的な大小関係をもたない<a href="https://toukeigaku-jouhou.info/2019/06/09/qualitative-and-quantitative-data/">質的変数</a>で、特に(low、middle、high)の3つの独立した値をとる、<strong>カテゴリカルな変数</strong>でした。このように、量的変数と質的変数が入力に混在する場合、両方の性質を考慮した空間を定義することのできるカーネルを設定する必要があります。しかし、質的変数には「距離」の概念が無いため、ガウスカーネル等のように、各入力の「近接性」を再現するカーネルで対応することはできません。では、どのようにカーネル関数を設定すればよいのでしょうか。</p>
+<h2 id="質的変数が1つの場合">質的変数が1つの場合</h2>
+<p>まず、量的変数と質的変数を含んだ入力を$\mathrm{w} = (\mathrm{x}^T, \mathrm{z}^T)^T$とし、$\mathrm{x} = (x_1, \ldots, x_I)$、を量的変数$\mathrm{z} = (z_1, \ldots, z_J)$を質的変数とします。それに従い、$(1)$式、$(2)$式を</p>
+<p>$$
+y(\mathrm{w}) = \mathrm{\beta}\mathrm{f}(\mathrm{w}) + \epsilon(\mathrm{w}) \tag{1&rsquo;}
+$$</p>
+<p>$$
+\epsilon(\mathrm{z}) \sim  Normal(0, \sigma^2\mathrm{K}) \tag{2&rsquo;}
+$$</p>
+<p>としておきます。</p>
+<p>簡略のため、$m_1$個の値をとる一つの質的変数$z_1$について考えます。
+$\mathrm{w}= (\mathrm{x}^T, z_1) = (\mathrm{x}^T, u)$($u = 1,\ldots,m_1$)における$\mathrm{\epsilon}(\mathrm{x})$を、</p>
+<p>$$
+\mathrm{\epsilon}^*(\mathrm{x}) = \left(
+\begin{array}{ccc}
+\epsilon_1(\mathrm{x}) \\<br>
+\vdots \\<br>
+\epsilon_{m_1}(\mathrm{x})
+\end{array}
+\right) \tag{13}
+$$</p>
+<p>と定義します。すると、$\epsilon^*(\mathrm{x})$の各要素については、量的変数に関するカーネル関数で空間的距離を指定し、質的変数の影響については、$\epsilon^*(\mathrm{x})$の分散共分散行列を決定すれば、量的変数・質的変数双方の差異を考慮した相関関数$cor(\epsilon(\mathrm{w}_m),\epsilon(\mathrm{w}_n))$を指定できそうです。そこで、$\epsilon^*(\mathrm{x})$を</p>
+<p>$$
+\epsilon(\mathrm{x})^* = \mathrm{A}\mathrm{\eta}(\mathrm{x}) \tag{14}
+$$</p>
+<p>と推定することにします。</p>
+<p>ここで、$\mathrm{\eta}(\mathrm{x}) = (\eta_1(\mathrm{x}), \ldots, \eta_{m1}(\mathrm{x}))^T$は量的変数における「距離」を考慮する部分で、各要素がそれぞれ独立に、標準偏差$\sigma$、相関関数$\mathrm{K}$のガウス過程に従って生成されるものとします。</p>
+<p>また、$m_1×m_1$行列$\mathrm{A}$は質的変数の影響を考慮する部分で、単位行ベクトル$a_u$($a_ua_u^T = 1$、$u = 1, \ldots, m_1$)を用いて</p>
+<p>$$
+\mathrm{A} = \left(
+\begin{array}{ccc}
+a_1 \\<br>
+\vdots \\<br>
+a_{m1}
+\end{array}
+\right) \tag{15}
+$$</p>
+<p>とし、$\epsilon_i(\mathrm{x})$($i = 1,\ldots, m_1$)を単位行ベクトル$a_i$の指定する重みに基づく$\eta(\mathrm{x})$の線形和で表現することにします。</p>
+<p>すると、</p>
+<p>$$
+cor(\eta_{z_1m}(\mathrm{x}_n),\eta_{z_1n}(\mathrm{x}_m))=\left(
+\begin{array}{ccc}
+k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)&amp;0&amp;\cdots&amp;0 \\<br>
+0&amp;k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)&amp;\cdots&amp;0\\<br>
+\vdots&amp; \vdots&amp; \ddots&amp; \vdots \\<br>
+0&amp;0&amp;\cdots&amp;k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)
+\end{array}
+\right) \tag{16}
+$$</p>
+<p>($\eta_{i}(\mathrm{x}_n)$、$\eta_{i&rsquo;}(\mathrm{x}_n)$は$i=i'$のときのみ$k_{\phi}()$の相関をとる)だから、2つの入力$\mathrm{w}_i = (\mathrm{x}_i^T, z_i)^T$($i=m,n$)の相関関数$cor(\epsilon(\mathrm{w}_m), \epsilon(\mathrm{w}_n))$について、</p>
+<p>$$
+a_{z_1m}a_{z_1n}^Tk_{\phi}(\mathrm{x}_m, \mathrm{x}_n)=
+cor(a_{z_1m}\eta(\mathrm{x}_m),a_{z_1n}\eta(\mathrm{x}_n))=
+cor(\epsilon_{z_1m}(\mathrm{x}_m),\epsilon_{z_1n}(\mathrm{x}_n))=
+cor(\epsilon(\mathrm{w}_m),\epsilon(\mathrm{w}_n))\tag{17}
+$$</p>
+<p>が成り立ちます($zm,zn = 1, \ldots,m1$)。</p>
+<p>ここで、$\tau_{r,s} = a^T_ra_s$($r=zm, s=zn, r,s=1,\ldots,m_1,$)とおくと、半正定値行列$\mathrm{T} = \mathrm{A}\mathrm{A}^T$は、</p>
+<p>$$
+\mathrm{T} = \mathrm{A}\mathrm{A}^t =
+\left(
+\begin{array}{ccc}
+a_1 \\<br>
+\vdots \\<br>
+a_{m1}
+\end{array}
+\right)
+\left(
+\begin{array}{ccc}
+a_1 &amp;
+\ldots &amp;
+a_{m1}
+\end{array}
+\right)=
+\left(
+\begin{array}{ccc}
+1 &amp; a_1a_2 &amp; \cdots &amp; a_1a_{m1} \\<br>
+a_2a_1 &amp; 1 &amp; \cdots &amp; a_2a_{m1}  \\<br>
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\<br>
+a_{m1}a_1 &amp; a_{m1}a_{m2} &amp; \cdots &amp; 1
+\end{array}
+\right) \tag{18}
+$$</p>
+<p>と、$\tau_{r,s}$を$(r,s)$成分にもつ対角成分が1の行列(positive definite matrix with unit diagonal elements)になります。</p>
+<p>以降、この性質をもつ行列を<strong>PDUDE</strong>と書きます。</p>
+<p>以上のことから、</p>
+<p>$$
+\mathrm{T}(r,s)k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)=cor(\epsilon(\mathrm{w}_m),\epsilon(\mathrm{w}_n)) \tag{19}
+$$</p>
+<p>は、質的変数と量的変数の影響を考慮することのできる相関関数ととらえることができます。</p>
+<h2 id="質的変数が2つ以上の場合">質的変数が2つ以上の場合</h2>
+<p>一般的なケースとして、$J$個の質的変数$\mathrm{z}=(z_1,\ldots,z_J)^T$の場合を考えます。</p>
+<p>ここで、$z_j(j=1,\ldots,J)$は$1,\ldots,m_j$の値をとるものとします。すると、式$(19)$の拡張により、$\epsilon(\mathrm{w})$の相関は関数は以下のようになります。</p>
+<p>$$
+\prod_{j=1}^{J}\left( \tau_{z_{j,r,s}}k_{\phi}(\mathrm{x}_m,\mathrm{x}_n) \right)=cor(\epsilon(\mathrm{w}_m),\epsilon{\mathrm{w}_n}) \tag{20}
+$$</p>
+<p>$\tau_{j,r,s}$は、$J$番目のPDUDE$\mathrm{T}_j$の$(r,s)$成分です。</p>
+<p>特に、$k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)$に式$(10)$のガウスカーネルをもちいた場合、$(20)$式は以下のようになります。</p>
+<p>$$
+\prod_{j=1}^{J}\left( \tau_{z_{j,r,s}}k_{\phi}(\mathrm{x}_m,\mathrm{x}_n) \right)=
+\prod_{j=1}^{J}\left(\tau_{z_{j,r,s}}exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im},x_{in})^2\right)\right)=
+\left(\prod_{j=1}^{J}\tau_{z_{j,r,s}}\right)exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right) \tag{21}
+$$</p>
+<p>式$(21)$は、量的変数の影響は$exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right)$で考慮し、質的変数の影響はそれとは独立に$\left(\prod_{j=1}^{J}\tau_{z_{j,r,s}}\right)$で考慮する、という構造を持っています。パラメータ$\tau_{z_{j,r,s}}$は、質的変数$z_j$について$r=z_jm$をとる入力$\mathrm{w}_m$と、$s=z_jn$をとる入力$\mathrm{w}_n$の、$z_j$のみによる共通性(相関)への影響を反映する役割を担っています。なお、式$(21)$ではshapeパラメータ$\alpha^2$を考慮していませんが、これは$(2)$式でshapeパラメータの役割を$\sigma$が受け持っている為です。</p>
+<p>モデリングにおいては、$\tau_{z_{j,r,s}}$は正の値をとるように設定し、任意の2点の入力が無相関もしくは正の相関のみをとるようにします。</p>
+<h2 id="制約のあるpdude">制約のあるPDUDE</h2>
+<p>前節では、PDUDEについて制約を設けない相関行列を用いていました。柔軟なモデリングにおいてはこれで問題ないのですが、質的変数が順序尺度であったり、カテゴリカルな変数であったりするということがあらかじめ自明な場合は、PDUDEに制約を持たせることで、その情報をモデルに反映させることができます。ここでは、sesがカテゴリカルな変数であることから、質的変数がカテゴリカルな場合にPDUDEに設ける制約について説明します。</p>
+<p>結論からですが、$m$個の値をとる$z$がカテゴリカルな場合、下記の$\tau_{r,s}$を$(r,s)$成分に持つ等方性を持った$m×m$相関行列$\mathrm{T}$が用いられます。</p>
+<p>$$
+\tau_{r,s}= \begin{cases}
+c~~~(0&lt;c&lt;1)~~~\mathrm{if}~r\neq{s}\\<br>
+1~~~\mathrm{if}~r=s
+\end{cases}　\tag{22}
+$$</p>
+<p>$r=s$のとき、入力間の相関は$z$に関しては1、$r\neq{s}$のとき、c(一定)にする、ということです。
+$\mathrm{T}$は以下のように分解できます。</p>
+<p>$$
+\mathrm{T}=
+(1-c)
+\left(
+\begin{array}{ccc}
+1 &amp; 0 &amp; \cdots &amp; 0 \\<br>
+0 &amp; 1 &amp; \cdots &amp; 0  \\<br>
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\<br>
+0 &amp; 0 &amp; \cdots &amp; 1
+\end{array}
+\right)+
+c
+\left(
+\begin{array}{ccc}
+1 \\<br>
+1  \\<br>
+\vdots \\<br>
+1
+\end{array}
+\right)
+\left(
+\begin{array}{ccc}
+1&amp;1&amp;\cdots,1 \\<br>
+\end{array}
+\right) \tag{23}
+$$
+このとき、任意の$m×1$ベクトルaについて、
+$$
+a^T\mathrm{T}a=(1-c)a-Ta+c(a-T1)^2　&gt;0 \tag{24}
+$$
+だから、$\mathrm{T}$は正定値行列なので、PDUDEです。$\mathrm{T}$が正定値行列であることは結構重要で、各要素の値を出力するカーネル関数$k(\mathrm{z}_m,\mathrm{z}_n)$が何かしらの特徴ベクトル空間の内積を表現するために必要な条件です。このあたりの詳細は<a href="https://mathwords.net/gramgyoretu">こちら</a>などを見てください。また上記$\mathrm{}T$の各要素を出力する関数は<strong>isotropic correlation function</strong>と呼ばれ、isotropic correlation functionによる出力を要素に持つ行列は<strong>compound symmetric correlation matrix</strong>と呼ばれています。</p>
+<p>上記の$\mathrm{T}$をPDUDEに用いる場合、式$(21)$は下記のように変形できます。</p>
+<p>$$
+\left(\prod_{j=1}^{J}\tau_{z_{j,r,s}}\right)exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right)=
+\prod_{j=1}^{J}exp\left(-ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right)exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right)=
+exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right) \tag{25}
+$$</p>
+<p>ここで、$I[r\neq{s}]$は下記の関数になります。</p>
+<p>$$
+I[r\neq{s}]=\begin{cases}
+1~~~\mathrm{if}~r\neq{s}\\<br>
+0~~~\mathrm{if}~r=s
+\end{cases}　\tag{26}
+$$</p>
+<p>式$(25)$最後の項は、対数をとると</p>
+<p>$$
+log\left(exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right)\right)=
+-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\tag{27}
+$$</p>
+<p>となります。よって、対数スケールにおいて、量的変数についてはL2距離を、質的変数については0~1の値をとる距離を使用していることが分かります。</p>
+<p>以上、カテゴリカルな変数を用いたカーネルについて説明しました。参考文献は<a href="http://www2.isye.gatech.edu/~jeffwu/publications/gaussian_procmodels.pdf">こちら</a>になります。制約のあるPDUDEについては、今回紹介したもののほかにも順序尺度に対するPDUDE,グループ相関に対するPDUDE等紹介されています。</p>
+<h1 id="まとめ">まとめ</h1>
+<p>今回はガウス過程みまつわる理論を深堀りしてみました。<strong>ガウス過程潜在変数モデル</strong>、<strong>カテゴリカルな変数への対応</strong>の2点が重要です。ここで紹介した内容は、実際のデータへの応用ということで次回に繋げたいと思います。</p>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0">回帰</a></span>
+        
+        <span><a href="https://rmorita-stat.github.io/my-page/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B">ガウス過程</a></span>
+        
+        <span><a href="https://rmorita-stat.github.io/my-page/tags/rstan">rstan</a></span>
+        
+        <span><a href="https://rmorita-stat.github.io/my-page/tags/%E3%83%8E%E3%83%B3%E3%83%91%E3%83%A9%E3%83%A1%E3%83%88%E3%83%AA%E3%83%83%E3%82%AF%E3%83%99%E3%82%A4%E3%82%BA%E3%83%A2%E3%83%87%E3%83%AB">ノンパラメトリックベイズモデル</a></span>
+        
+        
+    </div>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計、ロードバイク、古墳が好きです。 </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.07.11 00:00 </div>
+            <div class="pn-el__2"> 多項ロジスティック回帰・ガウス過程モデル </div>
+        </div>
+    </a>
+    
+    
+    <a class="next" href="https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.07.12 00:00 </div>
+            <div class="pn-el__2"> 多項ロジスティック回帰・ガウス過程モデル </div>
+        </div>
+    </a>
+    
+</div>
+
+<footer>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+    });
+</script>
+<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  "HTML-CSS": {
+    availableFonts: ["TeX"]
+  }
+  });
+</script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2020
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://rmorita-stat.github.io/my-page/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
