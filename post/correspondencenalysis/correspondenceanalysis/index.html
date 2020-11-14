@@ -289,7 +289,8 @@ p &lt;- ggplot() + theme_light(base_size=11) +
   geom_text_repel(data=data.frame(x=rikishi_axis1, y=rikishi_axis2, label=rownames(smo_data)),
                   aes(x=x,y=y,label=label)) +
   geom_text_repel(data=data.frame(x=waza_axis1, y=waza_axis2, label=colnames(smo_data)),
-                  aes(x=x,y=y,label=label))
+                  aes(x=x,y=y,label=label)) +
+  labs(title=&quot;Correspondence Analysis&quot;, x=&quot;dim1&quot;, y=&quot;dim2&quot;)
 
 p
 </code></pre><p><img src="/my-page/post/CorrespondenceAnalysis/CAplot.png" alt=""></p>
