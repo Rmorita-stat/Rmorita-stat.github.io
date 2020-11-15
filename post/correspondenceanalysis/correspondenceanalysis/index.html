@@ -136,7 +136,7 @@ $$</p>
 <p>$p_{ij}$をそのまま使うのではなくその行・列の全体の割合で調整しているようです。この意味合いは次の$\mathcal{\chi}^2$距離について考えると理解できます。</p>
 <p>行項目$I$の$i_1$番目と、$i_2$番目の個体の間の$\mathcal{\chi}^2$距離は、</p>
 <p>$$
-\mathcal{\chi^2_{i_{1}i_{2}}} = \sqrt{\sum^{N}_{j=1}
+\chi^2_{i_{1}i_{2}} = \sqrt{\sum^{N}_{j=1}
 \cfrac{\left( \cfrac{p_{i_{1}j}}{p_{i_{1}.}} - \cfrac{p_{i_{2}j}}{p_{i_{2}.}}
 \right)^2}{p_{.j}}} = \sqrt{\sum^{N}_{j=1}
 \cfrac{\left( \cfrac{f_{i_{1}j}}{f_{i_{1}.}} - \cfrac{f_{i_{2}j}}{f_{i_{2}.}}
@@ -147,14 +147,14 @@ $$</p>
 <p>対応分析が$(1)$式で計算される行列の主成分分析であるということは、つまり、対応分析とは$(2)$式で定義された$\mathcal{\chi}^2$距離に関する変量の関係を最大限に説明できる軸を求め、それらの軸上に各項目を配置することで、項目間の関係性を視覚的に表示しようとする分析手法である、ということになります<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>。</p>
 <h2 id="行項目列項目の座標の求め方">行項目・列項目の座標の求め方</h2>
 <p>ここからは基本的に$X$に関する主成分分析についての話です。項目$J$についても同様の行列計算・固有値分解を実行することで軸・座標を得ることができます。ただ、項目$I$と項目$J$それぞれで同じ軸が得られるというところの理論がよくわかりません。ここではそのへんの話は「そういうもの」とさせてください…</p>
-<p>Xの$\left(i,j\right)$成分を$X_{ij}$と表記し、$\mathbf{1}_m = (1,\ldots,1) ∈ R^m$として</p>
+<p>$X$の$\left(i,j\right)$成分を$x_{ij}$と表記し、$\mathbf{1}_m = (1,\ldots,1) ∈ R^m$として</p>
 <p>$$
 \bar{X}  = \left(
 \begin{array}{ccc}
-\cfrac{1}{M}X_{.1} &amp; \cfrac{1}{M}X_{.2} &amp; \cdots &amp; \cfrac{1}{M}X_{.N} \\<br>
-\cfrac{1}{M}X_{.1} &amp; \ddots &amp; \cdots &amp; \cfrac{1}{M}X_{.N} \\<br>
+\cfrac{1}{M}\sum_{i=1}^{M}x_{i1} &amp; \cfrac{1}{M}\sum_{i=1}^{M}x_{i2} &amp; \cdots &amp; \cfrac{1}{M}\sum_{i=1}^{M}x_{iN} \\<br>
+\cfrac{1}{M}\sum_{i=1}^{M}x_{i1} &amp; \ddots &amp; \cdots &amp; \cfrac{1}{M}\sum_{i=1}^{M}x_{iN} \\<br>
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\<br>
-\cfrac{1}{M}X_{.1} &amp; \cfrac{1}{M}X_{.2} &amp; \cdots &amp; \cfrac{1}{M}X_{.N}
+\cfrac{1}{M}\sum_{i=1}^{M}x_{i1} &amp; \cfrac{1}{M}\sum_{i=1}^{M}x_{i2} &amp; \cdots &amp; \cfrac{1}{M}\sum_{i=1}^{M}x_{iN}
 \end{array}\right) = \cfrac{1}{m} \mathbf{1}_m^T \mathbf{1}_m \tag{3}
 $$</p>
 <p>とする<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>と、Xの分散共分散行列$Σ$は</p>
@@ -167,14 +167,14 @@ $$</p>
 Σ = \cfrac{1}{N}\left(X-\bar{X}\right)^T\left(X-\bar{X}\right) \tag{4&rsquo;}
 $$</p>
 <p>だろ、とはじパタで主成分分析を学んだ私は思ったのですが、$P_{I} = f_{i.}/Sum$であることを踏まえると、分割表で集計された1つのセルを1観測値とするのではなく、1つの観測事象を1観測値としたときの分散共分散行列を計算する、というような計算をしているっぽいです。錚々たる専門家集団から査読・Acceptされたであろう参考論文にそう書かれているので、ここでは$(4)$式を正としましょう…</p>
-<p>とにかく、$(4)$式の$\Sigma$について固有値問題を解いて、得られた固有値を最大固有値から順に$\lambda_{1},\lambda_{2}\ldots,\lambda_{N}$、これらに対応する固有ベクトルを順に$l_1,l_2,\ldots,l_N$とします。これらを用いて、第$k$主成分ベクトルによる項目$I$の数量化スコア$z_{k} = (z_{1k}, \ldots, z_{Nk})$を計算します。</p>
+<p>とにかく、$(4)$式の$\Sigma$について固有値問題を解いて、得られた固有値を最大固有値から順に$\lambda_{1},\lambda_{2}\ldots,\lambda_{N}$、これらに対応する固有ベクトルを順に$\boldsymbol{l}_1,\boldsymbol{l}_2,\boldsymbol,\boldsymbol{l}_N$とします。これらを用いて、第$k$主成分ベクトルによる項目$I$の数量化スコア$\boldsymbol{z}_{k} = (z_{1k}, \ldots, z_{Nk})$を計算します。</p>
 <p>$$
-z_k = Xl_k = P_I^{-1}P_{IJ}P_{J}^{-1/2}l_k　\tag{5}
+\boldsymbol{z} _{k} = X \boldsymbol{l} _{k} = P _{I}^{-1} P _{IJ} P _{j}^{-1/2} \boldsymbol{l} _{k} 　\tag{5}
 $$</p>
 <p>これは主成分分析のスコアの計算と同じですね。純粋に項目$I$について主成分ベクトルに対する写像を得ています。</p>
-<p>項目$J$の数量化スコア$z^{*}_k$は、項目$I$と同様にして計算することもできますが、項目$I$の数量化スコアから求めることもできるようです。証明は未確認ですが、この式を信用していくことにします。</p>
+<p>項目$J$の数量化スコア$\boldsymbol{z}^{*}_k$は、項目$I$と同様にして計算することもできますが、項目$I$の数量化スコアから求めることもできるようです。証明は未確認ですが、この式を信用していくことにします。</p>
 <p>$$
-z_k^* = \cfrac{1}{\sqrt{λ_k}}P_J^{-1}P_{IJ}z_k \tag{6}
+\boldsymbol{z}_k^* = \cfrac{1}{\sqrt{λ_k}}P_J^{-1}P_{IJ}\boldsymbol{z}_k \tag{6}
 $$</p>
 <p>$(5)$式および$(6)$式により得られた数量化スコアを同じ図の中に付置したものを同時付置図といい、同時付置図をもとに項目間の関係性をみることになります。</p>
 <h2 id="得られた軸の性質">得られた軸の性質</h2>
@@ -402,19 +402,46 @@ p
 </div>
 
 <footer>
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
-    });
+  <script type="text/javascript">
+ MathJax = {
+   tex: {
+     inlineMath: [['$','$'], ['\\(','\\)']],
+     processEscapes: true,
+     tags: "ams",
+     autoload: {
+       color: [],
+       colorV2: ['color']
+     },
+     packages: {'[+]': ['noerrors']}
+   },
+   chtml: {
+     matchFontHeight: true,
+     displayAlign: "left",
+     displayIndent: "2em"
+   },
+   options: {
+     skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+     renderActions: {
+        
+       find_script_mathtex: [10, function (doc) {
+         for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+           const display = !!node.type.match(/; *mode=display/);
+           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+           const text = document.createTextNode('');
+           node.parentNode.replaceChild(text, node);
+           math.start = {node: text, delim: '', n: 0};
+           math.end = {node: text, delim: '', n: 0};
+           doc.math.push(math);
+         }
+       }, '']
+     }
+   },
+   loader: {
+     load: ['[tex]/noerrors']
+   }
+ };
 </script>
-<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-  "HTML-CSS": {
-    availableFonts: ["TeX"]
-  }
-  });
-</script>
+<script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
 </footer>
 
 </div>
