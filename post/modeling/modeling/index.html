@@ -11,7 +11,8 @@
     <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/my-page/images/logo2.png" />
     <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/my-page/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/monokai-sublime.min.css">
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
     <script src="https://rmorita-stat.github.io/my-page/js/highlight.min.js"></script>
     <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
     
@@ -86,11 +87,10 @@
 <p>統計解析ではデータが生成されるメカニズムを組み立てることでデータの解釈を進めていきます。このような活動をモデリングと呼んでいます。ただし、あるデータに対する数理モデルの候補は通常一つではありません。</p>
 <p>例として、今回は回帰分析等のサンプルデータとしてよく用いられるアヤメデータを用います。
 アヤメデータにはいくつかの変数がありますが、<code>GGally::ggpairs()</code>で一気に視覚化・相関係数を算出してみます。これぞ業務効率化。</p>
-<pre><code>library(GGally)
-p &lt;- GGally::ggpairs(iris, aes(colour=Species))
-p
-</code></pre>
-<p><img src="/my-page/post/modeling/unnamed-chunk-1-1.png" alt=""></p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">GGally</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="n">GGally</span><span class="o">::</span><span class="nf">ggpairs</span><span class="p">(</span><span class="n">iris</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">colour</span><span class="o">=</span><span class="n">Species</span><span class="p">))</span>
+<span class="n">p</span>
+</code></pre></div><p><img src="/my-page/post/modeling/unnamed-chunk-1-1.png" alt=""></p>
 <p>結果を見ると、花びらの長さ（Peral.Length）と幅（Petal.Width）には強い正の相関（0.963）があることが分かります。他にも様々な関係性が確認できますが、以降では花びらの長さを説明するためのモデルを構築していきます。</p>
 <h2 id="モデル1">モデル1</h2>
 <p>はじめは最も単純なモデルから。まずは花びらの幅のみで花びらの長さを説明する式です。</p>
@@ -114,52 +114,50 @@ $$</p>
 <p>よって、$(2)$式は確率変数$Y_n$が平均$\mu_n$、標準偏差$\sigma$の正規分布に従うことを意味します。 <br>
 さらに$(1)$式では$\mu_n$が$\alpha x_n + \beta$という$x$を用いた線形予測子によって計算されるとしています。</p>
 <p>ちなみに先に挙げた式を用いて平均0、標準偏差1の正規分布の確率密度関数を視覚化すると、以下のようになります。</p>
-<pre><code>library(ggplot2)
-x &lt;- seq(-5,5,0.1)
-y &lt;- (1/sqrt(2*pi))*exp(-x^2/2)
-p &lt;- ggplot(data=data.frame(X=x,Y=y)) + theme_light()+
-  geom_line(aes(x=X,y=Y)) + xlab(NULL) + ylab(NULL)
-p
-</code></pre>
-<p><img src="/my-page/post/modeling/unnamed-chunk-1-0.png" alt=""></p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">-5</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">0.1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="kc">pi</span><span class="p">))</span><span class="o">*</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x^2</span><span class="o">/</span><span class="m">2</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">()</span><span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">))</span> <span class="o">+</span> <span class="nf">xlab</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span> <span class="o">+</span> <span class="nf">ylab</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span>
+<span class="n">p</span>
+</code></pre></div><p><img src="/my-page/post/modeling/unnamed-chunk-1-0.png" alt=""></p>
 <p>このように、正規分布は左右対称であり、平均と標準偏差自体がパラメータとなる使いやすい分布であるため、様々な統計解析に活用されます。最もよく用いられるのは、今回の例のように連続型変数の誤差の分布を仮定するときではないだろうか？</p>
 <p><code>glm()</code>を用いてこのモデルのパラメータを推測した結果が以下になります。</p>
-<pre><code>library(ggeffects)
-res &lt;- glm(data=iris, formula = Petal.Length ~ Petal.Width, family=gaussian)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">ggeffects</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="n">formula</span> <span class="o">=</span> <span class="n">Petal.Length</span> <span class="o">~</span> <span class="n">Petal.Width</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">gaussian</span><span class="p">)</span>
 
-summary(res)
+<span class="nf">summary</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 
-##
-## Call:
-## glm(formula = Petal.Length ~ Petal.Width, family = gaussian,
-##     data = iris)
-##
-## Deviance Residuals:
-##      Min        1Q    Median        3Q       Max  
-## -1.33542  -0.30347  -0.02955   0.25776   1.39453  
-##
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  1.08356    0.07297   14.85   &lt;2e-16 ***
-## Petal.Width  2.22994    0.05140   43.39   &lt;2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-##
-## (Dispersion parameter for gaussian family taken to be 0.2286808)
-##
-##     Null deviance: 464.325  on 149  degrees of freedom
-## Residual deviance:  33.845  on 148  degrees of freedom
-## AIC: 208.35
-##
-## Number of Fisher Scoring iterations: 2
+<span class="c1">##</span>
+<span class="c1">## Call:</span>
+<span class="c1">## glm(formula = Petal.Length ~ Petal.Width, family = gaussian,</span>
+<span class="c1">##     data = iris)</span>
+<span class="c1">##</span>
+<span class="c1">## Deviance Residuals:</span>
+<span class="c1">##      Min        1Q    Median        3Q       Max  </span>
+<span class="c1">## -1.33542  -0.30347  -0.02955   0.25776   1.39453  </span>
+<span class="c1">##</span>
+<span class="c1">## Coefficients:</span>
+<span class="c1">##             Estimate Std. Error t value Pr(&gt;|t|)    </span>
+<span class="c1">## (Intercept)  1.08356    0.07297   14.85   &lt;2e-16 ***</span>
+<span class="c1">## Petal.Width  2.22994    0.05140   43.39   &lt;2e-16 ***</span>
+<span class="c1">## ---</span>
+<span class="c1">## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="c1">##</span>
+<span class="c1">## (Dispersion parameter for gaussian family taken to be 0.2286808)</span>
+<span class="c1">##</span>
+<span class="c1">##     Null deviance: 464.325  on 149  degrees of freedom</span>
+<span class="c1">## Residual deviance:  33.845  on 148  degrees of freedom</span>
+<span class="c1">## AIC: 208.35</span>
+<span class="c1">##</span>
+<span class="c1">## Number of Fisher Scoring iterations: 2</span>
 
-res_p &lt;- ggeffects::ggpredict(res, terms=&quot;Petal.Width&quot;)
-ggplot() + theme_light(base_size=11) +
-  geom_point(data=iris, aes(x=Petal.Width, y=Petal.Length), shape=1) +
-  geom_line(data=res_p, aes(x=x, y=predicted)) +
-  geom_ribbon(data=res_p, aes(x=x, ymin=conf.low, ymax=conf.high), alpha=0.1)
-</code></pre>
-<p><img src="/my-page/post/modeling/unnamed-chunk-3-1.png" alt=""></p>
+<span class="n">res_p</span> <span class="o">&lt;-</span> <span class="n">ggeffects</span><span class="o">::</span><span class="nf">ggpredict</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">terms</span><span class="o">=</span><span class="s">&#34;Petal.Width&#34;</span><span class="p">)</span>
+<span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Petal.Width</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Petal.Length</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">predicted</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">conf.low</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">conf.high</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0.1</span><span class="p">)</span>
+</code></pre></div><p><img src="/my-page/post/modeling/unnamed-chunk-3-1.png" alt=""></p>
 <p>結果がいろいろと書いてありますが、今回は<code>Coefficients</code>のところから、構築したモデルに対する以下の結果を確認するのみとします(Devianceなどについて復習するのが面倒になった顔)。信頼区間の算出方法も実はよくわかっていません…。ベイズ的なアプローチならこのあたりの理論を事後分布で回避できるのに…</p>
 <p>$$
 \mu_n = 1.08356 X_n + 2.22994
@@ -180,48 +178,48 @@ $$
 n = 1,2,\ldots,N
 $$</p>
 <p>説明変数に$Versicolor$と$Virginia$を追加しました。これらはアヤメの種類を指しますが、$n=1,2,3&hellip;$としたときに種類がそれぞれに該当したときのみ1をとり、そうでない場合は0をとります。カテゴリカルな説明変数は<strong>ダミー変数</strong>と呼ばれ、通常このような対応をとります。</p>
-<pre><code>res &lt;- glm(data=iris, formula = Petal.Length ~ Petal.Width + Species, family=gaussian)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">res</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="n">formula</span> <span class="o">=</span> <span class="n">Petal.Length</span> <span class="o">~</span> <span class="n">Petal.Width</span> <span class="o">+</span> <span class="n">Species</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">gaussian</span><span class="p">)</span>
 
-summary(res)
+<span class="nf">summary</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 
-##
-## Call:
-## glm(formula = Petal.Length ~ Petal.Width + Species, family = gaussian,
-##     data = iris)
-##
-## Deviance Residuals:
-##      Min        1Q    Median        3Q       Max  
-## -1.02977  -0.22241  -0.01514   0.18180   1.17449  
-##
-## Coefficients:
-##                   Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)        1.21140    0.06524  18.568  &lt; 2e-16 ***
-## Petal.Width        1.01871    0.15224   6.691 4.41e-10 ***
-## Speciesversicolor  1.69779    0.18095   9.383  &lt; 2e-16 ***
-## Speciesvirginica   2.27669    0.28132   8.093 2.08e-13 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-##
-## (Dispersion parameter for gaussian family taken to be 0.1426948)
-##
-##     Null deviance: 464.325  on 149  degrees of freedom
-## Residual deviance:  20.833  on 146  degrees of freedom
-## AIC: 139.57
-##
-## Number of Fisher Scoring iterations: 2
+<span class="c1">##</span>
+<span class="c1">## Call:</span>
+<span class="c1">## glm(formula = Petal.Length ~ Petal.Width + Species, family = gaussian,</span>
+<span class="c1">##     data = iris)</span>
+<span class="c1">##</span>
+<span class="c1">## Deviance Residuals:</span>
+<span class="c1">##      Min        1Q    Median        3Q       Max  </span>
+<span class="c1">## -1.02977  -0.22241  -0.01514   0.18180   1.17449  </span>
+<span class="c1">##</span>
+<span class="c1">## Coefficients:</span>
+<span class="c1">##                   Estimate Std. Error t value Pr(&gt;|t|)    </span>
+<span class="c1">## (Intercept)        1.21140    0.06524  18.568  &lt; 2e-16 ***</span>
+<span class="c1">## Petal.Width        1.01871    0.15224   6.691 4.41e-10 ***</span>
+<span class="c1">## Speciesversicolor  1.69779    0.18095   9.383  &lt; 2e-16 ***</span>
+<span class="c1">## Speciesvirginica   2.27669    0.28132   8.093 2.08e-13 ***</span>
+<span class="c1">## ---</span>
+<span class="c1">## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="c1">##</span>
+<span class="c1">## (Dispersion parameter for gaussian family taken to be 0.1426948)</span>
+<span class="c1">##</span>
+<span class="c1">##     Null deviance: 464.325  on 149  degrees of freedom</span>
+<span class="c1">## Residual deviance:  20.833  on 146  degrees of freedom</span>
+<span class="c1">## AIC: 139.57</span>
+<span class="c1">##</span>
+<span class="c1">## Number of Fisher Scoring iterations: 2</span>
 
-res_p &lt;- ggeffects::ggpredict(res, terms=c(&quot;Petal.Width[all]&quot;,&quot;Species&quot;), rawdata=T)
+<span class="n">res_p</span> <span class="o">&lt;-</span> <span class="n">ggeffects</span><span class="o">::</span><span class="nf">ggpredict</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">terms</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;Petal.Width[all]&#34;</span><span class="p">,</span><span class="s">&#34;Species&#34;</span><span class="p">),</span> <span class="n">rawdata</span><span class="o">=</span><span class="bp">T</span><span class="p">)</span>
 
-library(RColorBrewer)
-col=brewer.pal(3,&quot;Set1&quot;)
+<span class="nf">library</span><span class="p">(</span><span class="n">RColorBrewer</span><span class="p">)</span>
+<span class="n">col</span><span class="o">=</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="s">&#34;Set1&#34;</span><span class="p">)</span>
 
-ggplot() + theme_light(base_size=11) +
-  geom_point(data=iris, aes(x=Petal.Width, y=Petal.Length, colour=Species), shape=1) +
-  geom_line(data=res_p, aes(x=x, y=predicted, colour=group)) +
-  geom_ribbon(data=res_p, aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=0.3) +
-    scale_fill_manual(values=col) + scale_color_manual(values=col)
-</code></pre>
-<p><img src="/my-page/post/modeling/unnamed-chunk-4-1.png" alt=""></p>
+<span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Petal.Width</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Petal.Length</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">Species</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">predicted</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">conf.low</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">conf.high</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">group</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0.3</span><span class="p">)</span> <span class="o">+</span>
+    <span class="nf">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span> <span class="o">+</span> <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+
+</code></pre></div><p><img src="/my-page/post/modeling/unnamed-chunk-4-1.png" alt=""></p>
 <p>推定結果は以下の通りです。</p>
 <p>$$
 \mu_n = 1.01871 X_n + 1.69779 Versicolor + 2.27669 Virginica + 1.21140
@@ -243,48 +241,47 @@ $$
 $$
 n = 1,2,\ldots,N
 $$</p>
-<pre><code>res &lt;- glm(data=iris, formula = Petal.Length ~ Petal.Width + Species, family=Gamma(link=&quot;log&quot;))
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">res</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="n">formula</span> <span class="o">=</span> <span class="n">Petal.Length</span> <span class="o">~</span> <span class="n">Petal.Width</span> <span class="o">+</span> <span class="n">Species</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="nf">Gamma</span><span class="p">(</span><span class="n">link</span><span class="o">=</span><span class="s">&#34;log&#34;</span><span class="p">))</span>
 
-summary(res)
+<span class="nf">summary</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 
-##
-## Call:
-## glm(formula = Petal.Length ~ Petal.Width + Species, family = Gamma(link = &quot;log&quot;),
-##     data = iris)
-##
-## Deviance Residuals:
-##      Min        1Q    Median        3Q       Max  
-## -0.34682  -0.05608  -0.00637   0.05856   0.28685  
-##
-## Coefficients:
-##                   Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)        0.31996    0.01716  18.643  &lt; 2e-16 ***
-## Petal.Width        0.24062    0.04005   6.008 1.43e-08 ***
-## Speciesversicolor  0.80728    0.04760  16.960  &lt; 2e-16 ***
-## Speciesvirginica   0.90676    0.07400  12.253  &lt; 2e-16 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-##
-## (Dispersion parameter for Gamma family taken to be 0.009874458)
-##
-##     Null deviance: 44.6546  on 149  degrees of freedom
-## Residual deviance:  1.4566  on 146  degrees of freedom
-## AIC: 93.256
-##
-## Number of Fisher Scoring iterations: 4
+<span class="c1">##</span>
+<span class="c1">## Call:</span>
+<span class="c1">## glm(formula = Petal.Length ~ Petal.Width + Species, family = Gamma(link = &#34;log&#34;),</span>
+<span class="c1">##     data = iris)</span>
+<span class="c1">##</span>
+<span class="c1">## Deviance Residuals:</span>
+<span class="c1">##      Min        1Q    Median        3Q       Max  </span>
+<span class="c1">## -0.34682  -0.05608  -0.00637   0.05856   0.28685  </span>
+<span class="c1">##</span>
+<span class="c1">## Coefficients:</span>
+<span class="c1">##                   Estimate Std. Error t value Pr(&gt;|t|)    </span>
+<span class="c1">## (Intercept)        0.31996    0.01716  18.643  &lt; 2e-16 ***</span>
+<span class="c1">## Petal.Width        0.24062    0.04005   6.008 1.43e-08 ***</span>
+<span class="c1">## Speciesversicolor  0.80728    0.04760  16.960  &lt; 2e-16 ***</span>
+<span class="c1">## Speciesvirginica   0.90676    0.07400  12.253  &lt; 2e-16 ***</span>
+<span class="c1">## ---</span>
+<span class="c1">## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="c1">##</span>
+<span class="c1">## (Dispersion parameter for Gamma family taken to be 0.009874458)</span>
+<span class="c1">##</span>
+<span class="c1">##     Null deviance: 44.6546  on 149  degrees of freedom</span>
+<span class="c1">## Residual deviance:  1.4566  on 146  degrees of freedom</span>
+<span class="c1">## AIC: 93.256</span>
+<span class="c1">##</span>
+<span class="c1">## Number of Fisher Scoring iterations: 4</span>
 
-res_p &lt;- ggeffects::ggpredict(res, terms=c(&quot;Petal.Width[all]&quot;,&quot;Species&quot;), rawdata=T)
+<span class="n">res_p</span> <span class="o">&lt;-</span> <span class="n">ggeffects</span><span class="o">::</span><span class="nf">ggpredict</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">terms</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;Petal.Width[all]&#34;</span><span class="p">,</span><span class="s">&#34;Species&#34;</span><span class="p">),</span> <span class="n">rawdata</span><span class="o">=</span><span class="bp">T</span><span class="p">)</span>
 
-library(RColorBrewer)
-col=brewer.pal(3,&quot;Set1&quot;)
+<span class="nf">library</span><span class="p">(</span><span class="n">RColorBrewer</span><span class="p">)</span>
+<span class="n">col</span><span class="o">=</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="s">&#34;Set1&#34;</span><span class="p">)</span>
 
-ggplot() + theme_light(base_size=11) +
-  geom_point(data=iris, aes(x=Petal.Width, y=Petal.Length, colour=Species), shape=1) +
-  geom_line(data=res_p, aes(x=x, y=predicted, colour=group)) +
-  geom_ribbon(data=res_p, aes(x=x, ymin=conf.low, ymax=conf.high, fill=group), alpha=0.3) +
-    scale_fill_manual(values=col) + scale_color_manual(values=col)
-</code></pre>
-<p><img src="/my-page/post/modeling/unnamed-chunk-5-1.png" alt=""></p>
+<span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Petal.Width</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Petal.Length</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">Species</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">predicted</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">conf.low</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">conf.high</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">group</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0.3</span><span class="p">)</span> <span class="o">+</span>
+    <span class="nf">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span> <span class="o">+</span> <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+</code></pre></div><p><img src="/my-page/post/modeling/unnamed-chunk-5-1.png" alt=""></p>
 <p>推定結果は以下の通りです。</p>
 <p>$$
 \mu_n = 0.24062 x_{n} + 0.80728 Versicolor + 0.90672 Virginia + 0.31996

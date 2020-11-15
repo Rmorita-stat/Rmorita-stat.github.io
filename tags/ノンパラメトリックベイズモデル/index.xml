@@ -17,7 +17,7 @@
       <pubDate>Sun, 12 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</guid>
-      <description>はじめに 回帰に関する記事です。 以前の記事では、対象が3つ以上のクラスに分類されるとき、それぞれのクラスに属する確率を予測するモデルである多項</description>
+      <description>はじめに いい夢の色は緑色だそうだ。私もうさぎさんにとっての牧草色の夢を見ることもありますが、現実は柵に引っかかってばかりです。 さて、回帰に関</description>
     </item>
     
     <item>
@@ -26,7 +26,7 @@
       <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/</guid>
-      <description>はじめに 特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、前回の記事ではガウス過程回帰について取り</description>
+      <description>はじめに 前回の記事では、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、ガウス過程回帰について取</description>
     </item>
     
   </channel>

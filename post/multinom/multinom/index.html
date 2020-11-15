@@ -11,7 +11,8 @@
     <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/my-page/images/logo2.png" />
     <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/my-page/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/monokai-sublime.min.css">
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
     <script src="https://rmorita-stat.github.io/my-page/js/highlight.min.js"></script>
     <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
     
@@ -139,41 +140,40 @@ $$</p>
 <p>本記事は<a href="https://stats.idre.ucla.edu/r/dae/multinomial-logistic-regression/">こちらのページ</a>を参考に作成しました。内容的にはほとんど同じで、つまりただ真似してやってみただけです…。</p>
 <h1 id="データの入手と内容の確認">データの入手と内容の確認</h1>
 <p>SPSS、Stata等に蓄積されているデータをダウンロードするためのパッケージ<strong>foreign</strong>を使ってデータを入手し、簡単に内容を確認しておきます。</p>
-<pre><code>library(foreign)
-ml &lt;- read.dta(&quot;https://stats.idre.ucla.edu/stat/data/hsbdemo.dta&quot;)
-head(ml)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">foreign</span><span class="p">)</span>
+<span class="n">ml</span> <span class="o">&lt;-</span> <span class="nf">read.dta</span><span class="p">(</span><span class="s">&#34;https://stats.idre.ucla.edu/stat/data/hsbdemo.dta&#34;</span><span class="p">)</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">ml</span><span class="p">)</span>
 
-##    id female    ses schtyp     prog read write math science socst       honors
-## 1  45 female    low public vocation   34    35   41      29    26 not enrolled
-## 2 108   male middle public  general   34    33   41      36    36 not enrolled
-## 3  15   male   high public vocation   39    39   44      26    42 not enrolled
-## 4  67   male    low public vocation   37    37   42      33    32 not enrolled
-## 5 153   male middle public vocation   39    31   40      39    51 not enrolled
-## 6  51 female   high public  general   42    36   42      31    39 not enrolled
-##   awards cid
-## 1      0   1
-## 2      0   1
-## 3      0   1
-## 4      0   1
-## 5      0   1
-## 6      0   1
+<span class="c1">##    id female    ses schtyp     prog read write math science socst       honors</span>
+<span class="c1">## 1  45 female    low public vocation   34    35   41      29    26 not enrolled</span>
+<span class="c1">## 2 108   male middle public  general   34    33   41      36    36 not enrolled</span>
+<span class="c1">## 3  15   male   high public vocation   39    39   44      26    42 not enrolled</span>
+<span class="c1">## 4  67   male    low public vocation   37    37   42      33    32 not enrolled</span>
+<span class="c1">## 5 153   male middle public vocation   39    31   40      39    51 not enrolled</span>
+<span class="c1">## 6  51 female   high public  general   42    36   42      31    39 not enrolled</span>
+<span class="c1">##   awards cid</span>
+<span class="c1">## 1      0   1</span>
+<span class="c1">## 2      0   1</span>
+<span class="c1">## 3      0   1</span>
+<span class="c1">## 4      0   1</span>
+<span class="c1">## 5      0   1</span>
+<span class="c1">## 6      0   1</span>
 
-with(ml, table(ses, prog))
+<span class="nf">with</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span> <span class="nf">table</span><span class="p">(</span><span class="n">ses</span><span class="p">,</span> <span class="n">prog</span><span class="p">))</span>
 
-##         prog
-## ses      general academic vocation
-##   low         16       19       12
-##   middle      20       44       31
-##   high         9       42        7
+<span class="c1">##         prog</span>
+<span class="c1">## ses      general academic vocation</span>
+<span class="c1">##   low         16       19       12</span>
+<span class="c1">##   middle      20       44       31</span>
+<span class="c1">##   high         9       42        7</span>
 
-with(ml, do.call(rbind, tapply(write, prog, function(x) c(M=mean(x), SD=sd(x)))))
+<span class="nf">with</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span> <span class="nf">do.call</span><span class="p">(</span><span class="n">rbind</span><span class="p">,</span> <span class="nf">tapply</span><span class="p">(</span><span class="n">write</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="nf">c</span><span class="p">(</span><span class="n">M</span><span class="o">=</span><span class="nf">mean</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">SD</span><span class="o">=</span><span class="nf">sd</span><span class="p">(</span><span class="n">x</span><span class="p">)))))</span>
 
-##                 M       SD
-## general  51.33333 9.397775
-## academic 56.25714 7.943343
-## vocation 46.76000 9.318754
-</code></pre>
-<p>このデータは200人の生徒について、性別等の属性や受賞数、読み書きの力を得点化したもの等がまとめられています。</p>
+<span class="c1">##                 M       SD</span>
+<span class="c1">## general  51.33333 9.397775</span>
+<span class="c1">## academic 56.25714 7.943343</span>
+<span class="c1">## vocation 46.76000 9.318754</span>
+</code></pre></div><p>このデータは200人の生徒について、性別等の属性や受賞数、読み書きの力を得点化したもの等がまとめられています。</p>
 <p>今回は、general、academic、vocationの3つの授業プログラムの中から生徒が選択したプログラムの種類(prog)を従属変数とし、ses(経済的位置の3段階分類)、write(書く力を得点化したもの)を説明変数と設定します。</p>
 <p>sesとprogのクロス集計表を見ると、いずれもsesにおいてもacademicが人気ですがses=highの子には特にacademicが人気なようです。</p>
 <p>write毎のprogの平均、標準偏差を確認すると、やはりacademicを選んだ生徒は書く力が若干高いようです。</p>
@@ -205,58 +205,61 @@ $$</p>
 <p>$\mu$のK個の要素を識別可能とするため、下記の実行では$\mu_{academic}=0$としています。
 <!-- raw HTML omitted --><br>
 またmultinom()はp値を出力してくれないので、両側Z検定を行いp値を算出します。</p>
-<pre><code>library(nnet)
-#academicを基準に設定
-ml$prog2 &lt;- relevel(ml$prog, ref = &quot;academic&quot;)
-test &lt;- multinom(formula = prog2 ~ ses + write, data=ml)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">nnet</span><span class="p">)</span>
+<span class="c1">#academicを基準に設定</span>
+<span class="n">ml</span><span class="o">$</span><span class="n">prog2</span> <span class="o">&lt;-</span> <span class="nf">relevel</span><span class="p">(</span><span class="n">ml</span><span class="o">$</span><span class="n">prog</span><span class="p">,</span> <span class="n">ref</span> <span class="o">=</span> <span class="s">&#34;academic&#34;</span><span class="p">)</span>
+<span class="n">test</span> <span class="o">&lt;-</span> <span class="nf">multinom</span><span class="p">(</span><span class="n">formula</span> <span class="o">=</span> <span class="n">prog2</span> <span class="o">~</span> <span class="n">ses</span> <span class="o">+</span> <span class="n">write</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">ml</span><span class="p">)</span>
 
-## # weights:  15 (8 variable)
-## initial  value 219.722458
-## iter  10 value 179.982880
-## final  value 179.981726
-## converged
+<span class="c1">## # weights:  15 (8 variable)</span>
+<span class="c1">## initial  value 219.722458</span>
+<span class="c1">## iter  10 value 179.982880</span>
+<span class="c1">## final  value 179.981726</span>
+<span class="c1">## converged</span>
 
-summary(test)
+<span class="nf">summary</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
 
-## Call:
-## multinom(formula = prog2 ~ ses + write, data = ml)
-##
-## Coefficients:
-##          (Intercept)  sesmiddle    seshigh      write
-## general     2.852198 -0.5332810 -1.1628226 -0.0579287
-## vocation    5.218260  0.2913859 -0.9826649 -0.1136037
-##
-## Std. Errors:
-##          (Intercept) sesmiddle   seshigh      write
-## general     1.166441 0.4437323 0.5142196 0.02141097
-## vocation    1.163552 0.4763739 0.5955665 0.02221996
-##
-## Residual Deviance: 359.9635
-## AIC: 375.9635
+<span class="c1">## Call:</span>
+<span class="c1">## multinom(formula = prog2 ~ ses + write, data = ml)</span>
+<span class="c1">##</span>
+<span class="c1">## Coefficients:</span>
+<span class="c1">##          (Intercept)  sesmiddle    seshigh      write</span>
+<span class="c1">## general     2.852198 -0.5332810 -1.1628226 -0.0579287</span>
+<span class="c1">## vocation    5.218260  0.2913859 -0.9826649 -0.1136037</span>
+<span class="c1">##</span>
+<span class="c1">## Std. Errors:</span>
+<span class="c1">##          (Intercept) sesmiddle   seshigh      write</span>
+<span class="c1">## general     1.166441 0.4437323 0.5142196 0.02141097</span>
+<span class="c1">## vocation    1.163552 0.4763739 0.5955665 0.02221996</span>
+<span class="c1">##</span>
+<span class="c1">## Residual Deviance: 359.9635</span>
+<span class="c1">## AIC: 375.9635</span>
 
-#両側Z検定の実行
-z &lt;- summary(test)$coefficients/summary(test)$standard.errors
-p &lt;- (1 - pnorm(abs(z),0,1))
-p
+<span class="c1">#両側Z検定の実行</span>
+<span class="n">z</span> <span class="o">&lt;-</span> <span class="nf">summary</span><span class="p">(</span><span class="n">test</span><span class="p">)</span><span class="o">$</span><span class="n">coefficients</span><span class="o">/</span><span class="nf">summary</span><span class="p">(</span><span class="n">test</span><span class="p">)</span><span class="o">$</span><span class="n">standard.errors</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="m">1</span> <span class="o">-</span> <span class="nf">pnorm</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">z</span><span class="p">),</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">))</span>
+<span class="n">p</span>
 
-##           (Intercept) sesmiddle    seshigh        write
-## general  7.238305e-03 0.1147190 0.01186928 3.409451e-03
-## vocation 3.649650e-06 0.2703765 0.04947488 1.588023e-07
-</code></pre>
-<p>結果は下記式に帰着します($^{***}$：0.1%有意、$^{**}$：1%有意、$^{*}$：5%有意)。</p>
+<span class="c1">##           (Intercept) sesmiddle    seshigh        write</span>
+<span class="c1">## general  7.238305e-03 0.1147190 0.01186928 3.409451e-03</span>
+<span class="c1">## vocation 3.649650e-06 0.2703765 0.04947488 1.588023e-07</span>
+</code></pre></div><p>結果は下記式に帰着します($^{***}$：0.1%有意、$^{**}$：1%有意、$^{*}$：5%有意)。</p>
 <p>$$\cfrac{P(prog=general)}{P(prog=academic)} = exp(2.85^{***}-0.53(ses=middle) -1.16^*(ses=high) - 0.06^{***}write)$$</p>
 <p>$$\cfrac{P(prog=vocation)}{P(prog=academic)} = exp(5.22^{***}-0.29(ses=middle) -0.98^*(ses=high) - 0.11^{***}write)$$</p>
 <p>上記の結果は、generalを選択する確率とacademicを選択する確率のオッズ比</p>
 <p>$$\cfrac{P(prog=general)}{P(prog=academic)}$$</p>
 <p>に着目した場合、下記式のようにwriteの値が1増えるとオッズ比は0.94倍になる、というよう解釈できます。
+<div style="overflow-x:auto;">
+  
 $$
-\cfrac{\cfrac{P(prog=general(write=x+1))}{P(prog=academic(write=x+1))}}{\cfrac{P(prog=general(write=x))}{P(prog=academic(write=x))}}
+\cfrac{\\cfrac{P(prog=general(write=x+1))}{P(prog=academic(write=x+1))}}{\\cfrac{P(prog=general(write=x))}{P(prog=academic(write=x))}}
 = \cfrac{exp(2.85 - 0.53(ses=middle) - 1.16(ses=high) - 0.06(write=x+1)}{exp(2.85 - 0.53(ses=middle) - 1.16(ses=high) - 0.06(write=x))}
 $$
 $$
 =  exp(-0.06)
 \fallingdotseq  0.94
-$$</p>
+$$
+
+</div></p>
 <p>ロジスティック回帰のモデルは、このように、基準に設定した値を分母としたオッズ比からの解釈がしやすい点が特徴です。</p>
 <p>そのほかの係数について確認しておくと、</p>
 <ul>
@@ -290,21 +293,20 @@ $$</p>
 <p>結果の描画を行います。ses,writeの値が1組与えられた時の予測値は<code>predict()</code>関数で算出できます(信頼区間を求めようとしたら<code>nnet::predict()</code>は<code>predict=“confidence&quot;</code>が使えませんでした…残念)。
 <!-- raw HTML omitted --><br>
 以下では予測値の算出を行っていますが、今回のモデルは解釈しやすいように設計されたモデルです。予測用のモデルにが欲しいなら更なる改良モデルが存在します。</p>
-<pre><code>library(reshape2)
-library(ggplot2)
-library(RColorBrewer)
-#予測値を計算する点を準備
-dwite &lt;- data.frame(ses = rep(c(&quot;low&quot;,&quot;middle&quot;,&quot;high&quot;),each = 41), write = rep(c(30:70),3))
-#predict()関数で予測値を計算し、予測を行う点dwiteと結合
-pp.wite &lt;- cbind(dwite, predict(test, newdata=dwite, type=&quot;probs&quot;, se = T))
-#縦長データに変換し、ggplot()で描画
-lpp &lt;- reshape2::melt(pp.wite, id.vars = c(&quot;ses&quot;,&quot;write&quot;),value.name = &quot;probability&quot;)
-cols &lt;= brewer.pal(3,&quot;Dark2&quot;)
-p0 &lt;- ggplot(data=lpp,aes(x=write, y=probability,colour=ses)) + geom_line() + facet_grid(variable ~.) + theme_bw(base_size=11) +
-  theme(legend.position = &quot;bottom&quot;) + scale_color_manual(values=cols) + labs(title=&quot;With multinom&quot;)
-p0
-</code></pre>
-<p><img src="/my-page/post/multinom/multinom.png" alt="aai"></p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">reshape2</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">RColorBrewer</span><span class="p">)</span>
+<span class="c1">#予測値を計算する点を準備</span>
+<span class="n">dwite</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">ses</span> <span class="o">=</span> <span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;low&#34;</span><span class="p">,</span><span class="s">&#34;middle&#34;</span><span class="p">,</span><span class="s">&#34;high&#34;</span><span class="p">),</span><span class="n">each</span> <span class="o">=</span> <span class="m">41</span><span class="p">),</span> <span class="n">write</span> <span class="o">=</span> <span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">30</span><span class="o">:</span><span class="m">70</span><span class="p">),</span><span class="m">3</span><span class="p">))</span>
+<span class="c1">#predict()関数で予測値を計算し、予測を行う点dwiteと結合</span>
+<span class="n">pp.wite</span> <span class="o">&lt;-</span> <span class="nf">cbind</span><span class="p">(</span><span class="n">dwite</span><span class="p">,</span> <span class="nf">predict</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">newdata</span><span class="o">=</span><span class="n">dwite</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&#34;probs&#34;</span><span class="p">,</span> <span class="n">se</span> <span class="o">=</span> <span class="bp">T</span><span class="p">))</span>
+<span class="c1">#縦長データに変換し、ggplot()で描画</span>
+<span class="n">lpp</span> <span class="o">&lt;-</span> <span class="n">reshape2</span><span class="o">::</span><span class="nf">melt</span><span class="p">(</span><span class="n">pp.wite</span><span class="p">,</span> <span class="n">id.vars</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;ses&#34;</span><span class="p">,</span><span class="s">&#34;write&#34;</span><span class="p">),</span><span class="n">value.name</span> <span class="o">=</span> <span class="s">&#34;probability&#34;</span><span class="p">)</span>
+<span class="n">cols</span> <span class="o">&lt;=</span> <span class="nf">brewer.pal</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="s">&#34;Dark2&#34;</span><span class="p">)</span>
+<span class="n">p0</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">lpp</span><span class="p">,</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">write</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">probability</span><span class="p">,</span><span class="n">colour</span><span class="o">=</span><span class="n">ses</span><span class="p">))</span> <span class="o">+</span> <span class="nf">geom_line</span><span class="p">()</span> <span class="o">+</span> <span class="nf">facet_grid</span><span class="p">(</span><span class="n">variable</span> <span class="o">~</span><span class="n">.)</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;bottom&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span> <span class="o">+</span> <span class="nf">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#34;With multinom&#34;</span><span class="p">)</span>
+<span class="n">p0</span>
+</code></pre></div><p><img src="/my-page/post/multinom/multinom.png" alt="aai"></p>
 <p>上図では3つの授業が選ばれる確率を別々に描画しています。同じ色の線がとる確率値の割をとると1になります。
 図の全体的な傾向と前節で確認した内容に不一致は見られないようです。</p>
 <h1 id="まとめ">まとめ</h1>

@@ -11,7 +11,8 @@
     <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/my-page/images/logo2.png" />
     <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/my-page/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/monokai-sublime.min.css">
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
     <script src="https://rmorita-stat.github.io/my-page/js/highlight.min.js"></script>
     <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
     
@@ -76,7 +77,13 @@
     <div class="main-content__article">
         <article id="content">
             <h1 id="はじめに">はじめに</h1>
-<p><strong>回帰</strong>に関する記事です。</p>
+<p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/NE27zGsZ16U" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+いい夢の色は緑色だそうだ。私もうさぎさんにとっての牧草色の夢を見ることもありますが、現実は柵に引っかかってばかりです。</p>
+<p>さて、<strong>回帰</strong>に関する記事です。</p>
 <p><a href="https://rmorita-stat.github.io/my-page/post/multinom/multinom/">以前の記事</a>では、対象が3つ以上のクラスに分類されるとき、それぞれのクラスに属する確率を予測するモデルである<strong>多項ロジスティック回帰</strong>について書きました。</p>
 <p><a href="https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/">次の記事</a>では、同様のモデルを、<strong>マルコフ連鎖モンテカルロ法</strong>(MCMC)を実行するための汎用ソフトである<strong>Stan</strong>を用いて実装し、<strong>ベイズ統計</strong>の立場から分析しました。MCMCおよびベイズ統計については<a href="https://rmorita-stat.github.io/my-page/post/bayesintroduction/bayesintroduction/">こちらの記事</a>で(走り書きで)書いています。</p>
 <p>上で見た記事ではいずれも対象が各クラスに属する確率のオッズ比に着目し、オッズ比の線形性のみを考慮したモデルです。このように統計モデルでは変数の背後に何かしらの分布を想定したり、変数間に線形的な関係を想定したりすることでモデルを構築します。</p>
@@ -103,26 +110,26 @@
 <p>当初本記事と<a href="https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/">前回の記事</a>はひとつの記事として公開していましたが、余りにも長すぎる記事だったので、二つに分けて公開しなおしました。</p>
 <h1 id="データの入手">データの入手</h1>
 <p><a href="https://rmorita-stat.github.io/my-page/post/multinom/multinom/">以前の記事</a>でRのnnetパッケージを使って多項ロジスティック回帰分析をしたときに用いたものと同じデータを用いますある学校の生徒の属性と各生徒が選択した授業に関するデータです。</p>
-<pre><code>library(foreign)
-ml &lt;- read.dta(&quot;https://stats.idre.ucla.edu/stat/data/hsbdemo.dta&quot;)
-head(ml)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">foreign</span><span class="p">)</span>
+<span class="n">ml</span> <span class="o">&lt;-</span> <span class="nf">read.dta</span><span class="p">(</span><span class="s">&#34;https://stats.idre.ucla.edu/stat/data/hsbdemo.dta&#34;</span><span class="p">)</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">ml</span><span class="p">)</span>
 
-##    id female    ses schtyp     prog read write math science socst       honors
-## 1  45 female    low public vocation   34    35   41      29    26 not enrolled
-## 2 108   male middle public  general   34    33   41      36    36 not enrolled
-## 3  15   male   high public vocation   39    39   44      26    42 not enrolled
-## 4  67   male    low public vocation   37    37   42      33    32 not enrolled
-## 5 153   male middle public vocation   39    31   40      39    51 not enrolled
-## 6  51 female   high public  general   42    36   42      31    39 not enrolled
-##   awards cid
-## 1      0   1
-## 2      0   1
-## 3      0   1
-## 4      0   1
-## 5      0   1
-## 6      0   1
-</code></pre>
-<p>今回も、general, academic, vocation の3つの授業の中から生徒が選択した結果(prog)を出力（目的変数）、write(書く力を得点化したもの)と家庭の経済状況の指標ses(low, middle, highに分類)の2変数を入力(説明変数)とし、モデルを組み立てていきます。</p>
+<span class="c1">##    id female    ses schtyp     prog read write math science socst       honors</span>
+<span class="c1">## 1  45 female    low public vocation   34    35   41      29    26 not enrolled</span>
+<span class="c1">## 2 108   male middle public  general   34    33   41      36    36 not enrolled</span>
+<span class="c1">## 3  15   male   high public vocation   39    39   44      26    42 not enrolled</span>
+<span class="c1">## 4  67   male    low public vocation   37    37   42      33    32 not enrolled</span>
+<span class="c1">## 5 153   male middle public vocation   39    31   40      39    51 not enrolled</span>
+<span class="c1">## 6  51 female   high public  general   42    36   42      31    39 not enrolled</span>
+<span class="c1">##   awards cid</span>
+<span class="c1">## 1      0   1</span>
+<span class="c1">## 2      0   1</span>
+<span class="c1">## 3      0   1</span>
+<span class="c1">## 4      0   1</span>
+<span class="c1">## 5      0   1</span>
+<span class="c1">## 6      0   1</span>
+
+</code></pre></div><p>今回も、general, academic, vocation の3つの授業の中から生徒が選択した結果(prog)を出力（目的変数）、write(書く力を得点化したもの)と家庭の経済状況の指標ses(low, middle, highに分類)の2変数を入力(説明変数)とし、モデルを組み立てていきます。</p>
 <h1 id="多項ロジスティックガウス過程モデル">多項ロジスティック・ガウス過程モデル</h1>
 <h2 id="モデルの確認">モデルの確認</h2>
 <p>出力を$(N×1)$ベクトル$\mathrm{y}=(y_1,\ldots,y_N)^T$、入力を$(N×(I+J))$行列$\mathrm{W}=(\mathrm{w}_1,\ldots, \mathrm{w}_N)^T$とします。</p>
@@ -194,137 +201,137 @@ $$</p>
 <p>ハイパーパラメータは$\theta_1$,$\theta2$,$\rho$,$c$の4つです。</p>
 <h2 id="モデル１の実装と結果の確認">モデル１の実装と結果の確認</h2>
 <p>モデル１を実行するStanコードを以下のようになります。</p>
-<pre><code>//model2
-data{
-  int&lt;lower=2&gt; K; //カテゴリ数
-  int&lt;lower=1&gt; N1; //データ数
-  int N2; //予測入力数
-  int&lt;lower=1&gt; I; //量的変数の数
-  int&lt;lower=1&gt; J; //質的変数の数
-  int M[J]; //各質的変数のカテゴリ数
-  int&lt;lower=1, upper=K&gt; y[N1]; //出力ラベル
-  int&lt;lower=1, upper=max(M)&gt; x1_j[N1,J]; //入力(質的変数)
-  vector[I] x1_i[N1];//入力(量的変数)
-  int&lt;lower=1, upper=max(M)&gt; x2_j[N2,J]; //予測したい点(質的変数)
-  vector[I] x2_i[N2]; //予測したい点(量的変数)
-}
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//model2
+</span><span class="c1"></span><span class="n">data</span><span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">2</span><span class="o">&gt;</span> <span class="n">K</span><span class="p">;</span> <span class="c1">//カテゴリ数
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">N1</span><span class="p">;</span> <span class="c1">//データ数
+</span><span class="c1"></span>  <span class="kt">int</span> <span class="n">N2</span><span class="p">;</span> <span class="c1">//予測入力数
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">I</span><span class="p">;</span> <span class="c1">//量的変数の数
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">J</span><span class="p">;</span> <span class="c1">//質的変数の数
+</span><span class="c1"></span>  <span class="kt">int</span> <span class="n">M</span><span class="p">[</span><span class="n">J</span><span class="p">];</span> <span class="c1">//各質的変数のカテゴリ数
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">K</span><span class="o">&gt;</span> <span class="n">y</span><span class="p">[</span><span class="n">N1</span><span class="p">];</span> <span class="c1">//出力ラベル
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">x1_j</span><span class="p">[</span><span class="n">N1</span><span class="p">,</span><span class="n">J</span><span class="p">];</span> <span class="c1">//入力(質的変数)
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="n">x1_i</span><span class="p">[</span><span class="n">N1</span><span class="p">];</span><span class="c1">//入力(量的変数)
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">x2_j</span><span class="p">[</span><span class="n">N2</span><span class="p">,</span><span class="n">J</span><span class="p">];</span> <span class="c1">//予測したい点(質的変数)
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="n">x2_i</span><span class="p">[</span><span class="n">N2</span><span class="p">];</span> <span class="c1">//予測したい点(量的変数)
+</span><span class="c1"></span><span class="p">}</span>
 
-transformed data{
-  real delta = 1e-9;
-  int&lt;lower=1&gt; N = N1 + N2;
-  int&lt;lower=1, upper=max(M)&gt; x_j[N,J]; //入力(質的変数)と予測入力(質的変数)を縦に繋げたもの
-  vector[I] x_i[N]; //入力(量的変数)と予測入力(量的変数)を縦に繋げたもの
-
-  //以下でx1_iとx2_i,x1_jとx2_jを縦に結合し、新たな行列x_i,x_jをそれぞれ作成する
-  for(n in 1:N1){
-    for(j in 1:J){
-      x_j[n,j] = x1_j[n,j];
-    }
-  }
-  for(n in 1:N2){
-    for(j in 1:J){
-      x_j[(N1+n),j] = x2_j[n,j];
-    }
-  }
-  for(n in 1:N1) x_i[n] = x1_i[n];  
-  for(n in 1:N2) x_i[N1+n] = x2_i[n];
-
-
-}
-
-parameters{
-  vector[N] eta[(K-1)]; //潜在変数
-  vector&lt;lower=0&gt;[2] theta;
-  vector&lt;lower=0, upper=1&gt;[J] C;
-}
-
-transformed parameters{
-  vector[N] f[(K-1)];
-  row_vector[K] p[N]; //ソフトマックス関数に投げる値
-
-  //この中でカーネル関数を定義、ガウス過程の関数fを作成
-  {
-    matrix[N,N] L_K[(K-1)];
-    matrix[N,N]linear_kernel;
-    matrix[N,N]isotropic_correlation_kernel = rep_matrix(0,N,N);//初期値を0に設定。
-    matrix[N,N] kernel_matrix[(K-1)];
-    matrix[max(M),max(M)] PDUDE[J];
-
-    //compound symmetric correlation matrix を作成
-    for(j in 1:J){
-      for(n in 1:(max(M)-1)){
-      PDUDE[j][n,n] = 1;
-      for(m in (n+1):max(M)){
-        PDUDE[j][n,m] = C[j];
-        PDUDE[j][m,n] = PDUDE[j][n,m];
-        }
-      }
-      PDUDE[j][max(M),max(M)] = 1;
-    }
+<span class="n">transformed</span> <span class="n">data</span><span class="p">{</span>
+  <span class="n">real</span> <span class="n">delta</span> <span class="o">=</span> <span class="mf">1e-9</span><span class="p">;</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">N</span> <span class="o">=</span> <span class="n">N1</span> <span class="o">+</span> <span class="n">N2</span><span class="p">;</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">x_j</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">J</span><span class="p">];</span> <span class="c1">//入力(質的変数)と予測入力(質的変数)を縦に繋げたもの
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="n">x_i</span><span class="p">[</span><span class="n">N</span><span class="p">];</span> <span class="c1">//入力(量的変数)と予測入力(量的変数)を縦に繋げたもの
+</span><span class="c1"></span>
+  <span class="c1">//以下でx1_iとx2_i,x1_jとx2_jを縦に結合し、新たな行列x_i,x_jをそれぞれ作成する
+</span><span class="c1"></span>  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N1</span><span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">J</span><span class="p">){</span>
+      <span class="n">x_j</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">x1_j</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">j</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N2</span><span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">J</span><span class="p">){</span>
+      <span class="n">x_j</span><span class="p">[(</span><span class="n">N1</span><span class="o">+</span><span class="n">n</span><span class="p">),</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">x2_j</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">j</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N1</span><span class="p">)</span> <span class="n">x_i</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">x1_i</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>  
+  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N2</span><span class="p">)</span> <span class="n">x_i</span><span class="p">[</span><span class="n">N1</span><span class="o">+</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">x2_i</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
 
 
-    //isotropic_correlation_kernelを生成
-    for(j in 1:J){
-      for(n in 1:N){
-        for(m in 1:N){
-          isotropic_correlation_kernel[n,m] += PDUDE[j][x_j[n,j],x_j[m,j]];
-        }
-      }
-    }
+<span class="p">}</span>
 
-    //linear_kernel_matrixを生成。切片項はisotropic_correlation_kernelで捉えることにした
-    for(n in 1:N){
-      for(m in1:N){
-        linear_kernel[n,m] = dot_product(x_i[n],x_i[m]);
-      }
-    }
-    //kernel_matrixを作成
-    for(k in 1:(K-1)){
-      kernel_matrix[k] = theta[1] * linear_kernel + theta[2] * isotropic_correlation_kernel;
-      for(n in 1:N){
-        kernel_matrix[k][n,n] += delta;
-      }
-    }
-    for(k in 1:(K-1)){
-      L_K[k] = cholesky_decompose(kernel_matrix[k]);
-      f[k] = L_K[k] * eta[k];
-    }
-  }
+<span class="n">parameters</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">eta</span><span class="p">[(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)];</span> <span class="c1">//潜在変数
+</span><span class="c1"></span>  <span class="n">vector</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">theta</span><span class="p">;</span>
+  <span class="n">vector</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">[</span><span class="n">J</span><span class="p">]</span> <span class="n">C</span><span class="p">;</span>
+<span class="p">}</span>
 
-  // pの作成 1列目は0に固定 2列目以降に独立のガウス過程を指定
-  for(n in 1:N){
-     p[n,1] = 0;
-     for(k in 1:(K-1)){
-        p[n,(k+1)] = f[k,n];
-     }
-  }
-}
+<span class="n">transformed</span> <span class="n">parameters</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">f</span><span class="p">[(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)];</span>
+  <span class="n">row_vector</span><span class="p">[</span><span class="n">K</span><span class="p">]</span> <span class="n">p</span><span class="p">[</span><span class="n">N</span><span class="p">];</span> <span class="c1">//ソフトマックス関数に投げる値
+</span><span class="c1"></span>
+  <span class="c1">//この中でカーネル関数を定義、ガウス過程の関数fを作成
+</span><span class="c1"></span>  <span class="p">{</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">L_K</span><span class="p">[(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)];</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">]</span><span class="n">linear_kernel</span><span class="p">;</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">]</span><span class="n">isotropic_correlation_kernel</span> <span class="o">=</span> <span class="n">rep_matrix</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">);</span><span class="c1">//初期値を0に設定。
+</span><span class="c1"></span>    <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">kernel_matrix</span><span class="p">[(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)];</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">),</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)]</span> <span class="n">PDUDE</span><span class="p">[</span><span class="n">J</span><span class="p">];</span>
 
-model{
-  //事前分布
-  theta ~ student_t(4,0,2);
-  C ~ normal(0,0.1);
+    <span class="c1">//compound symmetric correlation matrix を作成
+</span><span class="c1"></span>    <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">J</span><span class="p">){</span>
+      <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)){</span>
+      <span class="n">PDUDE</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="k">for</span><span class="p">(</span><span class="n">m</span> <span class="n">in</span> <span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)){</span>
+        <span class="n">PDUDE</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">C</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+        <span class="n">PDUDE</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">PDUDE</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">];</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+      <span class="n">PDUDE</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">),</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
 
-  //モデル部分
-  for(k in 1:(K-1)){
-    for(n in 1:N){
-      eta[k,n] ~ std_normal();
-    }
-  }
-  for(n in 1:N1){
-    y[n] ~ categorical_logit(p[n]');
-  }
 
-}
+    <span class="c1">//isotropic_correlation_kernelを生成
+</span><span class="c1"></span>    <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">J</span><span class="p">){</span>
+      <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">m</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+          <span class="n">isotropic_correlation_kernel</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">+=</span> <span class="n">PDUDE</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">x_j</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">j</span><span class="p">],</span><span class="n">x_j</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">j</span><span class="p">]];</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
 
-generated quantities{
-  vector[K] pred[N2];
-  for(n in 1:N2){
-    pred[n] = softmax(p[(N1+n)]');
-  }
-}
-</code></pre>
-<p>入力データを命令する<code>data{}</code>ブロックでは、入力データ(<code>x1_i</code>、<code>x1_j</code>)を量的変数・質的変数で分けて指定しています。また、予測したい入力点(<code>x2_i</code>、<code>x2_j</code>)も指定しています。</p>
+    <span class="c1">//linear_kernel_matrixを生成。切片項はisotropic_correlation_kernelで捉えることにした
+</span><span class="c1"></span>    <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+      <span class="k">for</span><span class="p">(</span><span class="n">m</span> <span class="nl">in1</span><span class="p">:</span><span class="n">N</span><span class="p">){</span>
+        <span class="n">linear_kernel</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">dot_product</span><span class="p">(</span><span class="n">x_i</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">x_i</span><span class="p">[</span><span class="n">m</span><span class="p">]);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">//kernel_matrixを作成
+</span><span class="c1"></span>    <span class="k">for</span><span class="p">(</span><span class="n">k</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="p">(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)){</span>
+      <span class="n">kernel_matrix</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">linear_kernel</span> <span class="o">+</span> <span class="n">theta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">isotropic_correlation_kernel</span><span class="p">;</span>
+      <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+        <span class="n">kernel_matrix</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">]</span> <span class="o">+=</span> <span class="n">delta</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">k</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="p">(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)){</span>
+      <span class="n">L_K</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">cholesky_decompose</span><span class="p">(</span><span class="n">kernel_matrix</span><span class="p">[</span><span class="n">k</span><span class="p">]);</span>
+      <span class="n">f</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">L_K</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">eta</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="c1">// pの作成 1列目は0に固定 2列目以降に独立のガウス過程を指定
+</span><span class="c1"></span>  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+     <span class="n">p</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+     <span class="k">for</span><span class="p">(</span><span class="n">k</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="p">(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)){</span>
+        <span class="n">p</span><span class="p">[</span><span class="n">n</span><span class="p">,(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">n</span><span class="p">];</span>
+     <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">model</span><span class="p">{</span>
+  <span class="c1">//事前分布
+</span><span class="c1"></span>  <span class="n">theta</span> <span class="o">~</span> <span class="n">student_t</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+  <span class="n">C</span> <span class="o">~</span> <span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.1</span><span class="p">);</span>
+
+  <span class="c1">//モデル部分
+</span><span class="c1"></span>  <span class="k">for</span><span class="p">(</span><span class="n">k</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="p">(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)){</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+      <span class="n">eta</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">n</span><span class="p">]</span> <span class="o">~</span> <span class="n">std_normal</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N1</span><span class="p">){</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">~</span> <span class="n">categorical_logit</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="n">generated</span> <span class="n">quantities</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">K</span><span class="p">]</span> <span class="n">pred</span><span class="p">[</span><span class="n">N2</span><span class="p">];</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N2</span><span class="p">){</span>
+    <span class="n">pred</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">p</span><span class="p">[(</span><span class="n">N1</span><span class="o">+</span><span class="n">n</span><span class="p">)]</span><span class="err">&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+</code></pre></div><p>入力データを命令する<code>data{}</code>ブロックでは、入力データ(<code>x1_i</code>、<code>x1_j</code>)を量的変数・質的変数で分けて指定しています。また、予測したい入力点(<code>x2_i</code>、<code>x2_j</code>)も指定しています。</p>
 <p><code>transformes data{}</code>ブロックでは、式$(12)$の計算を実行するため、入力(実現値)と予測したい入力点のデータを量的変数・質的変数毎に縦に繋げています。</p>
 <p><code>transformed parameter{}</code>ブロックでは、まず、式$(8)$の行列を<code>PDUDE</code>という呼称で作成しています。次に、<code>issotropic_correlation_kernel</code>として、<code>PDUDE</code>を参照しながらcompound symmetric correlation matrixを作成しています。
 <!-- raw HTML omitted -->  <br>
@@ -336,45 +343,44 @@ generated quantities{
 また、前回記事式$(9)$中段の設定を<code>eta ~ std_normal()</code>として指定し、多項ロジスティック回帰モデルの式$(2)$、式$(3)$を<code>y[n] ~ categorical_logit(p[n]')</code>としています。</p>
 <p><code>generated quantities{}</code>ブロックでは、<code>model</code>ブロックでは作成しなかった入力点<code>x2_i</code>、<code>x2_j</code>における予測値を<code>pred</code>として指定しています。</p>
 <p>このStanファイルを実行するコードは以下になります。</p>
-<pre><code># progの3要素を数字に置き換えるための表を作成
-progid &lt;- c(1,2,3)
-names(progid) &lt;- c(&quot;academic&quot;,&quot;general&quot;,&quot;vocation&quot;)
-# sesの3要素を数字に置き換えるための表を作成
-sesid &lt;- c(1,2,3)
-names(sesid) &lt;- c(&quot;low&quot;,&quot;middle&quot;,&quot;high&quot;)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># progの3要素を数字に置き換えるための表を作成</span>
+<span class="n">progid</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">)</span>
+<span class="nf">names</span><span class="p">(</span><span class="n">progid</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;academic&#34;</span><span class="p">,</span><span class="s">&#34;general&#34;</span><span class="p">,</span><span class="s">&#34;vocation&#34;</span><span class="p">)</span>
+<span class="c1"># sesの3要素を数字に置き換えるための表を作成</span>
+<span class="n">sesid</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">)</span>
+<span class="nf">names</span><span class="p">(</span><span class="n">sesid</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;low&#34;</span><span class="p">,</span><span class="s">&#34;middle&#34;</span><span class="p">,</span><span class="s">&#34;high&#34;</span><span class="p">)</span>
 
 
-library(makedummies)
-library(tidyr)
-library(dplyr)
+<span class="nf">library</span><span class="p">(</span><span class="n">makedummies</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyr</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
 
-d2 &lt;- ml %&gt;% mutate(sesid = sesid[paste(ses)]) %&gt;%
-  mutate(progid = progid[paste(prog)]) %&gt;% mutate(write=(write-mean(write))/sd(write)) %&gt;% select(c(sesid, write, progid))
+<span class="n">d2</span> <span class="o">&lt;-</span> <span class="n">ml</span> <span class="o">%&gt;%</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">sesid</span> <span class="o">=</span> <span class="n">sesid</span><span class="nf">[paste</span><span class="p">(</span><span class="n">ses</span><span class="p">)</span><span class="n">]</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">progid</span> <span class="o">=</span> <span class="n">progid</span><span class="nf">[paste</span><span class="p">(</span><span class="n">prog</span><span class="p">)</span><span class="n">]</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">write</span><span class="o">=</span><span class="p">(</span><span class="n">write</span><span class="o">-</span><span class="nf">mean</span><span class="p">(</span><span class="n">write</span><span class="p">))</span><span class="o">/</span><span class="nf">sd</span><span class="p">(</span><span class="n">write</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">sesid</span><span class="p">,</span> <span class="n">write</span><span class="p">,</span> <span class="n">progid</span><span class="p">))</span>
 
-#x1:入力点
-x1_j &lt;- data.frame(d2[,-c(2,3)]) # 入力(質的変数)
-x1_i &lt;- data.frame(d2[,-c(1,3)]) # 入力(量的変数)
-N1 &lt;- nrow(x1_i)
-#x2:予測入力点
-x2_j &lt;- data.frame(sesid = c(rep(1,41),rep(2,41),rep(3,41))) # 予測入力点(質的変数)
-x2_i &lt;- data.frame(write = (rep(c(30:70),3)-mean(ml$write))/sd(ml$write)) # 予測入力点(量的変数)
-N2 &lt;- nrow(x2_i)
+<span class="c1">#x1:入力点</span>
+<span class="n">x1_j</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">d2[</span><span class="p">,</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">)</span><span class="n">]</span><span class="p">)</span> <span class="c1"># 入力(質的変数)</span>
+<span class="n">x1_i</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">d2[</span><span class="p">,</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">3</span><span class="p">)</span><span class="n">]</span><span class="p">)</span> <span class="c1"># 入力(量的変数)</span>
+<span class="n">N1</span> <span class="o">&lt;-</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">x1_i</span><span class="p">)</span>
+<span class="c1">#x2:予測入力点</span>
+<span class="n">x2_j</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">sesid</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">41</span><span class="p">),</span><span class="nf">rep</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">41</span><span class="p">),</span><span class="nf">rep</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="m">41</span><span class="p">)))</span> <span class="c1"># 予測入力点(質的変数)</span>
+<span class="n">x2_i</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">write</span> <span class="o">=</span> <span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">30</span><span class="o">:</span><span class="m">70</span><span class="p">),</span><span class="m">3</span><span class="p">)</span><span class="o">-</span><span class="nf">mean</span><span class="p">(</span><span class="n">ml</span><span class="o">$</span><span class="n">write</span><span class="p">))</span><span class="o">/</span><span class="nf">sd</span><span class="p">(</span><span class="n">ml</span><span class="o">$</span><span class="n">write</span><span class="p">))</span> <span class="c1"># 予測入力点(量的変数)</span>
+<span class="n">N2</span> <span class="o">&lt;-</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">x2_i</span><span class="p">)</span>
 
-#y:出力点
-y &lt;- d2[,3]
-K &lt;- 3
-J &lt;- 1 #質的変数の数
-I &lt;- 1 #量的変数の数
-M &lt;- c(3) #各量的変数のカテゴリ数
-dim(M) &lt;- 1
+<span class="c1">#y:出力点</span>
+<span class="n">y</span> <span class="o">&lt;-</span> <span class="n">d2[</span><span class="p">,</span><span class="m">3</span><span class="n">]</span>
+<span class="n">K</span> <span class="o">&lt;-</span> <span class="m">3</span>
+<span class="n">J</span> <span class="o">&lt;-</span> <span class="m">1</span> <span class="c1">#質的変数の数</span>
+<span class="n">I</span> <span class="o">&lt;-</span> <span class="m">1</span> <span class="c1">#量的変数の数</span>
+<span class="n">M</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">)</span> <span class="c1">#各量的変数のカテゴリ数</span>
+<span class="nf">dim</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="m">1</span>
 
-data &lt;- list(x1_i=x1_i,x1_j=x1_j,x2_i = x2_i,x2_j=x2_j,N1=N1,N2=N2,K=K,y=y,J=J,I=I, M=M)
+<span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">x1_i</span><span class="o">=</span><span class="n">x1_i</span><span class="p">,</span><span class="n">x1_j</span><span class="o">=</span><span class="n">x1_j</span><span class="p">,</span><span class="n">x2_i</span> <span class="o">=</span> <span class="n">x2_i</span><span class="p">,</span><span class="n">x2_j</span><span class="o">=</span><span class="n">x2_j</span><span class="p">,</span><span class="n">N1</span><span class="o">=</span><span class="n">N1</span><span class="p">,</span><span class="n">N2</span><span class="o">=</span><span class="n">N2</span><span class="p">,</span><span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">J</span><span class="o">=</span><span class="n">J</span><span class="p">,</span><span class="n">I</span><span class="o">=</span><span class="n">I</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">)</span>
 
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
-fit_cate1 &lt;- stan(file=&quot;model2.stan&quot;, data=data, pars = c(&quot;pred&quot;,&quot;theta&quot;,&quot;C&quot;), warmup = 400, iter = 1500, chains=4, seed=1234)
-</code></pre>
-<p>計算にかかった時間はsurface laptop2 Corei5-8250Uで約3000秒でした。
+<span class="nf">rstan_options</span><span class="p">(</span><span class="n">auto_write</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+<span class="nf">options</span><span class="p">(</span><span class="n">mc.cores</span> <span class="o">=</span> <span class="n">parallel</span><span class="o">::</span><span class="nf">detectCores</span><span class="p">())</span>
+<span class="n">fit_cate1</span> <span class="o">&lt;-</span> <span class="nf">stan</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s">&#34;model2.stan&#34;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">pars</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;pred&#34;</span><span class="p">,</span><span class="s">&#34;theta&#34;</span><span class="p">,</span><span class="s">&#34;C&#34;</span><span class="p">),</span> <span class="n">warmup</span> <span class="o">=</span> <span class="m">400</span><span class="p">,</span> <span class="n">iter</span> <span class="o">=</span> <span class="m">1500</span><span class="p">,</span> <span class="n">chains</span><span class="o">=</span><span class="m">4</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="m">1234</span><span class="p">)</span>
+</code></pre></div><p>計算にかかった時間はsurface laptop2 Corei5-8250Uで約3000秒でした。
 ガウス過程は逆行列の計算などを含むので、工夫をしないとどうしても計算に時間がかかってしまうようです。</p>
 <p>ハイパーパラメータの事後分布は以下のようになりました。</p>
 <p><img src="/my-page/post/multinom-gp/fit_cate1_density.png" alt=""></p>
@@ -384,163 +390,168 @@ fit_cate1 &lt;- stan(file=&quot;model2.stan&quot;, data=data, pars = c(&quot;pre
 <p>以上、sotropic correlationカーネルを含んだモデル全体が正常に動くことを確認し、次の分析に進みます。</p>
 <h2 id="モデル２の実装と結果の確認">モデル２の実装と結果の確認</h2>
 <p>モデル２を実行するStanコードを以下のようになります。</p>
-<pre><code>//model3
-data{
-  int&lt;lower=2&gt; K; //カテゴリ数
-  int&lt;lower=1&gt; N1; //入力データの数
-  int N2; //予測したい入力点の数
-  int&lt;lower=1&gt; I; //量的変数の数
-  int&lt;lower=1&gt; J; //質的変数の数
-  int M[J]; //各質的変数のカテゴリ数
-  int&lt;lower=1, upper=K&gt; y[N1]; //出力ラベル
-  int&lt;lower=1, upper=max(M)&gt; x1_j[N1,J]; //入力(質的変数)
-  vector[I] x1_i[N1];//入力(量的変数)
-  int&lt;lower=1, upper=max(M)&gt; x2_j[N2,J]; //予測した入力点(質的変数)
-  vector[I] x2_i[N2]; //予測したい入力点(量的変数)
-}
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//model3
+</span><span class="c1"></span><span class="n">data</span><span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">2</span><span class="o">&gt;</span> <span class="n">K</span><span class="p">;</span> <span class="c1">//カテゴリ数
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">N1</span><span class="p">;</span> <span class="c1">//入力データの数
+</span><span class="c1"></span>  <span class="kt">int</span> <span class="n">N2</span><span class="p">;</span> <span class="c1">//予測したい入力点の数
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">I</span><span class="p">;</span> <span class="c1">//量的変数の数
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">J</span><span class="p">;</span> <span class="c1">//質的変数の数
+</span><span class="c1"></span>  <span class="kt">int</span> <span class="n">M</span><span class="p">[</span><span class="n">J</span><span class="p">];</span> <span class="c1">//各質的変数のカテゴリ数
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">K</span><span class="o">&gt;</span> <span class="n">y</span><span class="p">[</span><span class="n">N1</span><span class="p">];</span> <span class="c1">//出力ラベル
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">x1_j</span><span class="p">[</span><span class="n">N1</span><span class="p">,</span><span class="n">J</span><span class="p">];</span> <span class="c1">//入力(質的変数)
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="n">x1_i</span><span class="p">[</span><span class="n">N1</span><span class="p">];</span><span class="c1">//入力(量的変数)
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">x2_j</span><span class="p">[</span><span class="n">N2</span><span class="p">,</span><span class="n">J</span><span class="p">];</span> <span class="c1">//予測した入力点(質的変数)
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="n">x2_i</span><span class="p">[</span><span class="n">N2</span><span class="p">];</span> <span class="c1">//予測したい入力点(量的変数)
+</span><span class="c1"></span><span class="p">}</span>
 
-transformed data{
-  real delta = 1e-9;
-  int&lt;lower=1&gt; N = N1 + N2;
-  int&lt;lower=1, upper=max(M)&gt; x_j[N,J]; //入力(質的変数)と予測入力(質的変数)を縦に繋げたもの
-  vector[I] x_i[N]; //入力(量的変数)と予測入力(量的変数)を縦に繋げたもの
-  matrix[max(M),max(M)] inv_I; //対角成分が0、それ以外が1の行列を生成
+<span class="n">transformed</span> <span class="n">data</span><span class="p">{</span>
+  <span class="n">real</span> <span class="n">delta</span> <span class="o">=</span> <span class="mf">1e-9</span><span class="p">;</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">N</span> <span class="o">=</span> <span class="n">N1</span> <span class="o">+</span> <span class="n">N2</span><span class="p">;</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">x_j</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">J</span><span class="p">];</span> <span class="c1">//入力(質的変数)と予測入力(質的変数)を縦に繋げたもの
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">I</span><span class="p">]</span> <span class="n">x_i</span><span class="p">[</span><span class="n">N</span><span class="p">];</span> <span class="c1">//入力(量的変数)と予測入力(量的変数)を縦に繋げたもの
+</span><span class="c1"></span>  <span class="n">matrix</span><span class="p">[</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">),</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)]</span> <span class="n">inv_I</span><span class="p">;</span> <span class="c1">//対角成分が0、それ以外が1の行列を生成
+</span><span class="c1"></span>
+  <span class="c1">//以下でx1_iとx2_i,x1_jとx2_jを縦に結合し、新たな行列x_i,x_jをそれぞれ作成する
+</span><span class="c1"></span>  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N1</span><span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">J</span><span class="p">){</span>
+      <span class="n">x_j</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">x1_j</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">j</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N2</span><span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">J</span><span class="p">){</span>
+      <span class="n">x_j</span><span class="p">[(</span><span class="n">N1</span><span class="o">+</span><span class="n">n</span><span class="p">),</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">x2_j</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">j</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N1</span><span class="p">)</span> <span class="n">x_i</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">x1_i</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>  
+  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N2</span><span class="p">)</span> <span class="n">x_i</span><span class="p">[</span><span class="n">N1</span><span class="o">+</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">x2_i</span><span class="p">[</span><span class="n">n</span><span class="p">];</span>
 
-  //以下でx1_iとx2_i,x1_jとx2_jを縦に結合し、新たな行列x_i,x_jをそれぞれ作成する
-  for(n in 1:N1){
-    for(j in 1:J){
-      x_j[n,j] = x1_j[n,j];
-    }
-  }
-  for(n in 1:N2){
-    for(j in 1:J){
-      x_j[(N1+n),j] = x2_j[n,j];
-    }
-  }
-  for(n in 1:N1) x_i[n] = x1_i[n];  
-  for(n in 1:N2) x_i[N1+n] = x2_i[n];
+  <span class="c1">//inv_Iの作成
+</span><span class="c1"></span>  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="p">(</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)){</span>
+    <span class="n">inv_I</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">m</span> <span class="n">in</span> <span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)){</span>
+      <span class="n">inv_I</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="n">inv_I</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">inv_I</span><span class="p">[</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">),</span><span class="n">max</span><span class="p">(</span><span class="n">M</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
-  //inv_Iの作成
-  for(n in 1:(max(M)-1)){
-    inv_I[n,n] = 0;
-    for(m in (n+1):max(M)){
-      inv_I[n,m] = 1;
-      inv_I[m,n] = 1;
-    }
-  }
-  inv_I[max(M),max(M)] = 0;
+<span class="p">}</span>
 
-}
+<span class="n">parameters</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">eta</span><span class="p">[(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)];</span> <span class="c1">//潜在変数
+</span><span class="c1"></span>  <span class="n">vector</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="c1">//theta;線形カーネルと「ガウスカーネル・isotropic correlationカーネル」の重みを決定するハイパーパラメータ
+</span><span class="c1"></span>  <span class="n">vector</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">[</span><span class="n">J</span><span class="p">]</span> <span class="n">C</span><span class="p">;</span> <span class="c1">//isotropic correlationカーネルのハイパーパラメータ
+</span><span class="c1"></span>  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">0.9</span><span class="o">&gt;</span> <span class="n">rho</span><span class="p">;</span> <span class="c1">//ガウスカーネルのshapeパラメータ
+</span><span class="c1"></span><span class="p">}</span>
 
-parameters{
-  vector[N] eta[(K-1)]; //潜在変数
-  vector&lt;lower=1&gt;[2] theta;線形カーネルと「ガウスカーネル・isotropic correlationカーネル」の重みを決定するハイパーパラメータ
-  vector&lt;lower=0, upper=1&gt;[J] C; //isotropic correlationカーネルのハイパーパラメータ
-  real&lt;lower=0, upper=0.9&gt; rho; //ガウスカーネルのshapeパラメータ
-}
+<span class="n">transformed</span> <span class="n">parameters</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">f</span><span class="p">[(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)];</span>
+  <span class="n">row_vector</span><span class="p">[</span><span class="n">K</span><span class="p">]</span> <span class="n">p</span><span class="p">[</span><span class="n">N</span><span class="p">];</span> <span class="c1">//ソフトマックス関数に投げる値
+</span><span class="c1"></span>
 
-transformed parameters{
-  vector[N] f[(K-1)];
-  row_vector[K] p[N]; //ソフトマックス関数に投げる値
+  <span class="c1">//この中でカーネル関数を定義、ガウス過程に従う関数fを作成
+</span><span class="c1"></span>  <span class="p">{</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">L_K</span><span class="p">[(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)];</span> <span class="c1">//カーネル行列をコレスキー分解した行列L。（出力がとる値）-1の数だけ準備する
+</span><span class="c1"></span>    <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">]</span><span class="n">linear_kernel</span><span class="p">;</span> <span class="c1">//線形カーネル
+</span><span class="c1"></span>    <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">]</span><span class="n">distance_L2_01_kernel</span><span class="p">;</span> <span class="c1">//。ガウスカーネル×isotropic correlation カーネル。logスケールでL2距離と0-1距離の成分を含んでいる
+</span><span class="c1"></span>    <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">kernel_matrix</span><span class="p">[(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)];</span> <span class="c1">//最終的に作成するカーネル関数
+</span><span class="c1"></span>
 
+    <span class="c1">//linear_kernelを生成
+</span><span class="c1"></span>    <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+      <span class="k">for</span><span class="p">(</span><span class="n">m</span> <span class="nl">in1</span><span class="p">:</span><span class="n">N</span><span class="p">){</span>
+        <span class="n">linear_kernel</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">dot_product</span><span class="p">(</span><span class="n">x_i</span><span class="p">[</span><span class="n">n</span><span class="p">],</span><span class="n">x_i</span><span class="p">[</span><span class="n">m</span><span class="p">]);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
 
-  //この中でカーネル関数を定義、ガウス過程に従う関数fを作成
-  {
-    matrix[N,N] L_K[(K-1)]; //カーネル行列をコレスキー分解した行列L。（出力がとる値）-1の数だけ準備する
-    matrix[N,N]linear_kernel; //線形カーネル
-    matrix[N,N]distance_L2_01_kernel; //。ガウスカーネル×isotropic correlation カーネル。logスケールでL2距離と0-1距離の成分を含んでいる
-    matrix[N,N] kernel_matrix[(K-1)]; //最終的に作成するカーネル関数
+    <span class="c1">//distanceL2_01_kernelを生成
+</span><span class="c1"></span>    <span class="p">{</span>
+      <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">distance_L2</span><span class="p">;</span> <span class="c1">//L2距離
+</span><span class="c1"></span>      <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">distance_01</span> <span class="o">=</span> <span class="n">rep_matrix</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">);</span> <span class="c1">//inv_Iに依存した0-1距離
+</span><span class="c1"></span>
+      <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">m</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+          <span class="n">distance_L2</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">dot_self</span><span class="p">((</span><span class="n">x_i</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="o">-</span><span class="n">x_i</span><span class="p">[</span><span class="n">m</span><span class="p">])</span> <span class="p">.</span><span class="o">/</span> <span class="n">rho</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
 
+      <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">J</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+          <span class="k">for</span><span class="p">(</span><span class="n">m</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+            <span class="n">distance_01</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">+=</span> <span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">C</span><span class="p">[</span><span class="n">j</span><span class="p">])</span><span class="o">*</span><span class="n">inv_I</span><span class="p">[</span><span class="n">x_j</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">j</span><span class="p">],</span><span class="n">x_j</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">j</span><span class="p">]];</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
 
-    //linear_kernelを生成
-    for(n in 1:N){
-      for(m in1:N){
-        linear_kernel[n,m] = dot_product(x_i[n],x_i[m]);
-      }
-    }
-
-    //distanceL2_01_kernelを生成
-    {
-      matrix[N,N] distance_L2; //L2距離
-      matrix[N,N] distance_01 = rep_matrix(0,N,N); //inv_Iに依存した0-1距離
-
-      for(n in 1:N){
-        for(m in 1:N){
-          distance_L2[n,m] = dot_self((x_i[n]-x_i[m]) ./ rho);
-        }
-      }
-
-      for(j in 1:J){
-        for(n in 1:N){
-          for(m in 1:N){
-            distance_01[n,m] += log(1/C[j])*inv_I[x_j[n,j],x_j[m,j]];
-          }
-        }
-      }
-
-      for(n in 1:N){
-        for(m in 1:N){
-          distance_L2_01_kernel[n,m] = exp(-0.5 * distance_L2[n,m] -distance_01[n,m]);
-        }
-      }
-    }
+      <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">m</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+          <span class="n">distance_L2_01_kernel</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">distance_L2</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">-</span><span class="n">distance_01</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">]);</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
 
 
-    //kernel_matrixを作成
-    for(k in 1:(K-1)){
-      kernel_matrix[k] = theta[1] * linear_kernel + theta[2] * distance_L2_01_kernel;
-      for(n in 1:N){
-        kernel_matrix[k][n,n] += delta;
-      }
-    }
+    <span class="c1">//kernel_matrixを作成
+</span><span class="c1"></span>    <span class="k">for</span><span class="p">(</span><span class="n">k</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="p">(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)){</span>
+      <span class="n">kernel_matrix</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">linear_kernel</span> <span class="o">+</span> <span class="n">theta</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">distance_L2_01_kernel</span><span class="p">;</span>
+      <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+        <span class="n">kernel_matrix</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">]</span> <span class="o">+=</span> <span class="n">delta</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
 
-    for(k in 1:(K-1)){
-      L_K[k] = cholesky_decompose(kernel_matrix[k]);
-      f[k] = L_K[k] * eta[k];
-    }
-  }
+    <span class="k">for</span><span class="p">(</span><span class="n">k</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="p">(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)){</span>
+      <span class="n">L_K</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">cholesky_decompose</span><span class="p">(</span><span class="n">kernel_matrix</span><span class="p">[</span><span class="n">k</span><span class="p">]);</span>
+      <span class="n">f</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">L_K</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">eta</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
 
-  // pの作成 1列目は0に固定 2列目以降に独立のガウス過程を指定
-  for(n in 1:N){
-     p[n,1] = 0;
-     for(k in 1:(K-1)){
-        p[n,(k+1)] = f[k,n];
-     }
-  }
-}
+  <span class="c1">// pの作成 1列目は0に固定 2列目以降に独立のガウス過程を指定
+</span><span class="c1"></span>  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+     <span class="n">p</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+     <span class="k">for</span><span class="p">(</span><span class="n">k</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="p">(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)){</span>
+        <span class="n">p</span><span class="p">[</span><span class="n">n</span><span class="p">,(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">n</span><span class="p">];</span>
+     <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
 
-model{
-  //事前分布
-  theta ~ student_t(4,1,2);
-  rho ~ inv_gamma(0.1, 0.1);
-  C ~ normal(0, 0.1);
+<span class="n">model</span><span class="p">{</span>
+  <span class="c1">//事前分布
+</span><span class="c1"></span>  <span class="n">theta</span> <span class="o">~</span> <span class="n">student_t</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+  <span class="n">rho</span> <span class="o">~</span> <span class="n">inv_gamma</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">);</span>
+  <span class="n">C</span> <span class="o">~</span> <span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">);</span>
 
-  //モデル部分
-  for(k in 1:(K-1)){
-    for(n in 1:N){
-      eta[k,n] ~ std_normal();
-    }
-  }
-  for(n in 1:N1){
-    y[n] ~ categorical_logit(p[n]');
-  }
+  <span class="c1">//モデル部分
+</span><span class="c1"></span>  <span class="k">for</span><span class="p">(</span><span class="n">k</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="p">(</span><span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">)){</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+      <span class="n">eta</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">n</span><span class="p">]</span> <span class="o">~</span> <span class="n">std_normal</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N1</span><span class="p">){</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">~</span> <span class="n">categorical_logit</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="err">&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
 
-}
+<span class="p">}</span>
 
-generated quantities{
-  vector[K] pred[N2];
-  for(n in 1:N2){
-    pred[n] = softmax(p[(N1+n)]');
-  }
-}
-</code></pre>
-<p>モデル１との違いは、<code>transformed parameters{}</code>ブロックにおけるカーネル行列作成の部分と、<code>model{}</code>ブロックにおける事前分布設定の部分になります。</p>
+<span class="n">generated</span> <span class="n">quantities</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">K</span><span class="p">]</span> <span class="n">pred</span><span class="p">[</span><span class="n">N2</span><span class="p">];</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N2</span><span class="p">){</span>
+    <span class="n">pred</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">p</span><span class="p">[(</span><span class="n">N1</span><span class="o">+</span><span class="n">n</span><span class="p">)]</span><span class="err">&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><p>モデル１との違いは、<code>transformed parameters{}</code>ブロックにおけるカーネル行列作成の部分と、<code>model{}</code>ブロックにおける事前分布設定の部分になります。</p>
 <p><code>transformed parameters{}</code>ブロックでは、<code>linear_kernel</code>として式$(9)$第1項の部分（線形カーネル）の$\theta_1$を除いた部分を、<code>distance_L2_01_kernel</code>として式$(9)$第2項の$\theta_2$を除いた部分を作成しています。また<code>distance_L2_01_kernel</code>は、<code>distance_L2</code>として$\sum_{i=1}^{I}(x_{im}-x_{in})^2$を、<code>distance_01_kernel</code>として$\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]$をそれぞれ作成し、それらを式$(9)$に従って合成することで作成しています。</p>
 <p>ハイパーパラメータの事前分布の設定はかなり苦戦しました。最終的に以下の事前分布を採用しています。</p>
 <p>$$
-\theta_1 \sim Student\verb|_|t(4,1,2) ~~~\theta_1 \geq 1\\<br>
-\theta_2 \sim Student\verb|_|t(4,1,2) ~~~\theta_2 \geq 1\\<br>
-\rho \sim invGamma(0.1,0.1)~~~0 \leq \rho \leq 0.9  \\<br>
+\theta_1 \sim Student\verb|_|t(4,1,2) ~~~\theta_1 \geq 1
+$$
+$$
+\theta_2 \sim Student\verb|_|t(4,1,2) ~~~\theta_2 \geq 1
+$$
+$$
+\rho \sim invGamma(0.1,0.1)~~~0 \leq \rho \leq 0.9
+$$
+$$
 c \sim Normal(0,0.1)
 $$</p>
 <p>$\theta_1$、$\theta_2$については弱情報事前分布として、自由度4、期待値1、スケールパラメータ1の半t分布を採用しています。
@@ -555,36 +566,35 @@ $c$については、0付近の値をとることが想定されるため、期�
 <p>今回の場合、$\rho$に値の上限を設定しないとどうしても$\rho$が大きくなってしまい、予測結果もモデル式１と変わらなくなってしまいました。しかしそれはこのモデルの意図した結果ではありません。</p>
 <p>以前の<a href="https://rmorita-stat.github.io/my-page/post/gaussianprocessori/gaussianprocess/">ガウス過程のシミュレーション結果</a>を見ると、標準化されたデータの場合、shapeパラメータ、rateパラメータともに1前後でちょうどよいガウス過程からの出力が得られそうであることが確認できます。よって、今回はrateパラメータに0.9の上限を設け、shapeパラメータも下限値1を設定することで、少し変化の傾きが急な出力を得られるように強要することにします。</p>
 <p>上記のStanファイルを実行するコードは以下になります。</p>
-<pre><code>data &lt;- list(x1_i=x1_i,x1_j=x1_j,x2_i = x2_i,x2_j=x2_j,N1=N1,N2=N2,K=K,y=y,J=J,I=I, M=M)
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
-fit_cate2 &lt;- stan(file=&quot;model3.stan&quot;, data=data, pars = c(&quot;pred&quot;,&quot;rho&quot;,&quot;theta&quot;,&quot;C&quot;), warmup = 400, iter = 1500, chains=4, seed=1234)
-</code></pre>
-<p>計算にかかったた時間は確かおよそ9800秒でした。2時間以上かかっていますね。PCもうなり声をあげていたので冷却対策など必要かもしれません。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">x1_i</span><span class="o">=</span><span class="n">x1_i</span><span class="p">,</span><span class="n">x1_j</span><span class="o">=</span><span class="n">x1_j</span><span class="p">,</span><span class="n">x2_i</span> <span class="o">=</span> <span class="n">x2_i</span><span class="p">,</span><span class="n">x2_j</span><span class="o">=</span><span class="n">x2_j</span><span class="p">,</span><span class="n">N1</span><span class="o">=</span><span class="n">N1</span><span class="p">,</span><span class="n">N2</span><span class="o">=</span><span class="n">N2</span><span class="p">,</span><span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">J</span><span class="o">=</span><span class="n">J</span><span class="p">,</span><span class="n">I</span><span class="o">=</span><span class="n">I</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">)</span>
+<span class="nf">rstan_options</span><span class="p">(</span><span class="n">auto_write</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+<span class="nf">options</span><span class="p">(</span><span class="n">mc.cores</span> <span class="o">=</span> <span class="n">parallel</span><span class="o">::</span><span class="nf">detectCores</span><span class="p">())</span>
+<span class="n">fit_cate2</span> <span class="o">&lt;-</span> <span class="nf">stan</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s">&#34;model3.stan&#34;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">pars</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;pred&#34;</span><span class="p">,</span><span class="s">&#34;rho&#34;</span><span class="p">,</span><span class="s">&#34;theta&#34;</span><span class="p">,</span><span class="s">&#34;C&#34;</span><span class="p">),</span> <span class="n">warmup</span> <span class="o">=</span> <span class="m">400</span><span class="p">,</span> <span class="n">iter</span> <span class="o">=</span> <span class="m">1500</span><span class="p">,</span> <span class="n">chains</span><span class="o">=</span><span class="m">4</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="m">1234</span><span class="p">)</span>
+</code></pre></div><p>計算にかかったた時間は確かおよそ9800秒でした。2時間以上かかっていますね。PCもうなり声をあげていたので冷却対策など必要かもしれません。</p>
 <p>ハイパーパラメータの事後分布は以下のようになります。</p>
-<pre><code>posterior_fit0_2 &lt;- rstan::extract(fit_cate2)
-library(bayesplot)
-plot_title &lt;- ggtitle(&quot;Posterior distribution of hyper parameters&quot;, &quot;with medians and 95% intervals&quot;)
-p1 &lt;- mcmc_areas(as.matrix(fit_cate2),
-                regex_pars = c(&quot;theta&quot;),prob=0.95, area_method = &quot;equal height&quot;) +
-  scale_y_discrete(labels=c(&quot;theta1&quot;,&quot;theta2&quot;)) + theme_bw(base_size=12)
-p2 &lt;- mcmc_areas(as.matrix(fit_cate2),
-                regex_pars = c(&quot;C&quot;,&quot;rho&quot;),prob=0.95, area_method = &quot;equal height&quot;) +
-  scale_y_discrete(labels=c(&quot;c&quot;,&quot;rho&quot;)) +
-   theme_bw(base_size=12)
-library(gridExtra)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">posterior_fit0_2</span> <span class="o">&lt;-</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">extract</span><span class="p">(</span><span class="n">fit_cate2</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">bayesplot</span><span class="p">)</span>
+<span class="n">plot_title</span> <span class="o">&lt;-</span> <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;Posterior distribution of hyper parameters&#34;</span><span class="p">,</span> <span class="s">&#34;with medians and 95% intervals&#34;</span><span class="p">)</span>
+<span class="n">p1</span> <span class="o">&lt;-</span> <span class="nf">mcmc_areas</span><span class="p">(</span><span class="nf">as.matrix</span><span class="p">(</span><span class="n">fit_cate2</span><span class="p">),</span>
+                <span class="n">regex_pars</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;theta&#34;</span><span class="p">),</span><span class="n">prob</span><span class="o">=</span><span class="m">0.95</span><span class="p">,</span> <span class="n">area_method</span> <span class="o">=</span> <span class="s">&#34;equal height&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_y_discrete</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;theta1&#34;</span><span class="p">,</span><span class="s">&#34;theta2&#34;</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">12</span><span class="p">)</span>
+<span class="n">p2</span> <span class="o">&lt;-</span> <span class="nf">mcmc_areas</span><span class="p">(</span><span class="nf">as.matrix</span><span class="p">(</span><span class="n">fit_cate2</span><span class="p">),</span>
+                <span class="n">regex_pars</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;C&#34;</span><span class="p">,</span><span class="s">&#34;rho&#34;</span><span class="p">),</span><span class="n">prob</span><span class="o">=</span><span class="m">0.95</span><span class="p">,</span> <span class="n">area_method</span> <span class="o">=</span> <span class="s">&#34;equal height&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_y_discrete</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;c&#34;</span><span class="p">,</span><span class="s">&#34;rho&#34;</span><span class="p">))</span> <span class="o">+</span>
+   <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">12</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">gridExtra</span><span class="p">)</span>
 
-g1 &lt;- ggplot_gtable(ggplot_build(p1))
-g2 &lt;- ggplot_gtable(ggplot_build(p2))
-Width &lt;- unit.pmax(g1$widths, g2$widths)
-Height &lt;- unit.pmin(g1$heights, g2$heights)
-g1$widths &lt;- Width
-g2$widths &lt;- Width
-g1$heights &lt;- Height
-g2$heights &lt;- Height
-p &lt;- gridExtra::grid.arrange(g1,g2,ncol=1, top=&quot;Posterior distribution of hyper parameters (with medians and 95% intervals)&quot;)
-</code></pre>
-<p><img src="/my-page/post/multinom-gp/fit_cate2_density.png" alt=""></p>
+<span class="n">g1</span> <span class="o">&lt;-</span> <span class="nf">ggplot_gtable</span><span class="p">(</span><span class="nf">ggplot_build</span><span class="p">(</span><span class="n">p1</span><span class="p">))</span>
+<span class="n">g2</span> <span class="o">&lt;-</span> <span class="nf">ggplot_gtable</span><span class="p">(</span><span class="nf">ggplot_build</span><span class="p">(</span><span class="n">p2</span><span class="p">))</span>
+<span class="n">Width</span> <span class="o">&lt;-</span> <span class="nf">unit.pmax</span><span class="p">(</span><span class="n">g1</span><span class="o">$</span><span class="n">widths</span><span class="p">,</span> <span class="n">g2</span><span class="o">$</span><span class="n">widths</span><span class="p">)</span>
+<span class="n">Height</span> <span class="o">&lt;-</span> <span class="nf">unit.pmin</span><span class="p">(</span><span class="n">g1</span><span class="o">$</span><span class="n">heights</span><span class="p">,</span> <span class="n">g2</span><span class="o">$</span><span class="n">heights</span><span class="p">)</span>
+<span class="n">g1</span><span class="o">$</span><span class="n">widths</span> <span class="o">&lt;-</span> <span class="n">Width</span>
+<span class="n">g2</span><span class="o">$</span><span class="n">widths</span> <span class="o">&lt;-</span> <span class="n">Width</span>
+<span class="n">g1</span><span class="o">$</span><span class="n">heights</span> <span class="o">&lt;-</span> <span class="n">Height</span>
+<span class="n">g2</span><span class="o">$</span><span class="n">heights</span> <span class="o">&lt;-</span> <span class="n">Height</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="n">gridExtra</span><span class="o">::</span><span class="nf">grid.arrange</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">,</span><span class="n">ncol</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s">&#34;Posterior distribution of hyper parameters (with medians and 95% intervals)&#34;</span><span class="p">)</span>
+
+</code></pre></div><p><img src="/my-page/post/multinom-gp/fit_cate2_density.png" alt=""></p>
 <p>$\rho$が頑張って大きな値をとろうとしている様子が見えますが、そこは抑えてもらっています。何だかかわいそう&hellip;</p>
 <p>最後に、予測結果を描画します。</p>
 <p><img src="/my-page/post/multinom-gp/fit_cate2_res.png" alt=""></p>

@@ -11,7 +11,8 @@
     <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/my-page/images/logo2.png" />
     <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/my-page/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/monokai-sublime.min.css">
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
     <script src="https://rmorita-stat.github.io/my-page/js/highlight.min.js"></script>
     <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
     
@@ -76,7 +77,7 @@
     <div class="main-content__article">
         <article id="content">
             <h1 id="はじめに">はじめに</h1>
-<p>特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、<a href="https://rmorita-stat.github.io/my-page/post/gaussianprocess/gaussianprocess/">前回の記事</a>では<strong>ガウス過程</strong>回帰について取り上げました。</p>
+<p><a href="https://rmorita-stat.github.io/my-page/post/gaussianprocess/gaussianprocess/">前回の記事</a>では、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、<strong>ガウス過程</strong>回帰について取り上げました。</p>
 <p>本記事ではガウス過程をさらに深堀りし、Stanなどでガウス過程を自在に扱うための土台を固めたいと思います。</p>
 <p>本記事の構成は以下の通りとします。</p>
 <!-- raw HTML omitted -->
@@ -146,17 +147,25 @@ $$</p>
 x_n \sim Normal(0,1) ~~~ (n = 1, \ldots, N) \tag{6}
 $$</p>
 <p>$\mathrm{y} = \mathrm{L}\mathrm{x}$の分布は、</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 p(\mathrm{x}) = \cfrac{1}{(\sqrt{2\pi}^N \sqrt{det\Sigma})}exp\left(-\cfrac{1}{2}(\mathrm{x}^T \mathrm{I}^{-1} \mathrm{x}) \right)  \propto exp\left(-\cfrac{1}{2}\mathrm{x}^T\mathrm{I}^{-1}\mathrm{x}\right) \tag{7}
-$$</p>
+$$
+
+</div>
 <p>に$\mathrm{x} = \mathrm{L}^{-1}\mathrm{y}$を代入すると、変数変換による空間の単位当たり面積の変動を調整するヤコビアン$|\partial{\mathrm{y}}/\partial{\mathrm{x}}|$は定数だから、</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 p(\mathrm{Lx})  \propto exp\left(-\cfrac{1}{2}\left(\mathrm{L}^{-1}\mathrm{y}\right)^T \mathrm{I}^{-1}\mathrm{L}^{-1}\mathrm{y}\right)
 \left|\cfrac{\partial{\mathrm{y}}}{\partial{\mathrm{x}}}\right|
 = exp\left(-\cfrac{1}{2}\mathrm{y}^{-1}\left(\mathrm{L}^{-1}\right)^T\mathrm{L}^{-1}\mathrm{y}\right)
 = exp\left(-\cfrac{1}{2}\mathrm{y}^{-1}\left(\mathrm{L}\mathrm{L}^T\right)^{-1}\mathrm{y}\right)
 = exp\left(-\cfrac{1}{2}\mathrm{y}^T\mathrm{\Sigma}^{-1}\mathrm{y}\right) \tag{8}
-$$</p>
+$$
+
+</div>
 <p>となります。</p>
 <p>このことから、$Normal(0,\Sigma)$に従う乱数を生成するには、標準正規分布に従う$\mathrm{x}$をランダムに生成し、$y=\mathrm{Lx}$と変換すればよいと分かります。</p>
 <h2 id="ガウス過程潜在変数モデルとは">ガウス過程潜在変数モデルとは</h2>
@@ -175,45 +184,48 @@ $$</p>
 <h2 id="stanでの実装">Stanでの実装</h2>
 <p>以下、<a href="https://mc-stan.org/docs/2_22/stan-users-guide/fit-gp-section.html">Stanマニュアル</a>を引用してLatent variable GPの実装について軽く触れておきます。</p>
 <p>Latent variable GPのStanでの実装は以下のようになります。</p>
-<pre><code>data{
-  int&lt;lower=1&gt; N;
-  real x[N];
-  vector[N] y;
-}
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">data</span><span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">N</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">x</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">y</span><span class="p">;</span>
+<span class="p">}</span>
 
-transformed data{
-  real delta = 1e-9;
-}
+<span class="n">transformed</span> <span class="n">data</span><span class="p">{</span>
+  <span class="n">real</span> <span class="n">delta</span> <span class="o">=</span> <span class="mf">1e-9</span><span class="p">;</span>
+<span class="p">}</span>
 
-parameters {
-  real&lt;lower=0&gt; rho;
-  real&lt;lower=0&gt; alpha;
-  real&lt;lower=0&gt; sigma;
-  vector[N] eta;
-}
+<span class="n">parameters</span> <span class="p">{</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">rho</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">alpha</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">sigma</span><span class="p">;</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">eta</span><span class="p">;</span>
+<span class="p">}</span>
 
-model {
-  vector[N] f;
-  {
-    matrix[N, N] L_K;
-    matrix[N, N] K = cov_exp_quad(x, alpha, rho);
+<span class="n">model</span> <span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">f</span><span class="p">;</span>
+  <span class="p">{</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">]</span> <span class="n">L_K</span><span class="p">;</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">]</span> <span class="n">K</span> <span class="o">=</span> <span class="n">cov_exp_quad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">rho</span><span class="p">);</span>
 
-    // diagonal elements
-    for (n in 1:N)
-      K[n, n] = K[n, n] + delta;
+    <span class="c1">// diagonal elements
+</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">)</span>
+      <span class="n">K</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">K</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">]</span> <span class="o">+</span> <span class="n">delta</span><span class="p">;</span>
 
-    L_K = cholesky_decompose(K);
-    f = L_K * eta;
-  }
-  eta ~ std_normal();
-  y ~ normal(f, sigma);
-}
-</code></pre>
-<p>ここで、<code>K = cov_exp_quad(x, alpha, rho)</code>はガウスカーネルをつくる便利な関数で、</p>
-<p>$$
+    <span class="n">L_K</span> <span class="o">=</span> <span class="n">cholesky_decompose</span><span class="p">(</span><span class="n">K</span><span class="p">);</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">L_K</span> <span class="o">*</span> <span class="n">eta</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">eta</span> <span class="o">~</span> <span class="n">std_normal</span><span class="p">();</span>
+  <span class="n">y</span> <span class="o">~</span> <span class="n">normal</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">sigma</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><p>ここで、<code>K = cov_exp_quad(x, alpha, rho)</code>はガウスカーネルをつくる便利な関数で、</p>
+<div style="overflow-x:auto;">
+  
+$$
 \mathrm{K}(m,n) =k_{\alpha, \rho}(\epsilon(\mathrm{x}_m),\epsilon(\mathrm{x}_n))
 =\alpha^2exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(\mathrm{x}_{m,i}-\mathrm{x}_{n,i})^2\right)  \tag{10}
-$$</p>
+$$
+
+</div>
 <p>を要素に持つカーネル行列$\mathrm{K}$を作成してくれます。</p>
 <p>また、<code>for (n in 1:N) K[n, n] = K[n, n] + delta;</code>とすることで、カーネル行列の対角要素に微小な値を加えていますが、こうすることでカーネル行列の逆行列の計算を安定化させています。また、コレスキー分解はその対象が正定値行列であることが必須ですが、対角要素に微小量を加えることで、その行列が正定値行列であることを保証することができます。</p>
 <p>式$(9)$の3式の計算は、それぞれ<code>L_K = cholesky_decompose(K);</code>、<code>eta ~ std_normal();</code>、<code>f = L_K * eta;</code>と指定しています。</p>
@@ -229,32 +241,31 @@ $$
 \mathrm{f} \sim Normal(\mu, \mathrm{K})
 $$</p>
 <p>と表現でき、これをStanで実行する場合、以下のようになります。</p>
-<pre><code>data{
-  int&lt;lower=1&gt; N;
-  real x[N];
-  vector[N] y;
-  ...
-}
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">data</span><span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">N</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">x</span><span class="p">[</span><span class="n">N</span><span class="p">];</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">y</span><span class="p">;</span>
+  <span class="p">...</span>
+<span class="p">}</span>
 
-parameters{
-  real mu; //muはpの期待値 観測データが近くに無い場合に漸近する値
-  ...
-}
+<span class="n">parameters</span><span class="p">{</span>
+  <span class="n">real</span> <span class="n">mu</span><span class="p">;</span> <span class="c1">//muはpの期待値 観測データが近くに無い場合に漸近する値
+</span><span class="c1"></span>  <span class="p">...</span>
+<span class="p">}</span>
 
-transformed parameters{
-  vector[N]&lt;lower=0, upper=1&gt; p;
-  ...
-  p = mu + f;
-  ...
-}
-...
-model {
-  mu ~ std_normal()
-  ...
-  y ~ bernoulli(p);
-}
-</code></pre>
-<h1 id="ガウス過程の予測分布">ガウス過程の予測分布</h1>
+<span class="n">transformed</span> <span class="n">parameters</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">;</span>
+  <span class="p">...</span>
+  <span class="n">p</span> <span class="o">=</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">f</span><span class="p">;</span>
+  <span class="p">...</span>
+<span class="p">}</span>
+<span class="p">...</span>
+<span class="n">model</span> <span class="p">{</span>
+  <span class="n">mu</span> <span class="o">~</span> <span class="n">std_normal</span><span class="p">()</span>
+  <span class="p">...</span>
+  <span class="n">y</span> <span class="o">~</span> <span class="n">bernoulli</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><h1 id="ガウス過程の予測分布">ガウス過程の予測分布</h1>
 <p>ガウス過程モデルにおいて、入力$\mathrm{X}$に含まれない値$\mathrm{X}^* = (\mathrm{x}^*_1,\ldots,\mathrm{x}_N^*)$に対応する出力の値$\mathrm{y}^* = (y^*_1, \ldots, y^*_M)$を予測したい場合、$\mathrm{y}$と$\mathrm{y}^*$の同時分布を次のようにすればよいです。</p>
 <p>$$
 \left(
@@ -315,50 +326,62 @@ a_{m1}
 $$</p>
 <p>とし、$\epsilon_i(\mathrm{x})$($i = 1,\ldots, m_1$)を単位行ベクトル$a_i$の指定する重みに基づく$\eta(\mathrm{x})$の線形和で表現することにします。</p>
 <p>すると、</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 cor(\eta_{z_1m}(\mathrm{x}_n),\eta_{z_1n}(\mathrm{x}_m))=\left(
 \begin{array}{ccc}
-k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)&amp;0&amp;\cdots&amp;0 \\<br>
-0&amp;k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)&amp;\cdots&amp;0\\<br>
-\vdots&amp; \vdots&amp; \ddots&amp; \vdots \\<br>
-0&amp;0&amp;\cdots&amp;k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)
+k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)&0&\cdots&0 \\\\
+0&k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)&\cdots&0\\\\
+\vdots& \vdots& \ddots& \vdots \\\\
+0&0&\cdots&k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)
 \end{array}
 \right) \tag{16}
-$$</p>
+$$
+
+</div>
 <p>($\eta_{i}(\mathrm{x}_n)$、$\eta_{i&rsquo;}(\mathrm{x}_n)$は$i=i'$のときのみ$k_{\phi}()$の相関をとる)だから、2つの入力$\mathrm{w}_i = (\mathrm{x}_i^T, z_i)^T$($i=m,n$)の相関関数$cor(\epsilon(\mathrm{w}_m), \epsilon(\mathrm{w}_n))$について、</p>
-<p>$$
-a_{z_1m}a_{z_1n}^Tk_{\phi}(\mathrm{x}_m, \mathrm{x}_n)=
-cor(a_{z_1m}\eta(\mathrm{x}_m),a_{z_1n}\eta(\mathrm{x}_n))=
-cor(\epsilon_{z_1m}(\mathrm{x}_m),\epsilon_{z_1n}(\mathrm{x}_n))=
-cor(\epsilon(\mathrm{w}_m),\epsilon(\mathrm{w}_n))\tag{17}
-$$</p>
+<div style="overflow-x:auto;">
+  
+$$
+ a_{z_1m}a_{z_1n}^Tk_{\phi}(\mathrm{x}_m, \mathrm{x}_n)=
+ cor(a_{z_1m}\eta(\mathrm{x}_m),a_{z_1n}\eta(\mathrm{x}_n))=
+ cor(\epsilon_{z_1m}(\mathrm{x}_m),\epsilon_{z_1n}(\mathrm{x}_n))=
+ cor(\epsilon(\mathrm{w}_m),\epsilon(\mathrm{w}_n))\tag{17}
+$$
+
+</div>
 <p>が成り立ちます($zm,zn = 1, \ldots,m1$)。</p>
 <p>ここで、$\tau_{r,s} = a^T_ra_s$($r=zm, s=zn, r,s=1,\ldots,m_1,$)とおくと、半正定値行列$\mathrm{T} = \mathrm{A}\mathrm{A}^T$は、</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 \mathrm{T} = \mathrm{A}\mathrm{A}^t =
 \left(
 \begin{array}{ccc}
-a_1 \\<br>
-\vdots \\<br>
+a_1 \\\\
+\vdots \\\\
 a_{m1}
 \end{array}
 \right)
 \left(
 \begin{array}{ccc}
-a_1 &amp;
-\ldots &amp;
+a_1 &
+\ldots &
 a_{m1}
 \end{array}
 \right)=
 \left(
 \begin{array}{ccc}
-1 &amp; a_1a_2 &amp; \cdots &amp; a_1a_{m1} \\<br>
-a_2a_1 &amp; 1 &amp; \cdots &amp; a_2a_{m1}  \\<br>
-\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\<br>
-a_{m1}a_1 &amp; a_{m1}a_{m2} &amp; \cdots &amp; 1
+1 & a_1a_2 & \cdots & a_1a_{m1} \\\\
+a_2a_1 & 1 & \cdots & a_2a_{m1}  \\\\
+\vdots & \vdots & \ddots & \vdots \\\\
+a_{m1}a_1 & a_{m1}a_{m2} & \cdots & 1
 \end{array}
 \right) \tag{18}
-$$</p>
+$$
+
+</div>
 <p>と、$\tau_{r,s}$を$(r,s)$成分にもつ対角成分が1の行列(positive definite matrix with unit diagonal elements)になります。</p>
 <p>以降、この性質をもつ行列を<strong>PDUDE</strong>と書きます。</p>
 <p>以上のことから、</p>
@@ -374,11 +397,15 @@ $$</p>
 $$</p>
 <p>$\tau_{j,r,s}$は、$J$番目のPDUDE$\mathrm{T}_j$の$(r,s)$成分です。</p>
 <p>特に、$k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)$に式$(10)$のガウスカーネルをもちいた場合、$(20)$式は以下のようになります。</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 \prod_{j=1}^{J}\left( \tau_{z_{j,r,s}}k_{\phi}(\mathrm{x}_m,\mathrm{x}_n) \right)=
 \prod_{j=1}^{J}\left(\tau_{z_{j,r,s}}exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im},x_{in})^2\right)\right)=
 \left(\prod_{j=1}^{J}\tau_{z_{j,r,s}}\right)exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right) \tag{21}
-$$</p>
+$$
+
+</div>
 <p>式$(21)$は、量的変数の影響は$exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right)$で考慮し、質的変数の影響はそれとは独立に$\left(\prod_{j=1}^{J}\tau_{z_{j,r,s}}\right)$で考慮する、という構造を持っています。パラメータ$\tau_{z_{j,r,s}}$は、質的変数$z_j$について$r=z_jm$をとる入力$\mathrm{w}_m$と、$s=z_jn$をとる入力$\mathrm{w}_n$の、$z_j$のみによる共通性(相関)への影響を反映する役割を担っています。なお、式$(21)$ではshapeパラメータ$\alpha^2$を考慮していませんが、これは$(2)$式でshapeパラメータの役割を$\sigma$が受け持っている為です。</p>
 <p>モデリングにおいては、$\tau_{z_{j,r,s}}$は正の値をとるように設定し、任意の2点の入力が無相関もしくは正の相関のみをとるようにします。</p>
 <h2 id="制約のあるpdude">制約のあるPDUDE</h2>
@@ -392,43 +419,51 @@ c~~~(0&lt;c&lt;1)~~~\mathrm{if}~r\neq{s}\\<br>
 $$</p>
 <p>$r=s$のとき、入力間の相関は$z$に関しては1、$r\neq{s}$のとき、c(一定)にする、ということです。
 $\mathrm{T}$は以下のように分解できます。</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 \mathrm{T}=
 (1-c)
 \left(
 \begin{array}{ccc}
-1 &amp; 0 &amp; \cdots &amp; 0 \\<br>
-0 &amp; 1 &amp; \cdots &amp; 0  \\<br>
-\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\<br>
-0 &amp; 0 &amp; \cdots &amp; 1
+1 & 0 & \cdots & 0 \\\\
+0 & 1 & \cdots & 0  \\\\
+\vdots & \vdots & \ddots & \vdots \\\\
+0 & 0 & \cdots & 1
 \end{array}
 \right)+
 c
 \left(
 \begin{array}{ccc}
-1 \\<br>
-1  \\<br>
-\vdots \\<br>
+1 \\\\
+1  \\\\
+\vdots \\\\
 1
 \end{array}
 \right)
 \left(
 \begin{array}{ccc}
-1&amp;1&amp;\cdots,1 \\<br>
+1&1&\cdots,1 \\\\
 \end{array}
 \right) \tag{23}
 $$
-このとき、任意の$m×1$ベクトルaについて、
+
+</div>
+<p>このとき、任意の$m×1$ベクトルaについて、
 $$
-a^T\mathrm{T}a=(1-c)a-Ta+c(a-T1)^2　&gt;0 \tag{24}
+a^T\mathrm{T}a=(1-c)a-Ta+c(a-T1)^2&gt;0 \tag{24}
 $$
 だから、$\mathrm{T}$は正定値行列なので、PDUDEです。$\mathrm{T}$が正定値行列であることは結構重要で、各要素の値を出力するカーネル関数$k(\mathrm{z}_m,\mathrm{z}_n)$が何かしらの特徴ベクトル空間の内積を表現するために必要な条件です。このあたりの詳細は<a href="https://mathwords.net/gramgyoretu">こちら</a>などを見てください。また上記$\mathrm{}T$の各要素を出力する関数は<strong>isotropic correlation function</strong>と呼ばれ、isotropic correlation functionによる出力を要素に持つ行列は<strong>compound symmetric correlation matrix</strong>と呼ばれています。</p>
 <p>上記の$\mathrm{T}$をPDUDEに用いる場合、式$(21)$は下記のように変形できます。</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 \left(\prod_{j=1}^{J}\tau_{z_{j,r,s}}\right)exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right)=
 \prod_{j=1}^{J}exp\left(-ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right)exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right)=
 exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right) \tag{25}
-$$</p>
+$$
+
+</div>
 <p>ここで、$I[r\neq{s}]$は下記の関数になります。</p>
 <p>$$
 I[r\neq{s}]=\begin{cases}
@@ -437,10 +472,14 @@ I[r\neq{s}]=\begin{cases}
 \end{cases}　\tag{26}
 $$</p>
 <p>式$(25)$最後の項は、対数をとると</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 log\left(exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right)\right)=
 -\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\tag{27}
-$$</p>
+$$
+
+</div>
 <p>となります。よって、対数スケールにおいて、量的変数についてはL2距離を、質的変数については0~1の値をとる距離を使用していることが分かります。</p>
 <p>以上、カテゴリカルな変数を用いたカーネルについて説明しました。参考文献は<a href="http://www2.isye.gatech.edu/~jeffwu/publications/gaussian_procmodels.pdf">こちら</a>になります。制約のあるPDUDEについては、今回紹介したもののほかにも順序尺度に対するPDUDE,グループ相関に対するPDUDE等紹介されています。</p>
 <h1 id="まとめ">まとめ</h1>

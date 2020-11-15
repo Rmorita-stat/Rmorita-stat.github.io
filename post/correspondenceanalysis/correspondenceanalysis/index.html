@@ -11,7 +11,8 @@
     <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/my-page/images/logo2.png" />
     <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/my-page/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/monokai-sublime.min.css">
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
     <script src="https://rmorita-stat.github.io/my-page/js/highlight.min.js"></script>
     <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
     
@@ -76,7 +77,13 @@
     <div class="main-content__article">
         <article id="content">
             <h1 id="はじめに">はじめに</h1>
-<p>この記事は<a href="https://qiita.com/advent-calendar/2020/stan">Stan Advent calendar</a>12月12日にエントリーしている記事（未投稿）を補完するために先に作成した記事になります。</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/255m-RxlrCw" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>秋は晴天の日が多いですネ。晴れた空の日曜日は外に出かけてみたくもなりますが、草野さんは部屋で昨日の夢を思い出しながら妄想するのもいいと言っています。なるほど…</p>
+<p>さてこの記事は<a href="https://qiita.com/advent-calendar/2020/stan">Stan Advent calendar</a>12月12日にエントリーしている記事（未投稿）を補完するために先に作成した記事になります。</p>
 <p>この記事では多変量解析の一つである<strong>対応分析</strong>を取り上げます。</p>
 <p>対応分析は多変量のカテゴリカルデータに用いられる分析で、分割表の結果を視覚的に表現するために使われる統計的手法です。</p>
 <p>実は対応分析は私の修士研究で使用した解析手法なのですが、対応分析の付置はデータ数に依存しないことから、座標を得るだけでその信頼性が確認できないところに当時問題を感じていました。<br>
@@ -179,121 +186,143 @@ $$</p>
 <p>$(5)$式および$(6)$式により得られた数量化スコアを同じ図の中に付置したものを同時付置図といい、同時付置図をもとに項目間の関係性をみることになります。</p>
 <h2 id="得られた軸の性質">得られた軸の性質</h2>
 <p>対応分析によって得られた軸に関する性質をまとめておきます。これらの性質は付置図について考察する際の前提にもなります。またこれらの性質はすべて主成分分析からきたものです。ここで$K=min(m,n) -1$<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup>とします。</p>
-<ul>
-<li>第$k$数量化スコアの平均は0（$∑_{k=1}^{K} f_{i.}z_{ik}$ = 0）</li>
-<li>第$k$数量化スコアの分散は$\lambda_k$</li>
-<li>各固有ベクトルは互いに直行する=数量化スコアは無相関($Cov(z_{k1}, z_{k2}) = 0$)</li>
-<li>各数量化スコアによる全データ変動の説明割合は、$\cfrac{\lambda_{k}}{\sum_{k=1}^{K}\lambda_k}$となる</li>
-</ul>
+<p><div style="padding: 0.75em; margin-bottom: 1rem; color: #111111; background-color: #d9c68c; border: 1px solid transparent; border-radius: 0.25rem;">
+ <center>
+第$k$数量化スコアの平均は0$\left(∑_{k=1}^{K} f_{i.}z_{ik}= 0\right)$
+</center>
+</div>
+
+
+<div style="padding: 0.75em; margin-bottom: 1rem; color: #111111; background-color: #a89456; border: 1px solid transparent; border-radius: 0.25rem;">
+ <center>
+第$k$数量化スコアの分散は$\lambda_k$
+</center>
+</div>
+
+
+<div style="padding: 0.75em; margin-bottom: 1rem; color: #111111; background-color: #d9c68c; border: 1px solid transparent; border-radius: 0.25rem;">
+ <center>
+各固有ベクトルは互いに直行する=数量化スコアは無相関($Cov(z_{k1}, z_{k2}) = 0$)  
+</center>
+</div>
+
+
+<div style="padding: 0.75em; margin-bottom: 1rem; color: #111111; background-color: #a89456; border: 1px solid transparent; border-radius: 0.25rem;">
+ <center>
+各数量化スコアによる全データ変動の説明割合は、$\cfrac{\lambda_{k}}{\sum_{k=1}^{K}\lambda_k}$となる
+</center>
+</div>
+
+</p>
 <h1 id="分析例">分析例</h1>
 <h2 id="rを用いた計算例">Rを用いた計算例</h2>
 <p>実際に対応分析をやってみます。<br>
 サンプルデータは参考論文にあった貴乃花現役時代の大相撲6場所の幕内力士20人の勝ち数と決まり手の関係です。</p>
-<pre><code>smo_data &lt;- matrix(data=c(15,15,0,0,1,0,1,19,9,7,12,1,3,3,4,22,0,11,2,0,4,
-                              14,3,11,3,1,1,6,24,7,5,5,0,0,2,30,2,6,2,2,0,2,
-                              11,13,5,6,2,1,4,25,8,10,7,5,3,1,13,31,3,3,0,2,3,
-                              8,2,19,3,2,0,4,28,8,8,2,1,0,7,9,3,14,11,2,0,4,
-                              5,3,12,11,4,0,7,7,1,18,0,1,0,11,12,6,1,12,7,2,2,
-                              25,2,11,3,1,0,1,16,4,18,3,0,0,5,23,2,6,5,1,0,2,
-                              7,17,2,16,3,0,1,2,8,1,11,1,0,2),byrow=TRUE, ncol=7)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">smo_data</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">15</span><span class="p">,</span><span class="m">15</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">19</span><span class="p">,</span><span class="m">9</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">22</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">4</span><span class="p">,</span>
+                              <span class="m">14</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">24</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">30</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
+                              <span class="m">11</span><span class="p">,</span><span class="m">13</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">25</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">10</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">13</span><span class="p">,</span><span class="m">31</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">,</span>
+                              <span class="m">8</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">19</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">28</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">9</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">14</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">4</span><span class="p">,</span>
+                              <span class="m">5</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">18</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
+                              <span class="m">25</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">16</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">18</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">23</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
+                              <span class="m">7</span><span class="p">,</span><span class="m">17</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">16</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">),</span><span class="n">byrow</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="m">7</span><span class="p">)</span>
 
-colnames(smo_data) &lt;- c(&quot;寄り&quot;,&quot;押し&quot;,&quot;投げ&quot;,&quot;引き&quot;,&quot;送り&quot;,&quot;突き&quot;,&quot;その他&quot;)
-rownames(smo_data) &lt;- c(&quot;小錦&quot;,&quot;琴錦&quot;,&quot;貴闘力&quot;,&quot;霧島&quot;,&quot;栃ノ和歌&quot;,&quot;水戸錦&quot;,&quot;若ノ花&quot;,
-&quot;貴ノ花&quot;,&quot;武蔵丸&quot;,&quot;大翔山&quot;,&quot;安芸ノ島&quot;,&quot;三杉里&quot;,&quot;旭道山&quot;,&quot;舞の海&quot;,
-&quot;寺尾&quot;,&quot;琴の若&quot;,&quot;貴ノ浪&quot;,&quot;琴富士&quot;,&quot;隆三杉&quot;,&quot;春日富士&quot;)
-</code></pre><p>分析例は以下になります<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup>。変量の数は7なので、得られる軸は6つですが、同時付置図は第1軸と第2軸をもとに作成します。</p>
-<pre><code># 主成分分析の対象行列作成 ------------------------------------------------------------
+<span class="nf">colnames</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;寄り&#34;</span><span class="p">,</span><span class="s">&#34;押し&#34;</span><span class="p">,</span><span class="s">&#34;投げ&#34;</span><span class="p">,</span><span class="s">&#34;引き&#34;</span><span class="p">,</span><span class="s">&#34;送り&#34;</span><span class="p">,</span><span class="s">&#34;突き&#34;</span><span class="p">,</span><span class="s">&#34;その他&#34;</span><span class="p">)</span>
+<span class="nf">rownames</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;小錦&#34;</span><span class="p">,</span><span class="s">&#34;琴錦&#34;</span><span class="p">,</span><span class="s">&#34;貴闘力&#34;</span><span class="p">,</span><span class="s">&#34;霧島&#34;</span><span class="p">,</span><span class="s">&#34;栃ノ和歌&#34;</span><span class="p">,</span><span class="s">&#34;水戸錦&#34;</span><span class="p">,</span><span class="s">&#34;若ノ花&#34;</span><span class="p">,</span>
+<span class="s">&#34;貴ノ花&#34;</span><span class="p">,</span><span class="s">&#34;武蔵丸&#34;</span><span class="p">,</span><span class="s">&#34;大翔山&#34;</span><span class="p">,</span><span class="s">&#34;安芸ノ島&#34;</span><span class="p">,</span><span class="s">&#34;三杉里&#34;</span><span class="p">,</span><span class="s">&#34;旭道山&#34;</span><span class="p">,</span><span class="s">&#34;舞の海&#34;</span><span class="p">,</span>
+<span class="s">&#34;寺尾&#34;</span><span class="p">,</span><span class="s">&#34;琴の若&#34;</span><span class="p">,</span><span class="s">&#34;貴ノ浪&#34;</span><span class="p">,</span><span class="s">&#34;琴富士&#34;</span><span class="p">,</span><span class="s">&#34;隆三杉&#34;</span><span class="p">,</span><span class="s">&#34;春日富士&#34;</span><span class="p">)</span>
+</code></pre></div><p>分析例は以下になります<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup>。変量の数は7なので、得られる軸は6つですが、同時付置図は第1軸と第2軸をもとに作成します。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># 主成分分析の対象行列作成 ------------------------------------------------------------</span>
 
-# apply()とか使わないでごめんなさい
+<span class="c1"># apply()とか使わないでごめんなさい</span>
 
-N &lt;- sum(smo_data)
-m &lt;- nrow(smo_data)
-n &lt;- ncol(smo_data)
+<span class="n">N</span> <span class="o">&lt;-</span> <span class="nf">sum</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">&lt;-</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">&lt;-</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span>
 
-p_i &lt;- rep(NA, length=m)
-for(i in 1:m){
-  p_i[i] &lt;- sum(smo_data[i,])/N
-}
-P_i &lt;- diag(p_i)
+<span class="n">p_i</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+<span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">m</span><span class="p">){</span>
+  <span class="n">p_i[i]</span> <span class="o">&lt;-</span> <span class="nf">sum</span><span class="p">(</span><span class="n">smo_data[i</span><span class="p">,</span><span class="n">]</span><span class="p">)</span><span class="o">/</span><span class="n">N</span>
+<span class="p">}</span>
+<span class="n">P_i</span> <span class="o">&lt;-</span> <span class="nf">diag</span><span class="p">(</span><span class="n">p_i</span><span class="p">)</span>
 
-p_j &lt;- rep(NA, length=n)
-for(j in 1:n){
-  p_j[j] &lt;- sum(smo_data[,j])/N
-}
-P_j &lt;- diag(p_j)
+<span class="n">p_j</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+<span class="nf">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">n</span><span class="p">){</span>
+  <span class="n">p_j[j]</span> <span class="o">&lt;-</span> <span class="nf">sum</span><span class="p">(</span><span class="n">smo_data[</span><span class="p">,</span><span class="n">j]</span><span class="p">)</span><span class="o">/</span><span class="n">N</span>
+<span class="p">}</span>
+<span class="n">P_j</span> <span class="o">&lt;-</span> <span class="nf">diag</span><span class="p">(</span><span class="n">p_j</span><span class="p">)</span>
 
-P_ij &lt;- smo_data/N
+<span class="n">P_ij</span> <span class="o">&lt;-</span> <span class="n">smo_data</span><span class="o">/</span><span class="n">N</span>
 
-matpow &lt;- function(x, pow=2) {
-  y &lt;- eigen(x)
-  y$vectors %*% diag( (y$values)^pow ) %*% t(y$vectors)
-}
+<span class="n">matpow</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pow</span><span class="o">=</span><span class="m">2</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">y</span> <span class="o">&lt;-</span> <span class="nf">eigen</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="n">y</span><span class="o">$</span><span class="n">vectors</span> <span class="o">%*%</span> <span class="nf">diag</span><span class="p">(</span> <span class="p">(</span><span class="n">y</span><span class="o">$</span><span class="n">values</span><span class="p">)</span><span class="n">^pow</span> <span class="p">)</span> <span class="o">%*%</span> <span class="nf">t</span><span class="p">(</span><span class="n">y</span><span class="o">$</span><span class="n">vectors</span><span class="p">)</span>
+<span class="p">}</span>
 
-X &lt;- solve(P_i) %*% P_ij %*% matpow(P_j, pow=(-1/2))
+<span class="n">X</span> <span class="o">&lt;-</span> <span class="nf">solve</span><span class="p">(</span><span class="n">P_i</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">P_ij</span> <span class="o">%*%</span> <span class="nf">matpow</span><span class="p">(</span><span class="n">P_j</span><span class="p">,</span> <span class="n">pow</span><span class="o">=</span><span class="p">(</span><span class="m">-1</span><span class="o">/</span><span class="m">2</span><span class="p">))</span>
 
-# 論文の方法に則った対応分析 -----------------------------------------------------------
+<span class="c1"># 論文の方法に則った対応分析 -----------------------------------------------------------</span>
 
-X_bar &lt;- matrix(rep(colSums(X)/nrow(X),20), byrow=T, nrow=nrow(X))
-X_cov &lt;- t((X - X_bar)) %*% P_i %*% (X - X_bar)
-X_pca &lt;- eigen(X_cov)
+<span class="n">X_bar</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="nf">colSums</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">/</span><span class="nf">nrow</span><span class="p">(</span><span class="n">X</span><span class="p">),</span><span class="m">20</span><span class="p">),</span> <span class="n">byrow</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="nf">nrow</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+<span class="n">X_cov</span> <span class="o">&lt;-</span> <span class="nf">t</span><span class="p">((</span><span class="n">X</span> <span class="o">-</span> <span class="n">X_bar</span><span class="p">))</span> <span class="o">%*%</span> <span class="n">P_i</span> <span class="o">%*%</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">X_bar</span><span class="p">)</span>
+<span class="n">X_pca</span> <span class="o">&lt;-</span> <span class="nf">eigen</span><span class="p">(</span><span class="n">X_cov</span><span class="p">)</span>
 
-## eigen() decomposition
-## $values
-## [1] 2.507433e-01 1.341368e-01 8.920454e-02 3.256496e-02 2.038708e-02 1.430728e-02
-## [7] 6.775222e-17
+<span class="c1">## eigen() decomposition</span>
+<span class="c1">## $values</span>
+<span class="c1">## [1] 2.507433e-01 1.341368e-01 8.920454e-02 3.256496e-02 2.038708e-02 1.430728e-02</span>
+<span class="c1">## [7] 6.775222e-17</span>
 
-## $vectors
-##             [,1]        [,2]       [,3]        [,4]        [,5]        [,6]
-## [1,]  0.22994960  0.71371157 -0.2438985  0.15461675  0.08409387 -0.06865717
-## [2,] -0.68444371  0.08147953  0.5365504 -0.03442796 -0.09073808  0.19007387
-## [3,]  0.57769184 -0.34733619  0.2671700 -0.07516444 -0.47057317  0.25705425
-## [4,] -0.30345943 -0.48187904 -0.5352658  0.36673289 -0.18451979 -0.27445628
-## [5,] -0.05982687 -0.19188089 -0.3935578 -0.38378721  0.44535231  0.64529649
-## [6,] -0.09307838  0.04510096 -0.1558085 -0.82883709 -0.24428825 -0.45225825
-## [7,]  0.20149856 -0.30376746  0.3399617 -0.02240822  0.68643479 -0.44363261
-##            [,7]
-## [1,] -0.5852867
-## [2,] -0.4375669
-## [3,] -0.4255399
-## [4,] -0.3812200
-## [5,] -0.2065814
-## [6,] -0.1176471
-## [7,] -0.2881753
+<span class="c1">## $vectors</span>
+<span class="c1">##             [,1]        [,2]       [,3]        [,4]        [,5]        [,6]</span>
+<span class="c1">## [1,]  0.22994960  0.71371157 -0.2438985  0.15461675  0.08409387 -0.06865717</span>
+<span class="c1">## [2,] -0.68444371  0.08147953  0.5365504 -0.03442796 -0.09073808  0.19007387</span>
+<span class="c1">## [3,]  0.57769184 -0.34733619  0.2671700 -0.07516444 -0.47057317  0.25705425</span>
+<span class="c1">## [4,] -0.30345943 -0.48187904 -0.5352658  0.36673289 -0.18451979 -0.27445628</span>
+<span class="c1">## [5,] -0.05982687 -0.19188089 -0.3935578 -0.38378721  0.44535231  0.64529649</span>
+<span class="c1">## [6,] -0.09307838  0.04510096 -0.1558085 -0.82883709 -0.24428825 -0.45225825</span>
+<span class="c1">## [7,]  0.20149856 -0.30376746  0.3399617 -0.02240822  0.68643479 -0.44363261</span>
+<span class="c1">##            [,7]</span>
+<span class="c1">## [1,] -0.5852867</span>
+<span class="c1">## [2,] -0.4375669</span>
+<span class="c1">## [3,] -0.4255399</span>
+<span class="c1">## [4,] -0.3812200</span>
+<span class="c1">## [5,] -0.2065814</span>
+<span class="c1">## [6,] -0.1176471</span>
+<span class="c1">## [7,] -0.2881753</span>
 
-rikishi_axis1 &lt;- X %*% X_pca$vectors[,1]
-rikishi_axis2 &lt;- X %*% X_pca$vectors[,2]
+<span class="n">rikishi_axis1</span> <span class="o">&lt;-</span> <span class="n">X</span> <span class="o">%*%</span> <span class="n">X_pca</span><span class="o">$</span><span class="n">vectors[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span>
+<span class="n">rikishi_axis2</span> <span class="o">&lt;-</span> <span class="n">X</span> <span class="o">%*%</span> <span class="n">X_pca</span><span class="o">$</span><span class="n">vectors[</span><span class="p">,</span><span class="m">2</span><span class="n">]</span>
 
-waza_axis1 &lt;- 1/sqrt(X_pca$values[1]) * solve(P_j) %*% t(P_ij) %*% rikishi_axis1
-waza_axis2 &lt;- 1/sqrt(X_pca$values[2]) * solve(P_j) %*% t(P_ij) %*% rikishi_axis2
+<span class="n">waza_axis1</span> <span class="o">&lt;-</span> <span class="m">1</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">X_pca</span><span class="o">$</span><span class="n">values[1]</span><span class="p">)</span> <span class="o">*</span> <span class="nf">solve</span><span class="p">(</span><span class="n">P_j</span><span class="p">)</span> <span class="o">%*%</span> <span class="nf">t</span><span class="p">(</span><span class="n">P_ij</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">rikishi_axis1</span>
+<span class="n">waza_axis2</span> <span class="o">&lt;-</span> <span class="m">1</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">X_pca</span><span class="o">$</span><span class="n">values[2]</span><span class="p">)</span> <span class="o">*</span> <span class="nf">solve</span><span class="p">(</span><span class="n">P_j</span><span class="p">)</span> <span class="o">%*%</span> <span class="nf">t</span><span class="p">(</span><span class="n">P_ij</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">rikishi_axis2</span>
 
-# 寄与率の表示 ------------------------------------------------------------------
+<span class="c1"># 寄与率の表示 ------------------------------------------------------------------</span>
 
-varsum &lt;- sum(X_pca$values[1:6])
-cat(paste(sprintf(&quot;\nContribution Rate of dim%.f: %.3f&quot;, 1:6,X_pca$values[1:6]/varsum)))
+<span class="n">varsum</span> <span class="o">&lt;-</span> <span class="nf">sum</span><span class="p">(</span><span class="n">X_pca</span><span class="o">$</span><span class="n">values[1</span><span class="o">:</span><span class="m">6</span><span class="n">]</span><span class="p">)</span>
+<span class="nf">cat</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;\nContribution Rate of dim%.f: %.3f&#34;</span><span class="p">,</span> <span class="m">1</span><span class="o">:</span><span class="m">6</span><span class="p">,</span><span class="n">X_pca</span><span class="o">$</span><span class="n">values[1</span><span class="o">:</span><span class="m">6</span><span class="n">]</span><span class="o">/</span><span class="n">varsum</span><span class="p">)))</span>
 
-## Contribution Rate of dim1: 0.463
-## Contribution Rate of dim2: 0.248
-## Contribution Rate of dim3: 0.165
-## Contribution Rate of dim4: 0.060
-## Contribution Rate of dim5: 0.038
-## Contribution Rate of dim6: 0.026
+<span class="c1">## Contribution Rate of dim1: 0.463</span>
+<span class="c1">## Contribution Rate of dim2: 0.248</span>
+<span class="c1">## Contribution Rate of dim3: 0.165</span>
+<span class="c1">## Contribution Rate of dim4: 0.060</span>
+<span class="c1">## Contribution Rate of dim5: 0.038</span>
+<span class="c1">## Contribution Rate of dim6: 0.026</span>
 
-# プロット --------------------------------------------------------------------
+<span class="c1"># プロット --------------------------------------------------------------------</span>
 
-library(ggplot2)
-library(ggrepel)
+<span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">ggrepel</span><span class="p">)</span>
 
-p &lt;- ggplot() + theme_light(base_size=11) +
-  geom_point(data=data.frame(x=rikishi_axis1, y=rikishi_axis2), aes(x=x,y=y), shape=1, col=&quot;red&quot;) +
-  geom_point(data=data.frame(x=waza_axis1, y=waza_axis2), aes(x=x,y=y), shape=2, col=&quot;blue&quot;) +
-  geom_text_repel(data=data.frame(x=rikishi_axis1, y=rikishi_axis2, label=rownames(smo_data)),
-                  aes(x=x,y=y,label=label)) +
-  geom_text_repel(data=data.frame(x=waza_axis1, y=waza_axis2, label=colnames(smo_data)),
-                  aes(x=x,y=y,label=label)) +
-  labs(title=&quot;Correspondence Analysis&quot;, x=&quot;dim1&quot;, y=&quot;dim2&quot;)
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">rikishi_axis1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">rikishi_axis2</span><span class="p">),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&#34;red&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">waza_axis1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">waza_axis2</span><span class="p">),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&#34;blue&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">rikishi_axis1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">rikishi_axis2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nf">rownames</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)),</span>
+                  <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">waza_axis1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">waza_axis2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nf">colnames</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)),</span>
+                  <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#34;Correspondence Analysis&#34;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s">&#34;dim1&#34;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&#34;dim2&#34;</span><span class="p">)</span>
 
-p
-</code></pre><p><img src="/my-page/post/correspondenceanalysis/CAplot.png" alt=""></p>
+<span class="n">p</span>
+</code></pre></div><p><img src="/my-page/post/correspondenceanalysis/CAplot.png" alt=""></p>
 <h2 id="結果の解釈">結果の解釈</h2>
 <p>以上の結果の解釈をしてみます。</p>
 <p>まず、軸の寄与率を確認すると、第1軸で0.463、第2軸で0.248です。累積寄与率は0.711ですから、作成した同時付置図でデータの全分散の71%を説明できることになります。第3軸以降を用いて付置図を作成することも寄与率によっては勧められますが、ここでは71%の寄与率で十分とします。</p>

@@ -11,7 +11,8 @@
     <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/my-page/images/logo2.png" />
     <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/my-page/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/monokai-sublime.min.css">
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
     <script src="https://rmorita-stat.github.io/my-page/js/highlight.min.js"></script>
     <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
     
@@ -79,8 +80,12 @@
 <p>今までに幾度かテーマにしていますが、回帰とよばれる問題があります。</p>
 <p>例えば、車の速度とブレーキをかけてから車が止まるまでの距離について、データから両者の関係を把握したい、というような場合。最も単純な関係式でこの目的を果たそうとする場合、一般には以下に示す単回帰が用いられるでしょう。</p>
 <p>$$
-\mu_n = ax_n + b \\<br>
-y_n \sim Normal(\mu_n, \sigma) \\<br>
+\mu_n = ax_n + b
+$$
+$$
+y_n \sim Normal(\mu_n, \sigma)
+$$
+$$
 n=1, \ldots, N
 $$</p>
 <p>$Y$は目的変数(説明変数によって説明される変数)、$X$は説明変数(目的変数を説明する変数)、それぞれ$Y=(y_1, \ldots, y_n, \ldots, y_N)$、$X=(x_1, \ldots, x_n, \ldots, x_N)$です。
@@ -88,7 +93,9 @@ $$</p>
 <p>こんな需要もあるかもしれません。
 上のモデルより少し難しいモデルですが、$X$、$Y$ともに非負の実数であることから、$Y$がガンマ分布に従うとし、リンク関数を$log$とした場合。
 $$
-\mu_n = exp(ax_n + b) \\<br>
+\mu_n = exp(ax_n + b)
+$$
+$$
 y_n \sim Gamma(\mu_n, \alpha, \beta)
 $$</p>
 <p><img src="/my-page/post/gaussianprocess/plot2.png" alt="aai"></p>
@@ -235,55 +242,53 @@ $$</p>
 <h1 id="ガウス過程のシミュレーション">ガウス過程のシミュレーション</h1>
 <p>ガウス過程の概要を確認したので、ガウス過程に従う確率変数がどのような挙動をするのか、いくつかのカーネル関数を例に見てみます。</p>
 <p>シミュレーションの前に、カーネル行列($K$のこと)を作成する関数と、シミュレーションのための関数を定義しておきます。</p>
-<pre><code># カーネル行列を作成する関数を定義
-# 引数 kernel：この後に定義するカーネル関数を指定 x：トレーニングデータ
-# 引数 par:kernelが要求するハイパーパラメータ delta：誤差の要素。ハイパーパラメータとは別で指定することにした
-kernel_cov &lt;- function(kernel, x,par, delta){
-  NL &lt;- length(x)
-  Sigma &lt;- matrix(NA, nrow=NL, ncol=NL)
-  for(i in 1:(NL-1)){
-    Sigma[i,i] &lt;- kernel(x[i],x[i],par) + delta
-    for(j in (i+1):NL){
-      Sigma[i,j] &lt;- kernel(x[i],x[j],par)
-      Sigma[j,i] &lt;- Sigma[i,j]
-    }
-  }
-  Sigma[NL,NL] &lt;- kernel(x[NL],x[NL],par) + delta
-  return(Sigma)
-}
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># カーネル行列を作成する関数を定義</span>
+<span class="c1"># 引数 kernel：この後に定義するカーネル関数を指定 x：トレーニングデータ</span>
+<span class="c1"># 引数 par:kernelが要求するハイパーパラメータ delta：誤差の要素。ハイパーパラメータとは別で指定することにした</span>
+<span class="n">kernel_cov</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span><span class="n">par</span><span class="p">,</span> <span class="n">delta</span><span class="p">){</span>
+  <span class="n">NL</span> <span class="o">&lt;-</span> <span class="nf">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="n">Sigma</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="n">NL</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">NL</span><span class="p">)</span>
+  <span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="p">(</span><span class="n">NL</span><span class="m">-1</span><span class="p">)){</span>
+    <span class="n">Sigma[i</span><span class="p">,</span><span class="n">i]</span> <span class="o">&lt;-</span> <span class="nf">kernel</span><span class="p">(</span><span class="n">x[i]</span><span class="p">,</span><span class="n">x[i]</span><span class="p">,</span><span class="n">par</span><span class="p">)</span> <span class="o">+</span> <span class="n">delta</span>
+    <span class="nf">for</span><span class="p">(</span><span class="n">j</span> <span class="nf">in </span><span class="p">(</span><span class="n">i</span><span class="m">+1</span><span class="p">)</span><span class="o">:</span><span class="n">NL</span><span class="p">){</span>
+      <span class="n">Sigma[i</span><span class="p">,</span><span class="n">j]</span> <span class="o">&lt;-</span> <span class="nf">kernel</span><span class="p">(</span><span class="n">x[i]</span><span class="p">,</span><span class="n">x[j]</span><span class="p">,</span><span class="n">par</span><span class="p">)</span>
+      <span class="n">Sigma[j</span><span class="p">,</span><span class="n">i]</span> <span class="o">&lt;-</span> <span class="n">Sigma[i</span><span class="p">,</span><span class="n">j]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">Sigma[NL</span><span class="p">,</span><span class="n">NL]</span> <span class="o">&lt;-</span> <span class="nf">kernel</span><span class="p">(</span><span class="n">x[NL]</span><span class="p">,</span><span class="n">x[NL]</span><span class="p">,</span><span class="n">par</span><span class="p">)</span> <span class="o">+</span> <span class="n">delta</span>
+  <span class="nf">return</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
+<span class="p">}</span>
 
-# シミュレーションのための自作関数を定義
-GP_sim &lt;- function(kernel, par){
-  p &lt;- ggplot() + theme_bw(base_size = 11)
-  i &lt;- 0
-  xs = seq(-4,4,0.05)
-  repeat{
-    i &lt;- i + 1
-    if(i == 5) break
-    p &lt;- p + geom_line(data=data.frame(x = xs,
-                                       y = MASS::mvrnorm(1, mu=rep(0,length(xs)),
-                                                         kernel_cov(kernel=kernel,x=xs, par=par,delta=1e-8))),
-                       aes(x=x,y=y), colour=as.factor(i))
-  }
-  plot(p)
-}
-</code></pre>
-<h2 id="ガウスカーネルのシミュレーション">ガウスカーネルのシミュレーション</h2>
+<span class="c1"># シミュレーションのための自作関数を定義</span>
+<span class="n">GP_sim</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">par</span><span class="p">){</span>
+  <span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span> <span class="o">=</span> <span class="m">11</span><span class="p">)</span>
+  <span class="n">i</span> <span class="o">&lt;-</span> <span class="m">0</span>
+  <span class="n">xs</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">-4</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">0.05</span><span class="p">)</span>
+  <span class="n">repeat</span><span class="p">{</span>
+    <span class="n">i</span> <span class="o">&lt;-</span> <span class="n">i</span> <span class="o">+</span> <span class="m">1</span>
+    <span class="nf">if</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="m">5</span><span class="p">)</span> <span class="n">break</span>
+    <span class="n">p</span> <span class="o">&lt;-</span> <span class="n">p</span> <span class="o">+</span> <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">xs</span><span class="p">,</span>
+                                       <span class="n">y</span> <span class="o">=</span> <span class="n">MASS</span><span class="o">::</span><span class="nf">mvrnorm</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="nf">length</span><span class="p">(</span><span class="n">xs</span><span class="p">)),</span>
+                                                         <span class="nf">kernel_cov</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="n">xs</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">,</span><span class="n">delta</span><span class="o">=</span><span class="m">1e-8</span><span class="p">))),</span>
+                       <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span> <span class="n">colour</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+  <span class="p">}</span>
+  <span class="nf">plot</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><h2 id="ガウスカーネルのシミュレーション">ガウスカーネルのシミュレーション</h2>
 <p>前の節で紹介したガウスカーネルのシミュレーションです。改めてガウスカーネルを再定義します。
 <!-- raw HTML omitted -->  <br>
 ガウスカーネルは、下のようにrateパラメータ$\theta$、shapeパラメータ$\rho$をもちます。ここでは$\theta$、$\rho$ともに１とした場合のシミュレーションをします。</p>
 <p>$$
 k(x,x_{'}) = \theta exp\left(-\cfrac{(x-x^{'})^2}{\rho}\right)
 $$</p>
-<pre><code>## ガウスカーネルの定義 kernel_cov()で使用できるように、引数は(x1,x2,par)でないといけない
-## カーネルのハイパーパラメータはすべてparで指定する
-Gaussian_kernel &lt;- function(x1, x2, par){
-  return(par[1]*exp(-(x1 - x2)^2/par[2]))
-}
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1">## ガウスカーネルの定義 kernel_cov()で使用できるように、引数は(x1,x2,par)でないといけない</span>
+<span class="c1">## カーネルのハイパーパラメータはすべてparで指定する</span>
+<span class="n">Gaussian_kernel</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">par</span><span class="p">){</span>
+  <span class="nf">return</span><span class="p">(</span><span class="n">par[1]</span><span class="o">*</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)</span><span class="n">^2</span><span class="o">/</span><span class="n">par[2]</span><span class="p">))</span>
+<span class="p">}</span>
 
-GP_sim(Gaussian_kernel, par=c(1,1))
-</code></pre>
-<p><img src="/my-page/post/gaussianprocess/sim_1.png" alt=""></p>
+<span class="nf">GP_sim</span><span class="p">(</span><span class="n">Gaussian_kernel</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">))</span>
+</code></pre></div><p><img src="/my-page/post/gaussianprocess/sim_1.png" alt=""></p>
 <p>ガウスカーネルをカーネル関数に設定したガウス過程は、無限回微分可能な滑らかな曲線になるそうです。</p>
 <h2 id="線形カーネルのシミュレーション">線形カーネルのシミュレーション</h2>
 <p>線形カーネルは、ハイパーパラメータを持たないカーネル関数です。</p>
@@ -291,14 +296,13 @@ GP_sim(Gaussian_kernel, par=c(1,1))
 k(x,x_{'}) = x^T x^{'}
 $$</p>
 <p>線形カーネルは、$\phi(x)=x$としているので、これを式(1)に代入すると、$x$の中に定数項$x_0=1$が含まれているとした場合、通常の重回帰と等価であることが分かります。</p>
-<pre><code>## 線形カーネルを定義。ハイパーパラメータは無し
-linear_kernel &lt;- function(x1,x2,par){
-  return(1 + t(x1)%*%x2)
-}
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1">## 線形カーネルを定義。ハイパーパラメータは無し</span>
+<span class="n">linear_kernel</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">par</span><span class="p">){</span>
+  <span class="nf">return</span><span class="p">(</span><span class="m">1</span> <span class="o">+</span> <span class="nf">t</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span><span class="o">%*%</span><span class="n">x2</span><span class="p">)</span>
+<span class="p">}</span>
 
-GP_sim(linear_kernel, par=NULL)
-</code></pre>
-<p><img src="/my-page/post/gaussianprocess/sim_2.png" alt=""></p>
+<span class="nf">GP_sim</span><span class="p">(</span><span class="n">linear_kernel</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="kc">NULL</span><span class="p">)</span>
+</code></pre></div><p><img src="/my-page/post/gaussianprocess/sim_2.png" alt=""></p>
 <p>シミュレーションでも直線が引けることが確認できます。</p>
 <h2 id="matern3カーネルのシミュレーション">Matern3カーネルのシミュレーション</h2>
 <p>Maternカーネルは、ガウスカーネルの無限回微分可能という前提がモデル化において強すぎるという主張から提案されたカーネルです。</p>
@@ -311,14 +315,13 @@ $$</p>
 k_{3/2}(x,x^{'}) = \left(1 + \cfrac{\sqrt{3}r}{\theta} \right) exp\left( -\cfrac{\sqrt{3}r}{\theta} \right)
 $$</p>
 <p>このMatern3カーネルを$\theta=1$としてシミュレーションしてみます。</p>
-<pre><code># Matern3カーネルを定義
-Matern3_kernel &lt;- function(x1,x2, par){
-  return((1 + sqrt(3)*abs(x1-x2)/par[1])*exp(-sqrt(3)*abs(x1-x2)/par[2]))
-}
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Matern3カーネルを定義</span>
+<span class="n">Matern3_kernel</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span> <span class="n">par</span><span class="p">){</span>
+  <span class="nf">return</span><span class="p">((</span><span class="m">1</span> <span class="o">+</span> <span class="nf">sqrt</span><span class="p">(</span><span class="m">3</span><span class="p">)</span><span class="o">*</span><span class="nf">abs</span><span class="p">(</span><span class="n">x1</span><span class="o">-</span><span class="n">x2</span><span class="p">)</span><span class="o">/</span><span class="n">par[1]</span><span class="p">)</span><span class="o">*</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="nf">sqrt</span><span class="p">(</span><span class="m">3</span><span class="p">)</span><span class="o">*</span><span class="nf">abs</span><span class="p">(</span><span class="n">x1</span><span class="o">-</span><span class="n">x2</span><span class="p">)</span><span class="o">/</span><span class="n">par[2]</span><span class="p">))</span>
+<span class="p">}</span>
 
-GP_sim(Matern3_kernel,par=c(1,1))
-</code></pre>
-<p><img src="/my-page/post/gaussianprocess/sim_3.png" alt=""></p>
+<span class="nf">GP_sim</span><span class="p">(</span><span class="n">Matern3_kernel</span><span class="p">,</span><span class="n">par</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">))</span>
+</code></pre></div><p><img src="/my-page/post/gaussianprocess/sim_3.png" alt=""></p>
 <p>ガウスカーネルと比べていびつな曲線になっていることが分かります。</p>
 <h2 id="ガウスカーネルと線形カーネルの結合">ガウスカーネルと線形カーネルの結合</h2>
 <p>カーネル関数は組み合わせて使うことも可能です。
@@ -327,33 +330,31 @@ GP_sim(Matern3_kernel,par=c(1,1))
 k(x,x_{'}) = \theta_1 exp\left(-\cfrac{(x-x^{'})^2}{\rho}\right) + \theta_2x^T x^{'}
 $$</p>
 <p>上の式において、$\theta_1=0.8, \theta_2=2, \rho=0.07$としたときのシミュレーションです。</p>
-<pre><code># ガウスカーネル＋線形カーネルの定義
-Gaussian_plus_Linear_kernel &lt;- function(x1,x2,par){
-  return(par[1] * exp(-(x1 - x2)^2/par[2]) + par[3] * (1 + t(x1)%*%x2))
-}
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># ガウスカーネル＋線形カーネルの定義</span>
+<span class="n">Gaussian_plus_Linear_kernel</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">par</span><span class="p">){</span>
+  <span class="nf">return</span><span class="p">(</span><span class="n">par[1]</span> <span class="o">*</span> <span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x2</span><span class="p">)</span><span class="n">^2</span><span class="o">/</span><span class="n">par[2]</span><span class="p">)</span> <span class="o">+</span> <span class="n">par[3]</span> <span class="o">*</span> <span class="p">(</span><span class="m">1</span> <span class="o">+</span> <span class="nf">t</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span><span class="o">%*%</span><span class="n">x2</span><span class="p">))</span>
+<span class="p">}</span>
 
-GP_sim(Gaussian_plus_Linear_kernel,c(0.8,0.07,2))
-</code></pre>
-<p><img src="/my-page/post/gaussianprocess/sim_4.png" alt=""></p>
+<span class="nf">GP_sim</span><span class="p">(</span><span class="n">Gaussian_plus_Linear_kernel</span><span class="p">,</span><span class="nf">c</span><span class="p">(</span><span class="m">0.8</span><span class="p">,</span><span class="m">0.07</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
+</code></pre></div><p><img src="/my-page/post/gaussianprocess/sim_4.png" alt=""></p>
 <p>ガウスカーネルと線形カーネルがうまく組み合わさっていることが分かります。</p>
 <h1 id="実際に回帰パラメータ推定を実行">実際に回帰・パラメータ推定を実行</h1>
 <p>ひととおりシミュレーションしたので実践です。
 まずは参考図書と同じ、陸上男子100mの世界記録のデータを準備します。$x$は世界記録更新日、$y$は世界記録のタイムです。</p>
-<pre><code># データの準備
-x &lt;- as.Date(x=c(&quot;1964/10/15&quot;,&quot;1968/6/20&quot;,&quot;1968/10/13&quot;,&quot;1968/10/14&quot;,&quot;1983/7/3&quot;,&quot;1987/8/30&quot;,&quot;1988/8/17&quot;,
-                 &quot;1988/9/24&quot;,&quot;1991/7/14&quot;,&quot;1991/8/25&quot;,&quot;1994/7/6&quot;,&quot;1996/7/27&quot;,&quot;1999/6/16&quot;,&quot;2002/9/14&quot;,
-                 &quot;2005/6/14&quot;,&quot;2006/5/12&quot;,&quot;2006/6/11&quot;,&quot;2006/8/18&quot;,&quot;2007/9/9&quot;,&quot;2008/5/31&quot;,&quot;2008/8/16&quot;,&quot;2009/8/16&quot;))
-y &lt;- c(10.06,10.03,10.02,9.95,9.93,9.93,9.93,9.92,9.9,9.86,9.85,9.84,9.79,9.78,9.77,9.77,9.77,9.77,9.74,9.72,9.69,9.58)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># データの準備</span>
+<span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">as.Date</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;1964/10/15&#34;</span><span class="p">,</span><span class="s">&#34;1968/6/20&#34;</span><span class="p">,</span><span class="s">&#34;1968/10/13&#34;</span><span class="p">,</span><span class="s">&#34;1968/10/14&#34;</span><span class="p">,</span><span class="s">&#34;1983/7/3&#34;</span><span class="p">,</span><span class="s">&#34;1987/8/30&#34;</span><span class="p">,</span><span class="s">&#34;1988/8/17&#34;</span><span class="p">,</span>
+                 <span class="s">&#34;1988/9/24&#34;</span><span class="p">,</span><span class="s">&#34;1991/7/14&#34;</span><span class="p">,</span><span class="s">&#34;1991/8/25&#34;</span><span class="p">,</span><span class="s">&#34;1994/7/6&#34;</span><span class="p">,</span><span class="s">&#34;1996/7/27&#34;</span><span class="p">,</span><span class="s">&#34;1999/6/16&#34;</span><span class="p">,</span><span class="s">&#34;2002/9/14&#34;</span><span class="p">,</span>
+                 <span class="s">&#34;2005/6/14&#34;</span><span class="p">,</span><span class="s">&#34;2006/5/12&#34;</span><span class="p">,</span><span class="s">&#34;2006/6/11&#34;</span><span class="p">,</span><span class="s">&#34;2006/8/18&#34;</span><span class="p">,</span><span class="s">&#34;2007/9/9&#34;</span><span class="p">,</span><span class="s">&#34;2008/5/31&#34;</span><span class="p">,</span><span class="s">&#34;2008/8/16&#34;</span><span class="p">,</span><span class="s">&#34;2009/8/16&#34;</span><span class="p">))</span>
+<span class="n">y</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">10.06</span><span class="p">,</span><span class="m">10.03</span><span class="p">,</span><span class="m">10.02</span><span class="p">,</span><span class="m">9.95</span><span class="p">,</span><span class="m">9.93</span><span class="p">,</span><span class="m">9.93</span><span class="p">,</span><span class="m">9.93</span><span class="p">,</span><span class="m">9.92</span><span class="p">,</span><span class="m">9.9</span><span class="p">,</span><span class="m">9.86</span><span class="p">,</span><span class="m">9.85</span><span class="p">,</span><span class="m">9.84</span><span class="p">,</span><span class="m">9.79</span><span class="p">,</span><span class="m">9.78</span><span class="p">,</span><span class="m">9.77</span><span class="p">,</span><span class="m">9.77</span><span class="p">,</span><span class="m">9.77</span><span class="p">,</span><span class="m">9.77</span><span class="p">,</span><span class="m">9.74</span><span class="p">,</span><span class="m">9.72</span><span class="p">,</span><span class="m">9.69</span><span class="p">,</span><span class="m">9.58</span><span class="p">)</span>
 
-# 標準化
-x &lt;- (as.numeric(x)-mean(as.numeric(x)))/sd(as.numeric(x))
-y &lt;- (y-mean(y))/sd(y)
+<span class="c1"># 標準化</span>
+<span class="n">x</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">-</span><span class="nf">mean</span><span class="p">(</span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span><span class="o">/</span><span class="nf">sd</span><span class="p">(</span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">y</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="nf">mean</span><span class="p">(</span><span class="n">y</span><span class="p">))</span><span class="o">/</span><span class="nf">sd</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
-library(ggplot2)
-p &lt;- ggplot(data=data.frame(x=x,y=y), aes(x=x,y=y)) + theme_bw(base_size=11) + geom_point()
-p
-</code></pre>
-<p><img src="/my-page/post/gaussianprocess/data_plot.png" alt=""></p>
+<span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">geom_point</span><span class="p">()</span>
+<span class="n">p</span>
+</code></pre></div><p><img src="/my-page/post/gaussianprocess/data_plot.png" alt=""></p>
 <p>分析にあたって、まずはハイパーパラメータの最適な値を推定します。
 <!-- raw HTML omitted -->推定方法にはハイパーパラメータを少しずつ変えてその事後分布を推定するMCMCも使えますが、ここでは計算量の少ない効率的な方法として<strong>勾配法</strong>を用います。
 簡略化のため、ガウス過程のハイパーパラメータを$\theta=(\theta_1, \theta_2,\ldots)$とまとめておき、カーネル行列も$K_{\theta}$とします。
@@ -371,70 +372,70 @@ $$</p>
 式(7)を最大にする$\theta$を求め、ハイパーパラメータの最適な値とします。
 <!-- raw HTML omitted -->  <br>
 式(7)を計算する自作関数を以下で定義します。</p>
-<pre><code># ガウス過程モデルの対数尤度に比例する値を計算する関数を定義
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># ガウス過程モデルの対数尤度に比例する値を計算する関数を定義</span>
 
-GP_L &lt;- function(x, y, par, kernel){
-  return(-log(det(kernel_cov(kernel=kernel,x=x,par=exp(par[-length(par)]),delta=exp(par[length(par)]))))
-         -t(y)%*%
-           solve(kernel_cov(kernel=kernel,x=x,par=exp(par[-length(par)]), delta=exp(par[length(par)])))%*%y)
-}
-</code></pre>
-<p>式(7)を最大にする$\theta$は、Rの汎用最適化関数の<code>optim()</code>を使います。参考図書では式(7)を$\theta$の各ハイパーパラメータで偏微分した式が紹介されています。<code>optim()</code>では引数<code>gr</code>で一階偏微分関数を指定でき、簡単に定義できるなら明示的に指定した方が良いのですが、指定しなくても勝手に微分してくれるので今回は横着します。</p>
+<span class="n">GP_L</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">par</span><span class="p">,</span> <span class="n">kernel</span><span class="p">){</span>
+  <span class="nf">return</span><span class="p">(</span><span class="o">-</span><span class="nf">log</span><span class="p">(</span><span class="nf">det</span><span class="p">(</span><span class="nf">kernel_cov</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">par</span><span class="o">=</span><span class="nf">exp</span><span class="p">(</span><span class="n">par[</span><span class="o">-</span><span class="nf">length</span><span class="p">(</span><span class="n">par</span><span class="p">)</span><span class="n">]</span><span class="p">),</span><span class="n">delta</span><span class="o">=</span><span class="nf">exp</span><span class="p">(</span><span class="n">par</span><span class="nf">[length</span><span class="p">(</span><span class="n">par</span><span class="p">)</span><span class="n">]</span><span class="p">))))</span>
+         <span class="o">-</span><span class="nf">t</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">%*%</span>
+           <span class="nf">solve</span><span class="p">(</span><span class="nf">kernel_cov</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">par</span><span class="o">=</span><span class="nf">exp</span><span class="p">(</span><span class="n">par[</span><span class="o">-</span><span class="nf">length</span><span class="p">(</span><span class="n">par</span><span class="p">)</span><span class="n">]</span><span class="p">),</span> <span class="n">delta</span><span class="o">=</span><span class="nf">exp</span><span class="p">(</span><span class="n">par</span><span class="nf">[length</span><span class="p">(</span><span class="n">par</span><span class="p">)</span><span class="n">]</span><span class="p">)))</span><span class="o">%*%</span><span class="n">y</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div><p>式(7)を最大にする$\theta$は、Rの汎用最適化関数の<code>optim()</code>を使います。参考図書では式(7)を$\theta$の各ハイパーパラメータで偏微分した式が紹介されています。<code>optim()</code>では引数<code>gr</code>で一階偏微分関数を指定でき、簡単に定義できるなら明示的に指定した方が良いのですが、指定しなくても勝手に微分してくれるので今回は横着します。</p>
 <p>参考図書には、以下のガウス過程の予測分布の公式が記載されていますので、この公式に倣って予測分布を計算する自作関数を定義します。</p>
 <p>$$
 p(Y^{\star}|X^{\star},\mathcal{D}) = MultiNormal(k_{\star}^T K^{-1}Y,k_{\star\star}-k_{\star}^{T}K^{-1}k_{\star})
 $$</p>
 <p>ここで$\mathcal{D}$は観測値$Y$、$X$の$N$個のペア、$Y^{\star}=(y_1^{\star},\ldots,y_M^{\star})$、$X^{\star}=(x_1^{\star}, \ldots, x_M^{\star})$はそれぞれ予測値と特徴ベクトル空間における予測したい点の$M$個のペアです。$k_{\star}$、$k_{\star\star}$はそれぞれ
 $$
-k_{\star}(n,m) = k(x_n,x_m^{\star})~~~(n=1,\ldots,N,m=1,\ldots,M) \\<br>
+k_{\star}(n,m) = k(x_n,x_m^{\star})~~~(n=1,\ldots,N,m=1,\ldots,M)
+$$
+$$
 k_{\star\star}(m_1,m_2) = k(x_{m1}^{\star},x_{m2}^{\star})~~~(m_1=1,\ldots,M, m_2=1,\ldots,M)
 $$</p>
 <p>を要素に持つカーネル行列です。</p>
-<pre><code># 予測値の算出のための関数定義
-# 返り値は各予測点の平均と共分散行列
-my_predict &lt;- function(x_test, x_train, y_train, kernel, par){
-  kernel_cov_star &lt;- function(x1,x2,par,kernel){
-    NL &lt;- length(x1)
-    ML &lt;- length(x2)
-    Sigma &lt;- matrix(NA, nrow=NL, ncol=ML)
-    for(i in 1:NL){
-      for(j in 1:ML){
-        Sigma[i,j] &lt;- kernel(x1=x1[i], x2=x2[j],par=par[-length(par)])
-      }
-    }
-    return(Sigma)
-  }
-  K &lt;- kernel_cov(kernel=kernel,x=x_train, par=par[-length(par)], delta=par[length(par)])
-  k_star &lt;- kernel_cov_star(kernel=kernel, x1=x_train, x2=x_test,par=par)
-  k_2star &lt;- kernel_cov(kernel=kernel, x=x_test, par=par[-length(par)], delta=par[length(par)])
-  mu &lt;- t(k_star) %*% solve(K) %*% y_train
-  sigma &lt;- k_2star - t(k_star) %*% solve(K) %*% k_star
-  return(list(mu, sigma))
-}
-</code></pre>
-<h2 id="ガウスカーネルを使った回帰">ガウスカーネルを使った回帰</h2>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># 予測値の算出のための関数定義</span>
+<span class="c1"># 返り値は各予測点の平均と共分散行列</span>
+<span class="n">my_predict</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">par</span><span class="p">){</span>
+  <span class="n">kernel_cov_star</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">x2</span><span class="p">,</span><span class="n">par</span><span class="p">,</span><span class="n">kernel</span><span class="p">){</span>
+    <span class="n">NL</span> <span class="o">&lt;-</span> <span class="nf">length</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+    <span class="n">ML</span> <span class="o">&lt;-</span> <span class="nf">length</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
+    <span class="n">Sigma</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="n">NL</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">ML</span><span class="p">)</span>
+    <span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">NL</span><span class="p">){</span>
+      <span class="nf">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">ML</span><span class="p">){</span>
+        <span class="n">Sigma[i</span><span class="p">,</span><span class="n">j]</span> <span class="o">&lt;-</span> <span class="nf">kernel</span><span class="p">(</span><span class="n">x1</span><span class="o">=</span><span class="n">x1[i]</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="n">x2[j]</span><span class="p">,</span><span class="n">par</span><span class="o">=</span><span class="n">par[</span><span class="o">-</span><span class="nf">length</span><span class="p">(</span><span class="n">par</span><span class="p">)</span><span class="n">]</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nf">return</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="n">K</span> <span class="o">&lt;-</span> <span class="nf">kernel_cov</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="n">x_train</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="n">par[</span><span class="o">-</span><span class="nf">length</span><span class="p">(</span><span class="n">par</span><span class="p">)</span><span class="n">]</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">par</span><span class="nf">[length</span><span class="p">(</span><span class="n">par</span><span class="p">)</span><span class="n">]</span><span class="p">)</span>
+  <span class="n">k_star</span> <span class="o">&lt;-</span> <span class="nf">kernel_cov_star</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="n">x_train</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="n">x_test</span><span class="p">,</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">)</span>
+  <span class="n">k_2star</span> <span class="o">&lt;-</span> <span class="nf">kernel_cov</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x_test</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="n">par[</span><span class="o">-</span><span class="nf">length</span><span class="p">(</span><span class="n">par</span><span class="p">)</span><span class="n">]</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">par</span><span class="nf">[length</span><span class="p">(</span><span class="n">par</span><span class="p">)</span><span class="n">]</span><span class="p">)</span>
+  <span class="n">mu</span> <span class="o">&lt;-</span> <span class="nf">t</span><span class="p">(</span><span class="n">k_star</span><span class="p">)</span> <span class="o">%*%</span> <span class="nf">solve</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">y_train</span>
+  <span class="n">sigma</span> <span class="o">&lt;-</span> <span class="n">k_2star</span> <span class="o">-</span> <span class="nf">t</span><span class="p">(</span><span class="n">k_star</span><span class="p">)</span> <span class="o">%*%</span> <span class="nf">solve</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">k_star</span>
+  <span class="nf">return</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">))</span>
+<span class="p">}</span>
+
+</code></pre></div><h2 id="ガウスカーネルを使った回帰">ガウスカーネルを使った回帰</h2>
 <p>上で定義した関数を使い、カーネル関数にガウスカーネルを設定して回帰を実行してみます。</p>
-<pre><code>#自作関数GP_L()を使って対数尤度を計算 対数尤度を最大化するハイパーパラメータを推定
-res_optim1 &lt;- optim(par=c(0,0,0),fn=GP_L,kernel=Gaussian_kernel, x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1">#自作関数GP_L()を使って対数尤度を計算 対数尤度を最大化するハイパーパラメータを推定</span>
+<span class="n">res_optim1</span> <span class="o">&lt;-</span> <span class="nf">optim</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span><span class="n">fn</span><span class="o">=</span><span class="n">GP_L</span><span class="p">,</span><span class="n">kernel</span><span class="o">=</span><span class="n">Gaussian_kernel</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">control</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">fnscale</span><span class="o">=</span><span class="m">-1</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s">&#34;BFGS&#34;</span><span class="p">)</span>
 
-par &lt;- exp(res_optim1$par)
-# 推定したパラメータの値を確認
-par
-## [1] 1.55308949 0.22898734 0.04299662
+<span class="n">par</span> <span class="o">&lt;-</span> <span class="nf">exp</span><span class="p">(</span><span class="n">res_optim1</span><span class="o">$</span><span class="n">par</span><span class="p">)</span>
+<span class="c1"># 推定したパラメータの値を確認</span>
+<span class="n">par</span>
+<span class="c1">## [1] 1.55308949 0.22898734 0.04299662</span>
 
-#自作関数my_predict()を使って予測分布の平均・ 共分散行列を求める
-pre &lt;- my_predict(x_test = seq(-2.0,2.0,0.01),x_train=x, y_train=y, kernel=Gaussian_kernel,par=par)
+<span class="c1">#自作関数my_predict()を使って予測分布の平均・ 共分散行列を求める</span>
+<span class="n">pre</span> <span class="o">&lt;-</span> <span class="nf">my_predict</span><span class="p">(</span><span class="n">x_test</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">-2.0</span><span class="p">,</span><span class="m">2.0</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span><span class="n">x_train</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y_train</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="n">Gaussian_kernel</span><span class="p">,</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">)</span>
 
-# 結果の描画
-library(ggplot2)
-p &lt;- ggplot() + theme_bw(base_size=11) +
-  geom_line(data=data.frame(x=seq(-2.0,2.0,0.01),y=pre[[1]]),aes(x=x,y=y))
-p &lt;- p + geom_point(data=data.frame(x=x,y=y),aes(x=x,y=y))
-p &lt;- p + geom_ribbon(data=data.frame(x=seq(-2.0,2.0,0.01),ymin=pre[[1]]-2*sqrt(diag(pre[[2]])), ymax=pre[[1]]+2*sqrt(diag(pre[[2]]))),
-                     aes(x=x,ymax=ymax,ymin=ymin),fill=&quot;blue&quot;,alpha=0.5)
-p
-</code></pre>
-<p><img src="/my-page/post/gaussianprocess/res_1.png" alt=""></p>
+<span class="c1"># 結果の描画</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">-2.0</span><span class="p">,</span><span class="m">2.0</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span><span class="n">y</span><span class="o">=</span><span class="n">pre[[1]]</span><span class="p">),</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="n">p</span> <span class="o">+</span> <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="n">p</span> <span class="o">+</span> <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">-2.0</span><span class="p">,</span><span class="m">2.0</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span><span class="n">ymin</span><span class="o">=</span><span class="n">pre[[1]]</span><span class="m">-2</span><span class="o">*</span><span class="nf">sqrt</span><span class="p">(</span><span class="nf">diag</span><span class="p">(</span><span class="n">pre[[2]]</span><span class="p">)),</span> <span class="n">ymax</span><span class="o">=</span><span class="n">pre[[1]]</span><span class="m">+2</span><span class="o">*</span><span class="nf">sqrt</span><span class="p">(</span><span class="nf">diag</span><span class="p">(</span><span class="n">pre[[2]]</span><span class="p">))),</span>
+                     <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">ymax</span><span class="o">=</span><span class="n">ymax</span><span class="p">,</span><span class="n">ymin</span><span class="o">=</span><span class="n">ymin</span><span class="p">),</span><span class="n">fill</span><span class="o">=</span><span class="s">&#34;blue&#34;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="m">0.5</span><span class="p">)</span>
+<span class="n">p</span>
+</code></pre></div><p><img src="/my-page/post/gaussianprocess/res_1.png" alt=""></p>
 <p>最適化したカーネル関数は以下になります。$\delta(x,x^{'})$はクロネッカーのデルタと呼ばれ、$x=x^{'}$のとき、つまりカーネル行列の対角成分にときのみ1を、それ以外は0を返す関数です。</p>
 <p>$$
 k(x,x_{'}) = 1.553exp\left(-\cfrac{(x-x^{'})^2}{0.229}\right) + 0.043\delta(x,x^{'})
@@ -448,31 +449,30 @@ $$</p>
 <p><strong>将来世界記録のタイムが伸びるという推定はあまりにもおかしいかめ</strong>&gt;🐢</p>
 <h2 id="ガウスカーネル線形カーネルで回帰">ガウスカーネル＋線形カーネルで回帰</h2>
 <p>かめきちの意見を踏まえ、カーネル関数でガウスカーネルと線形カーネルを組み合わせてみます。</p>
-<pre><code># ガウスカーネル＋線形カーネを使って回帰
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># ガウスカーネル＋線形カーネを使って回帰</span>
 
-# 自作関数GP_L()を使って尤度を計算 尤度を最大化するハイパーパラメータを推定
-res_optim2 &lt;- optim(par=c(0,0,0,0),fn=GP_L,kernel=Gaussian_plus_Linear_kernel,
-                 x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)
+<span class="c1"># 自作関数GP_L()を使って尤度を計算 尤度を最大化するハイパーパラメータを推定</span>
+<span class="n">res_optim2</span> <span class="o">&lt;-</span> <span class="nf">optim</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span><span class="n">fn</span><span class="o">=</span><span class="n">GP_L</span><span class="p">,</span><span class="n">kernel</span><span class="o">=</span><span class="n">Gaussian_plus_Linear_kernel</span><span class="p">,</span>
+                 <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">control</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">fnscale</span><span class="o">=</span><span class="m">-1</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s">&#34;BFGS&#34;</span><span class="p">)</span>
 
-par &lt;- exp(res_optim2$par)
-# 推定したパラメータの値を確認
-par
-## [1] 0.11098682 0.02720031 0.46865763 0.04742707
+<span class="n">par</span> <span class="o">&lt;-</span> <span class="nf">exp</span><span class="p">(</span><span class="n">res_optim2</span><span class="o">$</span><span class="n">par</span><span class="p">)</span>
+<span class="c1"># 推定したパラメータの値を確認</span>
+<span class="n">par</span>
+<span class="c1">## [1] 0.11098682 0.02720031 0.46865763 0.04742707</span>
 
-# 自作関数my_predict()を使って予測分布の平均・ 共分散行列を求める
-pre &lt;- my_predict(x_test = seq(-2.0,2.0,0.01),x_train=x, y_train=y,
-                  kernel = Gaussian_plus_Linear_kernel,par=par)
+<span class="c1"># 自作関数my_predict()を使って予測分布の平均・ 共分散行列を求める</span>
+<span class="n">pre</span> <span class="o">&lt;-</span> <span class="nf">my_predict</span><span class="p">(</span><span class="n">x_test</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">-2.0</span><span class="p">,</span><span class="m">2.0</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span><span class="n">x_train</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y_train</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+                  <span class="n">kernel</span> <span class="o">=</span> <span class="n">Gaussian_plus_Linear_kernel</span><span class="p">,</span><span class="n">par</span><span class="o">=</span><span class="n">par</span><span class="p">)</span>
 
-# 結果の描画
-library(ggplot2)
-p &lt;- ggplot() + theme_bw(base_size=11) +
-  geom_line(data=data.frame(x=seq(-2.0,2.0,0.01),y=pre[[1]]),aes(x=x,y=y))
-p &lt;- p + geom_point(data=data.frame(x=x,y=y),aes(x=x,y=y))
-p &lt;- p + geom_ribbon(data=data.frame(x=seq(-2.0,2.0,0.01),ymin=pre[[1]]-2*sqrt(diag(pre[[2]])), ymax=pre[[1]]+2*sqrt(diag(pre[[2]]))),
-                     aes(x=x,ymax=ymax,ymin=ymin),fill=&quot;blue&quot;,alpha=0.5)
-p
-</code></pre>
-<p><img src="/my-page/post/gaussianprocess/res_2.png" alt=""></p>
+<span class="c1"># 結果の描画</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">-2.0</span><span class="p">,</span><span class="m">2.0</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span><span class="n">y</span><span class="o">=</span><span class="n">pre[[1]]</span><span class="p">),</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="n">p</span> <span class="o">+</span> <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="n">p</span> <span class="o">+</span> <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">-2.0</span><span class="p">,</span><span class="m">2.0</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span><span class="n">ymin</span><span class="o">=</span><span class="n">pre[[1]]</span><span class="m">-2</span><span class="o">*</span><span class="nf">sqrt</span><span class="p">(</span><span class="nf">diag</span><span class="p">(</span><span class="n">pre[[2]]</span><span class="p">)),</span> <span class="n">ymax</span><span class="o">=</span><span class="n">pre[[1]]</span><span class="m">+2</span><span class="o">*</span><span class="nf">sqrt</span><span class="p">(</span><span class="nf">diag</span><span class="p">(</span><span class="n">pre[[2]]</span><span class="p">))),</span>
+                     <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">ymax</span><span class="o">=</span><span class="n">ymax</span><span class="p">,</span><span class="n">ymin</span><span class="o">=</span><span class="n">ymin</span><span class="p">),</span><span class="n">fill</span><span class="o">=</span><span class="s">&#34;blue&#34;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="m">0.5</span><span class="p">)</span>
+<span class="n">p</span>
+</code></pre></div><p><img src="/my-page/post/gaussianprocess/res_2.png" alt=""></p>
 <p><strong>It&rsquo;s so brilliant</strong>&gt;🐢</p>
 <p>最適化したカーネル関数は以下になります。</p>
 <p>$$
@@ -480,15 +480,14 @@ k(x,x_{'}) = 0.111exp\left(-\cfrac{(x-x^{'})^2}{0.027}\right) + 0.469x^T x^{'} +
 $$</p>
 <p>タイムが短縮される全体的な傾向が線形カーネルでとらえるとともに、細かい変動をガウスカーネルで表現できています。</p>
 <p>勾配法の初期値を変えるとどうなるでしょう。</p>
-<pre><code>res_optim3 &lt;- optim(par=c(0,0.4,0,0),fn=GP_L,kernel=Gaussian_plus_Linear_kernel,
-                 x=x,y=y,control = list(fnscale=-1), method=&quot;BFGS&quot;)
-par = exp(res_optim3$par)
-par
-## [1] 0.22313442 2.81135418 0.50883359 0.09808983
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">res_optim3</span> <span class="o">&lt;-</span> <span class="nf">optim</span><span class="p">(</span><span class="n">par</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0.4</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span><span class="n">fn</span><span class="o">=</span><span class="n">GP_L</span><span class="p">,</span><span class="n">kernel</span><span class="o">=</span><span class="n">Gaussian_plus_Linear_kernel</span><span class="p">,</span>
+                 <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">control</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">fnscale</span><span class="o">=</span><span class="m">-1</span><span class="p">),</span> <span class="n">method</span><span class="o">=</span><span class="s">&#34;BFGS&#34;</span><span class="p">)</span>
+<span class="n">par</span> <span class="o">=</span> <span class="nf">exp</span><span class="p">(</span><span class="n">res_optim3</span><span class="o">$</span><span class="n">par</span><span class="p">)</span>
+<span class="n">par</span>
+<span class="c1">## [1] 0.22313442 2.81135418 0.50883359 0.09808983</span>
 
-~省略~
-</code></pre>
-<p><img src="/my-page/post/gaussianprocess/res_3.png" alt=""></p>
+<span class="o">~</span>省略<span class="o">~</span>
+</code></pre></div><p><img src="/my-page/post/gaussianprocess/res_3.png" alt=""></p>
 <p>最適化したカーネル関数は以下になります。</p>
 <p>$$
 k(x,x_{'}) = 0.223exp\left(-\cfrac{(x-x^{'})^2}{2.811}\right) + 0.509x^T x^{'} + 0.098\delta(x,x^{'})
@@ -503,21 +502,18 @@ $$</p>
 <p>$$
 AIC = -2最大対数尤度＋2自由パラメータの個数
 $$</p>
-<pre><code># optim()で対数尤度にマイナスをかけているので、ここでは対数尤度にマイナスをかけない
-# optim()で最大化したGP_L()は、実際の対数尤度ではなく対数尤度に比例する値なので、ここで正確な対数尤度を計算する
-my_AIC &lt;- function(res_optim, x){
-  return(2*(res_optim$value/2 + length(x)/2 * log(2*pi))+2*length(res_optim$par))
-}
-cat(sprintf(&quot;AIC of \n res1 = %.3f\n res2 = %.3f\n res3 = %.3f&quot;,my_AIC(res_optim1,x), my_AIC(res_optim2,x), my_AIC(res_optim3,x)))
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># optim()で対数尤度にマイナスをかけているので、ここでは対数尤度にマイナスをかけない</span>
+<span class="c1"># optim()で最大化したGP_L()は、実際の対数尤度ではなく対数尤度に比例する値なので、ここで正確な対数尤度を計算する</span>
+<span class="n">my_AIC</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">res_optim</span><span class="p">,</span> <span class="n">x</span><span class="p">){</span>
+  <span class="nf">return</span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="p">(</span><span class="n">res_optim</span><span class="o">$</span><span class="n">value</span><span class="o">/</span><span class="m">2</span> <span class="o">+</span> <span class="nf">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="m">2</span> <span class="o">*</span> <span class="nf">log</span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="kc">pi</span><span class="p">))</span><span class="m">+2</span><span class="o">*</span><span class="nf">length</span><span class="p">(</span><span class="n">res_optim</span><span class="o">$</span><span class="n">par</span><span class="p">))</span>
+<span class="p">}</span>
+<span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;AIC of \n res1 = %.3f\n res2 = %.3f\n res3 = %.3f&#34;</span><span class="p">,</span><span class="nf">my_AIC</span><span class="p">(</span><span class="n">res_optim1</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="nf">my_AIC</span><span class="p">(</span><span class="n">res_optim2</span><span class="p">,</span><span class="n">x</span><span class="p">),</span> <span class="nf">my_AIC</span><span class="p">(</span><span class="n">res_optim3</span><span class="p">,</span><span class="n">x</span><span class="p">)))</span>
 
-## AIC of
-##  res1 = 60.507
-##  res2 = 68.203
-##  res3 = 65.642
-</code></pre>
-<blockquote>
-</blockquote>
-<p>AICは、小さい値をとるモデルほど良いモデルと考えます。結果を見ると、一番初めのガウスカーネルを使ったモデルが最もAICが小さいです。また、ガウスカーネル・線形カーネルの２モデルの比較では、後のモデルの方がAICが小さいです。</p>
+<span class="c1">## AIC of</span>
+<span class="c1">##  res1 = 60.507</span>
+<span class="c1">##  res2 = 68.203</span>
+<span class="c1">##  res3 = 65.642</span>
+</code></pre></div><p>AICは、小さい値をとるモデルほど良いモデルと考えます。結果を見ると、一番初めのガウスカーネルを使ったモデルが最もAICが小さいです。また、ガウスカーネル・線形カーネルの２モデルの比較では、後のモデルの方がAICが小さいです。</p>
 <p>これらの結果から、ガウスカーネルを使ったモデルが最も良いモデルであることが示唆されますが、AICはほかのモデルを完全否定するものではないので、最終的にどのモデルを選択するかは技術者判断と言えます。</p>
 <p>私としては最後の結果を支持したいところです…。</p>
 <h1 id="まとめ">まとめ</h1>

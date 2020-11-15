@@ -11,7 +11,8 @@
     <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/my-page/images/logo2.png" />
     <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/my-page/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/monokai-sublime.min.css">
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
     <script src="https://rmorita-stat.github.io/my-page/js/highlight.min.js"></script>
     <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
     
@@ -123,93 +124,92 @@ $$</p>
 <h1 id="データの入手整形">データの入手・整形</h1>
 <p><a href="https://rmorita-stat.github.io/my-page/post/multinom/multimon/">以前の記事</a>でも扱ったデータを用います。今回もprog(200人の生徒がgeneral、vocation、academicの3つの授業から選んだ授業)を従属変数とし、ses(家庭の経済状況)、write(書く力)を従属変数とします。</p>
 <p>以下の通りStanに指定するデータに整形していきます。</p>
-<pre><code>library(makedummies)
-library(tidyr)
-library(dplyr)
-library(foreign)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">makedummies</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyr</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">foreign</span><span class="p">)</span>
 
-ml &lt;- read.dta(&quot;https://stats.idre.ucla.edu/stat/data/hsbdemo.dta&quot;)
+<span class="n">ml</span> <span class="o">&lt;-</span> <span class="nf">read.dta</span><span class="p">(</span><span class="s">&#34;https://stats.idre.ucla.edu/stat/data/hsbdemo.dta&#34;</span><span class="p">)</span>
 
-## progの3引数を数字に置き換えるための表を作成
-progid &lt;- c(1,2,3)
-names(progid) &lt;- c(&quot;academic&quot;,&quot;general&quot;,&quot;vocation&quot;)
+<span class="c1">## progの3引数を数字に置き換えるための表を作成</span>
+<span class="n">progid</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">)</span>
+<span class="nf">names</span><span class="p">(</span><span class="n">progid</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;academic&#34;</span><span class="p">,</span><span class="s">&#34;general&#34;</span><span class="p">,</span><span class="s">&#34;vocation&#34;</span><span class="p">)</span>
 
-## makedummies()はsesに対してダミー変数を作成するために使用
-## interceptは切片項
-d &lt;- ml %&gt;% cbind(makedummies::makedummies(ml,basal_level = F, col = &quot;ses&quot;)) %&gt;%
-  mutate(progid = progid[paste(prog)]) %&gt;% select(c(ses_middle, ses_high, write, progid)) %&gt;%
-  cbind(intercept=rep(1,nrow(ml)))
+<span class="c1">## makedummies()はsesに対してダミー変数を作成するために使用</span>
+<span class="c1">## interceptは切片項</span>
+<span class="n">d</span> <span class="o">&lt;-</span> <span class="n">ml</span> <span class="o">%&gt;%</span> <span class="nf">cbind</span><span class="p">(</span><span class="n">makedummies</span><span class="o">::</span><span class="nf">makedummies</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span><span class="n">basal_level</span> <span class="o">=</span> <span class="bp">F</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="s">&#34;ses&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">progid</span> <span class="o">=</span> <span class="n">progid</span><span class="nf">[paste</span><span class="p">(</span><span class="n">prog</span><span class="p">)</span><span class="n">]</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">ses_middle</span><span class="p">,</span> <span class="n">ses_high</span><span class="p">,</span> <span class="n">write</span><span class="p">,</span> <span class="n">progid</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">cbind</span><span class="p">(</span><span class="n">intercept</span><span class="o">=</span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="nf">nrow</span><span class="p">(</span><span class="n">ml</span><span class="p">)))</span>
 
-head(d,10)
+<span class="nf">head</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="m">10</span><span class="p">)</span>
 
-##    ses_middle ses_high write progid intercept
-## 1           0        0    35      3         1
-## 2           1        0    33      2         1
-## 3           0        1    39      3         1
-## 4           0        0    37      3         1
-## 5           1        0    31      3         1
-## 6           0        1    36      2         1
-## 7           1        0    36      3         1
-## 8           1        0    31      3         1
-## 9           1        0    41      3         1
-## 10          1        0    37      3         1
-</code></pre>
-<p>ここで、本データ用に設定したモデル式における係数の呼称を以下の通り定義しておきます。</p>
+<span class="c1">##    ses_middle ses_high write progid intercept</span>
+<span class="c1">## 1           0        0    35      3         1</span>
+<span class="c1">## 2           1        0    33      2         1</span>
+<span class="c1">## 3           0        1    39      3         1</span>
+<span class="c1">## 4           0        0    37      3         1</span>
+<span class="c1">## 5           1        0    31      3         1</span>
+<span class="c1">## 6           0        1    36      2         1</span>
+<span class="c1">## 7           1        0    36      3         1</span>
+<span class="c1">## 8           1        0    31      3         1</span>
+<span class="c1">## 9           1        0    41      3         1</span>
+<span class="c1">## 10          1        0    37      3         1</span>
+
+</code></pre></div><p>ここで、本データ用に設定したモデル式における係数の呼称を以下の通り定義しておきます。</p>
 <p>$$\cfrac{P(prog=general)}{P(prog=academic)} = exp(b_{11} + b_{21}(ses=middle) + b_{31}(ses=high) + b_{41}write)$$</p>
 <p>$$\cfrac{P(prog=vocation)}{P(prog=academic)} = exp(b_{12} + b_{22}(ses=middle) + b_{32}(ses=high) + b_{42}write)$$</p>
 <h1 id="stanによる多項ロジスティック回帰の実装">Stanによる多項ロジスティック回帰の実装</h1>
 <p>多項ロジスティック回帰を実行するStanコードは以下のようになります。</p>
-<pre><code>//(model1.stan)
-//dataブロック：データを指定
-data{
-  int&lt;lower=2&gt; K; //カテゴリ数
-  int&lt;lower=1&gt; N; //サンプルサイズ
-  int&lt;lower=1&gt; D; //データ項目数+切片項の数（１）
-  int&lt;lower=1, upper=K&gt; y[N]; //prog
-  matrix[N,D] x; //説明変数と切片項
-  int N_new; //予測点の数
-  matrix[N_new,D] x_new; //予測点群
-}
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//(model1.stan)
+</span><span class="c1">//dataブロック：データを指定
+</span><span class="c1"></span><span class="n">data</span><span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">2</span><span class="o">&gt;</span> <span class="n">K</span><span class="p">;</span> <span class="c1">//カテゴリ数
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">N</span><span class="p">;</span> <span class="c1">//サンプルサイズ
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">D</span><span class="p">;</span> <span class="c1">//データ項目数+切片項の数（１）
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="n">K</span><span class="o">&gt;</span> <span class="n">y</span><span class="p">[</span><span class="n">N</span><span class="p">];</span> <span class="c1">//prog
+</span><span class="c1"></span>  <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">D</span><span class="p">]</span> <span class="n">x</span><span class="p">;</span> <span class="c1">//説明変数と切片項
+</span><span class="c1"></span>  <span class="kt">int</span> <span class="n">N_new</span><span class="p">;</span> <span class="c1">//予測点の数
+</span><span class="c1"></span>  <span class="n">matrix</span><span class="p">[</span><span class="n">N_new</span><span class="p">,</span><span class="n">D</span><span class="p">]</span> <span class="n">x_new</span><span class="p">;</span> <span class="c1">//予測点群
+</span><span class="c1"></span><span class="p">}</span>
 
-//transformed dataブロック：新しくデータを生成 ここではmuの区別化の為の0ベクトルを生成
-transformed data{
-  vector[D] Zeros;
-  Zeros = rep_vector(0, D);
-}
+<span class="c1">//transformed dataブロック：新しくデータを生成 ここではmuの区別化の為の0ベクトルを生成
+</span><span class="c1"></span><span class="n">transformed</span> <span class="n">data</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">D</span><span class="p">]</span> <span class="n">Zeros</span><span class="p">;</span>
+  <span class="n">Zeros</span> <span class="o">=</span> <span class="n">rep_vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">D</span><span class="p">);</span>
+<span class="p">}</span>
 
-//parameterブロック：パラメータを定義
-parameters{
-  matrix[D, K-1] b;
-}
+<span class="c1">//parameterブロック：パラメータを定義
+</span><span class="c1"></span><span class="n">parameters</span><span class="p">{</span>
+  <span class="n">matrix</span><span class="p">[</span><span class="n">D</span><span class="p">,</span> <span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
 
-//transformed parameterブロック：parameterブロックで指定したパラメータを変形 ここでは0ベクトルと結合
-transformed parameters{
-  matrix[D,K] beta;
-  beta = append_col(Zeros, b);
-}
+<span class="c1">//transformed parameterブロック：parameterブロックで指定したパラメータを変形 ここでは0ベクトルと結合
+</span><span class="c1"></span><span class="n">transformed</span> <span class="n">parameters</span><span class="p">{</span>
+  <span class="n">matrix</span><span class="p">[</span><span class="n">D</span><span class="p">,</span><span class="n">K</span><span class="p">]</span> <span class="n">beta</span><span class="p">;</span>
+  <span class="n">beta</span> <span class="o">=</span> <span class="n">append_col</span><span class="p">(</span><span class="n">Zeros</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
 
-//modelブロック：モデルを定義
-model{
-  matrix[N,K] mu;
-  mu = x * beta;
-  for(n in 1:N){
-    y[n] ~ categorical_logit(mu[n]);
-  }
-}
+<span class="c1">//modelブロック：モデルを定義
+</span><span class="c1"></span><span class="n">model</span><span class="p">{</span>
+  <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">K</span><span class="p">]</span> <span class="n">mu</span><span class="p">;</span>
+  <span class="n">mu</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">beta</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">~</span> <span class="n">categorical_logit</span><span class="p">(</span><span class="n">mu</span><span class="p">[</span><span class="n">n</span><span class="p">]);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
 
-//generated quantitiesブロック：生成量を定義 ここでは確率に関する予測値mu_newとオッズ比の変量exp(b)を生成
-generated quantities{
-  matrix[D, K-1] ratio;//オッズ比の変量
-  vector[K] pred[N_new];//予測点において各programが選ばれる確率
-  matrix[N_new, K] mu_new;
-  mu_new = x_new * beta;
-  for(n in 1:N_new){
-    pred[n,] = softmax(mu_new[n,]);
-  }
-  ratio = exp(b);
-}
-</code></pre>
-<p>parameterブロックで指定した係数$b$の行番号・列番号の組み合わせが、先ほど定義したモデル式における係数の修飾番号に一致します。例えば、$b[1,2]$はモデル式における$b_{12}$に対応します。</p>
+<span class="c1">//generated quantitiesブロック：生成量を定義 ここでは確率に関する予測値mu_newとオッズ比の変量exp(b)を生成
+</span><span class="c1"></span><span class="n">generated</span> <span class="n">quantities</span><span class="p">{</span>
+  <span class="n">matrix</span><span class="p">[</span><span class="n">D</span><span class="p">,</span> <span class="n">K</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="n">ratio</span><span class="p">;</span><span class="c1">//オッズ比の変量
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">K</span><span class="p">]</span> <span class="n">pred</span><span class="p">[</span><span class="n">N_new</span><span class="p">];</span><span class="c1">//予測点において各programが選ばれる確率
+</span><span class="c1"></span>  <span class="n">matrix</span><span class="p">[</span><span class="n">N_new</span><span class="p">,</span> <span class="n">K</span><span class="p">]</span> <span class="n">mu_new</span><span class="p">;</span>
+  <span class="n">mu_new</span> <span class="o">=</span> <span class="n">x_new</span> <span class="o">*</span> <span class="n">beta</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N_new</span><span class="p">){</span>
+    <span class="n">pred</span><span class="p">[</span><span class="n">n</span><span class="p">,]</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">mu_new</span><span class="p">[</span><span class="n">n</span><span class="p">,]);</span>
+  <span class="p">}</span>
+  <span class="n">ratio</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">b</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><p>parameterブロックで指定した係数$b$の行番号・列番号の組み合わせが、先ほど定義したモデル式における係数の修飾番号に一致します。例えば、$b[1,2]$はモデル式における$b_{12}$に対応します。</p>
 <p><code>Categorical_logit()</code>はStanに実装された便利な関数で、Stan内部でsoftmaxを実行してくれます。
 つまり、<code>y[n] ~ categorical_logit(mu[n]')</code>と<code>y[n] ~ Categorical(softmax(mu[n]'))</code>はともに以下に示す処理を実行してくれます。</p>
 <p>$$y[n] \sim Categorical(softmax(mu[n]))$$</p>
@@ -233,19 +233,18 @@ $$</p>
 <p>また、上記の実装ではパラメータのbに事前分布を指定していませんが、Stanでは事前分布を指定しない場合、十分に幅の広い一様分布が自動で設定されます。
 <!-- raw HTML omitted -->そのため、パラメータに関する事前の設定要件が無い場合は、事前分布に何も指定しなくても無情報事前分布が設定されるため問題ありません。</p>
 <p>model1に基づいてサンプリングを命令するコードは以下のようになります。</p>
-<pre><code>#(run_model1)
-library(rstan)
-x &lt;- d[,c(5,1,2,3)]
-y &lt;- d[,&quot;progid&quot;]
-K &lt;- 3
-N &lt;- nrow(x)
-D &lt;- ncol(x)
-x_new &lt;- data.frame(rep(1,123),c(rep(0,41),rep(1,41),rep(0,41)),c(rep(0,82),rep(1,41)), write = rep(c(30:70),3))
-N_new &lt;- nrow(x_new)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1">#(run_model1)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">rstan</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">&lt;-</span> <span class="n">d[</span><span class="p">,</span><span class="nf">c</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">)</span><span class="n">]</span>
+<span class="n">y</span> <span class="o">&lt;-</span> <span class="n">d[</span><span class="p">,</span><span class="s">&#34;progid&#34;</span><span class="n">]</span>
+<span class="n">K</span> <span class="o">&lt;-</span> <span class="m">3</span>
+<span class="n">N</span> <span class="o">&lt;-</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">D</span> <span class="o">&lt;-</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">x_new</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">123</span><span class="p">),</span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">41</span><span class="p">),</span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">41</span><span class="p">),</span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">41</span><span class="p">)),</span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">82</span><span class="p">),</span><span class="nf">rep</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">41</span><span class="p">)),</span> <span class="n">write</span> <span class="o">=</span> <span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">30</span><span class="o">:</span><span class="m">70</span><span class="p">),</span><span class="m">3</span><span class="p">))</span>
+<span class="n">N_new</span> <span class="o">&lt;-</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
 
-fit0 &lt;- stan(file = &quot;model1.stan&quot;, data = list(x=x,y=y,K=K,N=N,D=D,x_new=x_new,N_new=N_new), seed=123, war=500, iter=1500, chains = 4)
-</code></pre>
-<p><code>rstan::stan()</code>の引数について説明しておきます。</p>
+<span class="n">fit0</span> <span class="o">&lt;-</span> <span class="nf">stan</span><span class="p">(</span><span class="n">file</span> <span class="o">=</span> <span class="s">&#34;model1.stan&#34;</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span><span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">,</span><span class="n">x_new</span><span class="o">=</span><span class="n">x_new</span><span class="p">,</span><span class="n">N_new</span><span class="o">=</span><span class="n">N_new</span><span class="p">),</span> <span class="n">seed</span><span class="o">=</span><span class="m">123</span><span class="p">,</span> <span class="n">war</span><span class="o">=</span><span class="m">500</span><span class="p">,</span> <span class="n">iter</span><span class="o">=</span><span class="m">1500</span><span class="p">,</span> <span class="n">chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">)</span>
+</code></pre></div><p><code>rstan::stan()</code>の引数について説明しておきます。</p>
 <ul>
 <li>file：stanファイルを指定</li>
 <li>data：必要なデータをリスト型で指定</li>
@@ -265,50 +264,48 @@ $$
 <h2 id="mcmcの収束の確認">MCMCの収束の確認</h2>
 <p>MCMCの実行後、まずはちゃんと収束していることを確認する必要があります。
 以下ではモデルの係数についてtracsplotを描画し、収束の確認を行います。</p>
-<pre><code>library(ggmcmc)
-library(bayesplot)
-posterior_fit0_1 &lt;- rstan::extract(fit0, inc_warmup=TRUE, permuted=FALSE)
-color_scheme_set(&quot;mix-blue-pink&quot;)
-p &lt;- mcmc_trace(posterior_fit0_1, regex_pars = c(&quot;b&quot;), n_warmup = 500,
-                facet_args = list(ncol = 2))+ theme_bw(base_size=12) + theme(legend.position = &quot;bottom&quot;)
-p
-</code></pre>
-<p><img src="/my-page/post/multinom-rstan/fit0_mcmc_trace.png" alt=""></p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">ggmcmc</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">bayesplot</span><span class="p">)</span>
+<span class="n">posterior_fit0_1</span> <span class="o">&lt;-</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">extract</span><span class="p">(</span><span class="n">fit0</span><span class="p">,</span> <span class="n">inc_warmup</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> <span class="n">permuted</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="nf">color_scheme_set</span><span class="p">(</span><span class="s">&#34;mix-blue-pink&#34;</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">mcmc_trace</span><span class="p">(</span><span class="n">posterior_fit0_1</span><span class="p">,</span> <span class="n">regex_pars</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;b&#34;</span><span class="p">),</span> <span class="n">n_warmup</span> <span class="o">=</span> <span class="m">500</span><span class="p">,</span>
+                <span class="n">facet_args</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">ncol</span> <span class="o">=</span> <span class="m">2</span><span class="p">))</span><span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">12</span><span class="p">)</span> <span class="o">+</span> <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;bottom&#34;</span><span class="p">)</span>
+<span class="n">p</span>
+</code></pre></div><p><img src="/my-page/post/multinom-rstan/fit0_mcmc_trace.png" alt=""></p>
 <p>どの係数も早い段階で一つの値に収束しているようです。ここではwarm upを500に設定していますが、十分すぎるwarm up であることが確認できます。</p>
 <p>MCMCの収束を確認する方法はtracsplotを用いた視覚的な判断だけでなく、数値基準も用意されています。</p>
-<pre><code>options(max.print = 80)
-fit0
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">options</span><span class="p">(</span><span class="n">max.print</span> <span class="o">=</span> <span class="m">80</span><span class="p">)</span>
+<span class="n">fit0</span>
 
-## Inference for Stan model: model1.
-## 4 chains, each with iter=1500; warmup=500; thin=1;
-## post-warmup draws per chain=1000, total post-warmup draws=4000.
-##
-##                  mean se_mean     sd    2.5%     25%     50%     75%   97.5%
-## b[1,1]           2.89    0.03   1.16    0.62    2.11    2.90    3.66    5.12
-## b[1,2]           5.36    0.03   1.13    3.17    4.61    5.32    6.14    7.57
-## b[2,1]          -0.54    0.01   0.45   -1.41   -0.83   -0.53   -0.24    0.33
-## b[2,2]           0.32    0.01   0.48   -0.64    0.00    0.31    0.64    1.28
-## b[3,1]          -1.19    0.01   0.52   -2.27   -1.53   -1.19   -0.84   -0.19
-## b[3,2]          -1.01    0.01   0.59   -2.21   -1.40   -1.00   -0.61    0.12
-## b[4,1]          -0.06    0.00   0.02   -0.10   -0.07   -0.06   -0.04   -0.02
-## b[4,2]          -0.12    0.00   0.02   -0.16   -0.13   -0.12   -0.10   -0.08
-##               n_eff Rhat
-## b[1,1]         2022    1
-## b[1,2]         1934    1
-## b[2,1]         2701    1
-## b[2,2]         2579    1
-## b[3,1]         2835    1
-## b[3,2]         2514    1
-## b[4,1]         2122    1
-## b[4,2]         1978    1
-##  [ reached getOption(&quot;max.print&quot;) -- 759 行を無視しました ]
-##
-## Samples were drawn using NUTS(diag_e) at Sun May 31 00:51:09 2020.
-## For each parameter, n_eff is a crude measure of effective sample size,
-## and Rhat is the potential scale reduction factor on split chains (at
-## convergence, Rhat=1).
-</code></pre>
-<p>R console上でfit0の中身を確認すると、各MCMCサンプルの要約統計量の他にn-eff、Rhatが出力されます。</p>
+<span class="c1">## Inference for Stan model: model1.</span>
+<span class="c1">## 4 chains, each with iter=1500; warmup=500; thin=1;</span>
+<span class="c1">## post-warmup draws per chain=1000, total post-warmup draws=4000.</span>
+<span class="c1">##</span>
+<span class="c1">##                  mean se_mean     sd    2.5%     25%     50%     75%   97.5%</span>
+<span class="c1">## b[1,1]           2.89    0.03   1.16    0.62    2.11    2.90    3.66    5.12</span>
+<span class="c1">## b[1,2]           5.36    0.03   1.13    3.17    4.61    5.32    6.14    7.57</span>
+<span class="c1">## b[2,1]          -0.54    0.01   0.45   -1.41   -0.83   -0.53   -0.24    0.33</span>
+<span class="c1">## b[2,2]           0.32    0.01   0.48   -0.64    0.00    0.31    0.64    1.28</span>
+<span class="c1">## b[3,1]          -1.19    0.01   0.52   -2.27   -1.53   -1.19   -0.84   -0.19</span>
+<span class="c1">## b[3,2]          -1.01    0.01   0.59   -2.21   -1.40   -1.00   -0.61    0.12</span>
+<span class="c1">## b[4,1]          -0.06    0.00   0.02   -0.10   -0.07   -0.06   -0.04   -0.02</span>
+<span class="c1">## b[4,2]          -0.12    0.00   0.02   -0.16   -0.13   -0.12   -0.10   -0.08</span>
+<span class="c1">##               n_eff Rhat</span>
+<span class="c1">## b[1,1]         2022    1</span>
+<span class="c1">## b[1,2]         1934    1</span>
+<span class="c1">## b[2,1]         2701    1</span>
+<span class="c1">## b[2,2]         2579    1</span>
+<span class="c1">## b[3,1]         2835    1</span>
+<span class="c1">## b[3,2]         2514    1</span>
+<span class="c1">## b[4,1]         2122    1</span>
+<span class="c1">## b[4,2]         1978    1</span>
+<span class="c1">##  [ reached getOption(&#34;max.print&#34;) -- 759 行を無視しました ]</span>
+<span class="c1">##</span>
+<span class="c1">## Samples were drawn using NUTS(diag_e) at Sun May 31 00:51:09 2020.</span>
+<span class="c1">## For each parameter, n_eff is a crude measure of effective sample size,</span>
+<span class="c1">## and Rhat is the potential scale reduction factor on split chains (at</span>
+<span class="c1">## convergence, Rhat=1).</span>
+</code></pre></div><p>R console上でfit0の中身を確認すると、各MCMCサンプルの要約統計量の他にn-eff、Rhatが出力されます。</p>
 <p><strong>n-eff</strong>
 <!-- raw HTML omitted --> <br>
 Stanが自己相関等から判断した実行サンプルサイズです。ある書籍には分布の推定・統計量の算出のために100程度以上あることが望ましいと紹介されています。
@@ -346,77 +343,73 @@ $$</p>
 <p>今回は全係数でRhatが1ですので、MCMCは収束したと判断します。</p>
 <h2 id="モデルの係数に着目">モデルの係数に着目</h2>
 <p>R console上でfit0の中身を確認したとき、係数の要約統計量が以下のように算出されていました。</p>
-<pre><code>options(max.print = 80)
-fit0
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">options</span><span class="p">(</span><span class="n">max.print</span> <span class="o">=</span> <span class="m">80</span><span class="p">)</span>
+<span class="n">fit0</span>
 
-## ～省略～
-##
-##                  mean se_mean     sd    2.5%     25%     50%     75%   97.5%
-## b[1,1]           2.89    0.03   1.16    0.62    2.11    2.90    3.66    5.12
-## b[1,2]           5.36    0.03   1.13    3.17    4.61    5.32    6.14    7.57
-## b[2,1]          -0.54    0.01   0.45   -1.41   -0.83   -0.53   -0.24    0.33
-## b[2,2]           0.32    0.01   0.48   -0.64    0.00    0.31    0.64    1.28
-## b[3,1]          -1.19    0.01   0.52   -2.27   -1.53   -1.19   -0.84   -0.19
-## b[3,2]          -1.01    0.01   0.59   -2.21   -1.40   -1.00   -0.61    0.12
-## b[4,1]          -0.06    0.00   0.02   -0.10   -0.07   -0.06   -0.04   -0.02
-## b[4,2]          -0.12    0.00   0.02   -0.16   -0.13   -0.12   -0.10   -0.08
-</code></pre>
-<p>事後分布の代表値とし上の中央値(50%列の値)も用いられますが、ここでは最尤法による結果との整合性を確認するためMAP推定値も算出してみます。
+<span class="c1">## ～省略～</span>
+<span class="c1">##</span>
+<span class="c1">##                  mean se_mean     sd    2.5%     25%     50%     75%   97.5%</span>
+<span class="c1">## b[1,1]           2.89    0.03   1.16    0.62    2.11    2.90    3.66    5.12</span>
+<span class="c1">## b[1,2]           5.36    0.03   1.13    3.17    4.61    5.32    6.14    7.57</span>
+<span class="c1">## b[2,1]          -0.54    0.01   0.45   -1.41   -0.83   -0.53   -0.24    0.33</span>
+<span class="c1">## b[2,2]           0.32    0.01   0.48   -0.64    0.00    0.31    0.64    1.28</span>
+<span class="c1">## b[3,1]          -1.19    0.01   0.52   -2.27   -1.53   -1.19   -0.84   -0.19</span>
+<span class="c1">## b[3,2]          -1.01    0.01   0.59   -2.21   -1.40   -1.00   -0.61    0.12</span>
+<span class="c1">## b[4,1]          -0.06    0.00   0.02   -0.10   -0.07   -0.06   -0.04   -0.02</span>
+<span class="c1">## b[4,2]          -0.12    0.00   0.02   -0.16   -0.13   -0.12   -0.10   -0.08</span>
+</code></pre></div><p>事後分布の代表値とし上の中央値(50%列の値)も用いられますが、ここでは最尤法による結果との整合性を確認するためMAP推定値も算出してみます。
 事後分布のMAP推定値が最尤推定による結果と理論的に一致することについては<a href="https://rmorita-stat.github.io/my-page/post/multinom/multimon/">以前の記事</a>を参照してください。</p>
-<pre><code>b_MAP &lt;- apply(posterior_fit0_2$b, c(2,3), function(x){
-mode_x &lt;- density(x)$x[which.max(density(x)$y)]
-})
-colnames(b_MAP) &lt;- c(&quot;general&quot;,&quot;vocation&quot;)
-t(b_MAP)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">b_MAP</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">posterior_fit0_2</span><span class="o">$</span><span class="n">b</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">){</span>
+<span class="n">mode_x</span> <span class="o">&lt;-</span> <span class="nf">density</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">$</span><span class="n">x</span><span class="nf">[which.max</span><span class="p">(</span><span class="nf">density</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">$</span><span class="n">y</span><span class="p">)</span><span class="n">]</span>
+<span class="p">})</span>
+<span class="nf">colnames</span><span class="p">(</span><span class="n">b_MAP</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;general&#34;</span><span class="p">,</span><span class="s">&#34;vocation&#34;</span><span class="p">)</span>
+<span class="nf">t</span><span class="p">(</span><span class="n">b_MAP</span><span class="p">)</span>
 
-##           Intercept  sesmiddle   seshigh       write
-##  general   2.898204 -0.5127911 -1.224067 -0.05841702
-##  vocation  5.059521  0.2740113 -1.028054 -0.11497210
-</code></pre>
-<p>一方、以前の記事でmultinom()を用いて同じ分析を行った結果が以下です。</p>
-<pre><code>## Call:
-## multinom(formula = prog2 ~ ses + write, data = ml)
-##
-## Coefficients:
-##          (Intercept)  sesmiddle    seshigh      write
-## general     2.852198 -0.5332810 -1.1628226 -0.0579287
-## vocation    5.218260  0.2913859 -0.9826649 -0.1136037
-##
-## Std. Errors:
-##          (Intercept) sesmiddle   seshigh      write
-## general     1.166441 0.4437323 0.5142196 0.02141097
-## vocation    1.163552 0.4763739 0.5955665 0.02221996
-##
-## Residual Deviance: 359.9635
-## AIC: 375.9635
+<span class="c1">##           Intercept  sesmiddle   seshigh       write</span>
+<span class="c1">##  general   2.898204 -0.5127911 -1.224067 -0.05841702</span>
+<span class="c1">##  vocation  5.059521  0.2740113 -1.028054 -0.11497210</span>
+</code></pre></div><p>一方、以前の記事でmultinom()を用いて同じ分析を行った結果が以下です。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1">## Call:</span>
+<span class="c1">## multinom(formula = prog2 ~ ses + write, data = ml)</span>
+<span class="c1">##</span>
+<span class="c1">## Coefficients:</span>
+<span class="c1">##          (Intercept)  sesmiddle    seshigh      write</span>
+<span class="c1">## general     2.852198 -0.5332810 -1.1628226 -0.0579287</span>
+<span class="c1">## vocation    5.218260  0.2913859 -0.9826649 -0.1136037</span>
+<span class="c1">##</span>
+<span class="c1">## Std. Errors:</span>
+<span class="c1">##          (Intercept) sesmiddle   seshigh      write</span>
+<span class="c1">## general     1.166441 0.4437323 0.5142196 0.02141097</span>
+<span class="c1">## vocation    1.163552 0.4763739 0.5955665 0.02221996</span>
+<span class="c1">##</span>
+<span class="c1">## Residual Deviance: 359.9635</span>
+<span class="c1">## AIC: 375.9635</span>
 
-## 両側Z検定の実行
-z &lt;- summary(test)$coefficients/summary(test)$standard.errors
-p &lt;- (1 - pnorm(abs(z),0,1))
-p
+<span class="c1">## 両側Z検定の実行</span>
+<span class="n">z</span> <span class="o">&lt;-</span> <span class="nf">summary</span><span class="p">(</span><span class="n">test</span><span class="p">)</span><span class="o">$</span><span class="n">coefficients</span><span class="o">/</span><span class="nf">summary</span><span class="p">(</span><span class="n">test</span><span class="p">)</span><span class="o">$</span><span class="n">standard.errors</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="m">1</span> <span class="o">-</span> <span class="nf">pnorm</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">z</span><span class="p">),</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">))</span>
+<span class="n">p</span>
 
-##           (Intercept) sesmiddle    seshigh        write
-## general  7.238305e-03 0.1147190 0.01186928 3.409451e-03
-## vocation 3.649650e-06 0.2703765 0.04947488 1.588023e-07
-</code></pre>
-<p>事後分布のMAP推定値とmultinom()による結果のcoefficients:を比較してみると、おおよそ一致していることがわかります。多少のずれはモンテカルロ誤差などの影響の範囲内と考えます。
+<span class="c1">##           (Intercept) sesmiddle    seshigh        write</span>
+<span class="c1">## general  7.238305e-03 0.1147190 0.01186928 3.409451e-03</span>
+<span class="c1">## vocation 3.649650e-06 0.2703765 0.04947488 1.588023e-07</span>
+</code></pre></div><p>事後分布のMAP推定値とmultinom()による結果のcoefficients:を比較してみると、おおよそ一致していることがわかります。多少のずれはモンテカルロ誤差などの影響の範囲内と考えます。
 このことから、最尤推定に基づく方法とベイズ統計からのアプローチの整合性が確認できました。</p>
 <p>multinom()の際には有意差検定を実行していましたので、今回もパラメータが0より大きい(小さい)確率(<strong>Bayesian p-value</strong>)を算出しておきます。</p>
-<pre><code>posterior_fit0_2 &lt;- rstan::extract(fit0)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">posterior_fit0_2</span> <span class="o">&lt;-</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">extract</span><span class="p">(</span><span class="n">fit0</span><span class="p">)</span>
 
-p_coef &lt;- apply(posterior_fit0_2$b,c(2,3), function(x){
-  sum(x &gt; 0)/length(x)
-})
-rownames(p_coef) &lt;- c(&quot;Intercept&quot;,&quot;sesmiddle&quot;,&quot;seshigh&quot;,&quot;write&quot;)
-colnames(p_coef) &lt;- c(&quot;general&quot;,&quot;vocation&quot;)
-t(p_coef)
+<span class="n">p_coef</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">posterior_fit0_2</span><span class="o">$</span><span class="n">b</span><span class="p">,</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">){</span>
+  <span class="nf">sum</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="m">0</span><span class="p">)</span><span class="o">/</span><span class="nf">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="p">})</span>
+<span class="nf">rownames</span><span class="p">(</span><span class="n">p_coef</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;Intercept&#34;</span><span class="p">,</span><span class="s">&#34;sesmiddle&#34;</span><span class="p">,</span><span class="s">&#34;seshigh&#34;</span><span class="p">,</span><span class="s">&#34;write&#34;</span><span class="p">)</span>
+<span class="nf">colnames</span><span class="p">(</span><span class="n">p_coef</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;general&#34;</span><span class="p">,</span><span class="s">&#34;vocation&#34;</span><span class="p">)</span>
+<span class="nf">t</span><span class="p">(</span><span class="n">p_coef</span><span class="p">)</span>
 
-##            
-##           Intercept sesmiddle seshigh  write
-##  general    0.99325   0.11125   0.009 0.0015
-##  vocation   1.00000   0.74550   0.041 0.0000
-</code></pre>
-<p>以上の結果の解釈はmultinom()の時より直感的で、例えば$b_{14}$に着目すると、</p>
+<span class="c1">##            </span>
+<span class="c1">##           Intercept sesmiddle seshigh  write</span>
+<span class="c1">##  general    0.99325   0.11125   0.009 0.0015</span>
+<span class="c1">##  vocation   1.00000   0.74550   0.041 0.0000</span>
+</code></pre></div><p>以上の結果の解釈はmultinom()の時より直感的で、例えば$b_{14}$に着目すると、</p>
 <ul>
 <li>$b_{14}$は95%の確率で-0.10から-0.02の値をとる。また中央値は-0.06である。</li>
 <li>$b_{14}$が0よりも大きい確率は0.15%である</li>
@@ -433,37 +426,35 @@ $$</p>
 $$</p>
 <h2 id="オッズ比の変量に着目">オッズ比の変量に着目</h2>
 <p>オッズ比の変量(説明変数が変化すると、オッズ比は何倍になるか)についても確認しておきます。こちらは事後分布の要約統計量ではなく、事後分布自体を視覚的に見てみることにします。また通常切片項は解釈に用いないため、図の描画では割愛します。</p>
-<pre><code>plot_title &lt;- ggtitle(&quot;Posterior distribution&quot;, &quot;with medians and 95% intervals&quot;)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">plot_title</span> <span class="o">&lt;-</span> <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;Posterior distribution&#34;</span><span class="p">,</span> <span class="s">&#34;with medians and 95% intervals&#34;</span><span class="p">)</span>
 
-mcmc_areas(as.matrix(fit0),
-           pars = c(&quot;ratio[2,1]&quot;,&quot;ratio[3,1]&quot;,&quot;ratio[4,1]&quot;,&quot;ratio[2,2]&quot;,&quot;ratio[3,2]&quot;,&quot;ratio[4,2]&quot;),prob=0.95, area_method = &quot;equal height&quot;) +
-           plot_title+ theme_bw(base_size=12)
-</code></pre>
-<p><img src="/my-page/post/multinom-rstan/fit0_mcmc_density.png" alt=""></p>
+<span class="nf">mcmc_areas</span><span class="p">(</span><span class="nf">as.matrix</span><span class="p">(</span><span class="n">fit0</span><span class="p">),</span>
+           <span class="n">pars</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;ratio[2,1]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[3,1]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[4,1]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[2,2]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[3,2]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[4,2]&#34;</span><span class="p">),</span><span class="n">prob</span><span class="o">=</span><span class="m">0.95</span><span class="p">,</span> <span class="n">area_method</span> <span class="o">=</span> <span class="s">&#34;equal height&#34;</span><span class="p">)</span> <span class="o">+</span>
+           <span class="n">plot_title</span><span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">12</span><span class="p">)</span>
+</code></pre></div><p><img src="/my-page/post/multinom-rstan/fit0_mcmc_density.png" alt=""></p>
 <p>上図の事後分布に表現された中央値、95%信頼区間を下で算出しておきます。</p>
-<pre><code>ratio_median &lt;- apply(posterior_fit0_2$ratio, c(2,3), median)
-ratio_quant &lt;- apply(posterior_fit0_2$ratio, c(2,3), quantile, prob=c(0.025, 0.975))
-ratio_general &lt;- rbind(ratio_median[,1], ratio_quant[,,1])
-ratio_vocation &lt;- rbind(ratio_median[,2],ratio_quant[,,2])
-rownames(ratio_general) &lt;- rownames(ratio_vocation) &lt;- c(&quot;median&quot;,&quot;2.5%&quot;,&quot;97.5%&quot;)
-colnames(ratio_general) &lt;- colnames(ratio_vocation) &lt;-  c(&quot;Intercept&quot;,&quot;sesmiddle&quot;,&quot;seshigh&quot;,&quot;write&quot;)
-ratio_odds &lt;- list(general = ratio_general, vocation=ratio_vocation)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">ratio_median</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">posterior_fit0_2</span><span class="o">$</span><span class="n">ratio</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="n">median</span><span class="p">)</span>
+<span class="n">ratio_quant</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">posterior_fit0_2</span><span class="o">$</span><span class="n">ratio</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="n">quantile</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0.025</span><span class="p">,</span> <span class="m">0.975</span><span class="p">))</span>
+<span class="n">ratio_general</span> <span class="o">&lt;-</span> <span class="nf">rbind</span><span class="p">(</span><span class="n">ratio_median[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span><span class="p">,</span> <span class="n">ratio_quant[</span><span class="p">,,</span><span class="m">1</span><span class="n">]</span><span class="p">)</span>
+<span class="n">ratio_vocation</span> <span class="o">&lt;-</span> <span class="nf">rbind</span><span class="p">(</span><span class="n">ratio_median[</span><span class="p">,</span><span class="m">2</span><span class="n">]</span><span class="p">,</span><span class="n">ratio_quant[</span><span class="p">,,</span><span class="m">2</span><span class="n">]</span><span class="p">)</span>
+<span class="nf">rownames</span><span class="p">(</span><span class="n">ratio_general</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">rownames</span><span class="p">(</span><span class="n">ratio_vocation</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;median&#34;</span><span class="p">,</span><span class="s">&#34;2.5%&#34;</span><span class="p">,</span><span class="s">&#34;97.5%&#34;</span><span class="p">)</span>
+<span class="nf">colnames</span><span class="p">(</span><span class="n">ratio_general</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">colnames</span><span class="p">(</span><span class="n">ratio_vocation</span><span class="p">)</span> <span class="o">&lt;-</span>  <span class="nf">c</span><span class="p">(</span><span class="s">&#34;Intercept&#34;</span><span class="p">,</span><span class="s">&#34;sesmiddle&#34;</span><span class="p">,</span><span class="s">&#34;seshigh&#34;</span><span class="p">,</span><span class="s">&#34;write&#34;</span><span class="p">)</span>
+<span class="n">ratio_odds</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">general</span> <span class="o">=</span> <span class="n">ratio_general</span><span class="p">,</span> <span class="n">vocation</span><span class="o">=</span><span class="n">ratio_vocation</span><span class="p">)</span>
 
-show(ratio_odds)
+<span class="nf">show</span><span class="p">(</span><span class="n">ratio_odds</span><span class="p">)</span>
 
-## $general
-##        Intercept sesmiddle   seshigh     write
-## median  18.08714 0.5897972 0.3041684 0.9428201
-## 2.5%     1.85266 0.2434086 0.1037669 0.9051025
-## 97.5%  166.69899 1.3964119 0.8242418 0.9836004
-##
-## $vocation
-##         Intercept sesmiddle   seshigh     write
-## median  204.48713  1.369324 0.3678701 0.8901682
-## 2.5%     23.69682  0.527517 0.1092642 0.8515944
-## 97.5%  1940.58136  3.594567 1.1219872 0.9260589
-</code></pre>
-<p>上図で一番目立つ$ratio[2,2]$に着目すると、これは$exp(b_{22})$ですので、
+<span class="c1">## $general</span>
+<span class="c1">##        Intercept sesmiddle   seshigh     write</span>
+<span class="c1">## median  18.08714 0.5897972 0.3041684 0.9428201</span>
+<span class="c1">## 2.5%     1.85266 0.2434086 0.1037669 0.9051025</span>
+<span class="c1">## 97.5%  166.69899 1.3964119 0.8242418 0.9836004</span>
+<span class="c1">##</span>
+<span class="c1">## $vocation</span>
+<span class="c1">##         Intercept sesmiddle   seshigh     write</span>
+<span class="c1">## median  204.48713  1.369324 0.3678701 0.8901682</span>
+<span class="c1">## 2.5%     23.69682  0.527517 0.1092642 0.8515944</span>
+<span class="c1">## 97.5%  1940.58136  3.594567 1.1219872 0.9260589</span>
+</code></pre></div><p>上図で一番目立つ$ratio[2,2]$に着目すると、これは$exp(b_{22})$ですので、
 $$
 \cfrac{\cfrac{P(prog=vocation(ses=middle))}{P(prog=academic(ses=middle))}}{\cfrac{P(prog=vocation(ses=low))}{P(prog=academic(ses=low))}}
 $$
@@ -477,47 +468,46 @@ $$
 <p>このように、ベイズ統計ではパラメータや求めたい値のとりうる分布を推定することができ、大変便利です。</p>
 <h1 id="結果の描画">結果の描画</h1>
 <p>最後に結果(確率に関する予測値の分布)の描画を行います。以下では各programが選ばれる確率を、事後分布の中央値を予測値として、50%ベイズ信頼区間とともに示しています。</p>
-<pre><code>library(ggplot2)
-library(RColorBrewer)
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">RColorBrewer</span><span class="p">)</span>
 
-p25 &lt;- apply(posterior_fit0_2$pred, c(2,3), quantile, prob=c(0.25))
-p50 &lt;- apply(posterior_fit0_2$pred, c(2,3), median)
-p75 &lt;- apply(posterior_fit0_2$pred, c(2,3), quantile, prob=c(0.75))
-colnames(p25) &lt;- paste0(c(&quot;academic&quot;,&quot;general&quot;,&quot;vocation&quot;),&quot;_p25&quot;)
-colnames(p50) &lt;- paste0(c(&quot;academic&quot;,&quot;general&quot;,&quot;vocation&quot;),&quot;_p50&quot;)
-colnames(p75) &lt;- paste0(c(&quot;academic&quot;,&quot;general&quot;,&quot;vocation&quot;),&quot;_p75&quot;)
-data1 &lt;- data.frame(ses = rep(c(&quot;low&quot;,&quot;middle&quot;,&quot;high&quot;),each = 41), write = x_new[,-c(1:3)],y=p50[,&quot;academic_p50&quot;], ymax=p75[,&quot;academic_p75&quot;],
-                    ymin=p25[,&quot;academic_p25&quot;], facet=&quot;academic&quot;)
-data2 &lt;- data.frame(ses = rep(c(&quot;low&quot;,&quot;middle&quot;,&quot;high&quot;),each = 41), write = x_new[,-c(1:3)],y=p50[,&quot;general_p50&quot;], ymax=p75[,&quot;general_p75&quot;],
-                    ymin=p25[,&quot;general_p25&quot;], facet=&quot;general&quot;)
-data3 &lt;- data.frame(ses = rep(c(&quot;low&quot;,&quot;middle&quot;,&quot;high&quot;),each = 41), write = x_new[,-c(1:3)],y=p50[,&quot;vocation_p50&quot;], ymax=p75[,&quot;vocation_p75&quot;],
-                    ymin=p25[,&quot;vocation_p25&quot;], facet=&quot;vocation&quot;)
+<span class="n">p25</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">posterior_fit0_2</span><span class="o">$</span><span class="n">pred</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="n">quantile</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0.25</span><span class="p">))</span>
+<span class="n">p50</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">posterior_fit0_2</span><span class="o">$</span><span class="n">pred</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="n">median</span><span class="p">)</span>
+<span class="n">p75</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">posterior_fit0_2</span><span class="o">$</span><span class="n">pred</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="n">quantile</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0.75</span><span class="p">))</span>
+<span class="nf">colnames</span><span class="p">(</span><span class="n">p25</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">paste0</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;academic&#34;</span><span class="p">,</span><span class="s">&#34;general&#34;</span><span class="p">,</span><span class="s">&#34;vocation&#34;</span><span class="p">),</span><span class="s">&#34;_p25&#34;</span><span class="p">)</span>
+<span class="nf">colnames</span><span class="p">(</span><span class="n">p50</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">paste0</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;academic&#34;</span><span class="p">,</span><span class="s">&#34;general&#34;</span><span class="p">,</span><span class="s">&#34;vocation&#34;</span><span class="p">),</span><span class="s">&#34;_p50&#34;</span><span class="p">)</span>
+<span class="nf">colnames</span><span class="p">(</span><span class="n">p75</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">paste0</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;academic&#34;</span><span class="p">,</span><span class="s">&#34;general&#34;</span><span class="p">,</span><span class="s">&#34;vocation&#34;</span><span class="p">),</span><span class="s">&#34;_p75&#34;</span><span class="p">)</span>
+<span class="n">data1</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">ses</span> <span class="o">=</span> <span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;low&#34;</span><span class="p">,</span><span class="s">&#34;middle&#34;</span><span class="p">,</span><span class="s">&#34;high&#34;</span><span class="p">),</span><span class="n">each</span> <span class="o">=</span> <span class="m">41</span><span class="p">),</span> <span class="n">write</span> <span class="o">=</span> <span class="n">x_new[</span><span class="p">,</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">)</span><span class="n">]</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">p50[</span><span class="p">,</span><span class="s">&#34;academic_p50&#34;</span><span class="n">]</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">p75[</span><span class="p">,</span><span class="s">&#34;academic_p75&#34;</span><span class="n">]</span><span class="p">,</span>
+                    <span class="n">ymin</span><span class="o">=</span><span class="n">p25[</span><span class="p">,</span><span class="s">&#34;academic_p25&#34;</span><span class="n">]</span><span class="p">,</span> <span class="n">facet</span><span class="o">=</span><span class="s">&#34;academic&#34;</span><span class="p">)</span>
+<span class="n">data2</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">ses</span> <span class="o">=</span> <span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;low&#34;</span><span class="p">,</span><span class="s">&#34;middle&#34;</span><span class="p">,</span><span class="s">&#34;high&#34;</span><span class="p">),</span><span class="n">each</span> <span class="o">=</span> <span class="m">41</span><span class="p">),</span> <span class="n">write</span> <span class="o">=</span> <span class="n">x_new[</span><span class="p">,</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">)</span><span class="n">]</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">p50[</span><span class="p">,</span><span class="s">&#34;general_p50&#34;</span><span class="n">]</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">p75[</span><span class="p">,</span><span class="s">&#34;general_p75&#34;</span><span class="n">]</span><span class="p">,</span>
+                    <span class="n">ymin</span><span class="o">=</span><span class="n">p25[</span><span class="p">,</span><span class="s">&#34;general_p25&#34;</span><span class="n">]</span><span class="p">,</span> <span class="n">facet</span><span class="o">=</span><span class="s">&#34;general&#34;</span><span class="p">)</span>
+<span class="n">data3</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">ses</span> <span class="o">=</span> <span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;low&#34;</span><span class="p">,</span><span class="s">&#34;middle&#34;</span><span class="p">,</span><span class="s">&#34;high&#34;</span><span class="p">),</span><span class="n">each</span> <span class="o">=</span> <span class="m">41</span><span class="p">),</span> <span class="n">write</span> <span class="o">=</span> <span class="n">x_new[</span><span class="p">,</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">3</span><span class="p">)</span><span class="n">]</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">p50[</span><span class="p">,</span><span class="s">&#34;vocation_p50&#34;</span><span class="n">]</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">p75[</span><span class="p">,</span><span class="s">&#34;vocation_p75&#34;</span><span class="n">]</span><span class="p">,</span>
+                    <span class="n">ymin</span><span class="o">=</span><span class="n">p25[</span><span class="p">,</span><span class="s">&#34;vocation_p25&#34;</span><span class="n">]</span><span class="p">,</span> <span class="n">facet</span><span class="o">=</span><span class="s">&#34;vocation&#34;</span><span class="p">)</span>
 
 
-cols = RColorBrewer::brewer.pal(3,&quot;Dark2&quot;)
+<span class="n">cols</span> <span class="o">=</span> <span class="n">RColorBrewer</span><span class="o">::</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="s">&#34;Dark2&#34;</span><span class="p">)</span>
 
-data_point &lt;- ml %&gt;% cbind(makedummies::makedummies(ml,basal_level = T, col = &quot;prog&quot;)) %&gt;%
-  select(c(ses, write, prog, prog_academic, prog_general, prog_vocation))
+<span class="n">data_point</span> <span class="o">&lt;-</span> <span class="n">ml</span> <span class="o">%&gt;%</span> <span class="nf">cbind</span><span class="p">(</span><span class="n">makedummies</span><span class="o">::</span><span class="nf">makedummies</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span><span class="n">basal_level</span> <span class="o">=</span> <span class="bp">T</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="s">&#34;prog&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">ses</span><span class="p">,</span> <span class="n">write</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">prog_academic</span><span class="p">,</span> <span class="n">prog_general</span><span class="p">,</span> <span class="n">prog_vocation</span><span class="p">))</span>
 
-p0 &lt;- ggplot() + theme_bw(base_size=11) + mapply(
-  function(data){
-    geom_ribbon(data=data, aes(x=write, ymax=ymax, ymin=ymin, fill=ses), alpha=0.5)
-  },list(data1,data2,data3)
-) +mapply(
-  function(data){
-    geom_line(data=data,aes(x=write, y=y, colour=ses))
-  },list(data1,data2,data3)
-) + mapply(
-  function(data,n){
-  geom_jitter(data=data,aes(x=write, y=data[,n], colour=ses),height=0.1, width=0, size=0.8)
-},list(data.frame(data_point, facet=&quot;academic&quot;),data.frame(data_point, facet=&quot;general&quot;),data.frame(data_point, facet=&quot;vocation&quot;)),
-  list(4,5,6)) +
-  facet_grid(facet~.) + scale_colour_manual(values=cols) + scale_fill_manual(values=cols) +
-  theme(legend.position = &quot;bottom&quot;) + ylab(&quot;Probability&quot;) + labs(title = &quot;With Rstan&quot;)
+<span class="n">p0</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">mapply</span><span class="p">(</span>
+  <span class="nf">function</span><span class="p">(</span><span class="n">data</span><span class="p">){</span>
+    <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">write</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">ymax</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">ymin</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">ses</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0.5</span><span class="p">)</span>
+  <span class="p">},</span><span class="nf">list</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span><span class="n">data2</span><span class="p">,</span><span class="n">data3</span><span class="p">)</span>
+<span class="p">)</span> <span class="o">+</span><span class="nf">mapply</span><span class="p">(</span>
+  <span class="nf">function</span><span class="p">(</span><span class="n">data</span><span class="p">){</span>
+    <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">write</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">ses</span><span class="p">))</span>
+  <span class="p">},</span><span class="nf">list</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span><span class="n">data2</span><span class="p">,</span><span class="n">data3</span><span class="p">)</span>
+<span class="p">)</span> <span class="o">+</span> <span class="nf">mapply</span><span class="p">(</span>
+  <span class="nf">function</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">n</span><span class="p">){</span>
+  <span class="nf">geom_jitter</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">write</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">data[</span><span class="p">,</span><span class="n">n]</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">ses</span><span class="p">),</span><span class="n">height</span><span class="o">=</span><span class="m">0.1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="m">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="m">0.8</span><span class="p">)</span>
+<span class="p">},</span><span class="nf">list</span><span class="p">(</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">data_point</span><span class="p">,</span> <span class="n">facet</span><span class="o">=</span><span class="s">&#34;academic&#34;</span><span class="p">),</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">data_point</span><span class="p">,</span> <span class="n">facet</span><span class="o">=</span><span class="s">&#34;general&#34;</span><span class="p">),</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">data_point</span><span class="p">,</span> <span class="n">facet</span><span class="o">=</span><span class="s">&#34;vocation&#34;</span><span class="p">)),</span>
+  <span class="nf">list</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">6</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">facet_grid</span><span class="p">(</span><span class="n">facet</span><span class="o">~</span><span class="n">.)</span> <span class="o">+</span> <span class="nf">scale_colour_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span> <span class="o">+</span> <span class="nf">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;bottom&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">ylab</span><span class="p">(</span><span class="s">&#34;Probability&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">labs</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#34;With Rstan&#34;</span><span class="p">)</span>
 
-p0
-</code></pre>
-<p><img src="/my-page/post/multinom-rstan/fit0_mcmc_res.png" alt=""></p>
+<span class="n">p0</span>
+</code></pre></div><p><img src="/my-page/post/multinom-rstan/fit0_mcmc_res.png" alt=""></p>
 <p>multinom()による分析の際に描画した図を下に載せますが、この2つの結果はほぼ一致していることがわかります。</p>
 <p><img src="/my-page/post/multinom-rstan/multinom.png" alt=""></p>
 <h1 id="まとめ">まとめ</h1>
