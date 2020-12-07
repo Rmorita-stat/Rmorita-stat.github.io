@@ -12,15 +12,6 @@
     
     
     <item>
-      <title>対応分析の付置にベイズ信頼区間をもたせる</title>
-      <link>https://rmorita-stat.github.io/2020/11/corresp-and-bayes/</link>
-      <pubDate>Wed, 11 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/2020/11/corresp-and-bayes/</guid>
-      <description>はじめに この記事はStan Advent calendar12月12日にエントリーしている記事です。 普段よりもこのページを見る人が多いと思うので少し自分の</description>
-    </item>
-    
-    <item>
       <title>対応分析について</title>
       <link>https://rmorita-stat.github.io/2020/11/correspondenceanalysis/</link>
       <pubDate>Sat, 07 Nov 2020 00:00:00 +0000</pubDate>
