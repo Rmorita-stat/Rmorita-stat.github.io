@@ -77,7 +77,7 @@
     <div class="main-content__article">
         <article id="content">
             <h1 id="はじめに">はじめに</h1>
-<p><strong>回帰</strong>に関する記事です。本記事では<a href="https://rmorita-stat.github.io/my-page/post/multinom/multimon/">以前の記事</a>で扱った多項ロジスティック回帰を<strong>rstan</strong>で実行します。</p>
+<p><strong>回帰</strong>に関する記事です。本記事では<a href="https://rmorita-stat.github.io/2020/05/multinom/">以前の記事</a>で扱った多項ロジスティック回帰を<strong>rstan</strong>で実行します。</p>
 <p>本記事の構成は以下の通りとします。</p>
 <!-- raw HTML omitted -->
 <ul>
@@ -122,7 +122,7 @@ $$
 $$</p>
 <p>$\mu_n, \theta_n,\overrightarrow{a},\overrightarrow{b_1},\ldots,\overrightarrow{b_D}$は長さ$K$のベクトルです。</p>
 <h1 id="データの入手整形">データの入手・整形</h1>
-<p><a href="https://rmorita-stat.github.io/my-page/post/multinom/multimon/">以前の記事</a>でも扱ったデータを用います。今回もprog(200人の生徒がgeneral、vocation、academicの3つの授業から選んだ授業)を従属変数とし、ses(家庭の経済状況)、write(書く力)を従属変数とします。</p>
+<p><a href="https://rmorita-stat.github.io/2020/05/multinom/">以前の記事</a>でも扱ったデータを用います。今回もprog(200人の生徒がgeneral、vocation、academicの3つの授業から選んだ授業)を従属変数とし、ses(家庭の経済状況)、write(書く力)を従属変数とします。</p>
 <p>以下の通りStanに指定するデータに整形していきます。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">makedummies</span><span class="p">)</span>
 <span class="nf">library</span><span class="p">(</span><span class="n">tidyr</span><span class="p">)</span>
@@ -271,7 +271,7 @@ $$
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">mcmc_trace</span><span class="p">(</span><span class="n">posterior_fit0_1</span><span class="p">,</span> <span class="n">regex_pars</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;b&#34;</span><span class="p">),</span> <span class="n">n_warmup</span> <span class="o">=</span> <span class="m">500</span><span class="p">,</span>
                 <span class="n">facet_args</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">ncol</span> <span class="o">=</span> <span class="m">2</span><span class="p">))</span><span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">12</span><span class="p">)</span> <span class="o">+</span> <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;bottom&#34;</span><span class="p">)</span>
 <span class="n">p</span>
-</code></pre></div><p><img src="/my-page/post/multinom-rstan/fit0_mcmc_trace.png" alt=""></p>
+</code></pre></div><p><img src="/post/multinom-rstan/fit0_mcmc_trace.png" alt=""></p>
 <p>どの係数も早い段階で一つの値に収束しているようです。ここではwarm upを500に設定していますが、十分すぎるwarm up であることが確認できます。</p>
 <p>MCMCの収束を確認する方法はtracsplotを用いた視覚的な判断だけでなく、数値基準も用意されています。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">options</span><span class="p">(</span><span class="n">max.print</span> <span class="o">=</span> <span class="m">80</span><span class="p">)</span>
@@ -358,7 +358,7 @@ $$</p>
 <span class="c1">## b[4,1]          -0.06    0.00   0.02   -0.10   -0.07   -0.06   -0.04   -0.02</span>
 <span class="c1">## b[4,2]          -0.12    0.00   0.02   -0.16   -0.13   -0.12   -0.10   -0.08</span>
 </code></pre></div><p>事後分布の代表値とし上の中央値(50%列の値)も用いられますが、ここでは最尤法による結果との整合性を確認するためMAP推定値も算出してみます。
-事後分布のMAP推定値が最尤推定による結果と理論的に一致することについては<a href="https://rmorita-stat.github.io/my-page/post/multinom/multimon/">以前の記事</a>を参照してください。</p>
+事後分布のMAP推定値が最尤推定による結果と理論的に一致することについては<a href="https://rmorita-stat.github.io/2020/05/bayesintroduction/">以前の記事</a>を参照してください。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">b_MAP</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">posterior_fit0_2</span><span class="o">$</span><span class="n">b</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">){</span>
 <span class="n">mode_x</span> <span class="o">&lt;-</span> <span class="nf">density</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">$</span><span class="n">x</span><span class="nf">[which.max</span><span class="p">(</span><span class="nf">density</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">$</span><span class="n">y</span><span class="p">)</span><span class="n">]</span>
 <span class="p">})</span>
@@ -431,7 +431,7 @@ $$</p>
 <span class="nf">mcmc_areas</span><span class="p">(</span><span class="nf">as.matrix</span><span class="p">(</span><span class="n">fit0</span><span class="p">),</span>
            <span class="n">pars</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;ratio[2,1]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[3,1]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[4,1]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[2,2]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[3,2]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[4,2]&#34;</span><span class="p">),</span><span class="n">prob</span><span class="o">=</span><span class="m">0.95</span><span class="p">,</span> <span class="n">area_method</span> <span class="o">=</span> <span class="s">&#34;equal height&#34;</span><span class="p">)</span> <span class="o">+</span>
            <span class="n">plot_title</span><span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">12</span><span class="p">)</span>
-</code></pre></div><p><img src="/my-page/post/multinom-rstan/fit0_mcmc_density.png" alt=""></p>
+</code></pre></div><p><img src="/post/multinom-rstan/fit0_mcmc_density.png" alt=""></p>
 <p>上図の事後分布に表現された中央値、95%信頼区間を下で算出しておきます。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">ratio_median</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">posterior_fit0_2</span><span class="o">$</span><span class="n">ratio</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="n">median</span><span class="p">)</span>
 <span class="n">ratio_quant</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">posterior_fit0_2</span><span class="o">$</span><span class="n">ratio</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="n">quantile</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0.025</span><span class="p">,</span> <span class="m">0.975</span><span class="p">))</span>
@@ -507,9 +507,9 @@ $$
   <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;bottom&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">ylab</span><span class="p">(</span><span class="s">&#34;Probability&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">labs</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#34;With Rstan&#34;</span><span class="p">)</span>
 
 <span class="n">p0</span>
-</code></pre></div><p><img src="/my-page/post/multinom-rstan/fit0_mcmc_res.png" alt=""></p>
+</code></pre></div><p><img src="/post/multinom-rstan/fit0_mcmc_res.png" alt=""></p>
 <p>multinom()による分析の際に描画した図を下に載せますが、この2つの結果はほぼ一致していることがわかります。</p>
-<p><img src="/my-page/post/multinom-rstan/multinom.png" alt=""></p>
+<p><img src="/post/multinom-rstan/multinom.png" alt=""></p>
 <h1 id="まとめ">まとめ</h1>
 <p>本記事では多項ロジスティック回帰をRstanを用いて実行し、最尤法(multinom())による結果との比較を行い、ネイマン・ピアソン型統計とベイズ統計の違いを確認しました。</p>
 <p>両者がやっていることは実質的には変わりありませんが、解釈の違いなどについては実感できたかと思います。</p>

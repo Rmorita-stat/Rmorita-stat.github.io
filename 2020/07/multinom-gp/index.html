@@ -84,11 +84,11 @@
 
 いい夢の色は緑色だそうだ。私もうさぎさんにとっての牧草色の夢を見ることもありますが、現実は柵に引っかかってばかりです。</p>
 <p>さて、<strong>回帰</strong>に関する記事です。</p>
-<p><a href="https://rmorita-stat.github.io/my-page/post/multinom/multinom/">以前の記事</a>では、対象が3つ以上のクラスに分類されるとき、それぞれのクラスに属する確率を予測するモデルである<strong>多項ロジスティック回帰</strong>について書きました。</p>
-<p><a href="https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/">次の記事</a>では、同様のモデルを、<strong>マルコフ連鎖モンテカルロ法</strong>(MCMC)を実行するための汎用ソフトである<strong>Stan</strong>を用いて実装し、<strong>ベイズ統計</strong>の立場から分析しました。MCMCおよびベイズ統計については<a href="https://rmorita-stat.github.io/my-page/post/bayesintroduction/bayesintroduction/">こちらの記事</a>で(走り書きで)書いています。</p>
+<p><a href="https://rmorita-stat.github.io/2020/05/multinom/">以前の記事</a>では、対象が3つ以上のクラスに分類されるとき、それぞれのクラスに属する確率を予測するモデルである<strong>多項ロジスティック回帰</strong>について書きました。</p>
+<p><a href="https://rmorita-stat.github.io/2020/05/multinom-rstan/">次の記事</a>では、同様のモデルを、<strong>マルコフ連鎖モンテカルロ法</strong>(MCMC)を実行するための汎用ソフトである<strong>Stan</strong>を用いて実装し、<strong>ベイズ統計</strong>の立場から分析しました。MCMCおよびベイズ統計については<a href="https://rmorita-stat.github.io/2020/05/bayesintroduction/">こちらの記事</a>で(走り書きで)書いています。</p>
 <p>上で見た記事ではいずれも対象が各クラスに属する確率のオッズ比に着目し、オッズ比の線形性のみを考慮したモデルです。このように統計モデルでは変数の背後に何かしらの分布を想定したり、変数間に線形的な関係を想定したりすることでモデルを構築します。</p>
-<p>一方で、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルも存在します。そのようなモデルの例として<a href="https://rmorita-stat.github.io/my-page/post/gaussianprocess/gaussianprocess/">こちらの記事</a>では<strong>ガウス過程</strong>回帰について取り上げました。</p>
-<p>またガウス過程を様々なデータやモデルに応用できるよう、<a href="https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/">前回の記事</a>では<strong>ガウス過程潜在変数モデル</strong>や<strong>カテゴリカルな変数に対応できるカーネル</strong>、<strong>予測分布の計算方法</strong>について説明しました。</p>
+<p>一方で、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルも存在します。そのようなモデルの例として<a href="https://rmorita-stat.github.io/2020/06/gaussianprocess/">こちらの記事</a>では<strong>ガウス過程</strong>回帰について取り上げました。</p>
+<p>またガウス過程を様々なデータやモデルに応用できるよう、<a href="https://rmorita-stat.github.io/2020/07/gaussianprocess2/">前回の記事</a>では<strong>ガウス過程潜在変数モデル</strong>や<strong>カテゴリカルな変数に対応できるカーネル</strong>、<strong>予測分布の計算方法</strong>について説明しました。</p>
 <p>今回の記事はこれらの記事の内容をフル活用し、多項ロジスティック回帰にガウス過程を適用したモデルを実装します。</p>
 <p>最終目標は、対象が各クラスに属する確率の予測値を、データに柔軟にフィットさせることです。</p>
 <p>本記事の構成は以下の通りとします。</p>
@@ -107,9 +107,9 @@
 <li><a href="#%E3%81%BE%E3%81%A8%E3%82%81">まとめ</a></li>
 </ul>
 <!-- raw HTML omitted -->
-<p>当初本記事と<a href="https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/">前回の記事</a>はひとつの記事として公開していましたが、余りにも長すぎる記事だったので、二つに分けて公開しなおしました。</p>
+<p>当初本記事と<a href="https://rmorita-stat.github.io/2020/07/gaussianprocess2/">前回の記事</a>はひとつの記事として公開していましたが、余りにも長すぎる記事だったので、二つに分けて公開しなおしました。</p>
 <h1 id="データの入手">データの入手</h1>
-<p><a href="https://rmorita-stat.github.io/my-page/post/multinom/multinom/">以前の記事</a>でRのnnetパッケージを使って多項ロジスティック回帰分析をしたときに用いたものと同じデータを用いますある学校の生徒の属性と各生徒が選択した授業に関するデータです。</p>
+<p><a href="https://rmorita-stat.github.io/2020/05/multinom/">以前の記事</a>でRのnnetパッケージを使って多項ロジスティック回帰分析をしたときに用いたものと同じデータを用いますある学校の生徒の属性と各生徒が選択した授業に関するデータです。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">foreign</span><span class="p">)</span>
 <span class="n">ml</span> <span class="o">&lt;-</span> <span class="nf">read.dta</span><span class="p">(</span><span class="s">&#34;https://stats.idre.ucla.edu/stat/data/hsbdemo.dta&#34;</span><span class="p">)</span>
 <span class="nf">head</span><span class="p">(</span><span class="n">ml</span><span class="p">)</span>
@@ -173,7 +173,7 @@ $$</p>
 <h3 id="モデル１-線形カーネル--isotropic-correlationカーネル">モデル１ 線形カーネル + isotropic correlationカーネル</h3>
 <p>量的変数writeの影響は線形カーネルで取り入れ、カテゴリカル変数sesの影響をPDUDEである$\mathrm{T}$で考慮する、という構造です。$\mathrm{T}$の各要素はisotropic correlation functionで出力されます。
 <!-- raw HTML omitted -->  <br>
-このカーネル関数をロジスティック回帰・ガウス過程モデルに用いることで、これまでの記事<a href="https://rmorita-stat.github.io/my-page/post/multinom/multinom/">(1)</a>、<a href="https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/">(2)</a>で得られた結果と同じ結果が得られることを確認し、モデルの妥当性チェックを行います。</p>
+このカーネル関数をロジスティック回帰・ガウス過程モデルに用いることで、これまでの記事<a href="https://rmorita-stat.github.io/2020/05/multinom/">(1)</a>、<a href="https://rmorita-stat.github.io/2020/05/multinom-rstan/">(2)</a>で得られた結果と同じ結果が得られることを確認し、モデルの妥当性チェックを行います。</p>
 <p>カーネル関数は下になります。</p>
 <p>$$
 \theta_1\sum_{i=1}^{I}x_{mi}x_{ni} + \theta_2\sum_{j=1}^J\mathrm{T}(z_{nj},z_{mj}) = k(\mathrm{w}_m,\mathrm{w}_n) \tag{7}
@@ -189,7 +189,7 @@ c &amp; c &amp; \cdots &amp; 1
 \end{array}
 \right)\tag{8}
 $$</p>
-<p>は、<a href="https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/">前回の記事</a>の式$(22)$、$(23)$あたりで説明したものす。</p>
+<p>は、<a href="https://rmorita-stat.github.io/2020/07/gaussianprocess2/">前回の記事</a>の式$(22)$、$(23)$あたりで説明したものす。</p>
 <p>ハイパーパラメータは$\theta_1$、$\theta_2$、$c$の3つです。<br>
 なお、$(7)$式第一項の線形カーネルの部分は、ガウス過程として扱わないで前回の記事の式$(1&rsquo;)$の$\beta\mathrm{f}(\mathrm{w})$で扱うこともできるのですが、今回はフルガウス過程で実行してみます。</p>
 <h3 id="モデル２-線形カーネル--ガウスカーネル--isotropic-correlationカーネル">モデル２ 線形カーネル + (ガウスカーネル × isotropic correlationカーネル)</h3>
@@ -383,9 +383,9 @@ $$</p>
 </code></pre></div><p>計算にかかった時間はsurface laptop2 Corei5-8250Uで約3000秒でした。
 ガウス過程は逆行列の計算などを含むので、工夫をしないとどうしても計算に時間がかかってしまうようです。</p>
 <p>ハイパーパラメータの事後分布は以下のようになりました。</p>
-<p><img src="/my-page/post/multinom-gp/fit_cate1_density.png" alt=""></p>
-<p>予測結果は以下のようになりました。描画の為のコードは<a href="https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/">以前の記事</a>を参照してください。</p>
-<p><img src="/my-page/post/multinom-gp/fit_cate1_res.png" alt=""></p>
+<p><img src="/post/multinom-gp/fit_cate1_density.png" alt=""></p>
+<p>予測結果は以下のようになりました。描画の為のコードは<a href="https://rmorita-stat.github.io/2020/05/multinom-rstan/">以前の記事</a>を参照してください。</p>
+<p><img src="/post/multinom-gp/fit_cate1_res.png" alt=""></p>
 <p>rのパッケージnnetのmultinom()関数を使ったときや、Rstanで線形予測子Versionの多項ロジスティック回帰を実行したときの結果と同じ結果が得られていることが分かります。</p>
 <p>以上、sotropic correlationカーネルを含んだモデル全体が正常に動くことを確認し、次の分析に進みます。</p>
 <h2 id="モデル２の実装と結果の確認">モデル２の実装と結果の確認</h2>
@@ -564,7 +564,7 @@ $c$については、0付近の値をとることが想定されるため、期�
 <p>Perhaps most importantly, the parameter $\rho$ and $\alpha$ are weakly identified Zhang(2004). The ratio of the rwo parameters is well-identified&hellip;</p>
 </blockquote>
 <p>今回の場合、$\rho$に値の上限を設定しないとどうしても$\rho$が大きくなってしまい、予測結果もモデル式１と変わらなくなってしまいました。しかしそれはこのモデルの意図した結果ではありません。</p>
-<p>以前の<a href="https://rmorita-stat.github.io/my-page/post/gaussianprocessori/gaussianprocess/">ガウス過程のシミュレーション結果</a>を見ると、標準化されたデータの場合、shapeパラメータ、rateパラメータともに1前後でちょうどよいガウス過程からの出力が得られそうであることが確認できます。よって、今回はrateパラメータに0.9の上限を設け、shapeパラメータも下限値1を設定することで、少し変化の傾きが急な出力を得られるように強要することにします。</p>
+<p>以前の[ガウス過程のシミュレーション結果](<a href="https://rmorita-stat.github.io/2020/06/gaussianprocess/#">https://rmorita-stat.github.io/2020/06/gaussianprocess/#</a> ガウス過程のシミュレーション)を見ると、標準化されたデータの場合、shapeパラメータ、rateパラメータともに1前後でちょうどよいガウス過程からの出力が得られそうであることが確認できます。よって、今回はrateパラメータに0.9の上限を設け、shapeパラメータも下限値1を設定することで、少し変化の傾きが急な出力を得られるように強要することにします。</p>
 <p>上記のStanファイルを実行するコードは以下になります。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">x1_i</span><span class="o">=</span><span class="n">x1_i</span><span class="p">,</span><span class="n">x1_j</span><span class="o">=</span><span class="n">x1_j</span><span class="p">,</span><span class="n">x2_i</span> <span class="o">=</span> <span class="n">x2_i</span><span class="p">,</span><span class="n">x2_j</span><span class="o">=</span><span class="n">x2_j</span><span class="p">,</span><span class="n">N1</span><span class="o">=</span><span class="n">N1</span><span class="p">,</span><span class="n">N2</span><span class="o">=</span><span class="n">N2</span><span class="p">,</span><span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">J</span><span class="o">=</span><span class="n">J</span><span class="p">,</span><span class="n">I</span><span class="o">=</span><span class="n">I</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">)</span>
 <span class="nf">rstan_options</span><span class="p">(</span><span class="n">auto_write</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
@@ -594,10 +594,10 @@ $c$については、0付近の値をとることが想定されるため、期�
 <span class="n">g2</span><span class="o">$</span><span class="n">heights</span> <span class="o">&lt;-</span> <span class="n">Height</span>
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="n">gridExtra</span><span class="o">::</span><span class="nf">grid.arrange</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">,</span><span class="n">ncol</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s">&#34;Posterior distribution of hyper parameters (with medians and 95% intervals)&#34;</span><span class="p">)</span>
 
-</code></pre></div><p><img src="/my-page/post/multinom-gp/fit_cate2_density.png" alt=""></p>
+</code></pre></div><p><img src="/post/multinom-gp/fit_cate2_density.png" alt=""></p>
 <p>$\rho$が頑張って大きな値をとろうとしている様子が見えますが、そこは抑えてもらっています。何だかかわいそう&hellip;</p>
 <p>最後に、予測結果を描画します。</p>
-<p><img src="/my-page/post/multinom-gp/fit_cate2_res.png" alt=""></p>
+<p><img src="/post/multinom-gp/fit_cate2_res.png" alt=""></p>
 <p>線形モデルでは読み取ることが出来なかった傾向がうまく捉えられています。例えば、読み書きの能力が50前後のses=lowの生徒はgeneralの授業をとる傾向にあること、読み書きの能力が45前後のses=highの生徒はacademicの授業をとる確率とvocationの授業をとる確率が同程度である様子などが確認できます。</p>
 <p><strong>It&rsquo;s so brilliant</strong>&gt;🐢</p>
 <p>このように、線形モデルでは誤差として結果に反映されなかった事象もうまくとらえることが出来るのがガウス過程の魅力です。パラメータの事後分布や推測値よりデータの生成過程を考察する、という目的には不向きかもしれませんが、予測の観点から見れば非常に便利ではないでしょうか？。</p>

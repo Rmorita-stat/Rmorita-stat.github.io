@@ -77,7 +77,7 @@
     <div class="main-content__article">
         <article id="content">
             <h1 id="はじめに">はじめに</h1>
-<p><a href="https://rmorita-stat.github.io/my-page/post/gaussianprocess/gaussianprocess/">前回の記事</a>では、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、<strong>ガウス過程</strong>回帰について取り上げました。</p>
+<p><a href="https://rmorita-stat.github.io/2020/06/gaussianprocess/">前回の記事</a>では、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、<strong>ガウス過程</strong>回帰について取り上げました。</p>
 <p>本記事ではガウス過程をさらに深堀りし、Stanなどでガウス過程を自在に扱うための土台を固めたいと思います。</p>
 <p>本記事の構成は以下の通りとします。</p>
 <!-- raw HTML omitted -->
@@ -109,7 +109,7 @@ Stan等でガウス過程を様々なモデルに活用するために不可欠<
 <li>「<a href="#%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA%E3%82%AB%E3%83%AB%E3%81%AA%E5%A4%89%E6%95%B0%E3%82%92%E7%94%A8%E3%81%84%E3%81%9F%E3%82%AB%E3%83%BC%E3%83%8D%E3%83%AB">カテゴリカルな変数を用いたカーネル</a>」
 質的変数が入力に含まれる場合にも、ガウス過程を適用できるようにするための方法を説明</li>
 </ul>
-<p>当初本記事と<a href="https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/">次回の記事</a>はひとつの記事として公開していましたが、余りにも長すぎる記事だったので、二つに分けました。</p>
+<p>当初本記事と<a href="https://rmorita-stat.github.io/2020/07/multinom-gp/">次回の記事</a>はひとつの記事として公開していましたが、余りにも長すぎる記事だったので、二つに分けました。</p>
 <h1 id="ガウス過程の導入">ガウス過程の導入</h1>
 <p>まず、ガウス過程を用いたモデルについて一般化します。
 <!-- raw HTML omitted -->  <br>
@@ -453,7 +453,7 @@ $$
 $$
 a^T\mathrm{T}a=(1-c)a-Ta+c(a-T1)^2&gt;0 \tag{24}
 $$
-だから、$\mathrm{T}$は正定値行列なので、PDUDEです。$\mathrm{T}$が正定値行列であることは結構重要で、各要素の値を出力するカーネル関数$k(\mathrm{z}_m,\mathrm{z}_n)$が何かしらの特徴ベクトル空間の内積を表現するために必要な条件です。このあたりの詳細は<a href="https://mathwords.net/gramgyoretu">こちら</a>などを見てください。また上記$\mathrm{}T$の各要素を出力する関数は<strong>isotropic correlation function</strong>と呼ばれ、isotropic correlation functionによる出力を要素に持つ行列は<strong>compound symmetric correlation matrix</strong>と呼ばれています。</p>
+だから、$\mathrm{T}$は正定値行列なので、PDUDEです。$\mathrm{T}$が正定値行列であることは結構重要で、各要素の値を出力するカーネル関数$k(\mathrm{z}_m,\mathrm{z}_n)$が何かしらの特徴ベクトル空間の内積を表現するために必要な条件です。このあたりの詳細は<a href="https://mathwords.net/gramgyoretu">こちら</a>などを見てください。また上記$\mathrm{T}$の各要素を出力する関数は<strong>isotropic correlation function</strong>と呼ばれ、isotropic correlation functionによる出力を要素に持つ行列は<strong>compound symmetric correlation matrix</strong>と呼ばれています。</p>
 <p>上記の$\mathrm{T}$をPDUDEに用いる場合、式$(21)$は下記のように変形できます。</p>
 <div style="overflow-x:auto;">
   

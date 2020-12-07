@@ -135,14 +135,14 @@ $$</p>
 <h2 id="ネイマンピアソン型統計とベイズ統計の違い">ネイマン・ピアソン型統計とベイズ統計の違い</h2>
 <p>ネイマン・ピアソン型統計とベイズ統計の分析上の違いをまとめておきます。</p>
 <p><strong>パラメータの解釈</strong></p>
-<p>ネイマン・ピアソン型統計ではパラメータは定数とみなします。<a href="https://rmorita-stat.github.io/my-page/post/multinom/multimon/">前回の記事</a>でも、モデルの係数は<code>summary(test)</code>で<code>Coefficients:</code>に確定値、<code>Std.Errors</code>に標準誤差が得られていました。この結果の解釈の仕方は、</p>
+<p>ネイマン・ピアソン型統計ではパラメータは定数とみなします。<a href="http://localhost:1313/2020/05/multinom/">前回の記事</a>でも、モデルの係数は<code>summary(test)</code>で<code>Coefficients:</code>に確定値、<code>Std.Errors</code>に標準誤差が得られていました。この結果の解釈の仕方は、</p>
 <p>「与えられたデータから推測される係数の値は(確定値)だ。ただし、同じ母集団から同じようにデータを取り直した場合、パラメータは(標準誤差)の分散をもって取得される」</p>
 <p>となります。
 <!-- raw HTML omitted --> <br>
 一方、ベイズ統計では母集団のパラメータの分布が得られることから、</p>
 <p>「パラメータがこの範囲である確率は何%だ」</p>
 <p>もしくはより直接的に</p>
-<p>「パラメータの確率密度関数はこれだ」</p>
+<p>「パラメータの確率密度関数の近似はこれだ」</p>
 <p>といった解釈ができます。</p>
 <p>この両者を比較すると、どちらが解釈しやすいでしょうか?
 <!-- raw HTML omitted --><br>
@@ -201,9 +201,9 @@ $$
 Y[n] \sim Normal(a + bX[n], sigma)~~~~n=1,\ldots,N
 $$
 を適用し、確率的プログラミング言語<strong>Stan</strong>を用いてベイズ統計・MCMCを実行したときのtraceplot(MCMCサンプルの値をとった折れ線グラフ)と、MCMCサンプルの分布を以下に示します。</p>
-<p><img src="/my-page/post/bayesintroduction/p_a.png" alt="">
-<img src="/my-page/post/bayesintroduction/p_b.png" alt="">
-<img src="/my-page/post/bayesintroduction/p_sigma.png" alt=""></p>
+<p><img src="/post/bayesintroduction/p_a.png" alt="">
+<img src="/post/bayesintroduction/p_b.png" alt="">
+<img src="/post/bayesintroduction/p_sigma.png" alt=""></p>
 <p>まずは左側のtraceplotを確認します。
 <!-- raw HTML omitted -->  <br>
 パラメータ毎に4つの折れ線がありますが、MCMCではサンプル列をいくつか並列で実行し、事後分布への収束を確認します。この1つのサンプル列を<strong>chain</strong>と呼び、ここではchain数が4となっています。</p>
