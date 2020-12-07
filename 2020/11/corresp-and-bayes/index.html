@@ -116,11 +116,11 @@
 この論文はもうだいぶ古いですが、既に対応分析の付置の信頼性の問題を解決してくれています。ただし解析的な正規分布への近似をもとに信頼区間を求めているようなので、本記事ではこの論文とは別のベイズ的なアプローチをとることにします。</p>
 <h1 id="対応分析について">対応分析について</h1>
 <p>対応分析とはクロス集計表など、カテゴリカルな行と列のデータを視覚的に表現することで、項目間の関係を把握しようとする手法です。コレスポンデンス分析とも呼ばれ、数理的には林先生の数量化理論第Ⅲ類と同等のものとされています。<br>
-対応分析の数理的な内容については、<a href="https://rmorita-stat.github.io/my-page/post/correspondencenalysis/correspondenceanalysis/">前回の記事</a>で説明しているのでそちらを覗いてください。</p>
+対応分析の数理的な内容については、<a href="https://rmorita-stat.github.io/2020/11/correspondenceanalysis/">前回の記事</a>で説明しているのでそちらを覗いてください。</p>
 <h1 id="対応分析の同時付置図は信頼できるのか">対応分析の同時付置図は信頼できるのか</h1>
 <p>ここでは対応分析の同時付置図の信頼性について考えてみます。</p>
 <h2 id="付置は標本数に依らない">付置は標本数に依らない？</h2>
-<p><a href="https://rmorita-stat.github.io/my-page/post/correspondencenalysis/correspondenceanalysis/#%E5%AF%BE%E5%BF%9C%E5%88%86%E6%9E%90%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6">前回の記事</a>を振り返り、対応分析について復習します。</p>
+<p><a href="https://rmorita-stat.github.io/2020/11/correspondenceanalysis/#%E5%AF%BE%E5%BF%9C%E5%88%86%E6%9E%90%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6">前回の記事</a>を振り返り、対応分析について復習します。</p>
 <p>$i$行$j$列が$f_{ij}$（$i=1 … M$、$j = 1 … N$）である$M$行$N$列の分割表について考えたとき、対応分析の同時付置図作成までの過程は以下のようになっていました。<br>
 ここで各行・列および全項目の観測数の総和を前回と同様以下のように表記します。</p>
 <div style="overflow-x:auto;">
@@ -611,21 +611,21 @@ $$
   <span class="nf">scale_alpha_continuous</span><span class="p">(</span><span class="n">range</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="m">0.5</span><span class="p">))</span>
 <span class="n">p</span>
 
-</code></pre></div><p><img src="/my-page/post/corresp-and-bayes/res_plot_density(EST).png" alt="uni"></p>
+</code></pre></div><p><img src="/post/corresp-and-bayes/res_plot_density(EST).png" alt="uni"></p>
 <p>It&rsquo;s so brilliant&hellip;
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
   <iframe src="https://www.youtube.com/embed/JpQQhsNI-ns" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
 </div>
 </p>
-<p>対応分析の結果の解釈は<a href="https://rmorita-stat.github.io/my-page/post/correspondencenalysis/correspondenceanalysis/#%E7%B5%90%E6%9E%9C%E3%81%AE%E8%A7%A3%E9%87%88">前回の記事</a>に譲り、項目$I$の各ポイントの信頼区間について確認してみます。</p>
+<p>対応分析の結果の解釈は<a href="https://rmorita-stat.github.io/2020/11/correspondenceanalysis/#%E7%B5%90%E6%9E%9C%E3%81%AE%E8%A7%A3%E9%87%88">前回の記事</a>に譲り、項目$I$の各ポイントの信頼区間について確認してみます。</p>
 <p>白星の最も多い力士は貴乃花で59、最も少ない力士は春日富士で25でした。そこで両者の付置の信頼区間をみると、春日富士の方がやはり貴乃花よりも推定幅が広いようです。がしかしその差は明瞭ではなく、貴乃花よりも貴闘力（白星43）のほうが信頼区間の幅が狭いです。主成分ベクトルによる写像の影響も絡んでいるのでしょう。<br>
 一応貴ノ花と春日富士の従う多項分布のパラメータの事後分布を確認します。</p>
-<p><img src="/my-page/post/corresp-and-bayes/res_plot_posterior(%E8%B2%B4%E3%83%8E%E8%8A%B1).png" alt="uni">
-<img src="/my-page/post/corresp-and-bayes/res_plot_posterior(%E6%98%A5%E6%97%A5%E5%AF%8C%E5%A3%AB).png" alt="uni"></p>
+<p><img src="/post/corresp-and-bayes/res_plot_posterior(%E8%B2%B4%E3%83%8E%E8%8A%B1).png" alt="uni">
+<img src="/post/corresp-and-bayes/res_plot_posterior(%E6%98%A5%E6%97%A5%E5%AF%8C%E5%A3%AB).png" alt="uni"></p>
 <p>春日富士の方がやはり事後分布の幅が広い？</p>
 <p>パラメータの事後分布から乱数生成して求めた各ポイントの座標の予測区間も示しておきます<sup id="fnref:11"><a href="#fn:11" class="footnote-ref" role="doc-noteref">11</a></sup>。誤差を考慮したので当然着色部の幅が広くなっています。</p>
-<p><img src="/my-page/post/corresp-and-bayes/res_plot_density(RNG).png" alt="uni"></p>
+<p><img src="/post/corresp-and-bayes/res_plot_density(RNG).png" alt="uni"></p>
 <h1 id="おまけ私が相撲に参加すると">おまけ～私が相撲に参加すると？～</h1>
 <p>標本数の違いによる信頼区間の幅の差があまり実感出来なかったので、極端な例で試してみました。<br>
 私(R.morta)が相撲に参加した体で、新たな行を作成します。ただ私は相撲などしたことがない一般人なので、当然力士に勝てる見込みもありません。それでは分割表が作れないので、八百長をした体にして、「引き」での勝ち数が多いことにしてみましょう<sup id="fnref:12"><a href="#fn:12" class="footnote-ref" role="doc-noteref">12</a></sup>。</p>
@@ -643,10 +643,10 @@ $$
                         <span class="s">&#34;琴富士&#34;</span><span class="p">,</span><span class="s">&#34;隆三杉&#34;</span><span class="p">,</span><span class="s">&#34;春日富士&#34;</span><span class="p">,</span><span class="s">&#34;R.morita&#34;</span><span class="p">)</span>
 ～（以下略）～
 
-</code></pre></div><p><img src="/my-page/post/corresp-and-bayes/res_plot_posterior(R.morita).png" alt="uni"></p>
+</code></pre></div><p><img src="/post/corresp-and-bayes/res_plot_posterior(R.morita).png" alt="uni"></p>
 <p>私の従う多項分布のパラメータ事後分布幅はやはり広いですね。
 インスタ映えプロットも見てみましょう。</p>
-<p><img src="/my-page/post/corresp-and-bayes/res_plot_density(EST)_R.morita.png" alt="uni"></p>
+<p><img src="/post/corresp-and-bayes/res_plot_density(EST)_R.morita.png" alt="uni"></p>
 <p>期待通りの結果です。私の信頼区間だけ他と比べて広いです。特に「引き」の寄与が大きい「組んで取る相撲」-「離れて取る相撲」の第2軸についてその傾向が大きく、座標の正負もあやしい状態です。</p>
 <p>以上で対応分析の同時付置図に各ポイントの信頼区間を示すことが出来ていることを確認できました。</p>
 <h1 id="まとめ">まとめ</h1>
