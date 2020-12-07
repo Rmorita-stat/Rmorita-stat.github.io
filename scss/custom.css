@@ -1,0 +1,28 @@
+.memo {
+  position: relative;
+  margin: 2em 2em;
+  padding: 0.5em 1em;
+  border: solid 1px #a9a9a9;
+  background: #f5f5f5;
+  max-width: 70%;
+}
+.memo .memo-title {
+    position: absolute;
+    display: inline-block;
+    top: -26px;
+    left: -1px;
+    padding: 0 9px;
+    height: 25px;
+    line-height: 25px;
+    vertical-align: middle;
+    font-size: 0.8em;
+    background: #a9a9a9;
+    color: #ffffff;
+    font-weight: bold;
+    border-radius: 5px 5px 0 0;
+}
+.memo p {
+    margin: 0;
+    padding: 0;
+    font-size: 0.8em;
+}

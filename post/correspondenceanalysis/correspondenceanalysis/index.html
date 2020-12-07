@@ -8,12 +8,12 @@
         
     </title>
     <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
-    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/my-page/images/logo2.png" />
-    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/my-page/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/scss/style.css">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/my-page/css/syntax.css">
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
-    <script src="https://rmorita-stat.github.io/my-page/js/highlight.min.js"></script>
+    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
     <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
     
     <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
@@ -40,26 +40,26 @@
         </div>
         
         <div class=' site-logo '>
-            <a href="https://rmorita-stat.github.io/my-page/"><img src="https://rmorita-stat.github.io/my-page/images/logo.png" /></a>
+            <a href="https://rmorita-stat.github.io"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
         </div>
     </div>
     
 <div class=' site-nav u-font ' id="nav-bar">
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/my-page/" >HOME</a>
+        <a class="site-nav__el" href="/" >HOME</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/my-page/post" >BLOG</a>
+        <a class="site-nav__el" href="/post" >BLOG</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/my-page/about" >ABOUT</a>
+        <a class="site-nav__el" href="/about" >ABOUT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/my-page/tags/" >TAGS</a>
+        <a class="site-nav__el" href="/tags/" >TAGS</a>
     </div>
     
 </div>
@@ -121,68 +121,108 @@
 <h2 id="対応分析法がやろうとしていること">対応分析法がやろうとしていること</h2>
 <p>$i$行$m$列が$f_{ij}$（$i=1 … M$、$j = 1 … N$）である$M$行$N$列の分割表について考えます。<br>
 以下、この分割表の行項目$I$を、関係性を把握したい対象、列項目$J$を変量とみなして説明します。</p>
-<p>各行・列および全項目の総和を以下のように表記します。</p>
-<p>$$
+<p>各行・列および全項目の総和を以下のように表記します。
+<div style="overflow-x:auto;">
+  
+$$
 f_{i.} = ∑_{j=1}^{N}f_{ij} ~,~~ f_{.j} = ∑_{i=1}^{M}f_{ij} ~,~~ Sum = ∑_{j=1}^{N} ∑_{i=1}^{M} f_{ij}
-$$</p>
-<p>対応分析は、結局のところ以下の$M$×$N$行列$X$を$M$個の$N$変量のデータととらえた主成分分析と言えます。</p>
-<p>$$
+$$
+
+</div>
+対応分析は、結局のところ以下の$M$×$N$行列$X$を$M$個の$N$変量のデータととらえた主成分分析と言えます。
+<div style="overflow-x:auto;">
+  
+$$
 X = P_{I}^{-1} P_{IJ} P_{j}^{-1/2}
-$$</p>
-<p>ここで、$P_{ij}$は$f_{ij}/N$を$(i,j)$成分にもつ$M$×$N$行列、$P_I$と$P_J$は以下の単位行列です。</p>
-<p>$$
+$$
+
+</div>
+ここで、$P_{ij}$は$f_{ij}/N$を$(i,j)$成分にもつ$M$×$N$行列、$P_I$と$P_J$は以下の単位行列です。
+<div style="overflow-x:auto;">
+  
+$$
 P_I = diag \left[ p_{1.}, …, p_{M.} \right] ~,~~ p_{i.} = f_{i.}/Sum
 $$
 $$
-P_J = diag \left[ p_{.1}, …, p_{.N} \right] ~,~~ p_{j.} = f_{.j}/Sum
-$$</p>
-<p>$X$の($i$、$j$)成分$x_{ij}$は以下のようになっています。</p>
-<p>$$
+P_J = diag \left[ p_{.1}, …, p_{.N} \right] ~,~~ p_{.j} = f_{.j}/Sum
+$$
+
+</div></p>
+<p>$X$の($i$、$j$)成分$x_{ij}$は以下のようになっています。
+<div style="overflow-x:auto;">
+  
+$$
 x_{ij} = \cfrac{p_{ij}}{p_{i.} \sqrt{p_{,j}}}　\tag{1}
-$$</p>
-<p>$p_{ij}$をそのまま使うのではなくその行・列の全体の割合で調整しているようです。この意味合いは次の$\mathcal{\chi}^2$距離について考えると理解できます。</p>
-<p>行項目$I$の$i_1$番目と、$i_2$番目の個体の間の$\mathcal{\chi}^2$距離は、</p>
-<p>$$
+$$
+
+</div>
+$p_{ij}$をそのまま使うのではなくその行・列の全体の割合で調整しているようです。この意味合いは次の$\mathcal{\chi}^2$距離について考えると理解できます。</p>
+<p>行項目$I$の$i_1$番目と、$i_2$番目の個体の間の$\mathcal{\chi}^2$距離は、
+<div style="overflow-x:auto;">
+  
+$$
 \chi^2_{i_{1}i_{2}} = \sqrt{\sum^{N}_{j=1}
 \cfrac{\left( \cfrac{p_{i_{1}j}}{p_{i_{1}.}} - \cfrac{p_{i_{2}j}}{p_{i_{2}.}}
 \right)^2}{p_{.j}}} = \sqrt{\sum^{N}_{j=1}
 \cfrac{\left( \cfrac{f_{i_{1}j}}{f_{i_{1}.}} - \cfrac{f_{i_{2}j}}{f_{i_{2}.}}
 \right)^2}{p_{.j}}} \tag{2}
-$$</p>
-<p>で計算されます。これは、観測度数が少ない変量ほどより大きく距離に影響するように重みづけられた$f_{ij}/f_{i.}$に関するユークリッド距離になっています（二番目の等号参照）。
+$$
+
+</div>
+で計算されます。これは、観測度数が少ない変量ほどより大きく距離に影響するように重みづけられた$f_{ij}/f_{i.}$に関するユークリッド距離になっています（二番目の等号参照）。
 そしてこれは、$X$に対するユークリッド距離の計算をすることで求めることができるようになっています（一番目の等号参照）。</p>
 <p>対応分析が$(1)$式で計算される行列の主成分分析であるということは、つまり、対応分析とは$(2)$式で定義された$\mathcal{\chi}^2$距離に関する変量の関係を最大限に説明できる軸を求め、それらの軸上に各項目を配置することで、項目間の関係性を視覚的に表示しようとする分析手法である、ということになります<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>。</p>
 <h2 id="行項目列項目の座標の求め方">行項目・列項目の座標の求め方</h2>
 <p>ここからは基本的に$X$に関する主成分分析についての話です。項目$J$についても同様の行列計算・固有値分解を実行することで軸・座標を得ることができます。ただ、項目$I$と項目$J$それぞれで同じ軸が得られるというところの理論がよくわかりません。ここではそのへんの話は「そういうもの」とさせてください…</p>
-<p>$X$の$\left(i,j\right)$成分を$x_{ij}$と表記し、$\mathbf{1}_m = (1,\ldots,1) ∈ R^m$として</p>
-<p>$$
+<p>$X$の$\left(i,j\right)$成分を$x_{ij}$と表記し、$\mathbf{1}_m = (1,\ldots,1) ∈ R^m$として
+<div style="overflow-x:auto;">
+  
+$$
 \bar{X}  = \left(
-\begin{array}{ccc}
-\cfrac{1}{M}\sum_{i=1}^{M}x_{i1} &amp; \cfrac{1}{M}\sum_{i=1}^{M}x_{i2} &amp; \cdots &amp; \cfrac{1}{M}\sum_{i=1}^{M}x_{iN} \\<br>
-\cfrac{1}{M}\sum_{i=1}^{M}x_{i1} &amp; \ddots &amp; \cdots &amp; \cfrac{1}{M}\sum_{i=1}^{M}x_{iN} \\<br>
-\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\<br>
-\cfrac{1}{M}\sum_{i=1}^{M}x_{i1} &amp; \cfrac{1}{M}\sum_{i=1}^{M}x_{i2} &amp; \cdots &amp; \cfrac{1}{M}\sum_{i=1}^{M}x_{iN}
-\end{array}\right) = \cfrac{1}{m} \mathbf{1}_m^T \mathbf{1}_m \tag{3}
-$$</p>
-<p>とする<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>と、Xの分散共分散行列$Σ$は</p>
-<p>$$
+  \begin{array}{ccc}
+  \cfrac{1}{M}\sum_{i=1}^{M}x_{i1} & \cfrac{1}{M}\sum_{i=1}^{M}x_{i2} & \cdots & \cfrac{1}{M}\sum_{i=1}^{M}x_{iN} \\\\
+  \cfrac{1}{M}\sum_{i=1}^{M}x_{i1} & \ddots & \cdots & \cfrac{1}{M}\sum_{i=1}^{M}x_{iN} \\\\
+  \vdots & \vdots & \ddots & \vdots \\\\
+  \cfrac{1}{M}\sum_{i=1}^{M}x_{i1} & \cfrac{1}{M}\sum_{i=1}^{M}x_{i2} & \cdots & \cfrac{1}{M}\sum_{i=1}^{M}x_{iN}
+  \end{array}\right) = \cfrac{1}{m} \mathbf{1}_m^T \mathbf{1}_m \tag{3}
+$$
+
+</div>
+とする<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>と、Xの分散共分散行列$Σ$は</p>
+<p><div style="overflow-x:auto;">
+  
+$$
 Σ = \left(X-\bar{X}\right)^T P_I \left(X-\bar{X}\right) \tag{4}
-$$</p>
-<p>となります。</p>
-<p>…いや冗談だろう、$X$の分散共分散行列は</p>
-<p>$$
-Σ = \cfrac{1}{N}\left(X-\bar{X}\right)^T\left(X-\bar{X}\right) \tag{4&rsquo;}
-$$</p>
-<p>だろ、とはじパタで主成分分析を学んだ私は思ったのですが、$P_{I} = f_{i.}/Sum$であることを踏まえると、分割表で集計された1つのセルを1観測値とするのではなく、1つの観測事象を1観測値としたときの分散共分散行列を計算する、というような計算をしているっぽいです。錚々たる専門家集団から査読・Acceptされたであろう参考論文にそう書かれているので、ここでは$(4)$式を正としましょう…</p>
+$$
+
+</div>
+となります。</p>
+<p>…いや冗談だろう、$X$の分散共分散行列は
+<div style="overflow-x:auto;">
+  
+$$
+Σ = \cfrac{1}{N}\left(X-\bar{X}\right)^T\left(X-\bar{X}\right) \tag{4'}
+$$
+
+</div>
+だろ、とはじパタで主成分分析を学んだ私は思ったのですが、$P_{I} = f_{i.}/Sum$であることを踏まえると、分割表で集計された1つのセルを1観測値とするのではなく、1つの観測事象を1観測値としたときの分散共分散行列を計算する、というような計算をしているっぽいです。錚々たる専門家集団から査読・Acceptされたであろう参考論文にそう書かれているので、ここでは$(4)$式を正としましょう…</p>
 <p>とにかく、$(4)$式の$\Sigma$について固有値問題を解いて、得られた固有値を最大固有値から順に$\lambda_{1},\lambda_{2}\ldots,\lambda_{N}$、これらに対応する固有ベクトルを順に$\boldsymbol{l}_1,\boldsymbol{l}_2,\boldsymbol,\boldsymbol{l}_N$とします。これらを用いて、第$k$主成分ベクトルによる項目$I$の数量化スコア$\boldsymbol{z}_{k} = (z_{1k}, \ldots, z_{Nk})$を計算します。</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 \boldsymbol{z} _{k} = X \boldsymbol{l} _{k} = P _{I}^{-1} P _{IJ} P _{j}^{-1/2} \boldsymbol{l} _{k} 　\tag{5}
-$$</p>
+$$
+
+</div>
 <p>これは主成分分析のスコアの計算と同じですね。純粋に項目$I$について主成分ベクトルに対する写像を得ています。</p>
 <p>項目$J$の数量化スコア$\boldsymbol{z}^{*}_k$は、項目$I$と同様にして計算することもできますが、項目$I$の数量化スコアから求めることもできるようです。証明は未確認ですが、この式を信用していくことにします。</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 \boldsymbol{z}_k^* = \cfrac{1}{\sqrt{λ_k}}P_J^{-1}P_{IJ}\boldsymbol{z}_k \tag{6}
-$$</p>
+$$
+
+</div>
 <p>$(5)$式および$(6)$式により得られた数量化スコアを同じ図の中に付置したものを同時付置図といい、同時付置図をもとに項目間の関係性をみることになります。</p>
 <h2 id="得られた軸の性質">得られた軸の性質</h2>
 <p>対応分析によって得られた軸に関する性質をまとめておきます。これらの性質は付置図について考察する際の前提にもなります。またこれらの性質はすべて主成分分析からきたものです。ここで$K=min(m,n) -1$<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup>とします。</p>
@@ -289,11 +329,11 @@ $$</p>
 <span class="c1">## [6,] -0.1176471</span>
 <span class="c1">## [7,] -0.2881753</span>
 
-<span class="n">rikishi_axis1</span> <span class="o">&lt;-</span> <span class="n">X</span> <span class="o">%*%</span> <span class="n">X_pca</span><span class="o">$</span><span class="n">vectors[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span>
-<span class="n">rikishi_axis2</span> <span class="o">&lt;-</span> <span class="n">X</span> <span class="o">%*%</span> <span class="n">X_pca</span><span class="o">$</span><span class="n">vectors[</span><span class="p">,</span><span class="m">2</span><span class="n">]</span>
+<span class="n">rikishi_coord1</span> <span class="o">&lt;-</span> <span class="n">X</span> <span class="o">%*%</span> <span class="n">X_pca</span><span class="o">$</span><span class="n">vectors[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span>
+<span class="n">rikishi_coord2</span> <span class="o">&lt;-</span> <span class="n">X</span> <span class="o">%*%</span> <span class="n">X_pca</span><span class="o">$</span><span class="n">vectors[</span><span class="p">,</span><span class="m">2</span><span class="n">]</span>
 
-<span class="n">waza_axis1</span> <span class="o">&lt;-</span> <span class="m">1</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">X_pca</span><span class="o">$</span><span class="n">values[1]</span><span class="p">)</span> <span class="o">*</span> <span class="nf">solve</span><span class="p">(</span><span class="n">P_j</span><span class="p">)</span> <span class="o">%*%</span> <span class="nf">t</span><span class="p">(</span><span class="n">P_ij</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">rikishi_axis1</span>
-<span class="n">waza_axis2</span> <span class="o">&lt;-</span> <span class="m">1</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">X_pca</span><span class="o">$</span><span class="n">values[2]</span><span class="p">)</span> <span class="o">*</span> <span class="nf">solve</span><span class="p">(</span><span class="n">P_j</span><span class="p">)</span> <span class="o">%*%</span> <span class="nf">t</span><span class="p">(</span><span class="n">P_ij</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">rikishi_axis2</span>
+<span class="n">waza_coord1</span> <span class="o">&lt;-</span> <span class="m">1</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">X_pca</span><span class="o">$</span><span class="n">values[1]</span><span class="p">)</span> <span class="o">*</span> <span class="nf">solve</span><span class="p">(</span><span class="n">P_j</span><span class="p">)</span> <span class="o">%*%</span> <span class="nf">t</span><span class="p">(</span><span class="n">P_ij</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">rikishi_coord1</span>
+<span class="n">waza_coord2</span> <span class="o">&lt;-</span> <span class="m">1</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">X_pca</span><span class="o">$</span><span class="n">values[2]</span><span class="p">)</span> <span class="o">*</span> <span class="nf">solve</span><span class="p">(</span><span class="n">P_j</span><span class="p">)</span> <span class="o">%*%</span> <span class="nf">t</span><span class="p">(</span><span class="n">P_ij</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">rikishi_coord2</span>
 
 <span class="c1"># 寄与率の表示 ------------------------------------------------------------------</span>
 
@@ -313,11 +353,11 @@ $$</p>
 <span class="nf">library</span><span class="p">(</span><span class="n">ggrepel</span><span class="p">)</span>
 
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">rikishi_axis1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">rikishi_axis2</span><span class="p">),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&#34;red&#34;</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">waza_axis1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">waza_axis2</span><span class="p">),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&#34;blue&#34;</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">rikishi_axis1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">rikishi_axis2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nf">rownames</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)),</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">rikishi_coord1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">rikishi_coord2</span><span class="p">),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&#34;red&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">waza_coord1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">waza_coord2</span><span class="p">),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&#34;blue&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">rikishi_coord1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">rikishi_coord2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nf">rownames</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)),</span>
                   <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">))</span> <span class="o">+</span>
-  <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">waza_axis1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">waza_axis2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nf">colnames</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)),</span>
+  <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">waza_coord1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">waza_coord2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nf">colnames</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)),</span>
                   <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">))</span> <span class="o">+</span>
   <span class="nf">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#34;Correspondence Analysis&#34;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s">&#34;dim1&#34;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&#34;dim2&#34;</span><span class="p">)</span>
 
@@ -394,7 +434,7 @@ $$</p>
     <div class="main-content__tags u-font">
         
         
-        <span><a href="https://rmorita-stat.github.io/my-page/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90">多変量解析</a></span>
+        <span><a href="https://rmorita-stat.github.io/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90">多変量解析</a></span>
         
         
     </div>
@@ -419,7 +459,7 @@ $$</p>
 <div class="main-line"></div>
 <div class="main-pn">
     
-    <a class="previous" href="https://rmorita-stat.github.io/my-page/post/modeling/modeling/">
+    <a class="previous" href="https://rmorita-stat.github.io/post/modeling/modeling/">
         <div class="pn-dec"></div>
         <div class="pn-els">
             <div class="pn-el__1"> 2020.10.03 00:00 </div>
@@ -427,6 +467,14 @@ $$</p>
         </div>
     </a>
     
+    
+    <a class="next" href="https://rmorita-stat.github.io/post/corresp-and-bayes/corresp-and-bayes/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.11.11 00:00 </div>
+            <div class="pn-el__2"> 対応分析の付置にベイズ信頼区間をもたせる </div>
+        </div>
+    </a>
     
 </div>
 
@@ -490,6 +538,6 @@ $$</p>
     </div>
 </div>
 </body>
-<script src="https://rmorita-stat.github.io/my-page/js/page.js"></script>
+<script src="https://rmorita-stat.github.io/js/page.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 

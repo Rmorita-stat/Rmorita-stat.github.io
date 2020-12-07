@@ -3,97 +3,102 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/</loc>
+    <loc>https://rmorita-stat.github.io/post/</loc>
+    <lastmod>2020-11-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/tags/rstan/</loc>
+    <lastmod>2020-11-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/tags/</loc>
+    <lastmod>2020-11-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90/</loc>
+    <lastmod>2020-11-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/post/corresp-and-bayes/corresp-and-bayes/</loc>
+    <lastmod>2020-11-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/post/correspondenceanalysis/correspondenceanalysis/</loc>
     <lastmod>2020-11-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/</loc>
-    <lastmod>2020-11-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90/</loc>
-    <lastmod>2020-11-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/correspondenceanalysis/correspondenceanalysis/</loc>
-    <lastmod>2020-11-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/modeling/modeling/</loc>
+    <loc>https://rmorita-stat.github.io/post/modeling/modeling/</loc>
     <lastmod>2020-10-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/</loc>
+    <loc>https://rmorita-stat.github.io/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/</loc>
     <lastmod>2020-10-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/rstan/</loc>
+    <loc>https://rmorita-stat.github.io/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/</loc>
     <lastmod>2020-07-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/</loc>
+    <loc>https://rmorita-stat.github.io/tags/%E3%83%8E%E3%83%B3%E3%83%91%E3%83%A9%E3%83%A1%E3%83%88%E3%83%AA%E3%83%83%E3%82%AF%E3%83%99%E3%82%A4%E3%82%BA%E3%83%A2%E3%83%87%E3%83%AB/</loc>
     <lastmod>2020-07-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/%E3%83%8E%E3%83%B3%E3%83%91%E3%83%A9%E3%83%A1%E3%83%88%E3%83%AA%E3%83%83%E3%82%AF%E3%83%99%E3%82%A4%E3%82%BA%E3%83%A2%E3%83%87%E3%83%AB/</loc>
+    <loc>https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0/</loc>
     <lastmod>2020-07-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</loc>
+    <loc>https://rmorita-stat.github.io/post/multinom-gp/multinom-gp/</loc>
     <lastmod>2020-07-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</loc>
-    <lastmod>2020-07-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/</loc>
+    <loc>https://rmorita-stat.github.io/post/gaussianprocess2/gaussianprocess2/</loc>
     <lastmod>2020-07-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/gaussianprocess/gaussianprocess/</loc>
+    <loc>https://rmorita-stat.github.io/post/gaussianprocess/gaussianprocess/</loc>
     <lastmod>2020-06-14T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/</loc>
+    <loc>https://rmorita-stat.github.io/post/multinom-rstan/multinom-rstan/</loc>
     <lastmod>2020-05-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/bayesintroduction/bayesintroduction/</loc>
+    <loc>https://rmorita-stat.github.io/post/bayesintroduction/bayesintroduction/</loc>
     <lastmod>2020-05-29T23:50:14-05:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/post/multinom/multinom/</loc>
+    <loc>https://rmorita-stat.github.io/post/multinom/multinom/</loc>
     <lastmod>2020-05-27T21:13:14-05:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/</loc>
+    <loc>https://rmorita-stat.github.io/</loc>
     <lastmod>2020-05-22T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/about/</loc>
+    <loc>https://rmorita-stat.github.io/about/</loc>
     <lastmod>2020-05-22T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/my-page/categories/</loc>
+    <loc>https://rmorita-stat.github.io/categories/</loc>
   </url>
   
 </urlset>

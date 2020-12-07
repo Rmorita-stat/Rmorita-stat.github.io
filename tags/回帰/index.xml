@@ -2,57 +2,57 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>回帰 on SUCRE HECACHA</title>
-    <link>https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/</link>
+    <link>https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0/</link>
     <description>Recent content in 回帰 on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Sun, 12 Jul 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://rmorita-stat.github.io/my-page/tags/%E5%9B%9E%E5%B8%B0/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>多項ロジスティック回帰・ガウス過程モデル</title>
-      <link>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</link>
+      <link>https://rmorita-stat.github.io/post/multinom-gp/multinom-gp/</link>
       <pubDate>Sun, 12 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</guid>
+      <guid>https://rmorita-stat.github.io/post/multinom-gp/multinom-gp/</guid>
       <description>はじめに いい夢の色は緑色だそうだ。私もうさぎさんにとっての牧草色の夢を見ることもありますが、現実は柵に引っかかってばかりです。 さて、回帰に関</description>
     </item>
     
     <item>
       <title>ガウス過程の応用</title>
-      <link>https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/</link>
+      <link>https://rmorita-stat.github.io/post/gaussianprocess2/gaussianprocess2/</link>
       <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/</guid>
+      <guid>https://rmorita-stat.github.io/post/gaussianprocess2/gaussianprocess2/</guid>
       <description>はじめに 前回の記事では、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、ガウス過程回帰について取</description>
     </item>
     
     <item>
       <title>ガウス過程入門</title>
-      <link>https://rmorita-stat.github.io/my-page/post/gaussianprocess/gaussianprocess/</link>
+      <link>https://rmorita-stat.github.io/post/gaussianprocess/gaussianprocess/</link>
       <pubDate>Sun, 14 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/gaussianprocess/gaussianprocess/</guid>
+      <guid>https://rmorita-stat.github.io/post/gaussianprocess/gaussianprocess/</guid>
       <description>はじめに 今までに幾度かテーマにしていますが、回帰とよばれる問題があります。 例えば、車の速度とブレーキをかけてから車が止まるまでの距離について</description>
     </item>
     
     <item>
       <title>rstanを使った多項ロジスティック回帰</title>
-      <link>https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/</link>
+      <link>https://rmorita-stat.github.io/post/multinom-rstan/multinom-rstan/</link>
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/</guid>
+      <guid>https://rmorita-stat.github.io/post/multinom-rstan/multinom-rstan/</guid>
       <description>はじめに 回帰に関する記事です。本記事では以前の記事で扱った多項ロジスティック回帰をrstanで実行します。 本記事の構成は以下の通りとします。</description>
     </item>
     
     <item>
       <title>multinom()を使った多項ロジスティック回帰</title>
-      <link>https://rmorita-stat.github.io/my-page/post/multinom/multinom/</link>
+      <link>https://rmorita-stat.github.io/post/multinom/multinom/</link>
       <pubDate>Wed, 27 May 2020 21:13:14 -0500</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/multinom/multinom/</guid>
+      <guid>https://rmorita-stat.github.io/post/multinom/multinom/</guid>
       <description>はじめに 回帰に関する記事です。本記事では多項ロジスティック回帰について扱います。 本記事の目次は以下の通りです。 はじめに 多項ロジスティック回帰</description>
     </item>
     

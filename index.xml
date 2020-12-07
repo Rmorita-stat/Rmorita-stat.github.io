@@ -2,93 +2,102 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>SUCRE HECACHA</title>
-    <link>https://rmorita-stat.github.io/my-page/</link>
+    <link>https://rmorita-stat.github.io/</link>
     <description>Recent content on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Fri, 22 May 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://rmorita-stat.github.io/my-page/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://rmorita-stat.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>対応分析の付置にベイズ信頼区間をもたせる</title>
+      <link>https://rmorita-stat.github.io/post/corresp-and-bayes/corresp-and-bayes/</link>
+      <pubDate>Wed, 11 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/post/corresp-and-bayes/corresp-and-bayes/</guid>
+      <description>はじめに この記事はStan Advent calendar12月12日にエントリーしている記事です。 普段よりもこのページを見る人が多いと思うので少し自分の</description>
+    </item>
+    
+    <item>
       <title>対応分析について</title>
-      <link>https://rmorita-stat.github.io/my-page/post/correspondenceanalysis/correspondenceanalysis/</link>
+      <link>https://rmorita-stat.github.io/post/correspondenceanalysis/correspondenceanalysis/</link>
       <pubDate>Sat, 07 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/correspondenceanalysis/correspondenceanalysis/</guid>
+      <guid>https://rmorita-stat.github.io/post/correspondenceanalysis/correspondenceanalysis/</guid>
       <description>はじめに 秋は晴天の日が多いですネ。晴れた空の日曜日は外に出かけてみたくもなりますが、草野さんは部屋で昨日の夢を思い出しながら妄想するのもいい</description>
     </item>
     
     <item>
       <title>モデリングと情報量基準その１～モデリングとは？～</title>
-      <link>https://rmorita-stat.github.io/my-page/post/modeling/modeling/</link>
+      <link>https://rmorita-stat.github.io/post/modeling/modeling/</link>
       <pubDate>Sat, 03 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/modeling/modeling/</guid>
+      <guid>https://rmorita-stat.github.io/post/modeling/modeling/</guid>
       <description>はじめに 少しご無沙汰してしまい、また読者様から重くないやつを定期的にと助言いただきましたので、少し短めの投稿を記事作成のリハビリもかねてして</description>
     </item>
     
     <item>
       <title>多項ロジスティック回帰・ガウス過程モデル</title>
-      <link>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</link>
+      <link>https://rmorita-stat.github.io/post/multinom-gp/multinom-gp/</link>
       <pubDate>Sun, 12 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/multinom-gp/multinom-gp/</guid>
+      <guid>https://rmorita-stat.github.io/post/multinom-gp/multinom-gp/</guid>
       <description>はじめに いい夢の色は緑色だそうだ。私もうさぎさんにとっての牧草色の夢を見ることもありますが、現実は柵に引っかかってばかりです。 さて、回帰に関</description>
     </item>
     
     <item>
       <title>ガウス過程の応用</title>
-      <link>https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/</link>
+      <link>https://rmorita-stat.github.io/post/gaussianprocess2/gaussianprocess2/</link>
       <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/gaussianprocess2/gaussianprocess2/</guid>
+      <guid>https://rmorita-stat.github.io/post/gaussianprocess2/gaussianprocess2/</guid>
       <description>はじめに 前回の記事では、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、ガウス過程回帰について取</description>
     </item>
     
     <item>
       <title>ガウス過程入門</title>
-      <link>https://rmorita-stat.github.io/my-page/post/gaussianprocess/gaussianprocess/</link>
+      <link>https://rmorita-stat.github.io/post/gaussianprocess/gaussianprocess/</link>
       <pubDate>Sun, 14 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/gaussianprocess/gaussianprocess/</guid>
+      <guid>https://rmorita-stat.github.io/post/gaussianprocess/gaussianprocess/</guid>
       <description>はじめに 今までに幾度かテーマにしていますが、回帰とよばれる問題があります。 例えば、車の速度とブレーキをかけてから車が止まるまでの距離について</description>
     </item>
     
     <item>
       <title>rstanを使った多項ロジスティック回帰</title>
-      <link>https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/</link>
+      <link>https://rmorita-stat.github.io/post/multinom-rstan/multinom-rstan/</link>
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/multinom-rstan/multinom-rstan/</guid>
+      <guid>https://rmorita-stat.github.io/post/multinom-rstan/multinom-rstan/</guid>
       <description>はじめに 回帰に関する記事です。本記事では以前の記事で扱った多項ロジスティック回帰をrstanで実行します。 本記事の構成は以下の通りとします。</description>
     </item>
     
     <item>
       <title>ベイズ統計モデリング入門</title>
-      <link>https://rmorita-stat.github.io/my-page/post/bayesintroduction/bayesintroduction/</link>
+      <link>https://rmorita-stat.github.io/post/bayesintroduction/bayesintroduction/</link>
       <pubDate>Fri, 29 May 2020 23:50:14 -0500</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/bayesintroduction/bayesintroduction/</guid>
+      <guid>https://rmorita-stat.github.io/post/bayesintroduction/bayesintroduction/</guid>
       <description>はじめに 本記事では今後の記事でも頻繁に扱う予定のベイズ統計について理解してもらうため、その理論を簡単に説明します。 本記事の構成は以下の通りで</description>
     </item>
     
     <item>
       <title>multinom()を使った多項ロジスティック回帰</title>
-      <link>https://rmorita-stat.github.io/my-page/post/multinom/multinom/</link>
+      <link>https://rmorita-stat.github.io/post/multinom/multinom/</link>
       <pubDate>Wed, 27 May 2020 21:13:14 -0500</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/post/multinom/multinom/</guid>
+      <guid>https://rmorita-stat.github.io/post/multinom/multinom/</guid>
       <description>はじめに 回帰に関する記事です。本記事では多項ロジスティック回帰について扱います。 本記事の目次は以下の通りです。 はじめに 多項ロジスティック回帰</description>
     </item>
     
     <item>
       <title>このブログについて</title>
-      <link>https://rmorita-stat.github.io/my-page/about/</link>
+      <link>https://rmorita-stat.github.io/about/</link>
       <pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/my-page/about/</guid>
+      <guid>https://rmorita-stat.github.io/about/</guid>
       <description>R.moritaです。 洛中で6年間大学生活を過ごし、今は大阪で働いています。 統計学・ロードバイク・古墳巡りが好きです。 色々と好きなものが多い</description>
     </item>
     
