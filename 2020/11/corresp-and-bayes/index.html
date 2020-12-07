@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/post" >BLOG</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2020.11.11 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">対応分析の付置にベイズ信頼区間をもたせる</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <h1 id="はじめに">はじめに</h1>
+<p>この記事は<a href="https://qiita.com/advent-calendar/2020/stan">Stan Advent calendar</a>12月12日にエントリーしている記事です。<br>
+普段よりもこのページを見る人が多いと思うので少し自分のことについて。私はアカデミックの世界に身を置いている訳でもない、フツーの一般人です。あまり詮索しないでください…</p>
+<p>ここでは多変量解析の一つである<strong>対応分析</strong>を題材にします。</p>
+<p>対応分析は多変量のカテゴリカルデータに用いられる分析で、クロス集計表の結果を視覚的に表現するために使われる統計的手法です。</p>
+<p>実は対応分析は私の修士研究で使用した解析手法なのですが、対応分析の付置はデータ数に依存しないことから、座標を得るだけでその信頼性が確認できないところに当時問題を感じていました。<br>
+大学を卒業してからベイズ統計に関心を持ち、ある程度勉強したところで当時のことを思い出し、<strong>rstan</strong>を使ってこの問題に取り組もうと思ったのが本記事の執筆動機です。</p>
+<p>本記事の構成は以下のとおりです。</p>
+<!-- raw HTML omitted -->
+<ul>
+<li><a href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB">はじめに</a></li>
+<li><a href="#%E5%AF%BE%E5%BF%9C%E5%88%86%E6%9E%90%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6">対応分析について</a></li>
+<li><a href="#%E5%AF%BE%E5%BF%9C%E5%88%86%E6%9E%90%E3%81%AE%E5%90%8C%E6%99%82%E4%BB%98%E7%BD%AE%E5%9B%B3%E3%81%AF%E4%BF%A1%E9%A0%BC%E3%81%A7%E3%81%8D%E3%82%8B%E3%81%AE%E3%81%8B">対応分析の同時付置図は信頼できるのか</a>
+<ul>
+<li><a href="#%E4%BB%98%E7%BD%AE%E3%81%AF%E6%A8%99%E6%9C%AC%E6%95%B0%E3%81%AB%E4%BE%9D%E3%82%89%E3%81%AA%E3%81%84">付置は標本数に依らない？</a></li>
+<li><a href="#%E5%88%86%E5%89%B2%E8%A1%A8%E3%81%AE%E4%B8%80%E6%A7%98%E6%80%A7%E3%81%AE%E6%A4%9C%E5%AE%9A">分割表の一様性の検定</a></li>
+<li><a href="#%E5%90%8C%E6%99%82%E4%BB%98%E7%BD%AE%E5%9B%B3%E3%81%A8%E4%B8%80%E6%A7%98%E6%80%A7%E3%81%AE%E5%B8%B0%E7%84%A1%E4%BB%AE%E8%AA%AC%E3%81%AE%E9%96%A2%E4%BF%82">同時付置図と一様性の帰無仮説の関係</a></li>
+</ul>
+</li>
+<li><a href="#%E3%83%A2%E3%83%87%E3%83%AB%E4%BD%9C%E6%88%90">モデル作成</a>
+<ul>
+<li><a href="#%E5%88%86%E5%89%B2%E8%A1%A8%E3%81%AE%E3%83%A2%E3%83%87%E3%83%AA%E3%83%B3%E3%82%B0">分割表のモデリング</a></li>
+<li><a href="#mcmc%E3%82%B5%E3%83%B3%E3%83%97%E3%83%AB%E3%82%88%E3%82%8A%E7%94%9F%E6%88%90%E9%87%8F%E3%82%92%E5%BE%97%E3%82%8B%E5%80%A4">MCMCサンプルより生成量を得る値</a>
+<ul>
+<li><a href="#%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90%E3%81%AE%E5%AF%BE%E8%B1%A1x">主成分分析の対象$X$</a></li>
+<li><a href="#%E5%9B%BA%E6%9C%89%E3%83%99%E3%82%AF%E3%83%88%E3%83%AB$%5Cboldsymbol%7Bl%7D_k$">固有ベクトル$\boldsymbol{l}_k$</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E5%AE%9F%E8%A3%85">モデルの実装</a></li>
+<li><a href="#%E7%B5%90%E6%9E%9C%E3%81%AE%E7%A2%BA%E8%AA%8D">結果の確認</a></li>
+<li><a href="#%E3%81%8A%E3%81%BE%E3%81%91%E7%A7%81%E3%81%8C%E7%9B%B8%E6%92%B2%E3%81%AB%E5%8F%82%E5%8A%A0%E3%81%99%E3%82%8B%E3%81%A8">おまけ～私が相撲に参加すると？～</a></li>
+<li><a href="#%E3%81%BE%E3%81%A8%E3%82%81">まとめ</a></li>
+</ul>
+<!-- raw HTML omitted -->
+<p>参考にした論文は前回と同様の<a href="https://www.jstage.jst.go.jp/article/jscswabun/7/2/7_KJ00002502205/_article/-char/ja/">こちら</a>です。  <br>
+この論文はもうだいぶ古いですが、既に対応分析の付置の信頼性の問題を解決してくれています。ただし解析的な正規分布への近似をもとに信頼区間を求めているようなので、本記事ではこの論文とは別のベイズ的なアプローチをとることにします。</p>
+<h1 id="対応分析について">対応分析について</h1>
+<p>対応分析とはクロス集計表など、カテゴリカルな行と列のデータを視覚的に表現することで、項目間の関係を把握しようとする手法です。コレスポンデンス分析とも呼ばれ、数理的には林先生の数量化理論第Ⅲ類と同等のものとされています。<br>
+対応分析の数理的な内容については、<a href="https://rmorita-stat.github.io/my-page/post/correspondencenalysis/correspondenceanalysis/">前回の記事</a>で説明しているのでそちらを覗いてください。</p>
+<h1 id="対応分析の同時付置図は信頼できるのか">対応分析の同時付置図は信頼できるのか</h1>
+<p>ここでは対応分析の同時付置図の信頼性について考えてみます。</p>
+<h2 id="付置は標本数に依らない">付置は標本数に依らない？</h2>
+<p><a href="https://rmorita-stat.github.io/my-page/post/correspondencenalysis/correspondenceanalysis/#%E5%AF%BE%E5%BF%9C%E5%88%86%E6%9E%90%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6">前回の記事</a>を振り返り、対応分析について復習します。</p>
+<p>$i$行$j$列が$f_{ij}$（$i=1 … M$、$j = 1 … N$）である$M$行$N$列の分割表について考えたとき、対応分析の同時付置図作成までの過程は以下のようになっていました。<br>
+ここで各行・列および全項目の観測数の総和を前回と同様以下のように表記します。</p>
+<div style="overflow-x:auto;">
+  
+$$
+f_{i.} = ∑_{j=1}^{N}f_{ij} ~,~~ f_{.j} = ∑_{i=1}^{M}f_{ij} ~,~~ Sum = ∑_{j=1}^{N} ∑_{i=1}^{M} f_{ij}
+$$
+
+</div>
+<ol>
+<li>確率行列$P_I = diag \left[ p_{1.}, …, p_{M.} \right]$（$p_{i.} = f_{i.}/Sum$）、$P_J = diag \left[ p_{.1}, …, p_{.N} \right]$（$p_{.j} = f_{.j}/Sum$）、$P_{IJ}=\left(f_{ij}/N\right)$より$M$行$N$列の行列$X$
+<div style="overflow-x:auto;">
+  
+$$
+X = P_{I}^{-1} P_{IJ} P_{j}^{-1/2}
+$$
+</div>を作成する。</li>
+<li>$X$の主成分分析を計算し、最大固有値から順に$\lambda_{1},\lambda_{2}\ldots,\lambda_{N-1}$、およびこれらに対応する固有ベクトル$\boldsymbol{l} _1,\ldots,\boldsymbol{l} _{K}$($K = min(M,N)-1$)を得る<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。</li>
+<li>第$k$主成分ベクトルによる項目$I$の数量化スコアを下記式より計算する。
+<div style="overflow-x:auto;">
+  
+   $$
+   \boldsymbol{z} _k = X \boldsymbol{l} _k = P _I^{-1}P _{IJ}P _{J}^{-1/2}\boldsymbol{l} _k \tag{1}
+   $$
+   
+</div></li>
+<li>項目$J$の数量化スコアを、下記式に基づき項目$I$の数量化スコアから求める。
+<div style="overflow-x:auto;">
+  
+   $$
+   \boldsymbol{z} _k^* = \cfrac{1}{\sqrt{λ_k}}P_J^{-1}P_{IJ}\boldsymbol{z} _k \tag{2}
+   $$
+   
+</div></li>
+<li>$\boldsymbol{z}_k$、$\boldsymbol{z}^{*}_k$をもとに行項目・列項目の同時付置図を作成する。</li>
+</ol>
+<p>ここで、$(1)$$(2)$式を見ると、<strong>すべての数量化スコアが確率行列のみに依存しており、標本数$Sum$に影響されない</strong>ことが確認できます。つまり、標本数が違う2つの分割表があったとして、それらの確率行列$P_{IJ}$が一致する場合、同時付置図は全く同じものになると…<br>
+よって、同時付置図はそれのみでは付置がどの程度信頼できるかが確認できないようになっているのです。</p>
+<h2 id="分割表の一様性の検定">分割表の一様性の検定</h2>
+<p>上記問題の解決というわけではないですが、<strong>分割表の一様性の検定</strong>というものがありまして、分割表の各行の確生起確率$(p_{i1},\ldots,p_{iN})$が同じであるといえるかどうかを判定する検定があります。分割表の検定の結果下に述べる帰無仮説が棄却された場合、存在すると考えられる生起確率の差の傾向を対応分析で明瞭に把握できるだろう、というわけです<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>。</p>
+<p>この検定の帰無仮説は<br>
+<div style="padding: 0.75em; margin-bottom: 1rem; color: #111111; background-color: #d9c68c; border: 1px solid transparent; border-radius: 0.25rem;">
+ <center>
+$H_0$：すべての$1 \leq j< N$に対して、$\cfrac{f_{ij}}{f_{i.}} = p_{.j}$
+</center>
+</div>
+
+
+で<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>、検定統計量は</p>
+<div style="overflow-x:auto;">
+  
+
+$$
+T = ∑_{i=1}^{M}∑_{j=1}^{N}\cfrac{\left(f_{ij} - f_{i.}p_{.j}\right)^2}{f_{i.}p_{.j}} \tag{3}
+$$
+
+</div>
+<p>です。$T$が漸近的に自由度$(M-1)(N-1)$の$χ^2$分布に従うことを用いて検定を行います。<br>
+試しに前回の記事と同じ相撲データについて一様性の検定をしてみましょう。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># smo_dataの作成 ----------------------------------------------------------</span>
+
+<span class="n">smo_data</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">15</span><span class="p">,</span><span class="m">15</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">19</span><span class="p">,</span><span class="m">9</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">22</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">4</span><span class="p">,</span>
+                          <span class="m">14</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">24</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">30</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
+                          <span class="m">11</span><span class="p">,</span><span class="m">13</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">25</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">10</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">13</span><span class="p">,</span><span class="m">31</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">,</span>
+                          <span class="m">8</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">19</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">28</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">9</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">14</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">4</span><span class="p">,</span>
+                          <span class="m">5</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">18</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
+                          <span class="m">25</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">16</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">18</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">23</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
+                          <span class="m">7</span><span class="p">,</span><span class="m">17</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">16</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">),</span><span class="n">byrow</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="m">7</span><span class="p">)</span>
+
+<span class="nf">colnames</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;寄り&#34;</span><span class="p">,</span><span class="s">&#34;押し&#34;</span><span class="p">,</span><span class="s">&#34;投げ&#34;</span><span class="p">,</span><span class="s">&#34;引き&#34;</span><span class="p">,</span><span class="s">&#34;送り&#34;</span><span class="p">,</span><span class="s">&#34;突き&#34;</span><span class="p">,</span><span class="s">&#34;その他&#34;</span><span class="p">)</span>
+<span class="nf">rownames</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;小錦&#34;</span><span class="p">,</span><span class="s">&#34;琴錦&#34;</span><span class="p">,</span><span class="s">&#34;貴闘力&#34;</span><span class="p">,</span><span class="s">&#34;霧島&#34;</span><span class="p">,</span><span class="s">&#34;栃ノ和歌&#34;</span><span class="p">,</span><span class="s">&#34;水戸錦&#34;</span><span class="p">,</span><span class="s">&#34;若ノ花&#34;</span><span class="p">,</span><span class="s">&#34;貴ノ花&#34;</span><span class="p">,</span><span class="s">&#34;武蔵丸&#34;</span><span class="p">,</span>
+                        <span class="s">&#34;大翔山&#34;</span><span class="p">,</span><span class="s">&#34;安芸ノ島&#34;</span><span class="p">,</span><span class="s">&#34;三杉里&#34;</span><span class="p">,</span><span class="s">&#34;旭道山&#34;</span><span class="p">,</span><span class="s">&#34;舞の海&#34;</span><span class="p">,</span><span class="s">&#34;寺尾&#34;</span><span class="p">,</span><span class="s">&#34;琴の若&#34;</span><span class="p">,</span><span class="s">&#34;貴ノ浪&#34;</span><span class="p">,</span>
+                        <span class="s">&#34;琴富士&#34;</span><span class="p">,</span><span class="s">&#34;隆三杉&#34;</span><span class="p">,</span><span class="s">&#34;春日富士&#34;</span><span class="p">)</span>
+
+<span class="c1"># smo_dataの一様性検定 ----------------------------------------------------------</span>
+
+<span class="n">my_uniformity_test</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">data</span><span class="p">){</span>
+  <span class="n">data_teststat</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="nf">nrow</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="nf">ncol</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+  <span class="n">p_j</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+  <span class="nf">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">n</span><span class="p">){</span>
+    <span class="n">p_j[j]</span> <span class="o">&lt;-</span> <span class="nf">sum</span><span class="p">(</span><span class="n">data[</span><span class="p">,</span><span class="n">j]</span><span class="p">)</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">m</span><span class="p">){</span>
+    <span class="nf">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">n</span><span class="p">){</span>
+      <span class="n">data_teststat[i</span><span class="p">,</span><span class="n">j]</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="n">data[i</span><span class="p">,</span><span class="n">j]</span> <span class="o">-</span> <span class="nf">rowSums</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="n">[i]</span><span class="o">*</span><span class="n">p_j[j]</span><span class="p">)</span><span class="n">^2</span> <span class="o">/</span> <span class="p">(</span><span class="nf">rowSums</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="n">[i]</span><span class="o">*</span><span class="n">p_j[j]</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">T_stat</span> <span class="o">&lt;-</span> <span class="nf">sum</span><span class="p">(</span><span class="n">data_teststat</span><span class="p">)</span>
+  <span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;p-value:%.5f&#34;</span><span class="p">,</span><span class="nf">pchisq</span><span class="p">(</span><span class="n">T_stat</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="p">((</span><span class="n">m</span><span class="m">-1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">n</span><span class="m">-1</span><span class="p">)),</span> <span class="n">lower.tail</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)))</span>
+<span class="p">}</span>
+
+<span class="nf">my_uniformity_test</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span>
+<span class="c1">## p-value:0.00000</span>
+</code></pre></div><p>帰無仮説は有意水準0.1%以下で棄却されました。では、このデータの各度数を4分の1にしたデータではどうでしょうか<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">my_uniformity_test</span><span class="p">(</span><span class="n">smo_data</span><span class="o">/</span><span class="m">4</span><span class="p">)</span>
+<span class="c1">## p-value:0.39973</span>
+</code></pre></div><p>p値は約0.4ですので、とても帰無仮説を棄却できません。<br>
+そんな訳なので、同じ付置図が得られても標本数によって信頼性に差があるため、付置図だけからは正しい解釈ができない可能性があるんです。</p>
+<h2 id="同時付置図と一様性の帰無仮説の関係">同時付置図と一様性の帰無仮説の関係</h2>
+<p>対応分析の同時付置図がどのようになっているときに、一様性の帰無仮説が棄却されやすいかを考えます。</p>
+<p>生起確率が全体の平均に等しく$(p_{.1},\ldots,p_{.n})$である個体$i$の第$k$数量化スコアは、</p>
+<div style="overflow-x:auto;">
+  
+$$
+\left(\cfrac{p_{.1}}{p_{i.}\sqrt{p_{.1}}},\ldots,\cfrac{p_{.N}}{p_{i.}\sqrt{p_{.N}}}\right)^T \boldsymbol{l} _k = \cfrac{1}{p_{i.}}\left(\sqrt{p_{.1}},\ldots,\sqrt{p_{.N}}\right)^T \boldsymbol{l} _k = 0 \tag{4}
+$$
+
+</div>
+<p>なので<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup>、<strong>同時付置図の原点が帰無仮説に対応する点</strong>になっています。</p>
+<p>また、$(3)$式を展開すると、</p>
+<div style="overflow-x:auto;">
+  
+$$
+T = ∑_{i=1}^{M}∑_{j=1}^{N} f_{i.}\cfrac{\left(\cfrac{p_{ij}}{p_{i.}}-p_{.j}\right)^2}{p_{.j}}
+=  ∑_{i=1}^{M}f_{i.}∑_{j=1}^{N}\cfrac{\left(\cfrac{p_{ij}}{p_{i.}}-p_{.j}\right)^2}{p_{.j}} \tag{5}
+$$
+
+</div>
+<p>となることから、<strong>帰無仮説の点（同時付置図の原点）から離れている行$i$で、行和$f_i$が大きいものがある場合に$T$が大きくなり、一様性の帰無仮説が棄却されやすい</strong><sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup>ことが分かります。</p>
+<p>以上を踏まえ、同時付置図にそれぞれのポイントの信頼度を表示することができれば、分割表の情報を余すことなく付置図に表現でき、視覚的な結果の解釈や項目の分類の手助けになるのでは、というのが本記事の狙いです。</p>
+<h1 id="モデル作成">モデル作成</h1>
+<p>分割表の生成過程にモデルを設定して、MCMCによってそのパラメータを推定し、同時付置図における各ポイントのベイズ信頼区間（またはベイズ予測区間）を求めることを考えます<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup>。</p>
+<h2 id="分割表のモデリング">分割表のモデリング</h2>
+<p>分割表の生成過程は、分割表の性質により以下の2パターンのいずれかを仮定することができます。
+<div style="padding: 0.75em; margin-bottom: 1rem; color: #111111; background-color: #B4DA80; border: 1px solid transparent; border-radius: 0.25rem;">
+ <center>
+観測度数の総和が固定されており、全観測度数がひとつの多項分布に従うとする仮定
+</center>
+</div>
+
+
+<div style="padding: 0.75em; margin-bottom: 1rem; color: #111111; background-color: #A680DA; border: 1px solid transparent; border-radius: 0.25rem;">
+ <center>
+各行の総和が固定されており、各行の観測度数が独立の多項分布に従うとする仮定
+</center>
+</div>
+
+</p>
+<p>対応分析にかける分割表の場合、後者の場合が多いかと思います。一様性の検定の際にも、後者の仮定を設定して、検定をしていました。</p>
+<div style="overflow-x:auto;">
+  
+$$
+\left(f_{i1},\ldots,f_{iN}\right) \sim Multinom(f_{i.}
+, \boldsymbol{\theta}_i ) \tag{6}
+$$
+$$
+\boldsymbol{\theta}_{i} = (\theta_{i1},\ldots,, θ_{iN}) \tag{7}
+$$
+$$
+∑_{j=1}^{N}\theta_{ij} = 1 \tag{8}
+$$
+$$
+i=1,\ldots,M
+$$
+
+</div>
+<p>$(6)$式とデータによる尤度に基づいたMCMCにより、各行ごとの観測度数の生成確率$\Theta_{i}$の事後分布及びMCMCサンプルが得られます。<br>
+観測度数の行の総和$F_{i.}$が小さい行の$\boldsymbol{\theta_{i}}$ほど、事後分布の推定幅が広くなります。このMCMCサンプルに対する主成分ベクトルの射影を得ることで、同時付置図における項目$I$（行項目）の各ポイントの信頼区間を表示できると考えられます。</p>
+<p>項目$J$（列項目）についても、各列の観測度数に独立の多項分布を仮定することで、各ポイントの座標について信頼区間が得られると考えられますが、今回の実装では項目$J$を変量とみなし、列毎の観測度数の総和は試行ごとに一定でないと考えるので、列毎に独立の多項分布を仮定しない（列項目のポイントの座標の信頼区間は求めない）ことにします<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup>。</p>
+<h2 id="事前分布">事前分布</h2>
+<p>$\boldsymbol{\theta}_i$について以下の事前分布を設定しています。これは、相撲データの性質を踏まえて設定したもので、決まり手には比較的メジャーで頻繁に使われる技もあれば、めったに決まる、もしくは使われることのない技もあるだろう、ということを考慮しました。</p>
+<div style="overflow-x:auto;">
+  
+$$
+\boldsymbol{\theta} _{i} \sim dirichlet((p _{.1},\ldots,p _{.J})) \tag{9}
+$$
+
+</div>
+<p>$(9)$式のように事前分布を設定すると、ディリクレ分布の性質により$\theta_{ij}$の期待値と分散は以下のようになります。</p>
+<div style="overflow-x:auto;">
+  
+$$
+E\left[\theta_{ij}\right] = \cfrac{p_{ij}}{p_{i.}} = \cfrac{f_{ij}}{f_{i.}} \tag{10}
+$$
+$$
+Var\left[\theta_{ij}\right] = \cfrac{p_{ij}\left(p_{i.}-p_{ij}\right)}{p_{i.}^2\left(p_{i.}+1\right)} = \cfrac{p_{ij}(1-p_{ij})}{2} \tag{11}
+$$
+
+</div>
+<p>なので、$(10)$式より各行毎のセルの値の生成確率$\theta_{ij}$の期待値は全観測度数に占める列毎の観測度数の総和の割合$\cfrac{f_{ij}}{f_{i.}}$に等しくなります。</p>
+<p>分散については深く考えて決めたものではありませんが、ディリクレ分布の全パラメータの比はそのままに和を大きくしていくと、出力の期待値は一定のまま分散が減少するようになっているので、この性質を利用して$(9)$式の$(p_{.1},\ldots,p_{.J})$を等倍していって事前分布の強さを変化させていっても面白そうです。</p>
+<h2 id="mcmcサンプルより生成量を得る値">MCMCサンプルより生成量を得る値</h2>
+<p>対応分析の分析過程のなかのどの数値に対し、MCMCサンプルより生成量を得るかを考えます。$(1)$式より、座標は$X$及び固有ベクトル$l_k$ により計算されますから、それぞれについて考えます。</p>
+<h3 id="主成分分析の対象x">主成分分析の対象$X$</h3>
+<p>行列$X$は、統計的に独立な$M$つの多項分布からの生成量より構成されるものです。<br>
+これの生成量を素直に得ようとすると、$M$個の独立な生成過程がかかわってしまいます。考え方は色々あると思いますが、ここでは、個体$i$の同時付置図の信頼区間には、個体$i$の従う多項分布のパラメータ$\boldsymbol{\theta}_i$の影響しか反映させないものとし、$(12)$の行列から$X$を計算することにします<sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup>。</p>
+<div style="overflow-x:auto;">
+  
+$$
+\left(
+  \begin{array}{ccc}
+  f_{11} & f_{12} & \cdots & f_{1N} \\\\
+  \vdots & \vdots &  & \vdots \\\\
+  \theta_{i1}f_{i.} & \theta_{i2}f_{i.} & \cdots & \theta_{iN}f_{i.} \\\\
+  \vdots & \vdots & & \vdots \\\\
+  f_{M1} & f_{M2} & \cdots & f_{MN}
+  \end{array}\right) \tag{12}
+$$
+
+</div>
+<h3 id="固有ベクトルboldsymboll_k">固有ベクトル$\boldsymbol{l}_k$</h3>
+<p>分割表の生成過程のモデリングにより、各セルの観測度数の期待値がMCMCサンプルから計算できます。それらをもとに新しい分割表を生成し、新たに主成分ベクトルを得ることができるにはできるのですが、そうすると軸がMCMCサンプル毎に異なってしまいます。最終的に作成する同時付置図は軸を固定して示したいのでこれは不都合です。</p>
+<p>今回のモデルでは、観測値を真の値とみなすのと同様に、<strong>観測値から得られた主成分ベクトルを真のベクトルであるとみなし、同時付置図も観測値から計算された主成分ベクトル上で付置する</strong>ものとします。固有値や寄与率についても同様に観測値から計算された値を真の値とします。</p>
+<h1 id="モデルの実装">モデルの実装</h1>
+<p>以上のモデルを実装したStanコードを載せます。</p>
+<p><code>data{}</code>ブロックでは分割表に関する数値を指定するだけですが、通常の対応分析を実行するパートはStan外で行うことにしたので、事前に得られた固有ベクトルを<code>vector[N] eigenvector[K]</code>で指定しています。</p>
+<p><code>transformed data{}</code>ブロックでは、後の<code>generated quantities{}</code>ブロックでの計算に必要な値$p_{i.}$、$P_{i.}$や事前分布の計算に必要な$p_{.j}$を指定します。<br>
+ちなみにStanで実装されている関数<code>eigenvalues_sym()</code>や<code>eigenvectors_sym(Sigma)</code>を使えば、このブロック内で対応分析を済ませることも可能です。私はStan内で主成分ベクトルを計算すると、外で計算したものと異なってくるのでクレバーではないと判断しました。</p>
+<p><code>{parameters{}</code>ブロックでは項目$I$について仮定した各行毎に独立の多項分布のパラメータ$\boldsymbol{\theta_{i}}$を指定しています。</p>
+<p><code>model{}</code>ブロックでは$(6)$式のモデル及び$(9)$式の事前分布を指定しています。</p>
+<p><code>generated quantities{}</code>ブロックでは、<code>data{}</code>ブロックで指定した固有ベクトルや<code>transformed data{}</code>で指定した行列・ベクトル、及びMCMCサンプルを用いて座標の生成量を求めています。項目$I$のポイントについては2通り計算しており、観測度数の期待値から分割表を作成し求めた各ポイントの座標の生成量（<code>Z_EST</code>）と、観測度数の期待値から乱数を発生させて作成した分割表から求めた座標の生成量（<code>Z_RNG</code>）があります。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">// model.stan
+</span><span class="c1"></span><span class="n">data</span> <span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">Sum</span><span class="p">;</span> <span class="c1">//全観測数の和
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">N</span><span class="p">;</span> <span class="c1">//分割表の列数
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="n">N</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">;</span> <span class="c1">// 分割表の行数
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">K</span><span class="p">;</span> <span class="c1">// min(N,M)-1 対応分析で得られる次元数
+</span><span class="c1"></span>  <span class="kt">int</span> <span class="n">d</span><span class="p">[</span><span class="n">M</span><span class="p">,</span><span class="n">N</span><span class="p">];</span> <span class="c1">//分割表
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">eigenvector</span><span class="p">[</span><span class="n">K</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="n">transformed</span> <span class="n">data</span><span class="p">{</span>
+  <span class="n">matrix</span><span class="p">[</span><span class="n">M</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">d_numeric</span><span class="p">;</span> <span class="c1">//分割表 確率行列を作成するためにint型の分割表は使えない
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">M</span><span class="p">]</span> <span class="n">p_i</span><span class="p">;</span> <span class="c1">//行ごとの観測値全体に占める割合
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">p_j</span><span class="p">;</span> <span class="c1">//列ごとの観測値全体に占める割合
+</span><span class="c1"></span>  <span class="n">matrix</span><span class="p">[</span><span class="n">M</span><span class="p">,</span><span class="n">M</span><span class="p">]</span> <span class="n">P_I</span><span class="p">;</span>
+
+  <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">M</span><span class="p">){</span>
+      <span class="n">d_numeric</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">M</span><span class="p">){</span>
+    <span class="n">p_i</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">sum</span><span class="p">(</span><span class="n">d_numeric</span><span class="p">[</span><span class="n">i</span><span class="p">,])</span> <span class="o">/</span> <span class="n">Sum</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+    <span class="n">p_j</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">sum</span><span class="p">(</span><span class="n">d_numeric</span><span class="p">[,</span><span class="n">j</span><span class="p">])</span><span class="o">/</span><span class="n">Sum</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="n">P_I</span> <span class="o">=</span> <span class="n">diag_matrix</span><span class="p">(</span><span class="n">p_i</span><span class="p">);</span>
+
+<span class="p">}</span>
+
+<span class="n">parameters</span><span class="p">{</span>
+  <span class="n">simplex</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">theta</span><span class="p">[</span><span class="n">M</span><span class="p">];</span>
+<span class="p">}</span>
+
+<span class="n">model</span> <span class="p">{</span>
+  <span class="c1">//モデル部分
+</span><span class="c1"></span>  <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">M</span><span class="p">){</span>
+    <span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span> <span class="o">~</span> <span class="n">multinomial</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+  <span class="p">}</span>
+  <span class="c1">//事前分布
+</span><span class="c1"></span>  <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">M</span><span class="p">){</span>
+    <span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">~</span> <span class="n">dirichlet</span><span class="p">(</span><span class="n">p_j</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">generated</span> <span class="n">quantities</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">M</span><span class="p">]</span> <span class="n">Z_EST</span><span class="p">[</span><span class="n">K</span><span class="p">];</span> <span class="c1">//求めたい座標（期待値）
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">M</span><span class="p">]</span> <span class="n">Z_RNG</span><span class="p">[</span><span class="n">K</span><span class="p">];</span> <span class="c1">//求めたい座標（事後分布からの乱数生成）
+</span><span class="c1"></span>
+  <span class="c1">//期待値の座標を計算
+</span><span class="c1"></span>  <span class="p">{</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">M</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">P_IJ_EST</span><span class="p">;</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">M</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">P_IJ_RNG</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">d_RNG</span><span class="p">[</span><span class="n">M</span><span class="p">,</span><span class="n">N</span><span class="p">];</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">M</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">d_numeric_RNG</span><span class="p">;</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">sq_P_J_EST</span><span class="p">;</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">sq_P_J_RNG</span><span class="p">;</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">M</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">X_EST</span><span class="p">;</span>
+    <span class="n">matrix</span><span class="p">[</span><span class="n">M</span><span class="p">,</span><span class="n">N</span><span class="p">]</span> <span class="n">X_RNG</span><span class="p">;</span>
+
+    <span class="c1">//以降は行毎に必要な操作
+</span><span class="c1"></span>    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">M</span><span class="p">){</span>
+
+      <span class="c1">//着目する行によってP_IJは異なる
+</span><span class="c1"></span>      <span class="k">for</span><span class="p">(</span><span class="n">m</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">M</span><span class="p">){</span>
+        <span class="c1">//P_IJの生成
+</span><span class="c1"></span>        <span class="k">if</span><span class="p">(</span><span class="n">m</span><span class="o">==</span><span class="n">i</span><span class="p">){</span>
+          <span class="n">P_IJ_EST</span><span class="p">[</span><span class="n">m</span><span class="p">,]</span> <span class="o">=</span> <span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">d_numeric</span><span class="p">[</span><span class="n">i</span><span class="p">,]))</span> <span class="o">/</span> <span class="n">Sum</span><span class="p">)</span><span class="err">&#39;</span><span class="p">;</span> <span class="c1">//対象の行のみ期待値を用いる
+</span><span class="c1"></span>        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+          <span class="n">P_IJ_EST</span><span class="p">[</span><span class="n">m</span><span class="p">,]</span> <span class="o">=</span> <span class="n">d_numeric</span><span class="p">[</span><span class="n">m</span><span class="p">,]</span> <span class="o">/</span> <span class="n">Sum</span><span class="p">;</span>
+          <span class="p">}</span>
+      <span class="p">}</span>
+
+      <span class="c1">//着目する行によってP_Jも異なる
+</span><span class="c1"></span>      <span class="p">{</span>
+        <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">sq_p_j_EST</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+          <span class="n">sq_p_j_EST</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">P_IJ_EST</span><span class="p">[,</span><span class="n">n</span><span class="p">]));</span>
+        <span class="p">}</span>
+        <span class="n">sq_P_J_EST</span> <span class="o">=</span> <span class="n">diag_matrix</span><span class="p">(</span><span class="n">sq_p_j_EST</span><span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="n">X_EST</span> <span class="o">=</span> <span class="n">inverse</span><span class="p">(</span><span class="n">P_I</span><span class="p">)</span> <span class="o">*</span> <span class="n">P_IJ_EST</span> <span class="o">*</span> <span class="n">inverse</span><span class="p">(</span><span class="n">sq_P_J_EST</span><span class="p">);</span>
+
+      <span class="k">for</span><span class="p">(</span><span class="n">k</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">K</span><span class="p">){</span>
+        <span class="n">Z_EST</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_EST</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">eigenvector</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
+      <span class="p">}</span>
+
+    <span class="p">}</span>
+
+    <span class="c1">//乱数生成したときの座標を計算
+</span><span class="c1"></span>    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">M</span><span class="p">){</span>
+
+      <span class="k">for</span><span class="p">(</span><span class="n">m</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">M</span><span class="p">){</span>
+        <span class="c1">//P_IJの生成
+</span><span class="c1"></span>        <span class="k">if</span><span class="p">(</span><span class="n">m</span><span class="o">==</span><span class="n">i</span><span class="p">){</span>
+          <span class="n">d_RNG</span><span class="p">[</span><span class="n">m</span><span class="p">,]</span> <span class="o">=</span> <span class="n">multinomial_rng</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">m</span><span class="p">],</span><span class="n">sum</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">m</span><span class="p">,]));</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+          <span class="n">d_RNG</span><span class="p">[</span><span class="n">m</span><span class="p">,]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">m</span><span class="p">,];</span>
+          <span class="p">}</span>
+      <span class="p">}</span>
+
+      <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">m</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">M</span><span class="p">){</span>
+          <span class="n">d_numeric_RNG</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">d_RNG</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">];</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+
+      <span class="n">P_IJ_RNG</span> <span class="o">=</span> <span class="n">d_numeric_RNG</span> <span class="o">/</span> <span class="n">Sum</span><span class="p">;</span>
+
+      <span class="p">{</span>
+        <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">sq_p_j_RNG</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+          <span class="n">sq_p_j_RNG</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">P_IJ_RNG</span><span class="p">[,</span><span class="n">n</span><span class="p">]));</span>
+        <span class="p">}</span>
+        <span class="n">sq_P_J_RNG</span> <span class="o">=</span> <span class="n">diag_matrix</span><span class="p">(</span><span class="n">sq_p_j_RNG</span><span class="p">);</span>
+      <span class="p">}</span>
+
+      <span class="n">X_RNG</span> <span class="o">=</span> <span class="n">inverse</span><span class="p">(</span><span class="n">P_I</span><span class="p">)</span> <span class="o">*</span> <span class="n">P_IJ_RNG</span> <span class="o">*</span> <span class="n">inverse</span><span class="p">(</span><span class="n">sq_P_J_RNG</span><span class="p">);</span>
+
+      <span class="k">for</span><span class="p">(</span><span class="n">k</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">K</span><span class="p">){</span>
+        <span class="n">Z_RNG</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">X_RNG</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">eigenvector</span><span class="p">[</span><span class="n">k</span><span class="p">];</span>
+      <span class="p">}</span>
+
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div><h1 id="結果の確認">結果の確認</h1>
+<p>以下でMCMCを走らせ、$\hat{R}$で収束を確認します。モデル部分が簡素なのですぐ終わりますし、収束もばっちりですな。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">rstan</span><span class="p">)</span>
+
+<span class="c1"># 行列Xの作成 ------------------------------------------------------------</span>
+
+<span class="n">N</span> <span class="o">&lt;-</span> <span class="nf">sum</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">&lt;-</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">&lt;-</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span>
+<span class="n">K</span> <span class="o">&lt;-</span> <span class="nf">min</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">m</span><span class="p">)</span> <span class="o">-</span> <span class="m">1</span>
+
+<span class="n">p_i</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">m</span><span class="p">)</span>
+<span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">m</span><span class="p">){</span>
+  <span class="n">p_i[i]</span> <span class="o">&lt;-</span> <span class="nf">sum</span><span class="p">(</span><span class="n">smo_data[i</span><span class="p">,</span><span class="n">]</span><span class="p">)</span><span class="o">/</span><span class="n">N</span>
+<span class="p">}</span>
+<span class="n">P_i</span> <span class="o">&lt;-</span> <span class="nf">diag</span><span class="p">(</span><span class="n">p_i</span><span class="p">)</span>
+
+<span class="n">p_j</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+<span class="nf">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">n</span><span class="p">){</span>
+  <span class="n">p_j[j]</span> <span class="o">&lt;-</span> <span class="nf">sum</span><span class="p">(</span><span class="n">smo_data[</span><span class="p">,</span><span class="n">j]</span><span class="p">)</span><span class="o">/</span><span class="n">N</span>
+<span class="p">}</span>
+<span class="n">P_j</span> <span class="o">&lt;-</span> <span class="nf">diag</span><span class="p">(</span><span class="n">p_j</span><span class="p">)</span>
+
+<span class="n">P_ij</span> <span class="o">&lt;-</span> <span class="n">smo_data</span><span class="o">/</span><span class="n">N</span>
+
+<span class="n">matpow</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pow</span><span class="o">=</span><span class="m">2</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">y</span> <span class="o">&lt;-</span> <span class="nf">eigen</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="n">y</span><span class="o">$</span><span class="n">vectors</span> <span class="o">%*%</span> <span class="nf">diag</span><span class="p">(</span> <span class="p">(</span><span class="n">y</span><span class="o">$</span><span class="n">values</span><span class="p">)</span><span class="n">^pow</span> <span class="p">)</span> <span class="o">%*%</span> <span class="nf">t</span><span class="p">(</span><span class="n">y</span><span class="o">$</span><span class="n">vectors</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">X</span> <span class="o">&lt;-</span> <span class="nf">solve</span><span class="p">(</span><span class="n">P_i</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">P_ij</span> <span class="o">%*%</span> <span class="nf">matpow</span><span class="p">(</span><span class="n">P_j</span><span class="p">,</span> <span class="n">pow</span><span class="o">=</span><span class="p">(</span><span class="m">-1</span><span class="o">/</span><span class="m">2</span><span class="p">))</span>
+
+
+<span class="c1"># 論文の方法に則った対応分析 -----------------------------------------------------------</span>
+
+<span class="n">X_bar</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="nf">colSums</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">/</span><span class="nf">nrow</span><span class="p">(</span><span class="n">X</span><span class="p">),</span><span class="nf">nrow</span><span class="p">(</span><span class="n">X</span><span class="p">)),</span> <span class="n">byrow</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="nf">nrow</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+<span class="n">X_cov</span> <span class="o">&lt;-</span> <span class="nf">t</span><span class="p">((</span><span class="n">X</span> <span class="o">-</span> <span class="n">X_bar</span><span class="p">))</span> <span class="o">%*%</span> <span class="n">P_i</span> <span class="o">%*%</span> <span class="p">(</span><span class="n">X</span> <span class="o">-</span> <span class="n">X_bar</span><span class="p">)</span>
+<span class="n">X_pca</span> <span class="o">&lt;-</span> <span class="nf">eigen</span><span class="p">(</span><span class="n">X_cov</span><span class="p">)</span>
+
+<span class="n">rikishi_coord</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="n">X</span> <span class="o">%*%</span> <span class="n">X_pca</span><span class="o">$</span><span class="n">vectors[</span><span class="p">,</span><span class="m">1</span><span class="o">:</span><span class="n">K]</span><span class="p">)</span>
+
+<span class="n">waza_coord</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="n">K</span><span class="p">)</span>
+<span class="nf">for</span><span class="p">(</span><span class="n">k</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">K</span><span class="p">){</span>
+  <span class="n">waza_coord[</span><span class="p">,</span><span class="n">k]</span> <span class="o">&lt;-</span> <span class="m">1</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">X_pca</span><span class="o">$</span><span class="n">values[k]</span><span class="p">)</span> <span class="o">*</span> <span class="nf">solve</span><span class="p">(</span><span class="n">P_j</span><span class="p">)</span> <span class="o">%*%</span> <span class="nf">t</span><span class="p">(</span><span class="n">P_ij</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">rikishi_coord[</span><span class="p">,</span><span class="n">k]</span>
+<span class="p">}</span>
+
+<span class="n">waza_coord</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">waza_coord</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;寄り&#34;</span><span class="p">,</span><span class="s">&#34;押し&#34;</span><span class="p">,</span><span class="s">&#34;投げ&#34;</span><span class="p">,</span><span class="s">&#34;引き&#34;</span><span class="p">,</span><span class="s">&#34;送り&#34;</span><span class="p">,</span><span class="s">&#34;突き&#34;</span><span class="p">,</span><span class="s">&#34;その他&#34;</span><span class="p">))</span>
+
+<span class="c1"># stanを走らせる ------------------------------------------------------------</span>
+
+<span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">Sum</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">smo_data</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">eigenvector</span><span class="o">=</span><span class="nf">t</span><span class="p">(</span><span class="n">X_pca</span><span class="o">$</span><span class="n">vectors[</span><span class="p">,</span><span class="m">1</span><span class="o">:</span><span class="n">K]</span><span class="p">))</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">rstan</span><span class="p">)</span>
+<span class="nf">rstan_options</span><span class="p">(</span><span class="n">auto_write</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+<span class="nf">options</span><span class="p">(</span><span class="n">mc.cores</span> <span class="o">=</span> <span class="n">parallel</span><span class="o">::</span><span class="nf">detectCores</span><span class="p">())</span>
+<span class="n">fit</span> <span class="o">&lt;-</span> <span class="nf">stan</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s">&#34;model.stan&#34;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span> <span class="n">iter</span><span class="o">=</span><span class="m">1300</span><span class="p">,</span> <span class="n">warmup</span> <span class="o">=</span> <span class="m">300</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="n">fit</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="s">&#34;theta&#34;</span><span class="p">)</span>
+
+<span class="c1">## mean se_mean   sd 2.5%  25%  50%  75% 97.5% n_eff Rhat</span>
+<span class="c1">## theta[1,1]  0.47       0 0.08 0.30 0.41 0.47 0.53  0.63  6965    1</span>
+<span class="c1">## theta[1,2]  0.46       0 0.08 0.30 0.40 0.46 0.52  0.62  6147    1</span>
+<span class="c1">## theta[1,3]  0.01       0 0.01 0.00 0.00 0.00 0.00  0.04  4527    1</span>
+<span class="c1">## theta[1,4]  0.00       0 0.01 0.00 0.00 0.00 0.00  0.03  4572    1</span>
+<span class="c1">## theta[1,5]  0.03       0 0.03 0.00 0.01 0.02 0.04  0.11  3747    1</span>
+<span class="c1">## theta[1,6]  0.00       0 0.00 0.00 0.00 0.00 0.00  0.00  4123    1</span>
+<span class="c1">## theta[1,7]  0.03       0 0.03 0.00 0.01 0.02 0.05  0.11  4463    1</span>
+<span class="c1">## ～（以下略）～</span>
+</code></pre></div><p>次にインスタ映えプロットを作ります。今回のインスタ映えプロットは観測値から得られる（真の）第1軸と第2軸をもとに付置した対応分析の同時付置図です。項目$I$の各ポイントについてそのベイズ信頼区間を示しました<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup>。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">tidyr</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">stringr</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tibble</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">ggrepel</span><span class="p">)</span>
+
+<span class="c1"># MAP 推定値を得る関数</span>
+<span class="n">MAP</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">){</span>
+  <span class="n">dens</span> <span class="o">&lt;-</span> <span class="nf">density</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+  <span class="n">mode_i</span> <span class="o">&lt;-</span> <span class="nf">which.max</span><span class="p">(</span><span class="n">dens</span><span class="o">$</span><span class="n">y</span><span class="p">)</span>
+  <span class="n">mode_x</span> <span class="o">&lt;-</span> <span class="n">dens</span><span class="o">$</span><span class="n">x[mode_i]</span>
+  <span class="nf">return</span><span class="p">(</span><span class="n">mode_x</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># 集計 ----------------------------------------------------------------------</span>
+
+<span class="n">rikishi_label</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;小錦&#34;</span><span class="p">,</span><span class="s">&#34;琴錦&#34;</span><span class="p">,</span><span class="s">&#34;貴闘力&#34;</span><span class="p">,</span><span class="s">&#34;霧島&#34;</span><span class="p">,</span><span class="s">&#34;栃ノ和歌&#34;</span><span class="p">,</span><span class="s">&#34;水戸錦&#34;</span><span class="p">,</span><span class="s">&#34;若ノ花&#34;</span><span class="p">,</span><span class="s">&#34;貴ノ花&#34;</span><span class="p">,</span><span class="s">&#34;武蔵丸&#34;</span><span class="p">,</span>
+                   <span class="s">&#34;大翔山&#34;</span><span class="p">,</span><span class="s">&#34;安芸ノ島&#34;</span><span class="p">,</span><span class="s">&#34;三杉里&#34;</span><span class="p">,</span><span class="s">&#34;旭道山&#34;</span><span class="p">,</span><span class="s">&#34;舞の海&#34;</span><span class="p">,</span><span class="s">&#34;寺尾&#34;</span><span class="p">,</span><span class="s">&#34;琴の若&#34;</span><span class="p">,</span><span class="s">&#34;貴ノ浪&#34;</span><span class="p">,</span>
+                   <span class="s">&#34;琴富士&#34;</span><span class="p">,</span><span class="s">&#34;隆三杉&#34;</span><span class="p">,</span><span class="s">&#34;春日富士&#34;</span><span class="p">)</span>
+
+<span class="n">fit</span> <span class="o">%&gt;%</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">extract</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="nf">data.frame</span><span class="p">()</span><span class="o">%&gt;%</span>
+  <span class="nf">select</span><span class="p">(</span><span class="nf">starts_with</span><span class="p">(</span><span class="s">&#34;Z_EST&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="nf">everything</span><span class="p">(),</span> <span class="n">names_to</span><span class="o">=</span><span class="s">&#34;key&#34;</span><span class="p">,</span> <span class="n">values_to</span> <span class="o">=</span> <span class="s">&#34;val&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="nf">as.numeric</span><span class="p">(</span><span class="nf">str_sub</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="m">7</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="m">7</span><span class="p">)),</span>
+         <span class="n">target</span><span class="o">=</span><span class="nf">as.numeric</span><span class="p">(</span><span class="nf">str_sub</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="m">9</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="m">10</span><span class="p">)),</span>
+         <span class="n">key</span><span class="o">=</span><span class="kc">NULL</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">group_by</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">nest</span><span class="p">()</span> <span class="o">%&gt;%</span>
+  <span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span> <span class="o">=</span> <span class="n">dim</span><span class="p">,</span> <span class="n">values_from</span> <span class="o">=</span> <span class="n">data</span><span class="p">)</span><span class="o">%&gt;%</span> <span class="nf">unnest</span><span class="p">()</span> <span class="o">%&gt;%</span>
+  <span class="nf">group_by</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">rename</span><span class="p">(</span><span class="n">dim1</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="n">val1</span><span class="p">,</span> <span class="n">dim3</span><span class="o">=</span><span class="n">val2</span><span class="p">,</span> <span class="n">dim4</span><span class="o">=</span><span class="n">val3</span><span class="p">,</span> <span class="n">dim5</span><span class="o">=</span><span class="n">val4</span><span class="p">,</span> <span class="n">dim6</span><span class="o">=</span><span class="n">val5</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">summarise_all</span><span class="p">(</span><span class="nf">funs</span><span class="p">(</span><span class="n">MAP</span><span class="o">=</span><span class="nf">MAP</span><span class="p">(</span><span class="n">.)</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span><span class="nf">quantile</span><span class="p">(</span><span class="n">.,</span> <span class="m">0.25</span><span class="p">),</span><span class="n">upper</span><span class="o">=</span><span class="nf">quantile</span><span class="p">(</span><span class="n">.,0.75</span><span class="p">)))</span> <span class="o">%&gt;%</span> <span class="nf">arrange</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="nf">factor</span><span class="p">(</span><span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="n">m</span><span class="p">),</span>
+                       <span class="n">labels</span><span class="o">=</span><span class="n">rikishi_label</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">plot_row_EST.df</span>
+
+<span class="n">fit</span> <span class="o">%&gt;%</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">extract</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="nf">data.frame</span><span class="p">()</span> <span class="o">%&gt;%</span>
+  <span class="nf">select</span><span class="p">(</span><span class="nf">starts_with</span><span class="p">(</span><span class="s">&#34;Z_RNG&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="nf">everything</span><span class="p">(),</span> <span class="n">names_to</span><span class="o">=</span><span class="s">&#34;key&#34;</span><span class="p">,</span> <span class="n">values_to</span> <span class="o">=</span> <span class="s">&#34;val&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="nf">as.numeric</span><span class="p">(</span><span class="nf">str_sub</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="m">7</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="m">7</span><span class="p">)),</span>
+         <span class="n">target</span><span class="o">=</span><span class="nf">as.numeric</span><span class="p">(</span><span class="nf">str_sub</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="m">9</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="m">10</span><span class="p">)),</span>
+         <span class="n">key</span><span class="o">=</span><span class="kc">NULL</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">group_by</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">nest</span><span class="p">()</span> <span class="o">%&gt;%</span>
+  <span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span> <span class="o">=</span> <span class="n">dim</span><span class="p">,</span> <span class="n">values_from</span> <span class="o">=</span> <span class="n">data</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">unnest</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="nf">group_by</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">rename</span><span class="p">(</span><span class="n">dim1</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="n">val1</span><span class="p">,</span> <span class="n">dim3</span><span class="o">=</span><span class="n">val2</span><span class="p">,</span> <span class="n">dim4</span><span class="o">=</span><span class="n">val3</span><span class="p">,</span> <span class="n">dim5</span><span class="o">=</span><span class="n">val4</span><span class="p">,</span> <span class="n">dim6</span><span class="o">=</span><span class="n">val5</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">summarise_all</span><span class="p">(</span><span class="nf">funs</span><span class="p">(</span><span class="n">MAP</span><span class="o">=</span><span class="nf">MAP</span><span class="p">(</span><span class="n">.)</span><span class="p">,</span><span class="n">lower</span><span class="o">=</span><span class="nf">quantile</span><span class="p">(</span><span class="n">.,</span> <span class="m">0.25</span><span class="p">),</span><span class="n">upper</span><span class="o">=</span><span class="nf">quantile</span><span class="p">(</span><span class="n">.,0.75</span><span class="p">)))</span> <span class="o">%&gt;%</span> <span class="nf">arrange</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="nf">factor</span><span class="p">(</span><span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="n">m</span><span class="p">),</span>
+                       <span class="n">labels</span><span class="o">=</span><span class="n">rikishi_label</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">plot_row_RNG.df</span>
+
+<span class="n">fit</span> <span class="o">%&gt;%</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">extract</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="nf">data.frame</span><span class="p">()</span> <span class="o">%&gt;%</span>
+  <span class="nf">select</span><span class="p">(</span><span class="nf">starts_with</span><span class="p">(</span><span class="s">&#34;Z_EST&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="nf">everything</span><span class="p">(),</span> <span class="n">names_to</span><span class="o">=</span><span class="s">&#34;key&#34;</span><span class="p">,</span> <span class="n">values_to</span> <span class="o">=</span> <span class="s">&#34;val&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="nf">as.numeric</span><span class="p">(</span><span class="nf">str_sub</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="m">7</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="m">7</span><span class="p">)),</span>
+         <span class="n">target</span><span class="o">=</span><span class="nf">str_sub</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="m">9</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="m">10</span><span class="p">),</span>
+         <span class="n">key</span><span class="o">=</span><span class="kc">NULL</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">group_by</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">nest</span><span class="p">()</span> <span class="o">%&gt;%</span>
+  <span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span> <span class="o">=</span> <span class="n">dim</span><span class="p">,</span> <span class="n">values_from</span> <span class="o">=</span> <span class="n">data</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">unnest</span><span class="p">()</span> <span class="o">%&gt;%</span>
+  <span class="nf">rename</span><span class="p">(</span><span class="n">dim1</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="n">val1</span><span class="p">,</span> <span class="n">dim3</span><span class="o">=</span><span class="n">val2</span><span class="p">,</span> <span class="n">dim4</span><span class="o">=</span><span class="n">val3</span><span class="p">,</span> <span class="n">dim5</span><span class="o">=</span><span class="n">val4</span><span class="p">,</span> <span class="n">dim6</span><span class="o">=</span><span class="n">val5</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">ungroup</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="nf">factor</span><span class="p">(</span><span class="n">target</span><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="n">m</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="n">rikishi_label</span><span class="p">))</span><span class="o">-&gt;</span> <span class="n">plot_row_EST_range.df</span>
+
+<span class="n">fit</span> <span class="o">%&gt;%</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">extract</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="nf">data.frame</span><span class="p">()</span> <span class="o">%&gt;%</span>
+  <span class="nf">select</span><span class="p">(</span><span class="nf">starts_with</span><span class="p">(</span><span class="s">&#34;Z_RNG&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="nf">everything</span><span class="p">(),</span> <span class="n">names_to</span><span class="o">=</span><span class="s">&#34;key&#34;</span><span class="p">,</span> <span class="n">values_to</span> <span class="o">=</span> <span class="s">&#34;val&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="nf">as.numeric</span><span class="p">(</span><span class="nf">str_sub</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="m">7</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="m">7</span><span class="p">)),</span>
+         <span class="n">target</span><span class="o">=</span><span class="nf">str_sub</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">start</span><span class="o">=</span><span class="m">9</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="m">10</span><span class="p">),</span>
+         <span class="n">key</span><span class="o">=</span><span class="kc">NULL</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">group_by</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">dim</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">nest</span><span class="p">()</span> <span class="o">%&gt;%</span>
+  <span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span> <span class="o">=</span> <span class="n">dim</span><span class="p">,</span> <span class="n">values_from</span> <span class="o">=</span> <span class="n">data</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">unnest</span><span class="p">()</span> <span class="o">%&gt;%</span>
+  <span class="nf">rename</span><span class="p">(</span><span class="n">dim1</span><span class="o">=</span><span class="n">val</span><span class="p">,</span> <span class="n">dim2</span><span class="o">=</span><span class="n">val1</span><span class="p">,</span> <span class="n">dim3</span><span class="o">=</span><span class="n">val2</span><span class="p">,</span> <span class="n">dim4</span><span class="o">=</span><span class="n">val3</span><span class="p">,</span> <span class="n">dim5</span><span class="o">=</span><span class="n">val4</span><span class="p">,</span> <span class="n">dim6</span><span class="o">=</span><span class="n">val5</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">ungroup</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="nf">factor</span><span class="p">(</span><span class="n">target</span><span class="p">,</span><span class="n">levels</span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="n">m</span><span class="p">),</span> <span class="n">labels</span><span class="o">=</span><span class="n">rikishi_label</span><span class="p">))</span><span class="o">-&gt;</span> <span class="n">plot_row_RNG_range.df</span>
+
+<span class="c1"># Plot --------------------------------------------------------------------</span>
+
+<span class="nf">library</span><span class="p">(</span><span class="n">RColorBrewer</span><span class="p">)</span>
+<span class="n">mycol</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">11</span><span class="p">,</span><span class="s">&#34;Paired&#34;</span><span class="p">),</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">9</span><span class="p">,</span><span class="s">&#34;Set1&#34;</span><span class="p">))</span>
+
+<span class="c1"># Z_ESTを用いたプロット</span>
+
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">guides</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">stat_density_2d</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_row_EST_range.df</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dim2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">..nlevel..</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">target</span><span class="p">),</span> <span class="n">geom</span><span class="o">=</span><span class="s">&#34;polygon&#34;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="m">7</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">geom_errorbar</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_row_EST.df</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim1_MAP</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dim2_MAP</span><span class="p">,</span><span class="n">ymin</span><span class="o">=</span><span class="n">dim2_lower</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">dim2_upper</span><span class="p">),</span><span class="n">col</span><span class="o">=</span><span class="s">&#34;grey30&#34;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="m">0.1</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_errorbarh</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_row_EST.df</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">dim2_MAP</span><span class="p">,</span><span class="n">xmin</span><span class="o">=</span><span class="n">dim1_lower</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="n">dim1_upper</span><span class="p">,),</span><span class="n">col</span><span class="o">=</span><span class="s">&#34;grey30&#34;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="m">0.1</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">waza_coord</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim.1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dim.2</span><span class="p">),</span><span class="n">size</span><span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="m">17</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_row_EST.df</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim1_MAP</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dim2_MAP</span><span class="p">,</span><span class="n">fill</span><span class="o">=</span><span class="n">target</span><span class="p">),</span><span class="n">shape</span><span class="o">=</span><span class="m">21</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="m">2</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_row_EST.df</span><span class="p">,</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim1_MAP</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">dim2_MAP</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">target</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">waza_coord</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim.1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dim.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">target</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#34;Correspondence Analysis with Bayesian 50% confidence intervas &amp; density&#34;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s">&#34;dim1&#34;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&#34;dim2&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.title</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">())</span> <span class="o">+</span>
+  <span class="nf">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">mycol</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_alpha_continuous</span><span class="p">(</span><span class="n">range</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="m">0.5</span><span class="p">))</span>
+<span class="n">p</span>
+
+</code></pre></div><p><img src="/my-page/post/corresp-and-bayes/res_plot_density(EST).png" alt="uni"></p>
+<p>It&rsquo;s so brilliant&hellip;
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/JpQQhsNI-ns" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+</p>
+<p>対応分析の結果の解釈は<a href="https://rmorita-stat.github.io/my-page/post/correspondencenalysis/correspondenceanalysis/#%E7%B5%90%E6%9E%9C%E3%81%AE%E8%A7%A3%E9%87%88">前回の記事</a>に譲り、項目$I$の各ポイントの信頼区間について確認してみます。</p>
+<p>白星の最も多い力士は貴乃花で59、最も少ない力士は春日富士で25でした。そこで両者の付置の信頼区間をみると、春日富士の方がやはり貴乃花よりも推定幅が広いようです。がしかしその差は明瞭ではなく、貴乃花よりも貴闘力（白星43）のほうが信頼区間の幅が狭いです。主成分ベクトルによる写像の影響も絡んでいるのでしょう。<br>
+一応貴ノ花と春日富士の従う多項分布のパラメータの事後分布を確認します。</p>
+<p><img src="/my-page/post/corresp-and-bayes/res_plot_posterior(%E8%B2%B4%E3%83%8E%E8%8A%B1).png" alt="uni">
+<img src="/my-page/post/corresp-and-bayes/res_plot_posterior(%E6%98%A5%E6%97%A5%E5%AF%8C%E5%A3%AB).png" alt="uni"></p>
+<p>春日富士の方がやはり事後分布の幅が広い？</p>
+<p>パラメータの事後分布から乱数生成して求めた各ポイントの座標の予測区間も示しておきます<sup id="fnref:11"><a href="#fn:11" class="footnote-ref" role="doc-noteref">11</a></sup>。誤差を考慮したので当然着色部の幅が広くなっています。</p>
+<p><img src="/my-page/post/corresp-and-bayes/res_plot_density(RNG).png" alt="uni"></p>
+<h1 id="おまけ私が相撲に参加すると">おまけ～私が相撲に参加すると？～</h1>
+<p>標本数の違いによる信頼区間の幅の差があまり実感出来なかったので、極端な例で試してみました。<br>
+私(R.morta)が相撲に参加した体で、新たな行を作成します。ただ私は相撲などしたことがない一般人なので、当然力士に勝てる見込みもありません。それでは分割表が作れないので、八百長をした体にして、「引き」での勝ち数が多いことにしてみましょう<sup id="fnref:12"><a href="#fn:12" class="footnote-ref" role="doc-noteref">12</a></sup>。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">smo_data</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">15</span><span class="p">,</span><span class="m">15</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">19</span><span class="p">,</span><span class="m">9</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">22</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">4</span><span class="p">,</span>
+                          <span class="m">14</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">24</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">30</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
+                          <span class="m">11</span><span class="p">,</span><span class="m">13</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">25</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">10</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">13</span><span class="p">,</span><span class="m">31</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">,</span>
+                          <span class="m">8</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">19</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">28</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">9</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">14</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">4</span><span class="p">,</span>
+                          <span class="m">5</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">18</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
+                          <span class="m">25</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">16</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">18</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">23</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
+                          <span class="m">7</span><span class="p">,</span><span class="m">17</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">16</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">11</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span>
+                          <span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">),</span><span class="n">byrow</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="m">7</span><span class="p">)</span>
+<span class="nf">colnames</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;寄り&#34;</span><span class="p">,</span><span class="s">&#34;押し&#34;</span><span class="p">,</span><span class="s">&#34;投げ&#34;</span><span class="p">,</span><span class="s">&#34;引き&#34;</span><span class="p">,</span><span class="s">&#34;送り&#34;</span><span class="p">,</span><span class="s">&#34;突き&#34;</span><span class="p">,</span><span class="s">&#34;その他&#34;</span><span class="p">)</span>
+<span class="nf">rownames</span><span class="p">(</span><span class="n">smo_data</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;小錦&#34;</span><span class="p">,</span><span class="s">&#34;琴錦&#34;</span><span class="p">,</span><span class="s">&#34;貴闘力&#34;</span><span class="p">,</span><span class="s">&#34;霧島&#34;</span><span class="p">,</span><span class="s">&#34;栃ノ和歌&#34;</span><span class="p">,</span><span class="s">&#34;水戸錦&#34;</span><span class="p">,</span><span class="s">&#34;若ノ花&#34;</span><span class="p">,</span><span class="s">&#34;貴ノ花&#34;</span><span class="p">,</span><span class="s">&#34;武蔵丸&#34;</span><span class="p">,</span>
+                        <span class="s">&#34;大翔山&#34;</span><span class="p">,</span><span class="s">&#34;安芸ノ島&#34;</span><span class="p">,</span><span class="s">&#34;三杉里&#34;</span><span class="p">,</span><span class="s">&#34;旭道山&#34;</span><span class="p">,</span><span class="s">&#34;舞の海&#34;</span><span class="p">,</span><span class="s">&#34;寺尾&#34;</span><span class="p">,</span><span class="s">&#34;琴の若&#34;</span><span class="p">,</span><span class="s">&#34;貴ノ浪&#34;</span><span class="p">,</span>
+                        <span class="s">&#34;琴富士&#34;</span><span class="p">,</span><span class="s">&#34;隆三杉&#34;</span><span class="p">,</span><span class="s">&#34;春日富士&#34;</span><span class="p">,</span><span class="s">&#34;R.morita&#34;</span><span class="p">)</span>
+～（以下略）～
+
+</code></pre></div><p><img src="/my-page/post/corresp-and-bayes/res_plot_posterior(R.morita).png" alt="uni"></p>
+<p>私の従う多項分布のパラメータ事後分布幅はやはり広いですね。
+インスタ映えプロットも見てみましょう。</p>
+<p><img src="/my-page/post/corresp-and-bayes/res_plot_density(EST)_R.morita.png" alt="uni"></p>
+<p>期待通りの結果です。私の信頼区間だけ他と比べて広いです。特に「引き」の寄与が大きい「組んで取る相撲」-「離れて取る相撲」の第2軸についてその傾向が大きく、座標の正負もあやしい状態です。</p>
+<p>以上で対応分析の同時付置図に各ポイントの信頼区間を示すことが出来ていることを確認できました。</p>
+<h1 id="まとめ">まとめ</h1>
+<p>対応分析の同時付置図にベイズ信頼区間を表示する試みを紹介しました。やったことは単純で、対応分析の同時付置図には抜け落ちてしまっている標本数の情報を、多項分布モデルの事後分布幅に読み替え、MCMCサンプルの分布を同時付置上に加えただけです。
+同時付置図を基に項目をパターン分けしたりする際、今回のような方法で同時付置図上にポイントの信頼区間を表示することで、誤った判断を下すことを防げるのではないかと思っています。<br>
+あとは図がとても美しい…</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>$N$個の列変量に対する次元削減を狙いとした主成分分析なので、$N$個の固有値・固有ベクトルが得られます。そのうち最小固有値は自明な解$\lambda_{N}≃0$、$l_{N}=(\sqrt{p_{.1}},\ldots,\sqrt{p_{.N}})$であり、それを除いた$N-1$次元が得られる次元になるようです。（論文では自明な解$\lambda_{N}≃1$と記載されていたが計算すると自明な固有ベクトルに対応する固有値は0に近かった。どちらが正しいのか検算・理解が追い付かなかった…）さらに$N&gt;M$のときは$M-1$次元までを採用することになります <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>行列$X$のユークリッド距離が$\cfrac{f_{ij}}{f_{i.}}$に関する行項目間の$χ^2$距離になっているので、分割表の一様性の検定における検定対象は対応分析において視覚的に強調しようとしている対象そのものになっています <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p>参考論文では帰無仮説：$\cfrac{p_{ij}}{p_{i.}} = p_{.j}$となっていますが同じことです。分かりにくいナ <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p>4で割ると整数にならない観測度数がでてきますが気にしないようにしましょう。整数じゃなくても検定はできます。 <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p>自明な固有ベクトルとの内積になっているので0です <a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p>最右辺の$\cfrac{\left(\cfrac{p_{ij}}{p_{i.}}-p_{.j}\right)^2}{p_{.j}}$は、対応分析で各ポイントと原点からの距離として視覚的に表示される対象そのものです。分割表の一様性検定における検定統計量が$(5)$式のように分解されることからも、<div style="color:#f00078; font-size:16px">
+  対応分析の同時付置図には標本数の情報がすっぽり抜き取られている
+</div>ことが確認できます。 <a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7" role="doc-endnote">
+<p>ベイズ信頼区間は、パラメータのMCMCサンプルより分割表の各セルの期待値を計算し、各ポイントの分布を求めたものとし、ベイズ予測区間はパラメータのMCMCサンプルから分割表の各セルの値を乱数生成した上で各ポイントの分布を求めたものとします <a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8" role="doc-endnote">
+<p>列項目については$項目間のχ^2$距離を最大限説明できる軸を解析的に得るのみにして、生成過程を仮定してMCMCサンプルを得る、ということはしない、という考えです <a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:9" role="doc-endnote">
+<p>個体$i$の付置の予測区間を求める際は、$(12)$式の$i$行目に$\boldsymbol{\theta_{i}}$のMCMCサンプルを用いた乱数生成量をいれます <a href="#fnref:9" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:10" role="doc-endnote">
+<p>エラーバーで各座標の50%信頼区間を示し、着色で二次元カーネル密度推定結果を、等高線の最大値を1としたときの0.2以上の範囲を描画しています。 <a href="#fnref:10" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:11" role="doc-endnote">
+<p>Z_RNGをZ_ESTのかわりに用いることで得られます。集計までのコードも一緒に載せています <a href="#fnref:11" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:12" role="doc-endnote">
+<p>八百長での決まり手には「引き」がよく採用されるようです <a href="#fnref:12" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://rmorita-stat.github.io/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90">多変量解析</a></span>
+        
+        <span><a href="https://rmorita-stat.github.io/tags/rstan">rstan</a></span>
+        
+        
+    </div>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計、ロードバイク、古墳が好きです。 </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://rmorita-stat.github.io/2020/11/correspondenceanalysis/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.11.07 00:00 </div>
+            <div class="pn-el__2"> 対応分析について </div>
+        </div>
+    </a>
+    
+    
+</div>
+
+<footer>
+  <script type="text/javascript">
+ MathJax = {
+   tex: {
+     inlineMath: [['$','$'], ['\\(','\\)']],
+     processEscapes: true,
+     tags: "ams",
+     autoload: {
+       color: [],
+       colorV2: ['color']
+     },
+     packages: {'[+]': ['noerrors']}
+   },
+   chtml: {
+     matchFontHeight: true,
+     displayAlign: "left",
+     displayIndent: "2em"
+   },
+   options: {
+     skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+     renderActions: {
+        
+       find_script_mathtex: [10, function (doc) {
+         for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+           const display = !!node.type.match(/; *mode=display/);
+           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+           const text = document.createTextNode('');
+           node.parentNode.replaceChild(text, node);
+           math.start = {node: text, delim: '', n: 0};
+           math.end = {node: text, delim: '', n: 0};
+           doc.math.push(math);
+         }
+       }, '']
+     }
+   },
+   loader: {
+     load: ['[tex]/noerrors']
+   }
+ };
+</script>
+<script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2020
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
