@@ -13,28 +13,28 @@
     
     <item>
       <title>多項ロジスティック回帰・ガウス過程モデル</title>
-      <link>https://rmorita-stat.github.io/post/multinom-gp/multinom-gp/</link>
+      <link>https://rmorita-stat.github.io/2020/07/%E5%A4%9A%E9%A0%85%E3%83%AD%E3%82%B8%E3%82%B9%E3%83%86%E3%82%A3%E3%83%83%E3%82%AF%E5%9B%9E%E5%B8%B0%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E3%83%A2%E3%83%87%E3%83%AB/</link>
       <pubDate>Sun, 12 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/post/multinom-gp/multinom-gp/</guid>
+      <guid>https://rmorita-stat.github.io/2020/07/%E5%A4%9A%E9%A0%85%E3%83%AD%E3%82%B8%E3%82%B9%E3%83%86%E3%82%A3%E3%83%83%E3%82%AF%E5%9B%9E%E5%B8%B0%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E3%83%A2%E3%83%87%E3%83%AB/</guid>
       <description>はじめに いい夢の色は緑色だそうだ。私もうさぎさんにとっての牧草色の夢を見ることもありますが、現実は柵に引っかかってばかりです。 さて、回帰に関</description>
     </item>
     
     <item>
       <title>ガウス過程の応用</title>
-      <link>https://rmorita-stat.github.io/post/gaussianprocess2/gaussianprocess2/</link>
+      <link>https://rmorita-stat.github.io/2020/07/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E3%81%AE%E5%BF%9C%E7%94%A8/</link>
       <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/post/gaussianprocess2/gaussianprocess2/</guid>
+      <guid>https://rmorita-stat.github.io/2020/07/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E3%81%AE%E5%BF%9C%E7%94%A8/</guid>
       <description>はじめに 前回の記事では、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、ガウス過程回帰について取</description>
     </item>
     
     <item>
       <title>ガウス過程入門</title>
-      <link>https://rmorita-stat.github.io/post/gaussianprocess/gaussianprocess/</link>
+      <link>https://rmorita-stat.github.io/2020/06/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E5%85%A5%E9%96%80/</link>
       <pubDate>Sun, 14 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/post/gaussianprocess/gaussianprocess/</guid>
+      <guid>https://rmorita-stat.github.io/2020/06/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B%E5%85%A5%E9%96%80/</guid>
       <description>はじめに 今までに幾度かテーマにしていますが、回帰とよばれる問題があります。 例えば、車の速度とブレーキをかけてから車が止まるまでの距離について</description>
     </item>
     
