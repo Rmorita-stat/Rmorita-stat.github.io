@@ -119,7 +119,7 @@
 <h1 id="対応分析について">対応分析について</h1>
 <p>対応分析とは分割表<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>など、カテゴリカルな行と列のデータを視覚的に表現することで、項目間の関係を把握しようとする手法です。コレスポンデンス分析とも呼ばれ、数理的には林先生の数量化理論第Ⅲ類と同等のものとされています。</p>
 <h2 id="対応分析法がやろうとしていること">対応分析法がやろうとしていること</h2>
-<p>$i$行$m$列が$f_{ij}$（$i=1 … M$、$j = 1 … N$）である$M$行$N$列の分割表について考えます。<br>
+<p>$i$行$j$列が$f_{ij}$（$i=1 … M$、$j = 1 … N$）である$M$行$N$列の分割表について考えます。<br>
 以下、この分割表の行項目$I$を、関係性を把握したい対象、列項目$J$を変量とみなして説明します。</p>
 <p>各行・列および全項目の総和を以下のように表記します。
 <div style="overflow-x:auto;">
@@ -129,22 +129,22 @@ f_{i.} = ∑_{j=1}^{N}f_{ij} ~,~~ f_{.j} = ∑_{i=1}^{M}f_{ij} ~,~~ Sum = ∑_{j
 $$
 
 </div>
-対応分析は、結局のところ以下の$M$×$N$行列$X$を$M$個の$N$変量のデータととらえた主成分分析と言えます。
+対応分析は、結局のところ以下の$M$×$N$行列$\boldsymbol{X}$を$M$個の$N$変量のデータととらえた主成分分析と言えます。
 <div style="overflow-x:auto;">
   
 $$
-X = P_{I}^{-1} P_{IJ} P_{j}^{-1/2}
+\boldsymbol{X} = \boldsymbol{P} _{I}^{-1} \boldsymbol{P} _{IJ} \boldsymbol{P} _{J}^{-1/2}
 $$
 
 </div>
-ここで、$P_{ij}$は$f_{ij}/N$を$(i,j)$成分にもつ$M$×$N$行列、$P_I$と$P_J$は以下の単位行列です。
+ここで、$\boldsymbol{P}<em>{ij}$は$f</em>{ij}/N$を$(i,j)$成分にもつ$M$×$N$行列、$\boldsymbol{P}_I$と$\boldsymbol{P}_J$は以下の単位行列です。
 <div style="overflow-x:auto;">
   
 $$
-P_I = \rm{diag} \left[ p_{1.}, …, p_{M.} \right] ~,~~ p_{i.} = f_{i.}/Sum
+\boldsymbol{P}_I = \mathrm{diag} \left[ p_{1.}, …, p_{M.} \right] ~,~~ p_{i.} = f_{i.}/Sum
 $$
 $$
-P_J = \rm{diag} \left[ p_{.1}, …, p_{.N} \right] ~,~~ p_{.j} = f_{.j}/Sum
+\boldsymbol{P}_J = \mathrm{diag} \left[ p_{.1}, …, p_{.N} \right] ~,~~ p_{.j} = f_{.j}/Sum
 $$
 
 </div></p>
@@ -170,15 +170,15 @@ $$
 
 </div>
 で計算されます。これは、観測度数が少ない変量ほどより大きく距離に影響するように重みづけられた$f_{ij}/f_{i.}$に関するユークリッド距離になっています（二番目の等号参照）。
-そしてこれは、$X$に対するユークリッド距離の計算をすることで求めることができるようになっています（一番目の等号参照）。</p>
+そしてこれは、$\boldsymbol{X}$に対するユークリッド距離の計算をすることで求めることができるようになっています（一番目の等号参照）。</p>
 <p>対応分析が$(1)$式で計算される行列の主成分分析であるということは、つまり、対応分析とは$(2)$式で定義された$\mathcal{\chi}^2$距離に関する変量の関係を最大限に説明できる軸を求め、それらの軸上に各項目を配置することで、項目間の関係性を視覚的に表示しようとする分析手法である、ということになります<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>。</p>
 <h2 id="行項目列項目の座標の求め方">行項目・列項目の座標の求め方</h2>
-<p>ここからは基本的に$X$に関する主成分分析についての話です。項目$J$についても同様の行列計算・固有値分解を実行することで軸・座標を得ることができます。ただ、項目$I$と項目$J$それぞれで同じ軸が得られるというところの理論がよくわかりません。ここではそのへんの話は「そういうもの」とさせてください…</p>
-<p>$X$の$\left(i,j\right)$成分を$x_{ij}$と表記し、$\mathbf{1}_m = (1,\ldots,1) ∈ R^m$として
+<p>ここからは基本的に$\boldsymbol{X}$に関する主成分分析についての話です。項目$J$についても同様の行列計算・固有値分解を実行することで軸・座標を得ることができます。ただ、項目$I$と項目$J$それぞれで同じ軸が得られるというところの理論がよくわかりません。ここではそのへんの話は「そういうもの」とさせてください…</p>
+<p>$\boldsymbol{X}$の$\left(i,j\right)$成分を$x_{ij}$と表記し、$\mathbf{1}_m = (1,\ldots,1) ∈ R^m$として
 <div style="overflow-x:auto;">
   
 $$
-\bar{X}  = \left(
+\boldsymbol{\bar{X}}  = \left(
   \begin{array}{ccc}
   \cfrac{1}{M}\sum_{i=1}^{M}x_{i1} & \cfrac{1}{M}\sum_{i=1}^{M}x_{i2} & \cdots & \cfrac{1}{M}\sum_{i=1}^{M}x_{iN} \\\\
   \cfrac{1}{M}\sum_{i=1}^{M}x_{i1} & \ddots & \cdots & \cfrac{1}{M}\sum_{i=1}^{M}x_{iN} \\\\
@@ -188,29 +188,29 @@ $$
 $$
 
 </div>
-とする<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>と、Xの分散共分散行列$Σ$は</p>
+とする<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>と、$\boldsymbol{X}$の分散共分散行列$\boldsymbol{Σ}$は</p>
 <p><div style="overflow-x:auto;">
   
 $$
-Σ = \left(X-\bar{X}\right)^T P_I \left(X-\bar{X}\right) \tag{4}
+\boldsymbol{Σ} = \left(\boldsymbol{X}-\boldsymbol{\bar{X}}\right)^T \boldsymbol{P}_I \left(\boldsymbol{X}-\boldsymbol{\bar{X}}\right) \tag{4}
 $$
 
 </div>
 となります。</p>
-<p>…いや冗談だろう、$X$の分散共分散行列は
+<p>…いや冗談だろう、$\boldsymbol{X}$の分散共分散行列は
 <div style="overflow-x:auto;">
   
 $$
-Σ = \cfrac{1}{N}\left(X-\bar{X}\right)^T\left(X-\bar{X}\right) \tag{4'}
+\boldsymbol{Σ} = \cfrac{1}{N}\left(\boldsymbol{X}-\boldsymbol{\bar{X}}\right)^T\left(\boldsymbol{X}-\boldsymbol{\bar{X}}\right) \tag{4'}
 $$
 
 </div>
-だろ、とはじパタで主成分分析を学んだ私は思ったのですが、$P_{I} = f_{i.}/Sum$であることを踏まえると、分割表で集計された1つのセルを1観測値とするのではなく、1つの観測事象を1観測値としたときの分散共分散行列を計算する、というような計算をしているっぽいです。錚々たる専門家集団から査読・Acceptされたであろう参考論文にそう書かれているので、ここでは$(4)$式を正としましょう…</p>
-<p>とにかく、$(4)$式の$\Sigma$について固有値問題を解いて、得られた固有値を最大固有値から順に$\lambda_{1},\lambda_{2}\ldots,\lambda_{N}$、これらに対応する固有ベクトルを順に$\boldsymbol{l}_1,\boldsymbol{l}_2,\boldsymbol,\boldsymbol{l}_N$とします。これらを用いて、第$k$主成分ベクトルによる項目$I$の数量化スコア$\boldsymbol{z}_{k} = (z_{1k}, \ldots, z_{Nk})$を計算します。</p>
+だろ、とはじパタで主成分分析を学んだ私は思ったのですが、$\boldsymbol{P}<em>{I} = f</em>{i.}/Sum$であることを踏まえると、分割表で集計された1つのセルを1観測値とするのではなく、1つの観測事象を1観測値としたときの分散共分散行列を計算する、というような計算をしているっぽいです。錚々たる専門家集団から査読・Acceptされたであろう参考論文にそう書かれているので、ここでは$(4)$式を正としましょう…</p>
+<p>とにかく、$(4)$式の$\boldsymbol{\Sigma}$について固有値問題を解いて、得られた固有値を最大固有値から順に$\lambda_{1},\lambda_{2}\ldots,\lambda_{N}$、これらに対応する固有ベクトルを順に$\boldsymbol{l}_1,\boldsymbol{l}_2,\boldsymbol,\boldsymbol{l}_N$とします。これらを用いて、第$k$主成分ベクトルによる項目$I$の数量化スコア$\boldsymbol{z}_{k} = (z_{1k}, \ldots, z_{Nk})$を計算します。</p>
 <div style="overflow-x:auto;">
   
 $$
-\boldsymbol{z} _{k} = X \boldsymbol{l} _{k} = P _{I}^{-1} P _{IJ} P _{j}^{-1/2} \boldsymbol{l} _{k} 　\tag{5}
+\boldsymbol{z} _{k} = \boldsymbol{X} \boldsymbol{l} _{k} = \boldsymbol{P} _{I}^{-1} \boldsymbol{P} _{IJ} \boldsymbol{P} _{j}^{-1/2} \boldsymbol{l} _{k} 　\tag{5}
 $$
 
 </div>
@@ -219,13 +219,13 @@ $$
 <div style="overflow-x:auto;">
   
 $$
-\boldsymbol{z}_k^* = \cfrac{1}{\sqrt{λ_k}}P_J^{-1}P_{IJ}\boldsymbol{z}_k \tag{6}
+\boldsymbol{z}_k^* = \cfrac{1}{\sqrt{λ_k}}\boldsymbol{P}_J^{-1}\boldsymbol{P}_{IJ}\boldsymbol{z}_k \tag{6}
 $$
 
 </div>
 <p>$(5)$式および$(6)$式により得られた数量化スコアを同じ図の中に付置したものを同時付置図といい、同時付置図をもとに項目間の関係性をみることになります。</p>
 <h2 id="得られた軸の性質">得られた軸の性質</h2>
-<p>対応分析によって得られた軸に関する性質をまとめておきます。これらの性質は付置図について考察する際の前提にもなります。またこれらの性質はすべて主成分分析からきたものです。ここで$K=min(m,n) -1$<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup>とします。</p>
+<p>対応分析によって得られた軸に関する性質をまとめておきます。これらの性質は付置図について考察する際の前提にもなります。またこれらの性質はすべて主成分分析からきたものです。ここで$K=\rm{min}(\mathcal{m},\mathcal{n}) -1$<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup>とします。</p>
 <p><div style="padding: 0.75em; margin-bottom: 1rem; color: #111111; background-color: #d9c68c; border: 1px solid transparent; border-radius: 0.25rem;">
  <center>
 第$k$数量化スコアの平均は0$\left(∑_{k=1}^{K} f_{i.}z_{ik}= 0\right)$
@@ -415,13 +415,13 @@ $$
 <p>主成分分析は変量の次元削減に用いられる手法です。<a href="https://www.morikita.co.jp/books/book/2235">はじパタ</a>に分かりやすい説明があります。Webなら<a href="https://qiita.com/nirperm/items/5178431557f8871e6605">こちら</a>とか。 <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:4" role="doc-endnote">
-<p><a href="https://shop.ohmsha.co.jp/shopdetail/000000004417/">文献</a>によれば$(3)$式ではなく、$\sqrt{p_{j.}}$こそが$X$の各列の平均値であると仰っているのですが、こちらについては簡単な計算で誤っていると確認したので、参考論文の$(3)$式を正とすることにします。 <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://shop.ohmsha.co.jp/shopdetail/000000004417/">文献</a>によれば$(3)$式ではなく、$\sqrt{p_{j.}}$こそが$\boldsymbol{X}$の各列の平均値であると仰っているのですが、こちらについては簡単な計算で誤っていると確認したので、参考論文の$(3)$式を正とすることにします。 <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:5" role="doc-endnote">
 <p>次元数が多く得られた項目の方については余剰の次元数を寄与率から度外視するのか…？ <a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:6" role="doc-endnote">
-<p>行項目、列項目に対する主成分分析の結果のうち、得られた次元数が少ない方を次元の数とする、ということなのだが、$min(m,n)$とはならないのは何故？ <a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p>行項目、列項目に対する主成分分析の結果のうち、得られた次元数が少ない方を次元の数とする、ということなのだが、$\mathrm{min}(m,n)$とはならないのは何故？ <a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:7" role="doc-endnote">
 <p>RのFactoMineR::CAパッケージなどを使った整合確認は今後の自分に課す課題にします。参考論文における結果と異なるのであやしい気がする…←確認しました。今回の結果とFactoMineR::CAの結果はほぼ一致します。座標に関して言えば小数点第3位程度まで一致しました <a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
