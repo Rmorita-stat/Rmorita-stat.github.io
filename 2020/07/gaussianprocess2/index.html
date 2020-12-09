@@ -122,7 +122,7 @@ $$</p>
 <p>$\epsilon(\mathrm{x})$は右辺第一項のモデルで説明しきれなかった残差としての扱いですが、この残差がガウス過程に従うと仮定します。ガウス過程モデルは得られたデータに柔軟に近づこうとする挙動をとりますので、この性質を利用して右辺第一項で説明できなかった部分をガウス過程で補おうという目論見です。</p>
 <p>全入力が共通の標準偏差$\sigma$をもつように設定しておくと、</p>
 <p>$$
-\epsilon(\mathrm{x}) \sim   Normal(0, \sigma^2\mathrm{K}) \tag{2}
+\epsilon(\mathrm{x}) \sim   \rm{Normal}(0, \sigma^2\mathrm{K}) \tag{2}
 $$</p>
 <p>上式では$\epsilon$が残差を説明するものであることから多変量正規分布の平均を0としています。また分散共分散行列$\mathrm{K}$は、ハイパーパラメータ${\phi}$を持つカーネル関数$k_{\phi}(\mathrm{x}_m, \mathrm{x}_n)$を要素に持つ$N$×$N$行列です($m,n = 1,\ldots,N$)。</p>
 <p>$$
@@ -130,7 +130,7 @@ $$</p>
 $$</p>
 <p>各入力の標準偏差を$\sigma$で設定している為、$\mathrm{K}$の$(m,n)$成分は、$\epsilon(\mathrm{x}_m)$と$\epsilon(\mathrm{x}_n)$の相関に等しくなり、</p>
 <p>$$
-k_{\phi}(\epsilon(\mathrm{x}_m), \epsilon(\mathrm{x}_n)) = cor(\epsilon(\mathrm{x}_m), \epsilon(\mathrm{x}_n)) \tag{4}
+k_{\phi}(\epsilon(\mathrm{x}_m), \epsilon(\mathrm{x}_n)) = \rm{cor}(\epsilon(\mathrm{x}_m), \epsilon(\mathrm{x}_n)) \tag{4}
 $$</p>
 <p>となります。</p>
 <p>ガウス過程では、カーネル関数によって$\mathrm{x}_m$と$\mathrm{x}_n$の距離を定める空間を決定し、入力$\mathrm{x}_m$と$\mathrm{x}_n$の距離によって出力$\epsilon(\mathrm{x}_m)$と$\epsilon(\mathrm{x}_n)$の近さを決定します。また、カーネル関数によって決まる値は、$cor(\epsilon(\mathrm{x}_m),\epsilon(\mathrm{x}_n))$と解釈することができる、ということです。</p>
@@ -144,13 +144,13 @@ $$</p>
 <p>を満たす行列$L$を求めます。$(4)$式のような行列の分解は<strong>コレスキー分解</strong>と呼ばれます。</p>
 <p>次に、標準正規分布からの乱数$\mathrm{x} = (x_1, \ldots, x_N)$を生成します。</p>
 <p>$$
-x_n \sim Normal(0,1) ~~~ (n = 1, \ldots, N) \tag{6}
+x_n \sim \rm{Normal}(0,1) ~~~ (n = 1, \ldots, N) \tag{6}
 $$</p>
 <p>$\mathrm{y} = \mathrm{L}\mathrm{x}$の分布は、</p>
 <div style="overflow-x:auto;">
   
 $$
-p(\mathrm{x}) = \cfrac{1}{(\sqrt{2\pi}^N \sqrt{det\Sigma})}exp\left(-\cfrac{1}{2}(\mathrm{x}^T \mathrm{I}^{-1} \mathrm{x}) \right)  \propto exp\left(-\cfrac{1}{2}\mathrm{x}^T\mathrm{I}^{-1}\mathrm{x}\right) \tag{7}
+p(\mathrm{x}) = \cfrac{1}{(\sqrt{2\pi}^N \sqrt{det\Sigma})}\exp\left(-\cfrac{1}{2}(\mathrm{x}^T \mathrm{I}^{-1} \mathrm{x}) \right)  \propto \exp\left(-\cfrac{1}{2}\mathrm{x}^T\mathrm{I}^{-1}\mathrm{x}\right) \tag{7}
 $$
 
 </div>
@@ -158,23 +158,23 @@ $$
 <div style="overflow-x:auto;">
   
 $$
-p(\mathrm{Lx})  \propto exp\left(-\cfrac{1}{2}\left(\mathrm{L}^{-1}\mathrm{y}\right)^T \mathrm{I}^{-1}\mathrm{L}^{-1}\mathrm{y}\right)
+p(\mathrm{Lx})  \propto \exp\left(-\cfrac{1}{2}\left(\mathrm{L}^{-1}\mathrm{y}\right)^T \mathrm{I}^{-1}\mathrm{L}^{-1}\mathrm{y}\right)
 \left|\cfrac{\partial{\mathrm{y}}}{\partial{\mathrm{x}}}\right|
-= exp\left(-\cfrac{1}{2}\mathrm{y}^{-1}\left(\mathrm{L}^{-1}\right)^T\mathrm{L}^{-1}\mathrm{y}\right)
-= exp\left(-\cfrac{1}{2}\mathrm{y}^{-1}\left(\mathrm{L}\mathrm{L}^T\right)^{-1}\mathrm{y}\right)
-= exp\left(-\cfrac{1}{2}\mathrm{y}^T\mathrm{\Sigma}^{-1}\mathrm{y}\right) \tag{8}
+= \exp\left(-\cfrac{1}{2}\mathrm{y}^{-1}\left(\mathrm{L}^{-1}\right)^T\mathrm{L}^{-1}\mathrm{y}\right)
+= \exp\left(-\cfrac{1}{2}\mathrm{y}^{-1}\left(\mathrm{L}\mathrm{L}^T\right)^{-1}\mathrm{y}\right)
+= \exp\left(-\cfrac{1}{2}\mathrm{y}^T\mathrm{\Sigma}^{-1}\mathrm{y}\right) \tag{8}
 $$
 
 </div>
 <p>となります。</p>
-<p>このことから、$Normal(0,\Sigma)$に従う乱数を生成するには、標準正規分布に従う$\mathrm{x}$をランダムに生成し、$y=\mathrm{Lx}$と変換すればよいと分かります。</p>
+<p>このことから、$\rm{Normal}(0,\Sigma)$に従う乱数を生成するには、標準正規分布に従う$\mathrm{x}$をランダムに生成し、$y=\mathrm{Lx}$と変換すればよいと分かります。</p>
 <h2 id="ガウス過程潜在変数モデルとは">ガウス過程潜在変数モデルとは</h2>
 <p>モデルの残差$\epsilon(\mathrm{x})$がガウス過程に従うとした$(2)$式を、先ほど紹介した多変量正規分布の乱数生成法を用いて変形すると、</p>
 <p>$$
 \mathrm{K} = \mathrm{L}\mathrm{L}^T
 $$
 $$
-\eta_n \sim Normal(0,1) \tag{9}
+\eta_n \sim \rm{Normal}(0,1) \tag{9}
 $$
 $$
 \epsilon({\mathrm{x}_n}) = \mathrm{L}\eta_n
@@ -222,7 +222,7 @@ $$</p>
   
 $$
 \mathrm{K}(m,n) =k_{\alpha, \rho}(\epsilon(\mathrm{x}_m),\epsilon(\mathrm{x}_n))
-=\alpha^2exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(\mathrm{x}_{m,i}-\mathrm{x}_{n,i})^2\right)  \tag{10}
+=\alpha^2 \exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(\mathrm{x}_{m,i}-\mathrm{x}_{n,i})^2\right)  \tag{10}
 $$
 
 </div>
@@ -232,13 +232,13 @@ $$
 <p>上のコードでは、残差ではなく出力$\mathrm{y}$の平均値が$\mathrm{f} \sim Normal(0, \mathrm{K}_{\phi})$に従うと設定し、<code>y ~ Normal(f, sigma)</code>とすることで、平均$\mathrm{f}$の正規分布に従うと設定していますが、この部分をポアソン分布等他の分布にすることで、様々なモデルを構築することが出来ます。</p>
 <p>例えば、0か1のみをとる出力$\mathrm{y}$にベルヌーイ分布を仮定し、$y_n=1$となる確率$\mathrm{p} = (p_1, \dots, p_N)$を、入力$\mathrm{x}_n$のガウス過程を用いて説明する場合、</p>
 <p>$$
-\mathrm{y} \sim Binomial(\mathrm{p})
+\mathrm{y} \sim \rm{Binomial}(\mathrm{p})
 $$
 $$
-\mathrm{p} = inverselogit(\mathrm{f})　\tag{11}
+\mathrm{p} =\rm{inverselogit}(\mathrm{f})　\tag{11}
 $$
 $$
-\mathrm{f} \sim Normal(\mu, \mathrm{K})
+\mathrm{f} \sim \rm{Normal}(\mu, \mathrm{K})
 $$</p>
 <p>と表現でき、これをStanで実行する場合、以下のようになります。</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">data</span><span class="p">{</span>
@@ -277,7 +277,7 @@ y_1^* \\<br>
 \vdots \\<br>
 y_M^*
 \end{array}
-\right) \sim Normal \left(\vec{0},
+\right) \sim \rm{Normal} \left(\vec{0},
 \left(
 \begin{array}{ccc}
 \mathrm{K} &amp; \mathrm{k}^* \\<br>
@@ -294,7 +294,7 @@ $$</p>
 y(\mathrm{w}) = \mathrm{\beta}\mathrm{f}(\mathrm{w}) + \epsilon(\mathrm{w}) \tag{1&rsquo;}
 $$</p>
 <p>$$
-\epsilon(\mathrm{z}) \sim  Normal(0, \sigma^2\mathrm{K}) \tag{2&rsquo;}
+\epsilon(\mathrm{z}) \sim  \rm{Normal}(0, \sigma^2\mathrm{K}) \tag{2&rsquo;}
 $$</p>
 <p>としておきます。</p>
 <p>簡略のため、$m_1$個の値をとる一つの質的変数$z_1$について考えます。
@@ -340,14 +340,14 @@ k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)&0&\cdots&0 \\\\
 $$
 
 </div>
-<p>($\eta_{i}(\mathrm{x}_n)$、$\eta_{i&rsquo;}(\mathrm{x}_n)$は$i=i'$のときのみ$k_{\phi}()$の相関をとる)だから、2つの入力$\mathrm{w}_i = (\mathrm{x}_i^T, z_i)^T$($i=m,n$)の相関関数$cor(\epsilon(\mathrm{w}_m), \epsilon(\mathrm{w}_n))$について、</p>
+<p>($\eta_{i}(\mathrm{x}_n)$、$\eta_{i&rsquo;}(\mathrm{x}_n)$は$i=i'$のときのみ$k_{\phi}()$の相関をとる)だから、2つの入力$\mathrm{w}_i = (\mathrm{x}_i^T, z_i)^T$($i=m,n$)の相関関数$\rm{cor}(\epsilon(\mathrm{w}_m), \epsilon(\mathrm{w}_n))$について、</p>
 <div style="overflow-x:auto;">
   
 $$
  a_{z_1m}a_{z_1n}^Tk_{\phi}(\mathrm{x}_m, \mathrm{x}_n)=
- cor(a_{z_1m}\eta(\mathrm{x}_m),a_{z_1n}\eta(\mathrm{x}_n))=
- cor(\epsilon_{z_1m}(\mathrm{x}_m),\epsilon_{z_1n}(\mathrm{x}_n))=
- cor(\epsilon(\mathrm{w}_m),\epsilon(\mathrm{w}_n))\tag{17}
+ \rm{cor}(a_{z_1m}\eta(\mathrm{x}_m),a_{z_1n}\eta(\mathrm{x}_n))=
+ \rm{cor}(\epsilon_{z_1m}(\mathrm{x}_m),\epsilon_{z_1n}(\mathrm{x}_n))=
+ \rm{cor}(\epsilon(\mathrm{w}_m),\epsilon(\mathrm{w}_n))\tag{17}
 $$
 
 </div>
@@ -386,14 +386,14 @@ $$
 <p>以降、この性質をもつ行列を<strong>PDUDE</strong>と書きます。</p>
 <p>以上のことから、</p>
 <p>$$
-\mathrm{T}(r,s)k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)=cor(\epsilon(\mathrm{w}_m),\epsilon(\mathrm{w}_n)) \tag{19}
+\mathrm{T}(r,s)k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)=\rm{cor}(\epsilon(\mathrm{w}_m),\epsilon(\mathrm{w}_n)) \tag{19}
 $$</p>
 <p>は、質的変数と量的変数の影響を考慮することのできる相関関数ととらえることができます。</p>
 <h2 id="質的変数が2つ以上の場合">質的変数が2つ以上の場合</h2>
 <p>一般的なケースとして、$J$個の質的変数$\mathrm{z}=(z_1,\ldots,z_J)^T$の場合を考えます。</p>
 <p>ここで、$z_j(j=1,\ldots,J)$は$1,\ldots,m_j$の値をとるものとします。すると、式$(19)$の拡張により、$\epsilon(\mathrm{w})$の相関は関数は以下のようになります。</p>
 <p>$$
-\prod_{j=1}^{J}\left( \tau_{z_{j,r,s}}k_{\phi}(\mathrm{x}_m,\mathrm{x}_n) \right)=cor(\epsilon(\mathrm{w}_m),\epsilon{\mathrm{w}_n}) \tag{20}
+\prod_{j=1}^{J}\left( \tau_{z_{j,r,s}}k_{\phi}(\mathrm{x}_m,\mathrm{x}_n) \right)=\rm{cor}(\epsilon(\mathrm{w}_m),\epsilon{\mathrm{w}_n}) \tag{20}
 $$</p>
 <p>$\tau_{j,r,s}$は、$J$番目のPDUDE$\mathrm{T}_j$の$(r,s)$成分です。</p>
 <p>特に、$k_{\phi}(\mathrm{x}_m,\mathrm{x}_n)$に式$(10)$のガウスカーネルをもちいた場合、$(20)$式は以下のようになります。</p>
@@ -401,8 +401,8 @@ $$</p>
   
 $$
 \prod_{j=1}^{J}\left( \tau_{z_{j,r,s}}k_{\phi}(\mathrm{x}_m,\mathrm{x}_n) \right)=
-\prod_{j=1}^{J}\left(\tau_{z_{j,r,s}}exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im},x_{in})^2\right)\right)=
-\left(\prod_{j=1}^{J}\tau_{z_{j,r,s}}\right)exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right) \tag{21}
+\prod_{j=1}^{J}\left(\tau_{z_{j,r,s}}\rm{exp}\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im},x_{in})^2\right)\right)=
+\left(\prod_{j=1}^{J}\tau_{z_{j,r,s}}\right)\rm{exp}\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right) \tag{21}
 $$
 
 </div>
@@ -458,9 +458,9 @@ $$
 <div style="overflow-x:auto;">
   
 $$
-\left(\prod_{j=1}^{J}\tau_{z_{j,r,s}}\right)exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right)=
-\prod_{j=1}^{J}exp\left(-ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right)exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right)=
-exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right) \tag{25}
+\left(\prod_{j=1}^{J}\tau_{z_{j,r,s}}\right)\rm{exp}\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right)=
+\prod_{j=1}^{J}\rm{exp}\left(-ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right)exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2\right)=
+\rm{exp}\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right) \tag{25}
 $$
 
 </div>
@@ -475,7 +475,7 @@ $$</p>
 <div style="overflow-x:auto;">
   
 $$
-log\left(exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right)\right)=
+log\left(\rm{exp}\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right)\right)=
 -\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\tag{27}
 $$
 

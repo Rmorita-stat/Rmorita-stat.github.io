@@ -105,10 +105,10 @@ $x_n = (x_{1n},\ldots,x_{dn},\ldots, x_{Dn})$としたとき、多項ロジス�
 \mu_n = \overrightarrow{a} + \overrightarrow{b_1}x_{n1} + \cdots + \overrightarrow{b_d}x_{nd} + \cdots + \overrightarrow{b_D}x_{nD}
 $$
 $$
-\theta_n = softmax(\mu_n)
+\theta_n = \rm{softmax}(\mu_n)
 $$
 $$
-y_n \sim Categorical(\theta_n)
+y_n \sim \rm{Categorical}(\theta_n)
 $$
 $$
 (n=1,\ldots,N)
@@ -156,8 +156,8 @@ $$</p>
 <span class="c1">## 10          1        0    37      3         1</span>
 
 </code></pre></div><p>ここで、本データ用に設定したモデル式における係数の呼称を以下の通り定義しておきます。</p>
-<p>$$\cfrac{P(prog=general)}{P(prog=academic)} = exp(b_{11} + b_{21}(ses=middle) + b_{31}(ses=high) + b_{41}write)$$</p>
-<p>$$\cfrac{P(prog=vocation)}{P(prog=academic)} = exp(b_{12} + b_{22}(ses=middle) + b_{32}(ses=high) + b_{42}write)$$</p>
+<p>$$\cfrac{P(prog=general)}{P(prog=academic)} = \exp(b_{11} + b_{21}(ses=middle) + b_{31}(ses=high) + b_{41}write)$$</p>
+<p>$$\cfrac{P(prog=vocation)}{P(prog=academic)} = \exp(b_{12} + b_{22}(ses=middle) + b_{32}(ses=high) + b_{42}write)$$</p>
 <h1 id="stanによる多項ロジスティック回帰の実装">Stanによる多項ロジスティック回帰の実装</h1>
 <p>多項ロジスティック回帰を実行するStanコードは以下のようになります。</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//(model1.stan)
@@ -212,17 +212,17 @@ $$</p>
 </code></pre></div><p>parameterブロックで指定した係数$b$の行番号・列番号の組み合わせが、先ほど定義したモデル式における係数の修飾番号に一致します。例えば、$b[1,2]$はモデル式における$b_{12}$に対応します。</p>
 <p><code>Categorical_logit()</code>はStanに実装された便利な関数で、Stan内部でsoftmaxを実行してくれます。
 つまり、<code>y[n] ~ categorical_logit(mu[n]')</code>と<code>y[n] ~ Categorical(softmax(mu[n]'))</code>はともに以下に示す処理を実行してくれます。</p>
-<p>$$y[n] \sim Categorical(softmax(mu[n]))$$</p>
+<p>$$y[n] \sim \rm{Categorical}(\rm{softmax}(mu[n]))$$</p>
 <p>(注：上に示した実装ではコード表現の都合上<code>categorical_logit()</code>と<code>softmax()</code>の引数をそれぞれ<code>mu[n]</code>、<code>mu_new[n,]</code>としていますが、<code>softmax()</code>は列ベクトルにしか対応していないので、実装では必ずベクトルや行列を転置させる命令である<code>'</code>を引数の後ろにつけてください！)</p>
 <p>この部分についてもう少し補足すると、
 $$
-P(y[n] = 1) = softmax(mu[n,])[1]
+P(y[n] = 1) = \rm{softmax}(mu[n,])[1]
 $$
 $$
-P(y[n] = 2) = softmax(mu[n,2])[2]
+P(y[n] = 2) = \rm{softmax}(mu[n,2])[2]
 $$
 $$
-P(y[n] = 3) = softmax(mu[n,3])[3]
+P(y[n] = 3) = \rm{softmax}(mu[n,3])[3]
 $$
 という関係になっています。
 ここでは$beta[,1] = 0$とすることで$mu[,1] = 0$とし、
@@ -419,10 +419,10 @@ $$</p>
 <p><strong>multinom()の時と比べてずっと分かりやすくないですか？？＞🐢</strong></p>
 <p>全結果を数式で表現しておきます(Bayesian p-valueに基づいて$^{***}$：0.1%有意、$^{**}$：1%有意、$^{*}$：5%有意)。</p>
 <p>$$
-\cfrac{P(prog=general)}{P(prog=academic)} = exp(2.90^{***}-0.53(ses=middle) -1.19^{**}(ses=high) - 0.06^{**}write)
+\cfrac{P(prog=general)}{P(prog=academic)} = \rm{exp}(2.90^{***}-0.53(ses=middle) -1.19^{**}(ses=high) - 0.06^{**}write)
 $$</p>
 <p>$$
-\cfrac{P(prog=vocation)}{P(prog=academic)} = exp(5.32^{***}-0.31(ses=middle); -1.00^{*}(ses=high) - 0.12^{***}write)
+\cfrac{P(prog=vocation)}{P(prog=academic)} = \rm{exp}(5.32^{***}-0.31(ses=middle); -1.00^{*}(ses=high) - 0.12^{***}write)
 $$</p>
 <h2 id="オッズ比の変量に着目">オッズ比の変量に着目</h2>
 <p>オッズ比の変量(説明変数が変化すると、オッズ比は何倍になるか)についても確認しておきます。こちらは事後分布の要約統計量ではなく、事後分布自体を視覚的に見てみることにします。また通常切片項は解釈に用いないため、図の描画では割愛します。</p>
@@ -454,13 +454,13 @@ $$</p>
 <span class="c1">## median  204.48713  1.369324 0.3678701 0.8901682</span>
 <span class="c1">## 2.5%     23.69682  0.527517 0.1092642 0.8515944</span>
 <span class="c1">## 97.5%  1940.58136  3.594567 1.1219872 0.9260589</span>
-</code></pre></div><p>上図で一番目立つ$ratio[2,2]$に着目すると、これは$exp(b_{22})$ですので、
+</code></pre></div><p>上図で一番目立つ$ratio[2,2]$に着目すると、これは$\exp(b_{22})$ですので、
 $$
 \cfrac{\cfrac{P(prog=vocation(ses=middle))}{P(prog=academic(ses=middle))}}{\cfrac{P(prog=vocation(ses=low))}{P(prog=academic(ses=low))}}
 $$
 の事後分布を表現しています。
 事後分布は95%ベイズ信頼区間内に1を含んでいますし、比較的幅が広い分布ですので、確信をもってこうだといえる結果が得られていないことがわかります。</p>
-<p>一方で、$ratio[3,1]=exp(b_{21})$は幅が比較的狭く、95%ベイズ信頼区間内に1が含まれていません。このことから、
+<p>一方で、$ratio[3,1]=\exp(b_{21})$は幅が比較的狭く、95%ベイズ信頼区間内に1が含まれていません。このことから、
 $$
 \cfrac{\cfrac{P(prog=general(ses=high))}{P(prog=academic(ses=high))}}{\cfrac{P(prog=general(ses=low))}{P(prog=academic(ses=low))}}
 $$

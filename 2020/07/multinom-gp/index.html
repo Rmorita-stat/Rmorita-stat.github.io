@@ -146,12 +146,12 @@ $$</p>
 <p>$\mathrm{y}$が$K$個の値をとるとき、$\mathrm{y}$が各値をとる確率を表す$(N×K)$行列$\mathrm{\Theta}=(\mathrm{\theta}_1, \ldots, \mathrm{\theta}_K)$を導入します。</p>
 <p>ここで$(\theta_{k1},\ldots,\theta_{kN})^T=\mathrm{\theta}_k~~~(k=1,\ldots,K)$です。</p>
 <p>$$
-\mathrm{y} \sim Categorical(\Theta)\tag{2}
+\mathrm{y} \sim \rm{Categorical}(\Theta)\tag{2}
 $$</p>
 <p>$\Theta$は1行の要素の和をとると1になるので、各要素が$(-\infty,\infty)$の値をとる$(N×K)$行列$\mathrm{P}=(\mathrm{p}_1,\ldots,\mathrm{p}_K)$を導入し、下記のようにします。</p>
 <p>ここで、$(p_{k1},\ldots,p_{kN})^T=\mathrm{p}_k~~(k=1,\ldots,K)$です。</p>
 <p>$$
-(\theta_{1n},\ldots,\theta_{Kn})^T = softmax(\mathrm{P}_n^T)~~~(n=1,\ldots,N) \tag{3}
+(\theta_{1n},\ldots,\theta_{Kn})^T = \rm{softmax}(\mathrm{P}_n^T)~~~(n=1,\ldots,N) \tag{3}
 $$</p>
 <p>ここで$(p_{1n},p_{2n},\ldots,p_{Kn})=\mathrm{P}_n$です。</p>
 <p>ガウス過程で推定する対象は、上記モデルの$\mathrm{P}$になります。多項ロジスティック回帰では、出力が任意の特定の値をとる確率を固定する必要があったので、それを踏まえて下記のようにおきます。</p>
@@ -165,7 +165,7 @@ $$</p>
 \mathrm{LL^T} = \mathrm{K}\tag{5}
 $$</p>
 <p>$$
-\eta_k=(\eta_{k1},\ldots,\eta_{kN}) \sim Normal(0,1) ~~(k=2,\ldots,K)\tag{6}
+\eta_k=(\eta_{k1},\ldots,\eta_{kN}) \sim \rm{Normal}(0,1) ~~(k=2,\ldots,K)\tag{6}
 $$</p>
 <p>ここで、$\mathrm{K}$は$(N×N)$のカーネル行列で、$(m,n)$成分をカーネル関数$k(\mathrm{w}_m,\mathrm{w}_n)$とします。カーネル関数の設定を工夫することで、線形モデルから得られた知見やデータの特徴(カテゴリカル変数が含まれる点)などをモデルに反映させていきます。</p>
 <h2 id="カーネル関数の設定方法">カーネル関数の設定方法</h2>
@@ -196,7 +196,7 @@ $$</p>
 <p>量的変数writeの影響をモデル１のように線形的に把握するだけでなく、線形モデルでは誤差として扱われてしまう要素まで結果に取り入れるため、線形カーネルとガウスカーネルを組み合わせて量的変数の影響を予測します。質的変数の影響はモデル１と同様にisotropic correlationカーネルで予測します。</p>
 <p>カーネル関数は下になります。</p>
 <p>$$
-\theta_1\sum_{i=1}^{I}x_{mi}x_{ni} +\theta_2exp\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]\right)　\tag{9}
+\theta_1\sum_{i=1}^{I}x_{mi}x_{ni} +\theta_2\rm{exp}\left(-\cfrac{1}{2\rho^2}\sum_{i=1}^{I}(x_{im}-x_{in})^2-\sum_{j=1}^{J}\rm{ln}\left(\cfrac{1}{c}\right)I[r\neq{s}]\right)　\tag{9}
 $$</p>
 <p>ハイパーパラメータは$\theta_1$,$\theta2$,$\rho$,$c$の4つです。</p>
 <h2 id="モデル１の実装と結果の確認">モデル１の実装と結果の確認</h2>
@@ -543,16 +543,16 @@ $$</p>
 <p><code>transformed parameters{}</code>ブロックでは、<code>linear_kernel</code>として式$(9)$第1項の部分（線形カーネル）の$\theta_1$を除いた部分を、<code>distance_L2_01_kernel</code>として式$(9)$第2項の$\theta_2$を除いた部分を作成しています。また<code>distance_L2_01_kernel</code>は、<code>distance_L2</code>として$\sum_{i=1}^{I}(x_{im}-x_{in})^2$を、<code>distance_01_kernel</code>として$\sum_{j=1}^{J}ln\left(\cfrac{1}{c}\right)I[r\neq{s}]$をそれぞれ作成し、それらを式$(9)$に従って合成することで作成しています。</p>
 <p>ハイパーパラメータの事前分布の設定はかなり苦戦しました。最終的に以下の事前分布を採用しています。</p>
 <p>$$
-\theta_1 \sim Student\verb|_|t(4,1,2) ~~~\theta_1 \geq 1
+\theta_1 \sim \rm{Student\verb|_|t}(4,1,2) ~~~\theta_1 \geq 1
 $$
 $$
-\theta_2 \sim Student\verb|_|t(4,1,2) ~~~\theta_2 \geq 1
+\theta_2 \sim \rm{Student\verb|_|t}(4,1,2) ~~~\theta_2 \geq 1
 $$
 $$
-\rho \sim invGamma(0.1,0.1)~~~0 \leq \rho \leq 0.9
+\rho \sim \rm{invGamma}(0.1,0.1)~~~0 \leq \rho \leq 0.9
 $$
 $$
-c \sim Normal(0,0.1)
+c \sim \rm{Normal}(0,0.1)
 $$</p>
 <p>$\theta_1$、$\theta_2$については弱情報事前分布として、自由度4、期待値1、スケールパラメータ1の半t分布を採用しています。
 <!-- raw HTML omitted -->  <br>

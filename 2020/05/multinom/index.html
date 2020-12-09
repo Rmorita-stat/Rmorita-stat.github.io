@@ -108,10 +108,10 @@ $x_n = (x_{1n},\ldots,x_{dn},\ldots, x_{Dn})$とします。ここでNはサン�
 \mu_n = \overrightarrow{a} + \overrightarrow{b_1}x_{n1} + \cdots + \overrightarrow{b_d}x_{nd} + \cdots + \overrightarrow{b_D}x_{nD}
 $$
 $$
-\theta_n = softmax(\mu_n)
+\theta_n = \rm{softmax}(\mu_n)
 $$
 $$
-y_n \sim Categorical(\theta_n)
+y_n \sim \rm{Categorical}(\theta_n)
 $$
 $$
 (n=1,\ldots,N)
@@ -127,7 +127,9 @@ $$</p>
 <!-- raw HTML omitted --><br>
 $μ$は一般化線形モデルの枠組みでは線形予測子と呼ばれる部分で、ここではK個の線形予測子が準備される形です。</p>
 <p>ソフトマックス関数は下記式で与えられます。</p>
-<p>$$ softmax(\mu_n) = \left(\cfrac{exp(\mu_{1n})}{\sum_{k=1}^K \exp(\mu_{kn})}\cdots\cfrac{exp(\mu_{Kn})}{\sum_{k=1}^K \exp(\mu_{kn})} \right) $$</p>
+<p>$$
+\rm{softmax}(mu_n) = \left(\cfrac{\exp(mu_{1n})}{\sum_{k=1}^K \exp(mu_{kn})}\cdots\cfrac{\exp(mu_{Kn})}{\sum_{k=1}^K \exp(mu_{kn})} \right)
+$$</p>
 <p>ソフトマックス関数は各要素が$(0,1)$の範囲をとり合計1になる長さ$K$のベクトルであり、カテゴリカル分布に与える確率ベクトルとして用います。最終的には$Y$が$\theta_n$を確率ベクトルとしてもつカテゴリカル分布に従うと仮定することになります。</p>
 <p>なお、上記のモデルそのままでは$μ$の$K$個の要素が識別不可能であるため$Y$がとりうる$K$個の値それぞれにに対応させることができません。そのため、$K$個の要素のうち基準となる要素を一つ決め、 $μ$の$K$個の要素を識別できるように</p>
 <p>$$
@@ -182,10 +184,10 @@ $$</p>
 <h2 id="順序ロジスティック回帰">順序ロジスティック回帰</h2>
 <p>従属変数を順序データと解釈するモデルです。従属変数を$(Y =1,2,\ldots,k)$といった順序型の変数とみなしたとき、このモデルから得られる結果は
 　　
-$$P_{(y_n=2,&hellip;,K)} \sim Binomial(q_{1n}),　 q_n = inverselogit(a_1 + b_{1}x_{n1} + b_{2}x_{n2} +\ldots + b_{D}x_{nD})$$
-$$P_{(y_n=3,&hellip;,K)} \sim Binomial(q_{2n}),　 q_n = inverselogit(a_2 + b_{1}x_{n1} + b_{2}x_{n2} +\ldots + b_{D}x_{nD})$$
+$$P_{(y_n=2,&hellip;,K)} \sim \rm{Binomial}(q_{1n}),　 q_n = \rm{inverselogit}(a_1 + b_{1}x_{n1} + b_{2}x_{n2} +\ldots + b_{D}x_{nD})$$
+$$P_{(y_n=3,&hellip;,K)} \sim \rm{Binomial}(q_{2n}),　 q_n = \rm{inverselogit}(a_2 + b_{1}x_{n1} + b_{2}x_{n2} +\ldots + b_{D}x_{nD})$$
 $$\ldots$$
-$$P_{(y_n=K)} \sim Binomial(q_{(K-1)n}),　 q_n = inverselogit(a_{K-1} + b_{1}x_{n1} + b_{2}x_{n2} +\ldots + b_{D}x_{nD})$$</p>
+$$P_{(y_n=K)} \sim \rm{Binomial}(q_{(K-1)n}),　 q_n = \rm{inverselogit}(a_{K-1} + b_{1}x_{n1} + b_{2}x_{n2} +\ldots + b_{D}x_{nD})$$</p>
 <p>のk-1個の確率に関する回帰式となります。</p>
 <p>上記モデルでは、$Y$を一つの順序型変数とみなすという設定に合わせ、解釈上の都合から(?)切片項以外の係数を全回帰式で同一としています。</p>
 <p>今回のデータでは説明変数が通常の授業(general)、アカデミックな授業(academic)、職を持つための授業(vocation、高専のようなイメージ？)といった内容のものであるため、順序型データとはみなさないこととします。</p>
@@ -195,11 +197,11 @@ $$P_{(y_n=K)} \sim Binomial(q_{(K-1)n}),　 q_n = inverselogit(a_{K-1} + b_{1}x_
 <h1 id="分析の実行">分析の実行</h1>
 <p><strong>nnet</strong>パッケージの<code>multinom()</code>を用いて分析していきます。nnetは最尤法を用いて単層のニュートラルネットワークを実行するためのパッケージで、<code>multinom()</code>は単層のニュートラルネットワークを介して多項対数線形モデルを行う関数です。$x_n$に着目したとき、単層のニュートラルネットワークのK個の中間層を</p>
 <p>$$
-中間層k = exp(\overrightarrow{a_k} + \overrightarrow{b_{1k}}x_{n1} + \cdots + \overrightarrow{b_{dk}}x_{nd} + \cdots + \overrightarrow{b_{Dk}}x_{nD})~~~k=1,\ldots,K
+中間層k = \exp(\overrightarrow{a_k} + \overrightarrow{b_{1k}}x_{n1} + \cdots + \overrightarrow{b_{dk}}x_{nd} + \cdots + \overrightarrow{b_{Dk}}x_{nD})~~~k=1,\ldots,K
 $$
 、出力層を</p>
 <p>$$
-\left(\cfrac{exp(中間層1)}{\sum_{k=1}^K \ 中間層k}  \cdots\cfrac{exp(中間層K)}{\sum_{k=1}^K \ 中間層k}\right)
+\left(\cfrac{exp(中間層1)}{\sum_{k=1}^K 中間層k}  \cdots\cfrac{exp(中間層K)}{\sum_{k=1}^K 中間層k}\right)
 $$</p>
 <p>としてやれば多項ロジスティック回帰モデルと等価になる(はず…ニュートラルネットはよく知りません)ですので、中身はそのような形になっているものと思われます。</p>
 <p>$\mu$のK個の要素を識別可能とするため、下記の実行では$\mu_{academic}=0$としています。
@@ -243,19 +245,19 @@ $$</p>
 <span class="c1">## general  7.238305e-03 0.1147190 0.01186928 3.409451e-03</span>
 <span class="c1">## vocation 3.649650e-06 0.2703765 0.04947488 1.588023e-07</span>
 </code></pre></div><p>結果は下記式に帰着します($^{***}$：0.1%有意、$^{**}$：1%有意、$^{*}$：5%有意)。</p>
-<p>$$\cfrac{P(prog=general)}{P(prog=academic)} = exp(2.85^{***}-0.53(ses=middle) -1.16^*(ses=high) - 0.06^{***}write)$$</p>
-<p>$$\cfrac{P(prog=vocation)}{P(prog=academic)} = exp(5.22^{***}-0.29(ses=middle) -0.98^*(ses=high) - 0.11^{***}write)$$</p>
+<p>$$\cfrac{P(prog=general)}{P(prog=academic)} = \exp(2.85^{***}-0.53(ses=middle) -1.16^*(ses=high) - 0.06^{***}write)$$</p>
+<p>$$\cfrac{P(prog=vocation)}{P(prog=academic)} = \exp(5.22^{***}-0.29(ses=middle) -0.98^*(ses=high) - 0.11^{***}write)$$</p>
 <p>上記の結果は、generalを選択する確率とacademicを選択する確率のオッズ比</p>
 <p>$$\cfrac{P(prog=general)}{P(prog=academic)}$$</p>
 <p>に着目した場合、下記式のようにwriteの値が1増えるとオッズ比は0.94倍になる、というよう解釈できます。
 <div style="overflow-x:auto;">
   
 $$
-\cfrac{\\cfrac{P(prog=general(write=x+1))}{P(prog=academic(write=x+1))}}{\\cfrac{P(prog=general(write=x))}{P(prog=academic(write=x))}}
-= \cfrac{exp(2.85 - 0.53(ses=middle) - 1.16(ses=high) - 0.06(write=x+1)}{exp(2.85 - 0.53(ses=middle) - 1.16(ses=high) - 0.06(write=x))}
+\cfrac{\cfrac{P(prog=general(write=x+1))}{P(prog=academic(write=x+1))}}{\cfrac{P(prog=general(write=x))}{P(prog=academic(write=x))}}
+= \cfrac{\exp(2.85 - 0.53(ses=middle) - 1.16(ses=high) - 0.06(write=x+1)}{\exp(2.85 - 0.53(ses=middle) - 1.16(ses=high) - 0.06(write=x))}
 $$
 $$
-=  exp(-0.06)
+=  \exp(-0.06)
 \fallingdotseq  0.94
 $$
 
@@ -264,29 +266,29 @@ $$
 <p>そのほかの係数について確認しておくと、</p>
 <ul>
 <li>
-<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$はwriteの値が1増加すると$exp(-0.11)\fallingdotseq0.89$倍になる(有意)。</p>
+<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$はwriteの値が1増加すると$\exp(-0.11)\fallingdotseq0.89$倍になる(有意)。</p>
 </li>
 <li>
-<p>$\cfrac{P(prog=general)}{P(prog=academic)}$は$ses=high$のとき、$ses=low$の時の$exp(-1.16)\fallingdotseq0.31$倍の値をとる(有意)。</p>
+<p>$\cfrac{P(prog=general)}{P(prog=academic)}$は$ses=high$のとき、$ses=low$の時の$\exp(-1.16)\fallingdotseq0.31$倍の値をとる(有意)。</p>
 </li>
 <li>
-<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$は$ses=high$のとき、$ses=low$の時の$exp(-0.98)\fallingdotseq0.38$倍の値をとる(有意)。</p>
+<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$は$ses=high$のとき、$ses=low$の時の$\exp(-0.98)\fallingdotseq0.38$倍の値をとる(有意)。</p>
 </li>
 <li>
-<p>$\cfrac{P(prog=general)}{P(prog=academic)}$は$ses=middle$のとき、$ses=low$の時の$exp(-0.53)\fallingdotseq0.59$倍の値をとる。ただしこの値は1である可能性を捨てきれない</p>
+<p>$\cfrac{P(prog=general)}{P(prog=academic)}$は$ses=middle$のとき、$ses=low$の時の$\exp(-0.53)\fallingdotseq0.59$倍の値をとる。ただしこの値は1である可能性を捨てきれない</p>
 </li>
 <li>
-<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$は$ses=middle$のとき、$ses=low$の時の$exp(-0.29)\fallingdotseq0.74$倍の値をとる。ただしこの値は1である可能性を捨てきれない</p>
+<p>$\cfrac{P(prog=vocation)}{P(prog=academic)}$は$ses=middle$のとき、$ses=low$の時の$\exp(-0.29)\fallingdotseq0.74$倍の値をとる。ただしこの値は1である可能性を捨てきれない</p>
 </li>
 </ul>
 <p>といった結果が得られています。</p>
 <p>二番目の項目($\cfrac{P(prog=general)}{P(prog=academic)}$と$ses=high,ses=low$の関係)については下記式から確認できます。</p>
 <p>$$
 \cfrac{\cfrac{P(prog=general(ses=high))}{P(prog=academic(ses=high))}}{\cfrac{P(prog=general(ses=low))}{P(prog=academic(ses=low))}}
-= \cfrac{exp(2.85 - 0.53\times0 - 1.16\times1 - 0.06(write)}{exp(2.85 - 0.53\times0 - 1.16\times0 - 0.06(write))}
+= \cfrac{\exp(2.85 - 0.53\times0 - 1.16\times1 - 0.06(write)}{\exp(2.85 - 0.53\times0 - 1.16\times0 - 0.06(write))}
 $$
 $$
-= exp(-1.16)
+= \exp(-1.16)
 \fallingdotseq 0.31
 $$</p>
 <h1 id="結果の描画">結果の描画</h1>

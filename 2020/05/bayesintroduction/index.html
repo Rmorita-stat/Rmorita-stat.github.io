@@ -160,16 +160,16 @@ $$</p>
 MCMCは、簡単に説明するとある確率分布に従う乱数を発生させるアルゴリズムです。これまでメトロポリス法、ギブスサンプラー、ハミルトニアンモンテカルロ法等様々なアルゴリズムが提案されていますが、ここではメトロポリス法を紹介し、MCMCがどのようなアルゴリズムなのか簡単に説明します。</p>
 <p>以下のモデルを考えます。</p>
 <p>$$
-Y[n] \sim Normal(\mu, 1)~~~~n=1,\ldots,N
+Y[n] \sim \rm{Normal}(\mu, 1)~~~~n=1,\ldots,N
 $$
 $$
-\mu \sim Normal(0, 100)
+\mu \sim \rm{Normal}(0, 100)
 $$</p>
 <p>ここで、$Y$:従属変数の観測値、$X$:説明変数の観測値、$N$：サンプルサイズです。
 <!-- raw HTML omitted --><br>
 事後確率$P(\mu|Y)$は下記式で計算できます。</p>
 <p>$$
-P(\mu | Y) \propto P(Y | \mu)P(\mu) =\left[ \prod_{n=0}^{N} Normal(Y[n] | \mu, 1)\right] × Normal(\mu|0,100)
+P(\mu | Y) \propto P(Y | \mu)P(\mu) =\left[ \prod_{n=0}^{N} \rm{Normal}(Y[n] | \mu, 1)\right] \rm{Normal}(\mu|0,100)
 $$</p>
 <p>このモデルにメトロポリス法を適用した場合、以下のようなアルゴリズムになります。</p>
 <p><strong>[メトロポリス法]</strong>
@@ -183,7 +183,7 @@ $$
 $$</li>
 <li>サンプル候補と現在で$P(\mu|Y)$の比$r$を計算する。
 $$
-r \leftarrow \cfrac{\left[ \prod_{n=0}^{N} Normal(Y[n] | \mu{'}, 1)\right] × Normal(\mu{'}|0,100)}{\left[ \prod_{n=0}^{N} Normal(Y[n] | \mu, 1)\right] × Normal(\mu|0,100)}
+r \leftarrow \cfrac{\left[ \prod_{n=0}^{N} \rm{Normal}(Y[n] | \mu{'}, 1)\right] × \rm{Normal}(\mu{'}|0,100)}{\left[ \prod_{n=0}^{N} \rm{Normal}(Y[n] | \mu, 1)\right] × \rm{Normal}(\mu|0,100)}
 $$</li>
 <li>$0 \leq R &lt; 1$の一郎乱数$R$を発生させる。$R&lt;r$なら
 $$
