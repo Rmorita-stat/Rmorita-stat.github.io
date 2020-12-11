@@ -69,16 +69,16 @@
 
 <div class="main-content">
     <div class="main-content__date">
-        <h4 id="date"> 2020.12.10 00:00 </h4>
+        <h4 id="date"> 2020.12.11 00:00 </h4>
     </div>
     <div class="main-content__title">
-        <h1 id="title">対応分析の付置にベイズ信頼区間をもたせる</h1>
+        <h1 id="title">Stanで対応分析の付置にベイズ信頼区間をもたせる</h1>
     </div>
     <div class="main-content__article">
         <article id="content">
             <h1 id="はじめに">はじめに</h1>
-<p>この記事は<a href="https://qiita.com/advent-calendar/2020/stan">Stan Advent calendar</a>12月12日にエントリーしている記事です。<br>
-普段よりもこのページを見る人が多いと思うので少し自分のことについて。私はアカデミックの世界に身を置いている訳でもなし、IT系で働いている訳でもない一般人です。このブログのテーマも興味のおもむくままに。なのであまり詮索しないでください…</p>
+<p>この記事は<a href="https://qiita.com/advent-calendar/2020/stan">Stan Advent calendar</a>12月12日の記事です。<br>
+普段よりもこのページを見る人が多いと思います、私のことは<a href="https://rmorita-stat.github.io/about/">こちら</a>で紹介しています。匿名主義なので何の情報もありませんが…</p>
 <p>ここでは多変量解析の一つである<strong>対応分析</strong>を題材にします。</p>
 <p>対応分析は多変量のカテゴリカルデータに用いられる分析で、クロス集計表の結果を視覚的に表現するために使われる統計的手法です。</p>
 <p>実は対応分析は私の修士研究で使用した解析手法なのですが、対応分析の付置はデータ数に依存しないことから、座標を得るだけでその信頼性が確認できないところに当時問題を感じていました。<br>
@@ -113,7 +113,8 @@
 </ul>
 <!-- raw HTML omitted -->
 <p>参考にした論文は前回と同様の<a href="https://www.jstage.jst.go.jp/article/jscswabun/7/2/7_KJ00002502205/_article/-char/ja/">こちら</a>です。  <br>
-この論文はもうだいぶ古いですが、既に対応分析の付置の信頼性の問題を解決してくれています。ただし解析的な正規分布への近似をもとに信頼区間を求めているようなので、本記事ではこの論文とは別のベイズ的なアプローチをとることにします。</p>
+この論文はもうだいぶ古いですが、既に対応分析の付置の信頼性の問題に着目しています。ただし解析的な正規分布への近似をもとに信頼区間を求めているようなので、本記事ではこの論文とは別のベイズ的なアプローチをとることにします。</p>
+<p>ベイズ的なアプローチの部分は先行文献が見当たらなかったのでオリジナルです。そんな変なことはしていないと思うのですが…いや、どうなんだろう。</p>
 <h1 id="対応分析について">対応分析について</h1>
 <p>対応分析とはクロス集計表など、カテゴリカルな行と列のデータを視覚的に表現することで、項目間の関係を把握しようとする手法です。コレスポンデンス分析とも呼ばれ、数理的には林先生の数量化理論第Ⅲ類と同等のものとされています。<br>
 対応分析の数理的な内容については、<a href="https://rmorita-stat.github.io/2020/11/correspondenceanalysis/">前回の記事</a>で説明しているのでそちらを覗いてください。</p>
@@ -535,6 +536,16 @@ $$
 
 <span class="n">waza_coord</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">waza_coord</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;寄り&#34;</span><span class="p">,</span><span class="s">&#34;押し&#34;</span><span class="p">,</span><span class="s">&#34;投げ&#34;</span><span class="p">,</span><span class="s">&#34;引き&#34;</span><span class="p">,</span><span class="s">&#34;送り&#34;</span><span class="p">,</span><span class="s">&#34;突き&#34;</span><span class="p">,</span><span class="s">&#34;その他&#34;</span><span class="p">))</span>
 
+<span class="n">varsum</span> <span class="o">&lt;-</span> <span class="nf">sum</span><span class="p">(</span><span class="n">X_pca</span><span class="o">$</span><span class="n">values[1</span><span class="o">:</span><span class="m">6</span><span class="n">]</span><span class="p">)</span>
+<span class="nf">cat</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;\nContribution Rate of dim%.f: %.3f&#34;</span><span class="p">,</span> <span class="m">1</span><span class="o">:</span><span class="m">6</span><span class="p">,</span><span class="n">X_pca</span><span class="o">$</span><span class="n">values[1</span><span class="o">:</span><span class="m">6</span><span class="n">]</span><span class="o">/</span><span class="n">varsum</span><span class="p">)))</span>
+
+<span class="c1">## Contribution Rate of dim1: 0.463</span>
+<span class="c1">## Contribution Rate of dim2: 0.248</span>
+<span class="c1">## Contribution Rate of dim3: 0.165</span>
+<span class="c1">## Contribution Rate of dim4: 0.060</span>
+<span class="c1">## Contribution Rate of dim5: 0.038</span>
+<span class="c1">## Contribution Rate of dim6: 0.026</span>
+
 <span class="c1"># stanを走らせる ------------------------------------------------------------</span>
 
 <span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">Sum</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">m</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="n">smo_data</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">eigenvector</span><span class="o">=</span><span class="nf">t</span><span class="p">(</span><span class="n">X_pca</span><span class="o">$</span><span class="n">vectors[</span><span class="p">,</span><span class="m">1</span><span class="o">:</span><span class="n">K]</span><span class="p">))</span>
@@ -553,7 +564,7 @@ $$
 <span class="c1">## theta[1,5]  0.03       0 0.03 0.00 0.01 0.02 0.04  0.11  3747    1</span>
 <span class="c1">## theta[1,6]  0.00       0 0.00 0.00 0.00 0.00 0.00  0.00  4123    1</span>
 <span class="c1">## theta[1,7]  0.03       0 0.03 0.00 0.01 0.02 0.05  0.11  4463    1</span>
-<span class="c1">## ～（以下略）～</span>
+<span class="c1">## ～（以下略、全部Rhat1でした）～</span>
 </code></pre></div><p>次にインスタ映えプロットを作ります。今回のインスタ映えプロットは観測値から得られる（真の）第1軸と第2軸をもとに付置した対応分析の同時付置図です。項目$I$の各ポイントについてそのベイズ信頼区間を示しました<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup>。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">tidyr</span><span class="p">)</span>
 <span class="nf">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
@@ -624,24 +635,28 @@ $$
   <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">guides</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">stat_density_2d</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_row_EST_range.df</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dim2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">..nlevel..</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">target</span><span class="p">),</span> <span class="n">geom</span><span class="o">=</span><span class="s">&#34;polygon&#34;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="m">7</span><span class="p">)</span><span class="o">+</span>
   <span class="nf">geom_errorbar</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_row_EST.df</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim1_MAP</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dim2_MAP</span><span class="p">,</span><span class="n">ymin</span><span class="o">=</span><span class="n">dim2_lower</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">dim2_upper</span><span class="p">),</span><span class="n">col</span><span class="o">=</span><span class="s">&#34;grey30&#34;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="m">0.1</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">geom_errorbarh</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_row_EST.df</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">dim2_MAP</span><span class="p">,</span><span class="n">xmin</span><span class="o">=</span><span class="n">dim1_lower</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="n">dim1_upper</span><span class="p">,),</span><span class="n">col</span><span class="o">=</span><span class="s">&#34;grey30&#34;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="m">0.1</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">waza_coord</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim.1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dim.2</span><span class="p">),</span><span class="n">size</span><span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="m">17</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_errorbarh</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_row_EST.df</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">dim2_MAP</span><span class="p">,</span><span class="n">xmin</span><span class="o">=</span><span class="n">dim1_lower</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="n">dim1_upper</span><span class="p">),</span><span class="n">col</span><span class="o">=</span><span class="s">&#34;grey30&#34;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="m">0.1</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">waza_axis</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim.1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dim.2</span><span class="p">),</span><span class="n">size</span><span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="m">17</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_row_EST.df</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim1_MAP</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dim2_MAP</span><span class="p">,</span><span class="n">fill</span><span class="o">=</span><span class="n">target</span><span class="p">),</span><span class="n">shape</span><span class="o">=</span><span class="m">21</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="m">2</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plot_row_EST.df</span><span class="p">,</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim1_MAP</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">dim2_MAP</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">target</span><span class="p">))</span> <span class="o">+</span>
-  <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">waza_coord</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim.1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dim.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">target</span><span class="p">))</span> <span class="o">+</span>
-  <span class="nf">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#34;Correspondence Analysis with Bayesian 50% confidence intervas &amp; density&#34;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s">&#34;dim1&#34;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&#34;dim2&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">waza_axis</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">dim.1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">dim.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">target</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#34;Correspondence Analysis with Bayesian 50% confidence intervas &amp; density&#34;</span><span class="p">,</span>
+       <span class="n">x</span><span class="o">=</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;dim1(%.3f%%)&#34;</span><span class="p">,</span> <span class="n">var_rate[1]</span><span class="o">*</span><span class="m">100</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;dim2(%.3f%%)&#34;</span><span class="p">,</span> <span class="n">var_rate[2]</span><span class="o">*</span><span class="m">100</span><span class="p">))</span> <span class="o">+</span>
   <span class="nf">theme</span><span class="p">(</span><span class="n">legend.title</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">())</span> <span class="o">+</span>
   <span class="nf">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">mycol</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">scale_alpha_continuous</span><span class="p">(</span><span class="n">range</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="m">0.5</span><span class="p">))</span>
 <span class="n">p</span>
 
 </code></pre></div><p><img src="/post/corresp-and-bayes/res_plot_density(EST).png" alt="uni"></p>
-<p>It&rsquo;s so brilliant&hellip;
+<p>今回は1次元・2次元だけでなく3次元以降も可視化できるようにしてます。</p>
+<p><img src="/post/corresp-and-bayes/res_plot_density(EST)_dim3.png" alt="uni"></p>
+<p>It&rsquo;s so brilliant!
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
   <iframe src="https://www.youtube.com/embed/JpQQhsNI-ns" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
 </div>
 </p>
+<p>どちらの図も、付置が縄跳び状ですね。対応分析の付置図はこのようになわとびのような形になる（馬蹄形効果）ことが多いようです。それ自体が悪いことなのかよく知らないのですが、これに対する対応策もあるようです（今後の自分への宿題）。</p>
 <p>対応分析の結果の解釈は<a href="https://rmorita-stat.github.io/2020/11/correspondenceanalysis/#%E7%B5%90%E6%9E%9C%E3%81%AE%E8%A7%A3%E9%87%88">前回の記事</a>に譲り、項目$I$の各ポイントの信頼区間について確認してみます。</p>
 <p>白星の最も多い力士は貴乃花で59、最も少ない力士は春日富士で25でした。そこで両者の付置の信頼区間をみると、春日富士の方がやはり貴乃花よりも推定幅が広いようです。がしかしその差は明瞭ではなく、貴乃花よりも貴闘力（白星43）のほうが信頼区間の幅が狭いです。主成分ベクトルによる写像の影響も絡んでいるのでしょう。<br>
 一応貴ノ花と春日富士の従う多項分布のパラメータの事後分布を確認します。</p>
@@ -674,9 +689,9 @@ $$
 <p>期待通りの結果です。私の信頼区間だけ他と比べて広いです。特に「引き」の寄与が大きい「組んで取る相撲」-「離れて取る相撲」の第2軸についてその傾向が大きく、座標の正負もあやしい状態です。</p>
 <p>以上で対応分析の同時付置図に各ポイントの信頼区間を示すことが出来ていることを確認できました。</p>
 <h1 id="まとめ">まとめ</h1>
-<p>対応分析の同時付置図にベイズ信頼区間を表示する試みを紹介しました。やったことは単純で、対応分析の同時付置図には抜け落ちてしまっている標本数の情報を、多項分布モデルの事後分布幅に読み替え、MCMCサンプルの分布を同時付置上に加えただけです。
+<p>対応分析の同時付置図にベイズ信頼区間を表示する試みを紹介しました。やったことは単純で、対応分析の同時付置図には抜け落ちてしまっている標本数や付置の信頼度の情報を、多項分布モデルの事後分布幅に読み替え、MCMCサンプルの分布を同時付置図上に加えただけです。
 同時付置図を基に項目をパターン分けしたりする際、今回のような方法で同時付置図上にポイントの信頼区間を表示することで、誤った判断を下すことを防げるのではないかと思っています。<br>
-あとは図がとても美しい…</p>
+あとは図がとても美しいのがウリですね。</p>
 <section class="footnotes" role="doc-endnotes">
 <hr>
 <ol>

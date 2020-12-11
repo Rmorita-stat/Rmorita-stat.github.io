@@ -4,17 +4,27 @@
   
   <url>
     <loc>https://rmorita-stat.github.io/post/</loc>
-    <lastmod>2020-11-07T00:00:00+00:00</lastmod>
+    <lastmod>2020-12-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/tags/rstan/</loc>
+    <lastmod>2020-12-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/2020/12/corresp-and-bayes/</loc>
+    <lastmod>2020-12-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://rmorita-stat.github.io/tags/</loc>
-    <lastmod>2020-11-07T00:00:00+00:00</lastmod>
+    <lastmod>2020-12-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://rmorita-stat.github.io/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90/</loc>
-    <lastmod>2020-11-07T00:00:00+00:00</lastmod>
+    <lastmod>2020-12-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -30,11 +40,6 @@
   <url>
     <loc>https://rmorita-stat.github.io/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/</loc>
     <lastmod>2020-10-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/tags/rstan/</loc>
-    <lastmod>2020-07-12T00:00:00+00:00</lastmod>
   </url>
   
   <url>
