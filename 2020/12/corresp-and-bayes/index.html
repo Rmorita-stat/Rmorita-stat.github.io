@@ -151,7 +151,7 @@ $$
 <div style="overflow-x:auto;">
   
 $$
-\boldsymbol{X} = \boldsymbol{P}_{I}^{-1} \boldsymbol{P}_{IJ} \boldsymbol{P}_{j}^{-1/2}
+\boldsymbol{X} = \boldsymbol{P}_{I}^{-1} \boldsymbol{P}_{IJ} \boldsymbol{P}_{J}^{-1/2}
 $$
 </div>を作成する。</p>
 </li>
@@ -353,7 +353,7 @@ $$
 <p>以上のモデルを実装したStanコードを載せます。</p>
 <p><code>data{}</code>ブロックでは分割表に関する数値を指定するだけですが、通常の対応分析を実行するパートはStan外で行うことにしたので、事前に得られた固有ベクトルを<code>vector[N] eigenvector[K]</code>で指定しています。</p>
 <p><code>transformed data{}</code>ブロックでは、後の<code>generated quantities{}</code>ブロックでの計算に必要な値$p_{i.}$、$P_{i.}$や事前分布の計算に必要な$p_{.j}$を指定します。<br>
-ちなみにStanで実装されている関数<code>eigenvalues_sym()</code>や<code>eigenvectors_sym(Sigma)</code>を使えば、このブロック内で対応分析を済ませることも可能です。私はStan内で主成分ベクトルを計算すると、外で計算したものと異なってくるのでクレバーではないと判断しました。</p>
+ちなみにStanで実装されている関数<code>eigenvalues_sym()</code>や<code>eigenvectors_sym()</code>を使えば、このブロック内で対応分析を済ませることも可能です。私はStan内で主成分ベクトルを計算すると、外で計算したものと異なってくるのでクレバーではないと判断しました。</p>
 <p><code>{parameters{}</code>ブロックでは項目$I$について仮定した各行毎に独立の多項分布のパラメータ$\boldsymbol{\theta_{i}}$を指定しています。</p>
 <p><code>model{}</code>ブロックでは$(6)$式のモデル及び$(9)$式の事前分布を指定しています。</p>
 <p><code>generated quantities{}</code>ブロックでは、<code>data{}</code>ブロックで指定した固有ベクトルや<code>transformed data{}</code>で指定した行列・ベクトル、及びMCMCサンプルを用いて座標の生成量を求めています。項目$I$のポイントについては2通り計算しており、観測度数の期待値から分割表を作成し求めた各ポイントの座標の生成量（<code>Z_EST</code>）と、観測度数の期待値から乱数を発生させて作成した分割表から求めた座標の生成量（<code>Z_RNG</code>）があります。</p>
@@ -545,6 +545,8 @@ $$
 <span class="c1">## Contribution Rate of dim4: 0.060</span>
 <span class="c1">## Contribution Rate of dim5: 0.038</span>
 <span class="c1">## Contribution Rate of dim6: 0.026</span>
+
+<span class="n">var_rate</span> <span class="o">&lt;-</span> <span class="n">X_pca</span><span class="o">$</span><span class="n">values[1</span><span class="o">:</span><span class="m">6</span><span class="n">]</span><span class="o">/</span><span class="n">varsum</span>
 
 <span class="c1"># stanを走らせる ------------------------------------------------------------</span>
 
