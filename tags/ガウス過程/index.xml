@@ -6,10 +6,19 @@
     <description>Recent content in ガウス過程 on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sun, 12 Jul 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 24 Dec 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Soft K-means法とガウス過程</title>
+      <link>https://rmorita-stat.github.io/2020/12/modeling/</link>
+      <pubDate>Thu, 24 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2020/12/modeling/</guid>
+      <description>はじめに 今回は分類についての記事です。 正規分布の混合モデルをによるsoft K-Means法を扱います。 タイトルにガウス過程とありますが、今回</description>
+    </item>
     
     <item>
       <title>多項ロジスティック回帰・ガウス過程モデル</title>

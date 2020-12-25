@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>Soft K-means法とガウス過程</title>
+      <link>https://rmorita-stat.github.io/2020/12/modeling/</link>
+      <pubDate>Thu, 24 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2020/12/modeling/</guid>
+      <description>はじめに 今回は分類についての記事です。 正規分布の混合モデルをによるsoft K-Means法を扱います。 タイトルにガウス過程とありますが、今回</description>
+    </item>
+    
+    <item>
       <title>Stanで対応分析の付置にベイズ信頼区間をもたせる</title>
       <link>https://rmorita-stat.github.io/2020/12/corresp-and-bayes/</link>
       <pubDate>Fri, 11 Dec 2020 00:00:00 +0000</pubDate>
