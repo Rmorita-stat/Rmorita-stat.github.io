@@ -257,9 +257,13 @@ $$
 </code></pre></div><p>一つ目のポイントは<code>ordered Z_mu[D]</code>でしょうか。ラベルスイッチングと呼ばれる、クラスターを識別できない問題を解消しています。これがないと全く収束しません。</p>
 <p>二つ目のポイントは<code>vector&lt;upper=0&gt;[K] soft_z[N]</code>と<code>target += log_sum_exp(soft_z[n])</code>ですね。$N$個の$K$ベクトル<code>soft_z</code>の要素には$(5)$式の対数尤度が格納されています。それを関数<code>log_sum_exp()</code>を使って混合モデルとして認識させ<code>target</code>に足していきます。詳しくは<a href="https://www.kyoritsu-pub.co.jp/bookdetail/9784320112421">アヒル本</a>203ページを参照のこと。</p>
 <p>三つ目のポイントは<code>p[n] = softmax(soft_z[n])</code>です。ソフトマックス関数について思い出して下さい。</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 \mathrm{softmax}(\boldsymbol{x}_ n) = \left(\cfrac{\exp(x_{1n})}{\sum_{k=1}^K \exp(x_{kn})}\cdots\cfrac{\exp(x_{Kn})}{\sum_{k=1}^K \exp(x_{kn})} \right) \tag{6}
-$$</p>
+$$
+
+</div>
 <p>対数尤度が格納された<code>soft_z</code>を$\exp()$で再び尤度に戻しています。尤度比がそのまま各クラスターに分類される確率と解釈できる訳です。</p>
 <h2 id="結果">結果</h2>
 <p>以下でMCMCを走らせ、$\hat{R}$で収束を確認します。</p>
