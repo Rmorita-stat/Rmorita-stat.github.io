@@ -150,12 +150,16 @@ $$
 </div>
 <p>一般に$\boldsymbol{\Phi}$を<strong>計画行列</strong>と呼びます。また$\phi_0(\boldsymbol{x}),\ldots,\phi_H(\boldsymbol{x})$を<strong>基底関数</strong>、$\boldsymbol{\phi}(\boldsymbol{x}) = \left(\phi_0(\boldsymbol{x}),\phi_1(\boldsymbol{x}),\ldots, \phi_H(\boldsymbol{x}) \right)^T$を$\boldsymbol{x}$の<strong>特徴ベクトル</strong>と呼びます。<br>
 <br>
+<div style="overflow-x:auto;">
+  
 <div class="memo" >
     <span class="memo-title">memo</span>
     <p>
 基底関数を、ベクトル$\boldsymbol{x}$をスカラーに変換する解析的な関数であると想定していますが、
 通常の重回帰モデルも$\boldsymbol{\phi}(\boldsymbol{x}) = \boldsymbol{x}$とすれば$(3)$式で説明できます！その場合基底関数は各変数それぞれを出力する関数になります。
 </p>
+</div>
+
 </div></p>
 <p>このとき、以下の公式が得られます。   <br>
 <br>
@@ -168,6 +172,8 @@ $$
 
 </fieldset><br>
 <br>
+<div style="overflow-x:auto;">
+  
 <fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆証明</strong></legend>
 
 データ全体の誤差(損失関数)は、
@@ -188,10 +194,14 @@ $$
 \boldsymbol{w} = \left(\boldsymbol{\Phi}^T\boldsymbol{\Phi}\right)^{-1}\boldsymbol{\Phi}^T\boldsymbol{y}
 $$
 
-</fieldset></p>
+</fieldset>
+
+</div></p>
 <h1 id="正則化">正則化</h1>
 <p>線形回帰モデルの係数パラメータは$(4)$式で計算できることが分かりましたが、右辺には$\boldsymbol{\Phi}^T\boldsymbol{\Phi}$の逆行列が存在するため、$\boldsymbol{\Phi}^T\boldsymbol{\Phi}$が正則でない場合、係数パラメータの解を得ることが出来ません。<br>
 <br>
+<div style="overflow-x:auto;">
+  
 <div class="memo" >
     <span class="memo-title">memo</span>
     <p>
@@ -201,8 +211,12 @@ $$
 $$
 となる$n$次正方行列$\boldsymbol{B}$が存在するとき、$\boldsymbol{A}$は正則であるという。
 </p>
+</div>
+
 </div></p>
 <p>では、$\boldsymbol{\Phi}^T\boldsymbol{\Phi}$が正則でないのは具体的にどんな場合かとうと、$\boldsymbol{\phi}_ {i}(\boldsymbol{x}) = \boldsymbol{\phi}_ {j}(\boldsymbol{x})$、もしくは$\boldsymbol{\phi}_ {i}(\boldsymbol{x}) = \alpha\boldsymbol{\phi}_ {j}(\boldsymbol{x})~~(\alpha \in \mathbb{R})$となるような$\boldsymbol{\phi}(\boldsymbol{x})$の組が存在する場合が典型的です。このような場合、$\boldsymbol{\phi}_ {i}(\boldsymbol{x})$と$\boldsymbol{\phi}_ {j}(\boldsymbol{x})$の相関は1または-1になっています。また$\boldsymbol{\phi}(\boldsymbol{x}_ {i}) \simeq \alpha\boldsymbol{\phi}(\boldsymbol{x}_ {j})$だったりする場合では、$\boldsymbol{\Phi}^T\boldsymbol{\Phi}^{-1}$の要素が大きくなり、結果的に$\boldsymbol{w}$の絶対値が大きくなってしまい、過学習が生じるようです。このような場合では、$\boldsymbol{\phi}_ {i}(\boldsymbol{x})$と$\boldsymbol{\phi}_ {j}(\boldsymbol{x})$はかなり強い相関関係になっています<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。</p>
+<div style="overflow-x:auto;">
+  
 <div class="memo" >
     <span class="memo-title">memo</span>
     <p>
@@ -212,6 +226,8 @@ $$
 $$
 と行列$\boldsymbol{\Phi}^T\boldsymbol{\Phi}$はランク落ちしており、ランク落ちした行列は逆行列が存在しない。
 </p>
+</div>
+
 </div>
 <p>係数パラメータの絶対値が大きくなるのを避けるための工夫が<strong>正則化</strong>です。正則化では、$(5)$式で得られたデータ全体の誤差に、$\boldsymbol{w}$の絶対値が大きくなることによるペナルティを課すように設定します。  このペナルティの設定方法が、Ridge回帰とLasso回帰の唯一の違いです。<br>
 <br>
@@ -229,6 +245,8 @@ $$
 
 </fieldset><br>
 <br>
+<div style="overflow-x:auto;">
+  
 <div class="memo" >
     <span class="memo-title">memo</span>
     <p>
@@ -239,7 +257,9 @@ $$
 を意味する。定義より$||\boldsymbol{x}||_1^1$は$\boldsymbol{x}$のマンハッタン距離を、$||\boldsymbol{x}||_2^2$は$\boldsymbol{x}$のユークリッド距離を意味する。
 </p>
 </div>
-損失関数を上記のように設定することが$\boldsymbol{\Phi}^T\boldsymbol{\Phi}$が正則でない場合に有効である仕組みを把握するために、Ridge回帰の場合についてみていきます。</p>
+
+</div></p>
+<p>損失関数を上記のように設定することが$\boldsymbol{\Phi}^T\boldsymbol{\Phi}$が正則でない場合に有効である仕組みを把握するために、Ridge回帰の場合についてみていきます。</p>
 <p>$(7)$式を$\boldsymbol{w}$で微分すると、</p>
 <div style="overflow-x:auto;">
   
@@ -256,7 +276,10 @@ $$
 $$
 
 </div>
-<p>リッジ回帰は、もともとは$(7)$式のように損失関数に$\boldsymbol{w}$の絶対値を小さくする為の項を設定したものでしたが、結果的に$\boldsymbol{\Phi}^T\boldsymbol{\Phi}$の対角要素に微小量$\alpha$を足すことで、逆行列計算の対象が正則行列であることを確実にし、計算を安定化させていることが分かります。
+<p>リッジ回帰は、もともとは$(7)$式のように損失関数に$\boldsymbol{w}$の絶対値を小さくする為の項を設定したものでしたが、結果的に$\boldsymbol{\Phi}^T\boldsymbol{\Phi}$の対角要素に微小量$\alpha$を足すことで、逆行列計算の対象が正則行列であることを確実にし、計算を安定化させていることが分かります。<br>
+<br>
+<div style="overflow-x:auto;">
+  
 <div class="memo" >
     <span class="memo-title">memo</span>
     <p>
@@ -279,6 +302,8 @@ $$
 
 よって$\boldsymbol{A}^T\boldsymbol{A} + \alpha\boldsymbol{I}$は正定値行列であり、正則行列。
 </p>
+</div>
+
 </div></p>
 <p>Lasso回帰については同様の方法では正則化との関係が見えてきませんでした。ただ係数パラメータの多くが0になる仕組みについては<a href="https://qiita.com/g-k/items/8b81e28ec3d1e6b8a62a">こちらの記事</a>に詳しかったです。</p>
 <h1 id="確率モデルでridge回帰を捉える">確率モデルでRidge回帰を捉える</h1>
@@ -296,6 +321,8 @@ $$
 
 </fieldset><br>
 <br>
+<div style="overflow-x:auto;">
+  
 <fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆証明</strong></legend>
 
 $y$と$\boldsymbol{w}$の同時確率密度について以下の通り仮定する。
@@ -317,7 +344,9 @@ $$
 $$
 これは$(7)$式のRidge回帰における損失関数$E$の$\boldsymbol{w}$についての最小化である。
 
-</fieldset></p>
+</fieldset>
+
+</div></p>
 <h1 id="確率モデルでlasso回帰を捉える">確率モデルでLasso回帰を捉える</h1>
 <p>Lasso回帰は確率分布を用いた以下のモデルでも説明できます。</p>
 <p><fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Lasso回帰の確率モデル</strong></legend>
@@ -333,6 +362,8 @@ $$
 
 </fieldset><br>
 <br>
+<div style="overflow-x:auto;">
+  
 <fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆証明</strong></legend>
 
 $y$と$\boldsymbol{w}$の同時確率密度について以下の通り仮定する。
@@ -354,8 +385,12 @@ $$
 $$
 これは$(8)$式のLasso回帰における損失関数$E$の$\boldsymbol{w}$についての最小化である。
 
-</fieldset><br>
+</fieldset>
+
+</div>
 <br>
+<div style="overflow-x:auto;">
+  
 <div class="memo" >
     <span class="memo-title">memo</span>
     <p>
@@ -369,6 +404,8 @@ X \sim \mathrm{Laplace}(\mu, b)
 $$
 と表す。
 </p>
+</div>
+
 </div></p>
 <h1 id="蛇足">蛇足</h1>
 <p>今回の記事は<a href="https://gohugo.io/content-management/shortcodes/">Hugoのshortcode機能</a>を駆使して文章に枠をもたせてみました。今までの記事よりかなり見やすくなっていませんか？？しばらくはこのスタイルで行こうと思います。</p>
