@@ -6,10 +6,19 @@
     <description>Recent content in Posts on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Thu, 24 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 29 Dec 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>正則化（Ridge回帰とLasso回帰）について</title>
+      <link>https://rmorita-stat.github.io/2020/12/regularization/</link>
+      <pubDate>Tue, 29 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2020/12/regularization/</guid>
+      <description>はじめに 今回は、回帰分析において過学習を防いだり、多重共線性に対応したりするために使われるRidge回帰や、変数の数が標本数より多いような時</description>
+    </item>
     
     <item>
       <title>Soft K-means法とガウス過程</title>

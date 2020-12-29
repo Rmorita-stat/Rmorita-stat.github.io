@@ -4,7 +4,22 @@
   
   <url>
     <loc>https://rmorita-stat.github.io/post/</loc>
-    <lastmod>2020-12-24T00:00:00+00:00</lastmod>
+    <lastmod>2020-12-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/tags/</loc>
+    <lastmod>2020-12-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0/</loc>
+    <lastmod>2020-12-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/2020/12/regularization/</loc>
+    <lastmod>2020-12-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -14,11 +29,6 @@
   
   <url>
     <loc>https://rmorita-stat.github.io/2020/12/modeling/</loc>
-    <lastmod>2020-12-24T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/tags/</loc>
     <lastmod>2020-12-24T00:00:00+00:00</lastmod>
   </url>
   
@@ -59,11 +69,6 @@
   
   <url>
     <loc>https://rmorita-stat.github.io/tags/%E3%83%8E%E3%83%B3%E3%83%91%E3%83%A9%E3%83%A1%E3%83%88%E3%83%AA%E3%83%83%E3%82%AF%E3%83%99%E3%82%A4%E3%82%BA%E3%83%A2%E3%83%87%E3%83%AB/</loc>
-    <lastmod>2020-07-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0/</loc>
     <lastmod>2020-07-12T00:00:00+00:00</lastmod>
   </url>
   
