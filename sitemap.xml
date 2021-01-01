@@ -8,13 +8,18 @@
   </url>
   
   <url>
+    <loc>https://rmorita-stat.github.io/tags/</loc>
+    <lastmod>2020-12-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://rmorita-stat.github.io/2020/12/information-criterion/</loc>
     <lastmod>2020-12-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/tags/</loc>
-    <lastmod>2020-12-29T00:00:00+00:00</lastmod>
+    <loc>https://rmorita-stat.github.io/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/</loc>
+    <lastmod>2020-12-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -64,11 +69,6 @@
   
   <url>
     <loc>https://rmorita-stat.github.io/2020/10/modeling/</loc>
-    <lastmod>2020-10-03T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/</loc>
     <lastmod>2020-10-03T00:00:00+00:00</lastmod>
   </url>
   

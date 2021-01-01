@@ -78,14 +78,15 @@
     <div class="main-content__article">
         <article id="content">
             <h1 id="この記事について">この記事について</h1>
-<p>情報量基準などのモデル選択基準について得た断片的な知識をまとめたい（自分の力では一生断片的な知識としかならないだろうが、ブログに残しておくことで少しでも自分の中で体系化できたらいな） 。
-随時更新予定。</p>
+<p>情報量基準などのモデル選択基準について得た断片的な知識をまとめたい。自分の力では一生断片的な知識としかならないだろうが、ブログに残しておくことで少しでも自分の中で体系化できたらいな。
+随時更新予定？<br>
+<br>
 <div class="memo" >
     <span class="memo-title">memo</span>
     <p>
 情報量基準は、候補モデルが将来得られるデータをどの程度精度よく予測できるかを評価したもの。
 </p>
-</div>
+</div></p>
 <h2 id="1-カルバックライブラー情報量基準">1. カルバック・ライブラー情報量基準</h2>
 <h3 id="11-定義">1.1. 定義</h3>
 <p>$y$を目的変数、$x$を説明変数とする。
@@ -94,9 +95,13 @@
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>カルバック・ライブラー(KL)情報量基準</strong></legend>
  
 $q(x)$を真のデータ生成分布、$f(x)$をデータ予測モデルとしたとき、カルバック・ライブラー情報量基準は以下で定義される。
+<div style="overflow-x:auto;">
+  
 $$
 \mathcal{D}(f;q) = E_{q}\left[\log\cfrac{q(x)}{f(x)}\right] = \int_{-∞}^{∞}~q(x)\log\cfrac{q(x)}{f(x)}~d(x) \tag{1}
 $$
+
+</div>
 
 </fieldset></p>
 <h3 id="12-性質">1.2. 性質</h3>
@@ -116,31 +121,52 @@ $$</li>
 <h2 id="2-aic赤池情報量基準">2. AIC（赤池情報量基準）</h2>
 <h3 id="21-平均対数尤度">2.1. 平均対数尤度</h3>
 <p>カルバック・ライブラー情報量基準は以下の通り対数尤度の期待値の差としても表現できる。
+<div style="overflow-x:auto;">
+  
 $$
 \mathcal{D}(f;q) = E_{q}\left[\log~q(x)\right] - E_{q}\left[\log~f(x)\right] = \int_{-∞}^{∞}q(x)\log q(x) dx - \int_{-∞}^{∞}q(x)\log f(x) dx \tag{2}
-$$</p>
+$$
+
+</div></p>
 <p>特に母数が所与のもとでは、
 $$
+<div style="overflow-x:auto;">
+  
 \mathcal{D}(f;q) = \int_{-∞}^{∞}q(x)\log q(x) dx - \int_{-∞}^{∞}q(x)\log f(x | \theta) dx \tag{3}
-$$</p>
+$$
+
+</div></p>
 <p>第2項は対数尤度$f(x|\theta)$を真の生成分布について期待値をとったものであり、<strong>平均対数尤度</strong>と呼ぶ。<br>
 情報量の算出理由が候補モデル間の比較である場合、第1項は共通であるから、第2項の平均対数尤度のみで比較すればよいことが分かる。<br>
 しかしこれも真のデータ生成分布が未知の場合は評価不能。そこで、将来得られるデータに対する予測の良さの観点から平均対数尤度を比較するため、平均対数尤度について確率変数$X$に関する期待値をとる。</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 E_X\left[E_q\left[\right[\log f(x|\theta)]\right] \tag{4}
-$$</p>
+$$
+
+</div>
 <p>これを<strong>期待平均対数尤度</strong>とよぶ。</p>
-<h3 id="23-aicの定義導出">2.3. AICの定義・導出</h3>
+<h3 id="22-aicの定義導出">2.2. AICの定義・導出</h3>
 <p>AIC(赤池情報量基準)は前節の期待平均対数尤度を近似することから導出されるものである。</p>
 <p>以下で定義される<strong>最大対数尤度</strong>
+<div style="overflow-x:auto;">
+  
 $$
 \log L_{max}(\boldsymbol{x} | \theta) = \sum_{n=1}^{N}\log f(x_{n}| \hat{\theta}) \tag{5}
-$$</p>
+$$
+
+</div></p>
 <p>を用いて、期待平均対数尤度を</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 E_X\left[E_q\left[\right[\log f(x|\theta)]\right] \approx \cfrac{\log L_{max}(\boldsymbol{x} | \theta)}{N} \tag{6}
-$$</p>
-<p>と近似する。さらに母数の数についてバイアス補正し、$-2N$倍することにより、下記AICが導出される。
+$$
+
+</div>
+<p>と近似する。さらに母数の数についてバイアス補正し、$-2N$倍することにより、下記AICが導出される。<br>
+<br>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>AIC</strong></legend>
  
 AICは下記式で定義される。
@@ -149,9 +175,10 @@ $$
 $$
 ただし、$p$はモデル中の未制約母数の数。
 
-</fieldset></p>
-<p>AICの値が小さい程よいモデルであるとみなす。$(7)$式は対数尤度が高いモデルをなるべく少ない母数の数で達成しようとするものであるとみなすことが出来る。</p>
-<h3 id="aicの適用制限">AICの適用制限</h3>
+</fieldset><br>
+<br>
+AICの値が小さい程よいモデルであるとみなす。$(7)$式は対数尤度が高いモデルをなるべく少ない母数の数で達成しようとするものであるとみなすことが出来る。</p>
+<h3 id="23-aicの適用制限">2.3. AICの適用制限</h3>
 <p>AICは、以下の条件が満たされる場合のみに適用可能。らしい。</p>
 <ul>
 <li>$q(x) = f(x|\theta)$となる母数が存在する</li>
@@ -161,49 +188,126 @@ $$
 <h2 id="3-交差検証法">3. 交差検証法</h2>
 <h3 id="31-交差検証法">3.1. 交差検証法</h3>
 <p>モデル評価のもう一つの方法に<strong>交差検証法</strong>がある。交差検証法も将来得られるデータ$x^{*}$に対する平均対数尤度</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 E_{q}\left[\log~f(x^{*}|\theta)\right] = \int_{-∞}^{∞}q(x^{ *})\log f(x^{ *} | \theta) dx \tag{8}
-$$</p>
+$$
+
+</div>
 <p>の推定量を検証する。</p>
 <h3 id="32-loocv1個抜き交差検証法">3.2. LOOCV（1個抜き交差検証法）</h3>
 <p><strong>LOOCV</strong>(1個抜き交差検証法)では、テストデータとして$\boldsymbol{x}$のなかから$x_k$だけを用い、それ以外をトレーニングデータとして利用する、という手続きを$N$個の点に対して繰り返し適用し、モデル性能を評価する。</p>
 <h3 id="33-mcmc標本を用いたloocvの推定">3.3. MCMC標本を用いたLOOCVの推定</h3>
 <p>まずは一般の交差検証法について、MCMC標本を用いた推定方法を考える。</p>
 <p>$K$個のデータをテスト用のデータとして用いた状態で、それ以外をトレーニングデータとして推定した候補モデルを用いて、テストデータ$\boldsymbol{x}^{* }$に関する尤度を
+<div style="overflow-x:auto;">
+  
 $$
 f^{(-K)}(\boldsymbol{x}^{*}|\theta) \tag{9}
 $$
+
+</div>
 と表す。モデルは母数$\theta$を持っているので、母数事後分布$f(\theta)$が得られた状況下では、$(9)$式に関する対数予測密度</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 lpd = \log \int_{-∞}^{∞} f^{(-K)}(\boldsymbol{x}^{*}|\theta) f(\theta) d\theta \tag{10}
-$$</p>
+$$
+
+</div>
 <p>を評価できる。これは1組のトレーニングデータ・テストデータを用いてテストデータ$\boldsymbol{x}^{* }$に関する候補モデルの尤度の$f(\theta)$に対する期待値をとったものである。</p>
 <p>これをMCMC標本を用いて近似する場合には、</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 lpd \approx \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(\boldsymbol{x}^{*} | \theta^{(t)})\right]^{(-K)} \tag{11}
-$$</p>
+$$
+
+</div>
 <p>とすればよい。ここで$T$はMCMC標本の数、$\theta^{(t)}$は母数の1MCMC標本である。右上の$(-K)$は$K$個のデータをテストデータとして推定から除外した状態であることを意味する。</p>
 <p>LOOCVのときも同様にして、</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 lpd_{loo} = \log \int_{-∞}^{∞} f^{(-k)}(x_{k}|\theta) f(\theta) d\theta \approx \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{k} | \theta^{(t)})\right]^{(-k)} \tag{12}
-$$</p>
+$$
+
+</div>
 <p>を$(8)$式の推定量として計算できる。ここで右上の$(-k)$は$k$番目の標本をテストデータとして推定から除外した状態を意味する。</p>
-<p>あとはすべての$k$について$(12)$式を足し上げればよい。</p>
+<p>あとはすべての$k$について$(12)$式を足し上げればよい。<br>
+<br>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>LOOCVによる平均対数尤度の推定量（対数点別予測密度）</strong></legend>
  
 LOOCVにおける候補モデルのデータに対する予測精度は、
 
+<div style="overflow-x:auto;">
+  
 $$
-lppd_{loo} \approx \sum_{k=1}^{N} \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{k} | \theta^{(t)})\right]^{(-k)}
+lppd_{loo} \approx \sum_{k=1}^{N} \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{k} | \theta^{(t)})\right]^{(-k)} \tag{13}
 $$
+
+</div>
 
 で与えられる。これを対数点別予測密度という。
 
-</fieldset>
+</fieldset></p>
+<h1 id="4-waic">4. WAIC</h1>
+<p>WAIC(Widely Applicable Information Criterion)は、2010年に東京工業大学の渡辺先生が考案した情報量基準。
+LOOCVと同様に、将来得られるデータに対する平均対数尤度（$(8)$式）を推定することを目的とする。</p>
+<p>$(8)$式はデータ生成分布について期待値を取る必要があるが、今までと同様データ生成分布は未知であるから計算できない。今度はデータ生成分布を事後分布で近似することを考える。</p>
+<div style="overflow-x:auto;">
+  
+$$
+elppd = \sum_{i=1}^{N} E_{post}\left[\log f(x_i^{ *} | \theta)\right] \left( \approx E_{q}\left[\log~f(x^{ *}|\theta)\right] \right) \tag{14}
+$$
+
+</div>
+<p>$(14)$式の$elppd$は<strong>期待対数点別予測密度</strong>と呼ばれる。これをMCMCサンプルを用いて近似計算することを考える。</p>
+<p>まず、将来得られる1つのデータ$x_i$に対する予測精度の評価値$lpd$を以下の通り再定義する。</p>
+<div style="overflow-x:auto;">
+  
+$$
+lpd_{WAIC} = \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{i} | \theta^{(t)})\right] \left(\approx E_{post}\left[\log f(x_i|\theta)\right]  \right) \tag{15}
+$$
+
+</div>
+<p>これを$N$個すべてのデータ点で足し上げれば、$(14)$式のMCMCサンプルを用いた近似値$lppd_{WAIC}$（対数点別予測密度）を得ることができる。</p>
+<div style="overflow-x:auto;">
+  
+$$
+lppd_{WAIC} = \sum_{i=1}^{N} \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{i} | \theta^{(t)})\right] \left( \approx \sum_{i=1}^{N} E_{post}\left[\log f(x_i | \theta)\right] \right) \tag{16}
+$$
+
+</div>
+<p>ただし、$(16)$式からわかるように、将来得られるデータとして既に得られた標本を用いている為、学習データに箇条適合してしまっている。その修正項として以下の<strong>有効パラメータ</strong>と呼ばれる項をペナルティとして$(16)$式に考慮する。</p>
+<div style="overflow-x:auto;">
+  
+$$
+p_{WAIC} = \sum_{i=1}^{N} V_{post}\left[\log f(x_{i}|\theta)\right] \tag{17}
+$$
+
+</div>
+<p>以上を踏まえ、また式の形をAICに合わせることで、WAICは下記の通り定義される。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>WAIC</strong></legend>
+ 
+Waicは下記式で定義される。
+$$
+WAIC = -2\sum_{i=1}^{N} \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{i} | \theta^{(t)})\right] + 2\sum_{i=1}^{N} V_{post}\left[\log f(x_{i}|\theta)\right] \tag{18}
+$$
+
+</fieldset><br>
+<br>
+WAICは、事後分布が正規分布で近似できないような多くのベイジアンモデルにおいても適用可能な情報量基準量である。</p>
 
         </article>
     </div>
     <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://rmorita-stat.github.io/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96">情報量基準</a></span>
+        
         
     </div>
 </div>
