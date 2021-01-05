@@ -131,8 +131,8 @@ $$
 \right)
 \left(
 \begin{array}{ccc}
+w_0 \\\\
 w_1 \\\\
-w_2 \\\\
 \vdots \\\\
 w_H
 \end{array}
@@ -140,6 +140,7 @@ w_H
 $$
 
 </div>
+<p>ただし、$\phi_0({\boldsymbol{x}_n}) = 1$です。</p>
 <p>これを行列を使って以下のように表記します。</p>
 <div style="overflow-x:auto;">
   
@@ -314,10 +315,10 @@ $(7)$のRidge回帰と等価の確率モデルは、
 $$
 \begin{cases}
 p(y | \boldsymbol{w}, \boldsymbol{x}) = \mathrm{Normal}(y | \boldsymbol{w}^T\boldsymbol{\phi}(\boldsymbol{x}), \sigma^2) \\\\
-p(\boldsymbol{w}) = \mathrm{Normal}(\boldsymbol{w}|0, \lambda^{-1}\boldsymbol{I}_H)
+p(\boldsymbol{w}) = \mathrm{Normal}(\boldsymbol{w}|0, \rho^{-1}\boldsymbol{I}_H)
 \end{cases} \tag{11}
 $$
-ただし、$\alpha = \lambda\sigma^2$
+ただし、$\alpha = \rho\sigma^2$
 
 </fieldset><br>
 <br>
@@ -334,12 +335,12 @@ $$
 \newcommand{\argmax}{\mathop{\rm arg~max}\limits}
 \newcommand{\argmin}{\mathop{\rm arg~min}\limits}
 \begin{split}
-\argmax_{\boldsymbol{w}∈\mathbb{R}^H} \log F(\boldsymbol{w}) &= \argmax_{\boldsymbol{w}∈\mathbb{R}^H} \log \prod_{n=1}^{N}p(y_n|\boldsymbol{w}, \boldsymbol{x}_ n)p(\boldsymbol{w})\\\\
-&= \argmax_{\boldsymbol{w}∈\mathbb{R}^H}\left[ \sum_{n=1}^{N}\log\mathrm{Normal}(y_n| \boldsymbol{w}^T\boldsymbol{\phi}(\boldsymbol{x}),\sigma^2) + \log\mathrm{Normal}(\boldsymbol{w}|\boldsymbol{0}, \lambda^{-1}\boldsymbol{I}_H)\right] \\\\
-&= \argmax_{\boldsymbol{w}∈\mathbb{R}^H}\left[\log\mathrm{MultiNormal}(\boldsymbol{y}| \boldsymbol{\Phi}\boldsymbol{w},\sigma^2\boldsymbol{I}_N) + \log\mathrm{Normal}(\boldsymbol{w}|\boldsymbol{0}, \lambda^{-1}\boldsymbol{I}_H)\right] \\\\
-&= \argmax_{\boldsymbol{w}∈\mathbb{R}^H}\left[ -\cfrac{1}{2\sigma^2}\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) -\cfrac{\lambda}{2}\boldsymbol{w}^T\boldsymbol{w} + C \right] \\\\
-&=\argmin_{\boldsymbol{w}∈\mathbb{R}^H}\left[\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \lambda\sigma^2||\boldsymbol{w}||_2^2\right] \\\\
-&= \argmin_{\boldsymbol{w}∈\mathbb{R}^H}\left[\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \alpha||\boldsymbol{w}||_2^2\right]
+\argmax_{\boldsymbol{w}∈\mathbb{R}^{H+1}} \log F(\boldsymbol{w}) &= \argmax_{\boldsymbol{w}∈\mathbb{R}^{H+1}} \log \prod_{n=1}^{N}p(y_n|\boldsymbol{w}, \boldsymbol{x}_ n)p(\boldsymbol{w})\\\\
+&= \argmax_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[ \sum_{n=1}^{N}\log\mathrm{Normal}(y_n| \boldsymbol{w}^T\boldsymbol{\phi}(\boldsymbol{x}),\sigma^2) + \log\mathrm{Normal}(\boldsymbol{w}|\boldsymbol{0}, \rho^{-1}\boldsymbol{I}_H)\right] \\\\
+&= \argmax_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\log\mathrm{MultiNormal}(\boldsymbol{y}| \boldsymbol{\Phi}\boldsymbol{w},\sigma^2\boldsymbol{I}_N) + \log\mathrm{Normal}(\boldsymbol{w}|\boldsymbol{0}, \rho^{-1}\boldsymbol{I}_H)\right] \\\\
+&= \argmax_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[ -\cfrac{1}{2\sigma^2}\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) -\cfrac{\rho}{2}\boldsymbol{w}^T\boldsymbol{w} + C \right] \\\\
+&=\argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \rho\sigma^2||\boldsymbol{w}||_2^2\right] \\\\
+&= \argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \alpha||\boldsymbol{w}||_2^2\right]
 \end{split}
 $$
 これは$(7)$式のRidge回帰における損失関数$E$の$\boldsymbol{w}$についての最小化である。
@@ -375,12 +376,12 @@ $$
 \newcommand{\argmax}{\mathop{\rm arg~max}\limits}
 \newcommand{\argmin}{\mathop{\rm arg~min}\limits}
 \begin{split}
-\argmax_{\boldsymbol{w}∈\mathbb{R}^H} \log F(\boldsymbol{w}) &= \argmax_{\boldsymbol{w}∈\mathbb{R}^H} \log \prod_{n=1}^{N}p(y_n|\boldsymbol{w}, \boldsymbol{x}_ n)p(\boldsymbol{w})\\\\
-&= \argmax_{\boldsymbol{w}∈\mathbb{R}^H}\left[ \sum_{n=1}^{N}\log\mathrm{Normal}(y_n| \boldsymbol{w}^T\boldsymbol{\phi}(\boldsymbol{x}),\sigma^2) + \sum_{h=1}^{H}\log\mathrm{Laplace}(w_h|0, b)\right] \\\\
-&= \argmax_{\boldsymbol{w}∈\mathbb{R}^H}\left[\log\mathrm{MultiNormal}(\boldsymbol{y}| \boldsymbol{\Phi}\boldsymbol{w},\sigma^2\boldsymbol{I}_ N) + \sum_{h=1}^{H}\log\mathrm{Laplace}(w_h|0, b)\right] \\\\
-&= \argmax_{\boldsymbol{w}∈\mathbb{R}^H}\left[ -\cfrac{1}{2\sigma^2}\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) - \cfrac{1}{b}\sum_{h=1}^{H}|w_h| + C \right] \\\\
-&=\argmin_{\boldsymbol{w}∈\mathbb{R}^H}\left[\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \cfrac{2\sigma^2}{b}||\boldsymbol{w}||_1^1\right] \\\\
-&= \argmin_{\boldsymbol{w}∈\mathbb{R}^H}\left[\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \alpha||\boldsymbol{w}||_1^1\right]
+\argmax_{\boldsymbol{w}∈\mathbb{R}^{H+1}} \log F(\boldsymbol{w}) &= \argmax_{\boldsymbol{w}∈\mathbb{R}^{H+1}} \log \prod_{n=1}^{N}p(y_n|\boldsymbol{w}, \boldsymbol{x}_ n)p(\boldsymbol{w})\\\\
+&= \argmax_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[ \sum_{n=1}^{N}\log\mathrm{Normal}(y_n| \boldsymbol{w}^T\boldsymbol{\phi}(\boldsymbol{x}),\sigma^2) + \sum_{h=1}^{H}\log\mathrm{Laplace}(w_h|0, b)\right] \\\\
+&= \argmax_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\log\mathrm{MultiNormal}(\boldsymbol{y}| \boldsymbol{\Phi}\boldsymbol{w},\sigma^2\boldsymbol{I}_ N) + \sum_{h=1}^{H}\log\mathrm{Laplace}(w_h|0, b)\right] \\\\
+&= \argmax_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[ -\cfrac{1}{2\sigma^2}\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) - \cfrac{1}{b}\sum_{h=1}^{H}|w_h| + C \right] \\\\
+&=\argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \cfrac{2\sigma^2}{b}||\boldsymbol{w}||_1^1\right] \\\\
+&= \argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \alpha||\boldsymbol{w}||_1^1\right]
 \end{split}
 $$
 これは$(8)$式のLasso回帰における損失関数$E$の$\boldsymbol{w}$についての最小化である。
@@ -544,7 +545,7 @@ $$
         <p class="copyright u-font">
             
             &#169;
-            2020
+            2021
             
             <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
             Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
