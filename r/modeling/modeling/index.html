@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="google-site-verification" content="qrt5G5NouQQVS-0Ss9qHlEuMYt3uKuifbUIOkPd4cPc" />
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/stat" >STAT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/r" >With R</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/julia" >With Julia</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2020.10.03 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">モデリングと情報量基準その１～モデリングとは？～</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <h1 id="はじめに">はじめに</h1>
+<p>少しご無沙汰してしまい、また読者様から重くないやつを定期的にと助言いただきましたので、少し短めの投稿を記事作成のリハビリもかねてしてみようと思います</p>
+<p>今回はそもそもこのブログで扱っているモデリングとは何だったのか？について改めて書いてみようと思います。
+さらに今後の記事では続きとしてモデル選択の基準、特にベイズで利用できるWAIC（広く使える情報量基準）について書いてみようと思っています。
+ただし、難しいことまではよくわからないので、感覚で理解できているところまで。</p>
+<h1 id="モデリング">モデリング</h1>
+<h2 id="モデリングとは">モデリングとは</h2>
+<p>そもそもの話です。</p>
+<p>統計解析ではデータが生成されるメカニズムを組み立てることでデータの解釈を進めていきます。このような活動をモデリングと呼んでいます。ただし、あるデータに対する数理モデルの候補は通常一つではありません。</p>
+<p>例として、今回は回帰分析等のサンプルデータとしてよく用いられるアヤメデータを用います。
+アヤメデータにはいくつかの変数がありますが、<code>GGally::ggpairs()</code>で一気に視覚化・相関係数を算出してみます。これぞ業務効率化。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">GGally</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="n">GGally</span><span class="o">::</span><span class="nf">ggpairs</span><span class="p">(</span><span class="n">iris</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">colour</span><span class="o">=</span><span class="n">Species</span><span class="p">))</span>
+<span class="n">p</span>
+</code></pre></div><p><img src="/post/modeling/unnamed-chunk-1-1.png" alt=""></p>
+<p>結果を見ると、花びらの長さ（Peral.Length）と幅（Petal.Width）には強い正の相関（0.963）があることが分かります。他にも様々な関係性が確認できますが、以降では花びらの長さを説明するためのモデルを構築していきます。</p>
+<h2 id="モデル1">モデル1</h2>
+<p>はじめは最も単純なモデルから。まずは花びらの幅のみで花びらの長さを説明する式です。</p>
+<p>$$
+\mu_n = \alpha x_n + \beta \tag{1}
+$$
+$$
+y_n \sim \rm{Normal}(\mu_n, \sigma) \tag{2}
+$$
+$$
+n = 1,2,\ldots,N
+$$</p>
+<p>ここで、$N$はデータの数、$Y=\left( y_1, y_2, \ldots, y_N \right)$は花びらの長さ、$X=\left( x_1, x_2, \ldots, x_N \right)$は花びらの幅とします。</p>
+<p>上の式の意味を見てみましょう。</p>
+<p>まず、これまで全く説明していませんでしたが、$(2)$式で使用した数学記号「$\sim$」は「確率変数（左辺）が確率分布（右辺）に従う」という意味です。 <br>
+また$Normal()$は正規分布（ガウス分布）を意味します。確率変数の記号の後ろにつく「$()$」には各確率分布のパラメータを明記するのが常です。</p>
+<p>正規分布の確率密度関数$f(x)$は以下となり、パラメータは平均$\mu$、標準偏差$\sigma$となります。</p>
+<p>$$
+f(x) = \cfrac{1}{\sqrt{2\pi}\sigma}exp\left[\cfrac{-\left(x-\mu\right)^2}{s\sigma^2}\right]
+$$</p>
+<p>よって、$(2)$式は確率変数$Y_n$が平均$\mu_n$、標準偏差$\sigma$の正規分布に従うことを意味します。 <br>
+さらに$(1)$式では$\mu_n$が$\alpha x_n + \beta$という$x$を用いた線形予測子によって計算されるとしています。</p>
+<p>ちなみに先に挙げた式を用いて平均0、標準偏差1の正規分布の確率密度関数を視覚化すると、以下のようになります。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">-5</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">0.1</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="kc">pi</span><span class="p">))</span><span class="o">*</span><span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x^2</span><span class="o">/</span><span class="m">2</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">()</span><span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">))</span> <span class="o">+</span> <span class="nf">xlab</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span> <span class="o">+</span> <span class="nf">ylab</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span>
+<span class="n">p</span>
+</code></pre></div><p><img src="/post/modeling/unnamed-chunk-1-0.png" alt=""></p>
+<p>このように、正規分布は左右対称であり、平均と標準偏差自体がパラメータとなる使いやすい分布であるため、様々な統計解析に活用されます。最もよく用いられるのは、今回の例のように連続型変数の誤差の分布を仮定するときではないだろうか？</p>
+<p><code>glm()</code>を用いてこのモデルのパラメータを推測した結果が以下になります。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">ggeffects</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="n">formula</span> <span class="o">=</span> <span class="n">Petal.Length</span> <span class="o">~</span> <span class="n">Petal.Width</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">gaussian</span><span class="p">)</span>
+
+<span class="nf">summary</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## Call:</span>
+<span class="c1">## glm(formula = Petal.Length ~ Petal.Width, family = gaussian,</span>
+<span class="c1">##     data = iris)</span>
+<span class="c1">##</span>
+<span class="c1">## Deviance Residuals:</span>
+<span class="c1">##      Min        1Q    Median        3Q       Max  </span>
+<span class="c1">## -1.33542  -0.30347  -0.02955   0.25776   1.39453  </span>
+<span class="c1">##</span>
+<span class="c1">## Coefficients:</span>
+<span class="c1">##             Estimate Std. Error t value Pr(&gt;|t|)    </span>
+<span class="c1">## (Intercept)  1.08356    0.07297   14.85   &lt;2e-16 ***</span>
+<span class="c1">## Petal.Width  2.22994    0.05140   43.39   &lt;2e-16 ***</span>
+<span class="c1">## ---</span>
+<span class="c1">## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="c1">##</span>
+<span class="c1">## (Dispersion parameter for gaussian family taken to be 0.2286808)</span>
+<span class="c1">##</span>
+<span class="c1">##     Null deviance: 464.325  on 149  degrees of freedom</span>
+<span class="c1">## Residual deviance:  33.845  on 148  degrees of freedom</span>
+<span class="c1">## AIC: 208.35</span>
+<span class="c1">##</span>
+<span class="c1">## Number of Fisher Scoring iterations: 2</span>
+
+<span class="n">res_p</span> <span class="o">&lt;-</span> <span class="n">ggeffects</span><span class="o">::</span><span class="nf">ggpredict</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">terms</span><span class="o">=</span><span class="s">&#34;Petal.Width&#34;</span><span class="p">)</span>
+<span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Petal.Width</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Petal.Length</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">predicted</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">conf.low</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">conf.high</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0.1</span><span class="p">)</span>
+</code></pre></div><p><img src="/post/modeling/unnamed-chunk-3-1.png" alt=""></p>
+<p>結果がいろいろと書いてありますが、今回は<code>Coefficients</code>のところから、構築したモデルに対する以下の結果を確認するのみとします(Devianceなどについて復習するのが面倒になった顔)。信頼区間の算出方法も実はよくわかっていません…。ベイズ的なアプローチならこのあたりの理論を事後分布で回避できるのに…</p>
+<p>$$
+\mu_n = 1.08356 X_n + 2.22994
+$$</p>
+<p>ここまで読んで、エクセルのグラフ機能についている近似曲線（線形近似）と何が違うのか、と思ったかもしれません。実は以上の分析はエクセルでもは全く同じ結果が得られるはずです。違うのは解析手法（最小二乗法か最尤法）くらいかもしれません。しかし単に線形補完をしているのだ、という認識ではなく、上のように統計的なモデルが背景にあるということを理解していると、データに対してより適切な仮定を置くことが可能になります。</p>
+<p>はっきり言いますが、ガウス分布を仮定した線形回帰の場合、①目的変数はすべての実数を定義域に持つ連続変数、②目的変数の誤差が正規分布に従うと仮定するため、これらの条件を満たしたデータでないとガウス分布を仮定した線形回帰の結果を信頼することはできない。ということ！<br>
+上記の仮定を無視した例としては、離散型変数を目的変数に置いたり、ガウス分布を仮定した線形回帰をあてはめた際の誤差の分布を<a href="https://qiita.com/kenmatsu4/items/59605dc745707e8701e0">QQプロット</a>や正規性の検定等で確認しない場合が挙げられます。</p>
+<h2 id="モデル2">モデル2</h2>
+<p>モデル1は<strong>単回帰</strong>と呼ばれ、一つの説明変数しか設定しない分析でしたが、説明変数は一つである必要はありません。より多くの情報を持たせた方がモデルの精度が向上することも十分あります。複数の説明変数が存在する場合、<strong>重回帰</strong>と呼ばれます。</p>
+<p><code>GGally::ggpairs()</code>の結果からアヤメの種類（Species）も花びらの長さに影響しそうだと判断し、説明変数に先ほどの花びらの長さに加えてアヤメの種類（Species）を追加してみます。モデル式は以下になります。</p>
+<p>$$
+\mu_n = \alpha x_{n} + \beta_1 Versicolor + \beta_2 Virginia + \gamma
+$$
+$$
+y_n \sim \rm{Normal}(\mu_n, \sigma)
+$$
+$$
+n = 1,2,\ldots,N
+$$</p>
+<p>説明変数に$Versicolor$と$Virginia$を追加しました。これらはアヤメの種類を指しますが、$n=1,2,3&hellip;$としたときに種類がそれぞれに該当したときのみ1をとり、そうでない場合は0をとります。カテゴリカルな説明変数は<strong>ダミー変数</strong>と呼ばれ、通常このような対応をとります。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">res</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="n">formula</span> <span class="o">=</span> <span class="n">Petal.Length</span> <span class="o">~</span> <span class="n">Petal.Width</span> <span class="o">+</span> <span class="n">Species</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">gaussian</span><span class="p">)</span>
+
+<span class="nf">summary</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## Call:</span>
+<span class="c1">## glm(formula = Petal.Length ~ Petal.Width + Species, family = gaussian,</span>
+<span class="c1">##     data = iris)</span>
+<span class="c1">##</span>
+<span class="c1">## Deviance Residuals:</span>
+<span class="c1">##      Min        1Q    Median        3Q       Max  </span>
+<span class="c1">## -1.02977  -0.22241  -0.01514   0.18180   1.17449  </span>
+<span class="c1">##</span>
+<span class="c1">## Coefficients:</span>
+<span class="c1">##                   Estimate Std. Error t value Pr(&gt;|t|)    </span>
+<span class="c1">## (Intercept)        1.21140    0.06524  18.568  &lt; 2e-16 ***</span>
+<span class="c1">## Petal.Width        1.01871    0.15224   6.691 4.41e-10 ***</span>
+<span class="c1">## Speciesversicolor  1.69779    0.18095   9.383  &lt; 2e-16 ***</span>
+<span class="c1">## Speciesvirginica   2.27669    0.28132   8.093 2.08e-13 ***</span>
+<span class="c1">## ---</span>
+<span class="c1">## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="c1">##</span>
+<span class="c1">## (Dispersion parameter for gaussian family taken to be 0.1426948)</span>
+<span class="c1">##</span>
+<span class="c1">##     Null deviance: 464.325  on 149  degrees of freedom</span>
+<span class="c1">## Residual deviance:  20.833  on 146  degrees of freedom</span>
+<span class="c1">## AIC: 139.57</span>
+<span class="c1">##</span>
+<span class="c1">## Number of Fisher Scoring iterations: 2</span>
+
+<span class="n">res_p</span> <span class="o">&lt;-</span> <span class="n">ggeffects</span><span class="o">::</span><span class="nf">ggpredict</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">terms</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;Petal.Width[all]&#34;</span><span class="p">,</span><span class="s">&#34;Species&#34;</span><span class="p">),</span> <span class="n">rawdata</span><span class="o">=</span><span class="bp">T</span><span class="p">)</span>
+
+<span class="nf">library</span><span class="p">(</span><span class="n">RColorBrewer</span><span class="p">)</span>
+<span class="n">col</span><span class="o">=</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="s">&#34;Set1&#34;</span><span class="p">)</span>
+
+<span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Petal.Width</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Petal.Length</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">Species</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">predicted</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">conf.low</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">conf.high</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">group</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0.3</span><span class="p">)</span> <span class="o">+</span>
+    <span class="nf">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span> <span class="o">+</span> <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+
+</code></pre></div><p><img src="/post/modeling/unnamed-chunk-4-1.png" alt=""></p>
+<p>推定結果は以下の通りです。</p>
+<p>$$
+\mu_n = 1.01871 X_n + 1.69779 Versicolor + 2.27669 Virginica + 1.21140
+$$</p>
+<p>このように、モデリングではある変数を説明するための変数を追加したり取り除いたりし、結果を確認しながら最終的にどの変数を用いるか検討していきます。</p>
+<h2 id="モデル3">モデル3</h2>
+<p>モデル1およびモデル2は、目的変数の誤差に正規分布を仮定したもので、<strong>一般線形モデル</strong>とも呼ばれるモデルでした。しかし目的変数の性質によっては誤差が正規分布でかていできない場合もあります。その場合に有効なのが<strong>一般化線形モデル</strong>（GLM）です。GLMでは誤差に正規分布だけでなく二項分布やポアソン分布、負の二項分布など様々な分布を一般化して扱います。</p>
+<p>今回の例の場合、花びらの長さは負の値をとらないことから厳密には正規分布を仮定できません。そこで非負の値を定義域に持つ連続変数に適用できる<strong>ガンマ分布</strong>を誤差が従う分布に仮定します。</p>
+<p>モデル式は以下になります。ガンマ分布はshapeパラメータ$k$とrateパラメータ$\lambda$をもち、$k$は常に一定、$\lambda$は線形予測子の変化に応じて変化すると仮定します。また目的変数の期待値が非負の値をとることを考慮し、<strong>リンク関数</strong>として$log$をを設定しています。線形予測子と目的変数の期待値を関連させるのがここでのリンク関数の役割です。下の$(4)$式を変形すると$log(E(y_n))=\mu_n$となり、$exp$の逆関数である$log$が目的変数の期待値を線形予測子と関連させていることになります。こうすることで$(2)$式の目的変数の期待値が非負の値をとることがないという特性を満足させることが出来ます。</p>
+<p>$$
+\mu_n = \alpha x_{n} + \beta_1 Versicolor + \beta_2 Virginia + \gamma \tag{3}
+$$</p>
+<p>$$
+E(y_n) = k/\lambda_n =  \rm{exp}(\mu_n) \tag{4}
+$$</p>
+<p>$$
+y_n \sim \rm{Gamma}( k, \lambda_n) \tag{5}
+$$
+$$
+n = 1,2,\ldots,N
+$$</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">res</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="n">formula</span> <span class="o">=</span> <span class="n">Petal.Length</span> <span class="o">~</span> <span class="n">Petal.Width</span> <span class="o">+</span> <span class="n">Species</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="nf">Gamma</span><span class="p">(</span><span class="n">link</span><span class="o">=</span><span class="s">&#34;log&#34;</span><span class="p">))</span>
+
+<span class="nf">summary</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## Call:</span>
+<span class="c1">## glm(formula = Petal.Length ~ Petal.Width + Species, family = Gamma(link = &#34;log&#34;),</span>
+<span class="c1">##     data = iris)</span>
+<span class="c1">##</span>
+<span class="c1">## Deviance Residuals:</span>
+<span class="c1">##      Min        1Q    Median        3Q       Max  </span>
+<span class="c1">## -0.34682  -0.05608  -0.00637   0.05856   0.28685  </span>
+<span class="c1">##</span>
+<span class="c1">## Coefficients:</span>
+<span class="c1">##                   Estimate Std. Error t value Pr(&gt;|t|)    </span>
+<span class="c1">## (Intercept)        0.31996    0.01716  18.643  &lt; 2e-16 ***</span>
+<span class="c1">## Petal.Width        0.24062    0.04005   6.008 1.43e-08 ***</span>
+<span class="c1">## Speciesversicolor  0.80728    0.04760  16.960  &lt; 2e-16 ***</span>
+<span class="c1">## Speciesvirginica   0.90676    0.07400  12.253  &lt; 2e-16 ***</span>
+<span class="c1">## ---</span>
+<span class="c1">## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span>
+<span class="c1">##</span>
+<span class="c1">## (Dispersion parameter for Gamma family taken to be 0.009874458)</span>
+<span class="c1">##</span>
+<span class="c1">##     Null deviance: 44.6546  on 149  degrees of freedom</span>
+<span class="c1">## Residual deviance:  1.4566  on 146  degrees of freedom</span>
+<span class="c1">## AIC: 93.256</span>
+<span class="c1">##</span>
+<span class="c1">## Number of Fisher Scoring iterations: 4</span>
+
+<span class="n">res_p</span> <span class="o">&lt;-</span> <span class="n">ggeffects</span><span class="o">::</span><span class="nf">ggpredict</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">terms</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;Petal.Width[all]&#34;</span><span class="p">,</span><span class="s">&#34;Species&#34;</span><span class="p">),</span> <span class="n">rawdata</span><span class="o">=</span><span class="bp">T</span><span class="p">)</span>
+
+<span class="nf">library</span><span class="p">(</span><span class="n">RColorBrewer</span><span class="p">)</span>
+<span class="n">col</span><span class="o">=</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="s">&#34;Set1&#34;</span><span class="p">)</span>
+
+<span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Petal.Width</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Petal.Length</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">Species</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">predicted</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">conf.low</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">conf.high</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">group</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0.3</span><span class="p">)</span> <span class="o">+</span>
+    <span class="nf">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span> <span class="o">+</span> <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
+</code></pre></div><p><img src="/post/modeling/unnamed-chunk-5-1.png" alt=""></p>
+<p>推定結果は以下の通りです。</p>
+<p>$$
+\mu_n = 0.24062 x_{n} + 0.80728 Versicolor + 0.90672 Virginia + 0.31996
+$$</p>
+<p>結果の解釈はお任せしますが、モデルの背景にある仮定をデータの特徴に合わせてより適切なものに修正した形になります。</p>
+<h1 id="まとめ">まとめ</h1>
+<p>今回はモデリングとは？ということで記事を書いてみました。まとめると以下のような作業がデータの生成過程を組み立てる一連の活動を構成するのかな、と思います。</p>
+<ul>
+<li>変数の取捨選択</li>
+<li>確率変数やその誤差が従う分布を仮定</li>
+</ul>
+<p>次はモデルの取捨選択を手助けする情報量基準についてまとめてみようかなとおもっています。</p>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://rmorita-stat.github.io/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96">情報量基準</a></span>
+        
+        
+    </div>
+</div>
+<div class="disqus-comments">
+  <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-rmorita-stat-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計、ロードバイク、古墳が好きです。 </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://rmorita-stat.github.io/r/multinom-gp/multinom-gp/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.07.12 00:00 </div>
+            <div class="pn-el__2"> 多項ロジスティック回帰・ガウス過程モデル </div>
+        </div>
+    </a>
+    
+    
+    <a class="next" href="https://rmorita-stat.github.io/r/correspondenceanalysis/correspondenceanalysis/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.11.07 00:00 </div>
+            <div class="pn-el__2"> 対応分析について </div>
+        </div>
+    </a>
+    
+</div>
+
+<footer>
+  <script type="text/javascript">
+ MathJax = {
+   tex: {
+     inlineMath: [['$','$'], ['\\(','\\)']],
+     processEscapes: true,
+     tags: "ams",
+     autoload: {
+       color: [],
+       colorV2: ['color']
+     },
+     packages: {'[+]': ['noerrors']}
+   },
+   chtml: {
+     matchFontHeight: true,
+     displayAlign: "left",
+     displayIndent: "2em"
+   },
+   options: {
+     skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+     renderActions: {
+        
+       find_script_mathtex: [10, function (doc) {
+         for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+           const display = !!node.type.match(/; *mode=display/);
+           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+           const text = document.createTextNode('');
+           node.parentNode.replaceChild(text, node);
+           math.start = {node: text, delim: '', n: 0};
+           math.end = {node: text, delim: '', n: 0};
+           doc.math.push(math);
+         }
+       }, '']
+     }
+   },
+   loader: {
+     load: ['[tex]/noerrors']
+   }
+ };
+</script>
+<script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2021
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="google-site-verification" content="qrt5G5NouQQVS-0Ss9qHlEuMYt3uKuifbUIOkPd4cPc" />
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/stat" >STAT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/r" >With R</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/julia" >With Julia</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2020.12.30 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">モデル選択基準</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <h1 id="この記事について">この記事について</h1>
+<p>情報量基準などのモデル選択基準について得た断片的な知識をまとめたい。自分の力では一生断片的な知識としかならないだろうが、ブログに残しておくことで少しでも自分の中で体系化できたらいな。
+随時更新予定？<br>
+<br>
+<div class="memo" >
+    <span class="memo-title">memo</span>
+    <p>
+情報量基準は、候補モデルが将来得られるデータをどの程度精度よく予測できるかを評価したもの。
+</p>
+</div></p>
+<h2 id="1-カルバックライブラー情報量基準">1. カルバック・ライブラー情報量基準</h2>
+<h3 id="11-定義">1.1. 定義</h3>
+<p>$y$を目的変数、$x$を説明変数とする。
+カルバック・ライブラー情報量基準は、$y$についての2つの生成分布に比の対数について、真のデータ生成分布で期待値をとったものとみなすことができる。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>カルバック・ライブラー(KL)情報量基準</strong></legend>
+ 
+$q(x)$を真のデータ生成分布、$f(x)$をデータ予測モデルとしたとき、カルバック・ライブラー情報量基準は以下で定義される。
+<div style="overflow-x:auto;">
+  
+$$
+\mathcal{D}(f;q) = E_{q}\left[\log\cfrac{q(x)}{f(x)}\right] = \int_{-∞}^{∞}~q(x)\log\cfrac{q(x)}{f(x)}~d(x) \tag{1}
+$$
+
+</div>
+
+</fieldset></p>
+<h3 id="12-性質">1.2. 性質</h3>
+<p>KL情報量基準は以下のような性質を持つ。これらの性質は2つのデータ生成分布の差としてイメージしやすいと思う。</p>
+<ul>
+<li>非負性
+$$
+\mathcal{D}(f;q) &gt; 0
+$$</li>
+<li>完備性
+$$
+\mathcal{D}(f;q) = 0 のときf=q
+$$</li>
+</ul>
+<p>カルバック・ライブラー情報量基準は予測モデル$f(x)$の平均的な予測の良さを表現する。
+ただし通常データ生成分布は未知であるからこれは計算できない。</p>
+<h2 id="2-aic赤池情報量基準">2. AIC（赤池情報量基準）</h2>
+<h3 id="21-平均対数尤度">2.1. 平均対数尤度</h3>
+<p>カルバック・ライブラー情報量基準は以下の通り対数尤度の期待値の差としても表現できる。
+<div style="overflow-x:auto;">
+  
+$$
+\mathcal{D}(f;q) = E_{q}\left[\log~q(x)\right] - E_{q}\left[\log~f(x)\right] = \int_{-∞}^{∞}q(x)\log q(x) dx - \int_{-∞}^{∞}q(x)\log f(x) dx \tag{2}
+$$
+
+</div></p>
+<p>特に母数が所与のもとでは、
+$$
+<div style="overflow-x:auto;">
+  
+\mathcal{D}(f;q) = \int_{-∞}^{∞}q(x)\log q(x) dx - \int_{-∞}^{∞}q(x)\log f(x | \theta) dx \tag{3}
+$$
+
+</div></p>
+<p>第2項は対数尤度$f(x|\theta)$を真の生成分布について期待値をとったものであり、<strong>平均対数尤度</strong>と呼ぶ。<br>
+情報量の算出理由が候補モデル間の比較である場合、第1項は共通であるから、第2項の平均対数尤度のみで比較すればよいことが分かる。<br>
+しかしこれも真のデータ生成分布が未知の場合は評価不能。そこで、将来得られるデータに対する予測の良さの観点から平均対数尤度を比較するため、平均対数尤度について確率変数$X$に関する期待値をとる。</p>
+<div style="overflow-x:auto;">
+  
+$$
+E_X\left[E_q\left[\right[\log f(x|\theta)]\right] \tag{4}
+$$
+
+</div>
+<p>これを<strong>期待平均対数尤度</strong>とよぶ。</p>
+<h3 id="22-aicの定義導出">2.2. AICの定義・導出</h3>
+<p>AIC(赤池情報量基準)は前節の期待平均対数尤度を近似することから導出されるものである。</p>
+<p>以下で定義される<strong>最大対数尤度</strong>
+<div style="overflow-x:auto;">
+  
+$$
+\log L_{max}(\boldsymbol{x} | \theta) = \sum_{n=1}^{N}\log f(x_{n}| \hat{\theta}) \tag{5}
+$$
+
+</div></p>
+<p>を用いて、期待平均対数尤度を</p>
+<div style="overflow-x:auto;">
+  
+$$
+E_X\left[E_q\left[\right[\log f(x|\theta)]\right] \approx \cfrac{\log L_{max}(\boldsymbol{x} | \theta)}{N} \tag{6}
+$$
+
+</div>
+<p>と近似する。さらに母数の数についてバイアス補正し、$-2N$倍することにより、下記AICが導出される。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>AIC</strong></legend>
+ 
+AICは下記式で定義される。
+$$
+-2\log L_{max}(\boldsymbol{x}|\hat{\theta}) + 2p \tag{7}
+$$
+ただし、$p$はモデル中の未制約母数の数。
+
+</fieldset><br>
+<br>
+AICの値が小さい程よいモデルであるとみなす。$(7)$式は対数尤度が高いモデルをなるべく少ない母数の数で達成しようとするものであるとみなすことが出来る。</p>
+<h3 id="23-aicの適用制限">2.3. AICの適用制限</h3>
+<p>AICは、以下の条件が満たされる場合のみに適用可能。らしい。</p>
+<ul>
+<li>$q(x) = f(x|\theta)$となる母数が存在する</li>
+<li>尤度関数（事後分布）が正規分布で近似可能</li>
+</ul>
+<p>そのため、多くのベイジアンモデルでは、事後分布が正規分布で近似できないため、AICを用いることが出来ない。代わりに交差検証法やWAICを用いる。</p>
+<h2 id="3-交差検証法">3. 交差検証法</h2>
+<h3 id="31-交差検証法">3.1. 交差検証法</h3>
+<p>モデル評価のもう一つの方法に<strong>交差検証法</strong>がある。交差検証法も将来得られるデータ$x^{*}$に対する平均対数尤度</p>
+<div style="overflow-x:auto;">
+  
+$$
+E_{q}\left[\log~f(x^{*}|\theta)\right] = \int_{-∞}^{∞}q(x^{ *})\log f(x^{ *} | \theta) dx \tag{8}
+$$
+
+</div>
+<p>の推定量を検証する。</p>
+<h3 id="32-loocv1個抜き交差検証法">3.2. LOOCV（1個抜き交差検証法）</h3>
+<p><strong>LOOCV</strong>(1個抜き交差検証法)では、テストデータとして$\boldsymbol{x}$のなかから$x_k$だけを用い、それ以外をトレーニングデータとして利用する、という手続きを$N$個の点に対して繰り返し適用し、モデル性能を評価する。</p>
+<h3 id="33-mcmc標本を用いたloocvの推定">3.3. MCMC標本を用いたLOOCVの推定</h3>
+<p>まずは一般の交差検証法について、MCMC標本を用いた推定方法を考える。</p>
+<p>$K$個のデータをテスト用のデータとして用いた状態で、それ以外をトレーニングデータとして推定した候補モデルを用いて、テストデータ$\boldsymbol{x}^{* }$に関する尤度を
+<div style="overflow-x:auto;">
+  
+$$
+f^{(-K)}(\boldsymbol{x}^{*}|\theta) \tag{9}
+$$
+
+</div>
+と表す。モデルは母数$\theta$を持っているので、母数事後分布$f(\theta)$が得られた状況下では、$(9)$式に関する対数予測密度</p>
+<div style="overflow-x:auto;">
+  
+$$
+lpd = \log \int_{-∞}^{∞} f^{(-K)}(\boldsymbol{x}^{*}|\theta) f(\theta) d\theta \tag{10}
+$$
+
+</div>
+<p>を評価できる。これは1組のトレーニングデータ・テストデータを用いてテストデータ$\boldsymbol{x}^{* }$に関する候補モデルの尤度の$f(\theta)$に対する期待値をとったものである。</p>
+<p>これをMCMC標本を用いて近似する場合には、</p>
+<div style="overflow-x:auto;">
+  
+$$
+lpd \approx \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(\boldsymbol{x}^{*} | \theta^{(t)})\right]^{(-K)} \tag{11}
+$$
+
+</div>
+<p>とすればよい。ここで$T$はMCMC標本の数、$\theta^{(t)}$は母数の1MCMC標本である。右上の$(-K)$は$K$個のデータをテストデータとして推定から除外した状態であることを意味する。</p>
+<p>LOOCVのときも同様にして、</p>
+<div style="overflow-x:auto;">
+  
+$$
+lpd_{loo} = \log \int_{-∞}^{∞} f^{(-k)}(x_{k}|\theta) f(\theta) d\theta \approx \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{k} | \theta^{(t)})\right]^{(-k)} \tag{12}
+$$
+
+</div>
+<p>を$(8)$式の推定量として計算できる。ここで右上の$(-k)$は$k$番目の標本をテストデータとして推定から除外した状態を意味する。</p>
+<p>あとはすべての$k$について$(12)$式を足し上げればよい。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>LOOCVによる平均対数尤度の推定量（対数点別予測密度）</strong></legend>
+ 
+LOOCVにおける候補モデルのデータに対する予測精度は、
+
+<div style="overflow-x:auto;">
+  
+$$
+lppd_{loo} \approx \sum_{k=1}^{N} \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{k} | \theta^{(t)})\right]^{(-k)} \tag{13}
+$$
+
+</div>
+
+で与えられる。これを対数点別予測密度という。
+
+</fieldset></p>
+<h1 id="4-waic">4. WAIC</h1>
+<p>WAIC(Widely Applicable Information Criterion)は、2010年に東京工業大学の渡辺先生が考案した情報量基準。
+LOOCVと同様に、将来得られるデータに対する平均対数尤度（$(8)$式）を推定することを目的とする。</p>
+<p>$(8)$式はデータ生成分布について期待値を取る必要があるが、今までと同様データ生成分布は未知であるから計算できない。今度はデータ生成分布を事後分布で近似することを考える。</p>
+<div style="overflow-x:auto;">
+  
+$$
+elppd = \sum_{i=1}^{N} E_{post}\left[\log f(x_i^{ *} | \theta)\right] \left( \approx E_{q}\left[\log~f(x^{ *}|\theta)\right] \right) \tag{14}
+$$
+
+</div>
+<p>$(14)$式の$elppd$は<strong>期待対数点別予測密度</strong>と呼ばれる。これをMCMCサンプルを用いて近似計算することを考える。</p>
+<p>まず、将来得られる1つのデータ$x_i$に対する予測精度の評価値$lpd$を以下の通り再定義する。</p>
+<div style="overflow-x:auto;">
+  
+$$
+lpd_{WAIC} = \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{i} | \theta^{(t)})\right] \left(\approx E_{post}\left[\log f(x_i|\theta)\right]  \right) \tag{15}
+$$
+
+</div>
+<p>これを$N$個すべてのデータ点で足し上げれば、$(14)$式のMCMCサンプルを用いた近似値$lppd_{WAIC}$（対数点別予測密度）を得ることができる。</p>
+<div style="overflow-x:auto;">
+  
+$$
+lppd_{WAIC} = \sum_{i=1}^{N} \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{i} | \theta^{(t)})\right] \left( \approx \sum_{i=1}^{N} E_{post}\left[\log f(x_i | \theta)\right] \right) \tag{16}
+$$
+
+</div>
+<p>ただし、$(16)$式からわかるように、将来得られるデータとして既に得られた標本を用いている為、学習データに箇条適合してしまっている。その修正項として以下の<strong>有効パラメータ</strong>と呼ばれる項をペナルティとして$(16)$式に考慮する。</p>
+<div style="overflow-x:auto;">
+  
+$$
+p_{WAIC} = \sum_{i=1}^{N} V_{post}\left[\log f(x_{i}|\theta)\right] \tag{17}
+$$
+
+</div>
+<p>以上を踏まえ、また式の形をAICに合わせることで、WAICは下記の通り定義される。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>WAIC</strong></legend>
+ 
+Waicは下記式で定義される。
+$$
+WAIC = -2\sum_{i=1}^{N} \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{i} | \theta^{(t)})\right] + 2\sum_{i=1}^{N} V_{post}\left[\log f(x_{i}|\theta)\right] \tag{18}
+$$
+
+</fieldset><br>
+<br>
+WAICは、事後分布が正規分布で近似できないような多くのベイジアンモデルにおいても適用可能な情報量基準量である。</p>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://rmorita-stat.github.io/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96">情報量基準</a></span>
+        
+        
+    </div>
+</div>
+<div class="disqus-comments">
+  <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-rmorita-stat-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計、ロードバイク、古墳が好きです。 </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://rmorita-stat.github.io/stat/regularization/regularization/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.12.29 00:00 </div>
+            <div class="pn-el__2"> 正則化（Ridge回帰とLasso回帰）について </div>
+        </div>
+    </a>
+    
+    
+</div>
+
+<footer>
+  <script type="text/javascript">
+ MathJax = {
+   tex: {
+     inlineMath: [['$','$'], ['\\(','\\)']],
+     processEscapes: true,
+     tags: "ams",
+     autoload: {
+       color: [],
+       colorV2: ['color']
+     },
+     packages: {'[+]': ['noerrors']}
+   },
+   chtml: {
+     matchFontHeight: true,
+     displayAlign: "left",
+     displayIndent: "2em"
+   },
+   options: {
+     skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+     renderActions: {
+        
+       find_script_mathtex: [10, function (doc) {
+         for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+           const display = !!node.type.match(/; *mode=display/);
+           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+           const text = document.createTextNode('');
+           node.parentNode.replaceChild(text, node);
+           math.start = {node: text, delim: '', n: 0};
+           math.end = {node: text, delim: '', n: 0};
+           doc.math.push(math);
+         }
+       }, '']
+     }
+   },
+   loader: {
+     load: ['[tex]/noerrors']
+   }
+ };
+</script>
+<script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2021
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+

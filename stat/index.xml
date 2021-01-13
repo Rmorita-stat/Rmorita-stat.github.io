@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Stats on SUCRE HECACHA</title>
+    <link>https://rmorita-stat.github.io/stat/</link>
+    <description>Recent content in Stats on SUCRE HECACHA</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Wed, 30 Dec 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://rmorita-stat.github.io/stat/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>モデル選択基準</title>
+      <link>https://rmorita-stat.github.io/stat/information-criterion/information-criterion/</link>
+      <pubDate>Wed, 30 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/stat/information-criterion/information-criterion/</guid>
+      <description>この記事について 情報量基準などのモデル選択基準について得た断片的な知識をまとめたい。自分の力では一生断片的な知識としかならないだろうが、ブロ</description>
+    </item>
+    
+    <item>
+      <title>正則化（Ridge回帰とLasso回帰）について</title>
+      <link>https://rmorita-stat.github.io/stat/regularization/regularization/</link>
+      <pubDate>Tue, 29 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/stat/regularization/regularization/</guid>
+      <description>はじめに 今回は、回帰分析において過学習を防いだり、多重共線性に対応したりするために使われるRidge回帰や、変数の数が標本数より多いような時</description>
+    </item>
+    
+    <item>
+      <title>ガウス過程の応用</title>
+      <link>https://rmorita-stat.github.io/stat/gaussianprocess2/gaussianprocess2/</link>
+      <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/stat/gaussianprocess2/gaussianprocess2/</guid>
+      <description>はじめに 前回の記事では、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、ガウス過程回帰について取</description>
+    </item>
+    
+    <item>
+      <title>ベイズ統計モデリング入門</title>
+      <link>https://rmorita-stat.github.io/stat/bayesintroduction/bayesintroduction/</link>
+      <pubDate>Fri, 29 May 2020 23:50:14 -0500</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/stat/bayesintroduction/bayesintroduction/</guid>
+      <description>はじめに 本記事では今後の記事でも頻繁に扱う予定のベイズ統計について理解してもらうため、その理論を簡単に説明します。 本記事の構成は以下の通りで</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,8 @@
+・確率モデルとしての解釈
+https://zenn.dev/wsuzume/books/66b6fe7bb537b3e2b4bb/viewer/e646d3
+
+・glmnetを使ったRでの実装
+https://toukei-lab.com/%E7%B7%9A%E5%BD%A2%E5%9B%9E%E5%B8%B0%E3%83%BBlasso%E3%83%BBridge%E3%82%92%E5%AE%9F%E8%A3%85%E3%81%97%E3%81%A6%E3%81%BF%E3%82%88%E3%81%86%EF%BC%81
+
+・ラッソ回帰の理論
+https://qiita.com/g-k/items/8b81e28ec3d1e6b8a62a

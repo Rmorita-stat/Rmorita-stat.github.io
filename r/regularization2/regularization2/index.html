@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="google-site-verification" content="qrt5G5NouQQVS-0Ss9qHlEuMYt3uKuifbUIOkPd4cPc" />
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/stat" >STAT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/r" >With R</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/julia" >With Julia</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2021.01.05 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">Bayesian RidgeとBayesian Lasso 通常の正則化回帰との比較</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <h1 id="はじめに">はじめに</h1>
+<p>今回は、<a href="https://rmorita-stat.github.io/2020/12/regularization/">以前の記事</a>で紹介したRidge回帰とLasso回帰をRのパッケージglmnetで試してみます。さらにRstanを用いてBayesian RigdeとBayesian Lasso を実装して、glmnetの結果との比較をしてみたいと思います。</p>
+<p>目次は以下のとおりです。</p>
+<!-- raw HTML omitted -->
+<ul>
+<li><a href="#%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB">はじめに</a></li>
+<li><a href="#glmnet%E3%82%92%E7%94%A8%E3%81%84%E3%81%9F%E6%AD%A3%E5%89%87%E5%8C%96%E5%9B%9E%E5%B8%B0">glmnetを用いた正則化回帰</a>
+<ul>
+<li><a href="#%E4%B8%8B%E6%BA%96%E5%82%99">下準備</a></li>
+<li><a href="#lasso%E5%9B%9E%E5%B8%B0">Lasso回帰</a></li>
+<li><a href="#ridge%E5%9B%9E%E5%B8%B0">Ridge回帰</a></li>
+</ul>
+</li>
+<li><a href="#rstan%E3%82%92%E7%94%A8%E3%81%84%E3%81%9F%E6%AD%A3%E5%89%87%E5%8C%96%E5%9B%9E%E5%B8%B0">rstanを用いた正則化回帰</a>
+<ul>
+<li><a href="#lasso%E5%9B%9E%E5%B8%B0-1">Lasso回帰</a>
+<ul>
+<li><a href="#%E5%AE%9F%E8%A3%85">実装</a></li>
+<li><a href="#%E7%B5%90%E6%9E%9C">結果</a></li>
+</ul>
+</li>
+<li><a href="#ridge%E5%9B%9E%E5%B8%B0-1">Ridge回帰</a>
+<ul>
+<li><a href="#%E5%AE%9F%E8%A3%85-1">実装</a></li>
+<li><a href="#%E7%B5%90%E6%9E%9C-1">結果</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E3%81%BE%E3%81%A8%E3%82%81">まとめ</a></li>
+</ul>
+<!-- raw HTML omitted -->
+<h1 id="glmnetを用いた正則化回帰">glmnetを用いた正則化回帰</h1>
+<p><a href="https://ultrabem-branch3.com/statistics/correlation/regression_ridge">こちらのサイト</a>を参考にglmnetを用いて正則化回帰をします。</p>
+<h2 id="下準備">下準備</h2>
+<p>まずはデータの準備を。<code>BostonHousing</code>にはボストンの住宅506件について、住宅の価格<code>medv</code>および13の変数が格納されています。ここでは、<code>medv</code>を13の変数で説明する回帰を考えます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">mlbench</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+<span class="nf">data</span><span class="p">(</span><span class="s">&#34;BostonHousing&#34;</span><span class="p">)</span>
+
+<span class="nf">head</span><span class="p">(</span><span class="n">BostonHousing</span><span class="p">)</span>
+
+<span class="c1">##      crim zn indus chas   nox    rm  age    dis rad tax ptratio      b lstat medv</span>
+<span class="c1">## 1 0.00632 18  2.31    0 0.538 6.575 65.2 4.0900   1 296    15.3 396.90  4.98 24.0</span>
+<span class="c1">## 2 0.02731  0  7.07    0 0.469 6.421 78.9 4.9671   2 242    17.8 396.90  9.14 21.6</span>
+<span class="c1">## 3 0.02729  0  7.07    0 0.469 7.185 61.1 4.9671   2 242    17.8 392.83  4.03 34.7</span>
+<span class="c1">## 4 0.03237  0  2.18    0 0.458 6.998 45.8 6.0622   3 222    18.7 394.63  2.94 33.4</span>
+<span class="c1">## 5 0.06905  0  2.18    0 0.458 7.147 54.2 6.0622   3 222    18.7 396.90  5.33 36.2</span>
+<span class="c1">## 6 0.02985  0  2.18    0 0.458 6.430 58.7 6.0622   3 222    18.7 394.12  5.21 28.7</span>
+
+<span class="n">predictors</span> <span class="o">=</span> <span class="n">BostonHousing</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="n">medv</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">data.matrix</span><span class="p">()</span>
+<span class="n">predictors_std</span> <span class="o">&lt;-</span> <span class="nf">scale</span><span class="p">(</span><span class="n">predictors</span><span class="p">)</span>
+<span class="n">response_variable</span> <span class="o">&lt;-</span>  <span class="n">BostonHousing</span><span class="o">$</span><span class="n">medv</span>
+<span class="n">response_variable_std</span> <span class="o">&lt;-</span> <span class="nf">scale</span><span class="p">(</span><span class="n">response_variable</span><span class="p">)</span>
+</code></pre></div><p>Rのパッケージlmを使って通常の線形回帰もしてみます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">res</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">response_variable_std</span> <span class="o">~</span> <span class="n">predictors_std</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+<span class="c1">## Call:</span>
+<span class="c1">##   lm(formula = response_variable_std ~ predictors_std)</span>
+<span class="c1">##</span>
+<span class="c1">## Residuals:</span>
+<span class="c1">##   Min       1Q   Median       3Q      Max</span>
+<span class="c1">## -1.69559 -0.29680 -0.05633  0.19322  2.84864</span>
+<span class="c1">##</span>
+<span class="c1">## Coefficients:</span>
+<span class="c1">##   Estimate Std. Error t value Pr(&gt;|t|)    </span>
+<span class="c1">## (Intercept)           -1.620e-16  2.294e-02   0.000 1.000000    </span>
+<span class="c1">## predictors_stdcrim    -1.010e-01  3.074e-02  -3.287 0.001087 **</span>
+<span class="c1">## predictors_stdzn       1.177e-01  3.481e-02   3.382 0.000778 ***</span>
+<span class="c1">## predictors_stdindus    1.534e-02  4.587e-02   0.334 0.738288    </span>
+<span class="c1">## predictors_stdchas     7.420e-02  2.379e-02   3.118 0.001925 **</span>
+<span class="c1">## predictors_stdnox     -2.238e-01  4.813e-02  -4.651 4.25e-06 ***</span>
+<span class="c1">## predictors_stdrm       2.911e-01  3.193e-02   9.116  &lt; 2e-16 ***</span>
+<span class="c1">## predictors_stdage      2.119e-03  4.043e-02   0.052 0.958229    </span>
+<span class="c1">## predictors_stddis     -3.378e-01  4.567e-02  -7.398 6.01e-13 ***</span>
+<span class="c1">## predictors_stdrad      2.897e-01  6.281e-02   4.613 5.07e-06 ***</span>
+<span class="c1">## predictors_stdtax     -2.260e-01  6.891e-02  -3.280 0.001112 **</span>
+<span class="c1">## predictors_stdptratio -2.243e-01  3.080e-02  -7.283 1.31e-12 ***</span>
+<span class="c1">## predictors_stdb        9.243e-02  2.666e-02   3.467 0.000573 ***</span>
+<span class="c1">## predictors_stdlstat   -4.074e-01  3.938e-02 -10.347  &lt; 2e-16 ***</span>
+<span class="c1">## ---</span>
+<span class="c1">## Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class="c1">##</span>
+<span class="c1">## Residual standard error: 0.516 on 492 degrees of freedom</span>
+<span class="c1">## Multiple R-squared:  0.7406,	Adjusted R-squared:  0.7338</span>
+<span class="c1">## F-statistic: 108.1 on 13 and 492 DF,  p-value: &lt; 2.2e-16</span>
+</code></pre></div><h2 id="lasso回帰">Lasso回帰</h2>
+<p><a href="https://rmorita-stat.github.io/2020/12/regularization/">以前の記事</a>と同様に記号を定義したとき、
+<code>glmnet::glmnet(alpha, lambda)</code>は下記式に基づいて係数パラメータ$\boldsymbol{w}$を最適化するようです<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。</p>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆glmnetにおけるパラメータの最適化方法</strong></legend>
+ 
+
+係数パラメータ$\boldsymbol{w}$の解は、
+
+$$
+\newcommand{\argmin}{\mathop{\rm arg~min}\limits}
+\argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\cfrac{1}{2N} \left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \lambda P_{\alpha}(\boldsymbol{w}_{-0})\right] \tag{1}
+$$
+
+ここで、
+
+$$
+P_{\alpha}(\boldsymbol{w}) = (1-\alpha)\cfrac{1}{2}||\boldsymbol{w}||_2^2 + \alpha||\boldsymbol{w}_{-0}||_1^1 \tag{2}
+$$
+
+$$
+\boldsymbol{w}_{-0} = (w_1,\ldots, w_H)^T \tag{3}
+$$
+
+である。
+
+
+</fieldset>
+<p><code>glmnet::glmnet(alpha=1)</code>で$(2)$式が$P_{\alpha}(\boldsymbol{w}) = ||\boldsymbol{w}||_1^1$となることにより、Lasso回帰をすることができます。引数の<code>lambda</code>は$\boldsymbol{w}$が大きくなることによるペナルティ$P_\alpha(\boldsymbol{w})$の重みになり、大きくなるほど係数パラメータは小さくなる傾向にあります。<code>lambda</code>の値は交差検証法を行う<code>glmet::cv.glmet()</code>で<code>nfolds=nrow(BostonHousing)</code>とすることにより1個抜き交差検証法を行い決定します。</p>
+<p>簡単にRスクリプトと結果だけ。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r">
+<span class="nf">library</span><span class="p">(</span><span class="n">glmnet</span><span class="p">)</span>
+<span class="n">lambdas</span> <span class="o">&lt;-</span> <span class="m">10</span><span class="nf">^seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">-3</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="m">-.1</span><span class="p">)</span>
+<span class="c1"># alpha=1でLasso回帰</span>
+<span class="n">fit_std</span> <span class="o">&lt;-</span> <span class="nf">glmnet</span><span class="p">(</span><span class="n">predictors_std</span><span class="p">,</span> <span class="n">response_variable_std</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">lambda</span> <span class="o">=</span> <span class="n">lambdas</span><span class="p">)</span>
+<span class="n">lambda_calc</span> <span class="o">&lt;-</span> <span class="nf">cv.glmnet</span><span class="p">(</span><span class="n">predictors_std</span><span class="p">,</span> <span class="n">response_variable_std</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">lambda</span> <span class="o">=</span> <span class="n">lambdas</span><span class="p">,</span> <span class="n">nfolds</span> <span class="o">=</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">BostonHousing</span><span class="p">),</span> <span class="n">grouped</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">optlambda</span> <span class="o">&lt;-</span> <span class="n">lambda_calc</span><span class="o">$</span><span class="n">lambda.min</span>
+<span class="nf">log</span><span class="p">(</span><span class="n">optlambda</span><span class="p">)</span>
+
+<span class="c1">## [1] -6.21698 Lasso回帰の結果</span>
+
+<span class="nf">coef</span><span class="p">(</span><span class="n">fit_std</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">optlambda</span><span class="p">)</span>
+
+<span class="c1">## Lassoの結果</span>
+<span class="c1">## 14 x 1 sparse Matrix of class &#34;dgCMatrix&#34;</span>
+<span class="c1">## 1</span>
+<span class="c1">## (Intercept) -8.076217e-16</span>
+<span class="c1">## crim        -9.513801e-02</span>
+<span class="c1">## zn           1.089273e-01</span>
+<span class="c1">## indus        .           </span>
+<span class="c1">## chas         7.448868e-02</span>
+<span class="c1">## nox         -2.100694e-01</span>
+<span class="c1">## rm           2.937399e-01</span>
+<span class="c1">## age          .           </span>
+<span class="c1">## dis         -3.272420e-01</span>
+<span class="c1">## rad          2.541077e-01</span>
+<span class="c1">## tax         -1.920829e-01</span>
+<span class="c1">## ptratio     -2.202126e-01</span>
+<span class="c1">## b            9.048729e-02</span>
+<span class="c1">## lstat       -4.057165e-01</span>
+
+<span class="c1"># 結果の描画 -------------------------------------------------------------------</span>
+
+<span class="n">res_lm</span> <span class="o">&lt;-</span> <span class="n">res</span><span class="o">$</span><span class="n">coefficients</span> <span class="o">%&gt;%</span> <span class="nf">as.data.frame</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="nf">cbind</span><span class="p">(</span><span class="n">variable</span> <span class="o">=</span> <span class="nf">rownames</span><span class="p">(</span><span class="n">.)</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">variable</span> <span class="o">=</span> <span class="nf">str_replace</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="n">pattern</span> <span class="o">=</span> <span class="s">&#34;predictors_std&#34;</span><span class="p">,</span> <span class="n">replacement</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">rename</span><span class="p">(</span><span class="s">&#34;value&#34;</span> <span class="o">=</span> <span class="s">&#34;.&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">filter</span><span class="p">(</span><span class="n">variable</span> <span class="o">!=</span> <span class="s">&#34;(Intercept)&#34;</span><span class="p">)</span>
+
+<span class="nf">names</span><span class="p">(</span><span class="n">lambdas</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">paste0</span><span class="p">(</span><span class="s">&#34;s&#34;</span><span class="p">,</span><span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">40</span><span class="p">))</span>
+<span class="n">res_lasso</span> <span class="o">&lt;-</span> <span class="nf">as.matrix</span><span class="p">(</span><span class="n">fit_std</span><span class="o">$</span><span class="n">beta</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">as.data.frame</span><span class="p">()</span><span class="o">%&gt;%</span> <span class="nf">cbind</span><span class="p">(</span><span class="n">variable</span> <span class="o">=</span> <span class="nf">rownames</span><span class="p">(</span><span class="n">.)</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">pivot_longer</span><span class="p">(</span><span class="n">cols</span><span class="o">=-</span><span class="n">variable</span> <span class="p">,</span> <span class="n">names_to</span> <span class="o">=</span> <span class="s">&#34;x&#34;</span><span class="p">,</span> <span class="n">values_to</span><span class="o">=</span><span class="s">&#34;value&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">lambda</span> <span class="o">=</span> <span class="n">lambdas[x]</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">NULL</span><span class="p">)</span>
+
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">res_lasso</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">log</span><span class="p">(</span><span class="n">lambda</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="n">variable</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">variable</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">geom_line</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&#34;Log Lambda&#34;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span> <span class="s">&#34;Coefficients&#34;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&#34;Lasso regression&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_hline</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_lm</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">yintercept</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">variable</span><span class="p">),</span> <span class="n">linetype</span><span class="o">=</span><span class="s">&#34;dashed&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_vline</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">xintercept</span> <span class="o">=</span> <span class="nf">log</span><span class="p">(</span><span class="n">optlambda</span><span class="p">)),</span> <span class="n">linetype</span><span class="o">=</span><span class="s">&#34;dashed&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_text</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">log</span><span class="p">(</span><span class="n">optlambda</span><span class="p">)</span><span class="m">+1.2</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="m">-0.45</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;log(lambda) = %.2f&#34;</span><span class="p">,</span> <span class="nf">log</span><span class="p">(</span><span class="n">optlambda</span><span class="p">))),</span> <span class="n">color</span><span class="o">=</span><span class="s">&#34;black&#34;</span><span class="p">)</span>
+
+</code></pre></div><p>結果の図には13の変数に対する標準化偏回帰係数が$(1)$式の$\lambda$の変化とともにどのような値をとるかを示しています。また点線で通常の回帰分析における標準化偏回帰係数も示しています。
+$\lambda$が大きくなるにつれて各回帰係数の値が小さくなる傾向が分かります。特に変数<code>indus</code>と<code>age</code>の係数パラメータははやいうちから0となっており、変数の選択が行われていることが分かります。
+<img src="/post/regularization2/Lasso_res.png" alt=""></p>
+<h2 id="ridge回帰">Ridge回帰</h2>
+<p>Lasso回帰のときとほぼ同様ですが、<code>glmnet::glmnet(alpha=0)</code>で$(2)$式が$P_{\alpha}(\boldsymbol{w}) = \cfrac{1}{2} ||\boldsymbol{w}||_2^2$となることにより、Ridge回帰をすることができます。</p>
+<p>同様にして…</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># alpha=0でRidge回帰</span>
+<span class="n">fit_std</span> <span class="o">&lt;-</span> <span class="nf">glmnet</span><span class="p">(</span><span class="n">predictors_std</span><span class="p">,</span> <span class="n">response_variable_std</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span> <span class="n">lambda</span> <span class="o">=</span> <span class="n">lambdas</span><span class="p">)</span> <span class="c1"># Ridge</span>
+<span class="n">lambda_calc</span> <span class="o">&lt;-</span> <span class="nf">cv.glmnet</span><span class="p">(</span><span class="n">predictors_std</span><span class="p">,</span> <span class="n">response_variable_std</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span> <span class="n">lambda</span> <span class="o">=</span> <span class="n">lambdas</span><span class="p">,</span><span class="n">nfolds</span> <span class="o">=</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">BostonHousing</span><span class="p">),</span> <span class="n">grouped</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
+
+<span class="c1">## ～（略）～</span>
+
+<span class="nf">log</span><span class="p">(</span><span class="n">optlambda</span><span class="p">)</span>
+
+<span class="c1">## [1] -4.60517 Ridge回帰の結果</span>
+
+<span class="nf">coef</span><span class="p">(</span><span class="n">fit_std</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">optlambda</span><span class="p">)</span>
+
+<span class="c1">## Ridgeの結果</span>
+<span class="c1">## 14 x 1 sparse Matrix of class &#34;dgCMatrix&#34;</span>
+<span class="c1">## 1</span>
+<span class="c1">## (Intercept) -8.075655e-16</span>
+<span class="c1">## crim        -9.662095e-02</span>
+<span class="c1">## zn           1.100420e-01</span>
+<span class="c1">## indus        3.501806e-03</span>
+<span class="c1">## chas         7.587874e-02</span>
+<span class="c1">## nox         -2.090907e-01</span>
+<span class="c1">## rm           2.953197e-01</span>
+<span class="c1">## age         -1.009341e-03</span>
+<span class="c1">## dis         -3.236125e-01</span>
+<span class="c1">## rad          2.537157e-01</span>
+<span class="c1">## tax         -1.929854e-01</span>
+<span class="c1">## ptratio     -2.198235e-01</span>
+<span class="c1">## b            9.215636e-02</span>
+<span class="c1">## lstat       -4.006555e-01</span>
+</code></pre></div><p>結果の図からはLasso回帰と同様、$\lambda$が大きくなるほどに各係数の値が小さくなる傾向が見てとれます。また0に近づく推移傾向はLasso回帰より緩やかであることも分かります。
+<img src="/post/regularization2/Ridge_res.png" alt=""></p>
+<h1 id="rstanを用いた正則化回帰">rstanを用いた正則化回帰</h1>
+<p><a href="https://rmorita-stat.github.io/2020/12/regularization/">以前の記事</a>後半を参考に、rstanを用いて今までの正則化回帰と同様の分析を再現します。</p>
+<h2 id="lasso回帰-1">Lasso回帰</h2>
+<p>lambdaの計算だけ注意が必要です。
+$(4)$式左辺は以前の記事の$(12)$式の証明より、右辺は$(2)$式よりきています。</p>
+<p><div style="overflow-x:auto;">
+  
+$$
+\newcommand{\argmin}{\mathop{\rm arg~min}\limits}
+\argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \cfrac{2\sigma^2}{b}||\boldsymbol{w}_{-0}||_1^1\right] =
+\argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\cfrac{1}{2N} \left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \lambda P_{\alpha}(\boldsymbol{w}_{-0})\right] \tag{4}
+$$
+
+</div>
+<div style="overflow-x:auto;">
+  
+$$
+\newcommand{\argmin}{\mathop{\rm arg~min}\limits}
+\argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \cfrac{2\sigma^2}{b}||\boldsymbol{w}_{-0}||_1^1\right] =
+\argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\cfrac{1}{2N} \left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \lambda ||\boldsymbol{w}_{-0}||_1^1\right] \tag{5}
+$$
+
+</div>
+<div style="overflow-x:auto;">
+  
+$$
+2N\lambda = \cfrac{2\sigma^2}{b} \tag{6}
+$$
+
+</div>
+<div style="overflow-x:auto;">
+  
+$$
+\therefore ~ \lambda = \cfrac{\sigma^2}{Nb} \tag{7}
+$$
+
+</div></p>
+<h3 id="実装">実装</h3>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//model_lasso.stan
+</span><span class="c1"></span><span class="n">data</span><span class="p">{</span>
+  <span class="kt">int</span> <span class="n">N</span><span class="p">;</span> <span class="c1">//標本数
+</span><span class="c1"></span>  <span class="kt">int</span> <span class="n">H</span><span class="p">;</span> <span class="c1">//説明変数の数(切片を除く)
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">y</span><span class="p">;</span> <span class="c1">//目的変数 標準化済み
+</span><span class="c1"></span>  <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">H</span><span class="p">]</span> <span class="n">x</span><span class="p">;</span> <span class="c1">// 説明変数 標準化済み
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">parameters</span><span class="p">{</span>
+  <span class="n">real</span> <span class="n">w_0</span><span class="p">;</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">H</span><span class="p">]</span> <span class="n">w</span><span class="p">;</span> <span class="c1">//係数パラメータ
+</span><span class="c1"></span>  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">sigma</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">transformed</span> <span class="n">parameters</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">mu</span><span class="p">;</span>
+
+  <span class="n">mu</span> <span class="o">=</span> <span class="n">w_0</span> <span class="o">+</span> <span class="n">x</span> <span class="o">*</span> <span class="n">w</span><span class="p">;</span>
+
+<span class="p">}</span>
+
+<span class="n">model</span><span class="p">{</span>
+
+  <span class="n">y</span> <span class="o">~</span> <span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">);</span>
+  <span class="n">w</span> <span class="o">~</span> <span class="n">double_exponential</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+
+<span class="p">}</span>
+
+<span class="n">generated</span> <span class="n">quantities</span><span class="p">{</span>
+  <span class="n">real</span> <span class="n">log_lambda</span><span class="p">;</span>
+
+  <span class="n">log_lambda</span> <span class="o">=</span> <span class="n">log</span><span class="p">(</span><span class="n">sigma</span><span class="o">^</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">N</span> <span class="o">*</span> <span class="n">b</span><span class="p">));</span> <span class="c1">//(7)式
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><h3 id="結果">結果</h3>
+<p>以下で上記Stanファイルを走らせます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="nf">nrow</span><span class="p">(</span><span class="n">BostonHousing</span><span class="p">),</span> <span class="n">H</span><span class="o">=</span><span class="nf">ncol</span><span class="p">(</span><span class="n">predictors_std</span><span class="p">),</span> <span class="n">y</span><span class="o">=</span><span class="nf">as.vector</span><span class="p">(</span><span class="n">response_variable_std</span><span class="p">),</span> <span class="n">x</span><span class="o">=</span><span class="n">predictors_std</span><span class="p">)</span>
+<span class="n">stanmodel_lasso</span> <span class="o">&lt;-</span> <span class="nf">stan_model</span><span class="p">(</span><span class="s">&#34;model_lasso.stan&#34;</span><span class="p">)</span>
+<span class="nf">rstan_options</span><span class="p">(</span><span class="n">auto_write</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+<span class="nf">options</span><span class="p">(</span><span class="n">mc.cores</span> <span class="o">=</span> <span class="n">parallel</span><span class="o">::</span><span class="nf">detectCores</span><span class="p">())</span>
+<span class="n">fit_lasso</span> <span class="o">&lt;-</span> <span class="nf">sampling</span><span class="p">(</span><span class="n">stanmodel_lasso</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">iter</span><span class="o">=</span><span class="m">2500</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="m">500</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="m">4</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="n">fit_lasso</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;w_0&#34;</span><span class="p">,</span><span class="s">&#34;w&#34;</span><span class="p">,</span><span class="s">&#34;log_lambda&#34;</span><span class="p">))</span>
+
+<span class="c1">## Inference for Stan model: model_lasso.</span>
+<span class="c1">## 4 chains, each with iter=2500; warmup=500; thin=1;</span>
+<span class="c1">## post-warmup draws per chain=2000, total post-warmup draws=8000.</span>
+<span class="c1">##</span>
+<span class="c1">## mean se_mean   sd  2.5%   25%   50%   75% 97.5% n_eff Rhat</span>
+<span class="c1">## w_0         0.00       0 0.02 -0.05 -0.02  0.00  0.02  0.04  8915    1</span>
+<span class="c1">## w[1]       -0.09       0 0.03 -0.15 -0.11 -0.09 -0.07 -0.03  9311    1</span>
+<span class="c1">## w[2]        0.11       0 0.03  0.04  0.08  0.11  0.13  0.17  7094    1</span>
+<span class="c1">## w[3]        0.00       0 0.04 -0.08 -0.03  0.00  0.03  0.08  7595    1</span>
+<span class="c1">## w[4]        0.07       0 0.02  0.03  0.06  0.07  0.09  0.12  8469    1</span>
+<span class="c1">## w[5]       -0.21       0 0.05 -0.30 -0.24 -0.21 -0.17 -0.11  6364    1</span>
+<span class="c1">## w[6]        0.30       0 0.03  0.23  0.27  0.30  0.32  0.36  6917    1</span>
+<span class="c1">## w[7]        0.00       0 0.04 -0.07 -0.03  0.00  0.02  0.08  8055    1</span>
+<span class="c1">## w[8]       -0.32       0 0.05 -0.41 -0.35 -0.32 -0.29 -0.23  7513    1</span>
+<span class="c1">## w[9]        0.24       0 0.06  0.12  0.20  0.24  0.29  0.37  5429    1</span>
+<span class="c1">## w[10]      -0.18       0 0.07 -0.32 -0.23 -0.18 -0.14 -0.05  5855    1</span>
+<span class="c1">## w[11]      -0.22       0 0.03 -0.28 -0.24 -0.22 -0.20 -0.16  7772    1</span>
+<span class="c1">## w[12]       0.09       0 0.03  0.04  0.07  0.09  0.11  0.14  8959    1</span>
+<span class="c1">## w[13]      -0.40       0 0.04 -0.48 -0.43 -0.40 -0.38 -0.33  7017    1</span>
+<span class="c1">## log_lambda -5.93       0 0.31 -6.57 -6.14 -5.92 -5.71 -5.36  7056    1</span>
+</code></pre></div><p>係数パラメータの事後分布は<code>glmnet()</code>による結果と概ね整合しているようです。ただし、<code>glmnet()</code>によるLassoでは一部の係数パラメータが0となり、変数選択が可能であったのに対し、Bayesian Lassoでは中央値0付近の事後分布が得られるので、変数選択は難しくなります。
+<img src="/post/regularization2/res_plot_lasso.png" alt=""></p>
+<p>$\lambda$を係数パラメータとともに最適化できることがBayesian Lassoの強みかもしれません。<code>glmnet()</code>では$\lambda$をいくつか指定して交差検証により比較するしか方法が無かったので…
+<img src="/post/regularization2/res_loglambda_lasso.png" alt=""></p>
+<p>結果の描画のためのRスクリプトは以下になります。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">bayesplot</span><span class="p">)</span>
+
+<span class="c1"># 係数パラメータの事後分布の描画(lasso) ---------------------------------------------------------</span>
+
+<span class="n">w_id</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="nf">colnames</span><span class="p">(</span><span class="n">predictors</span><span class="p">))</span>
+<span class="nf">names</span><span class="p">(</span><span class="n">w_id</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;w[%.0f]&#34;</span><span class="p">,</span> <span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">13</span><span class="p">,</span><span class="n">by</span><span class="o">=</span><span class="m">1</span><span class="p">)))</span>
+<span class="n">posterior</span> <span class="o">&lt;-</span> <span class="nf">as.matrix</span><span class="p">(</span><span class="n">fit_lasso</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">as.data.frame</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="nf">starts_with</span><span class="p">(</span><span class="s">&#34;w[&#34;</span><span class="p">))</span>
+<span class="nf">colnames</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">w_id</span><span class="nf">[colnames</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span><span class="n">]</span>
+
+<span class="n">par_median</span> <span class="o">&lt;-</span> <span class="n">posterior</span> <span class="o">%&gt;%</span> <span class="nf">summarise_all</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">median</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="nf">summarise_all</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">round</span><span class="p">),</span><span class="n">digits</span><span class="o">=</span><span class="m">3</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="nf">everything</span><span class="p">())</span>
+
+
+<span class="n">plot_title</span> <span class="o">&lt;-</span> <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;Posterior distributions(coefficients of Ridge regression)&#34;</span><span class="p">,</span>
+                      <span class="s">&#34;with medians and 80% intervals&#34;</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">mcmc_areas</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span>
+           <span class="n">prob</span> <span class="o">=</span> <span class="m">0.8</span><span class="p">)</span> <span class="o">+</span> <span class="n">plot_title</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_text</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">par_median</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">value</span><span class="p">),</span> <span class="n">nudge_y</span> <span class="o">=</span> <span class="m">-0.25</span><span class="p">)</span>
+
+<span class="c1"># lambdaの事後分布の描画(lasso) ----------------------------------------------------------</span>
+
+<span class="n">posterior</span> <span class="o">&lt;-</span> <span class="nf">as.matrix</span><span class="p">(</span><span class="n">fit_lasso</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">as.data.frame</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="n">log_lambda</span><span class="p">)</span>
+
+<span class="n">par_median</span> <span class="o">&lt;-</span> <span class="n">posterior</span> <span class="o">%&gt;%</span> <span class="nf">summarise_all</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">median</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="nf">summarise_all</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">round</span><span class="p">),</span><span class="n">digits</span><span class="o">=</span><span class="m">3</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="nf">everything</span><span class="p">())</span>
+
+<span class="n">plot_title</span> <span class="o">&lt;-</span> <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;Posterior distributions(lambda of lasso regression)&#34;</span><span class="p">,</span>
+                        <span class="s">&#34;with medians and 80% intervals&#34;</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">mcmc_areas</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span>
+                <span class="n">prob</span> <span class="o">=</span> <span class="m">0.8</span><span class="p">)</span> <span class="o">+</span> <span class="n">plot_title</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">8</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_text</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">par_median</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">value</span><span class="p">),</span> <span class="n">nudge_y</span> <span class="o">=</span> <span class="m">-0.04</span><span class="p">)</span>
+
+</code></pre></div><h2 id="ridge回帰-1">Ridge回帰</h2>
+<p>lambdaの計算方法は下記の通りです。
+$(8)$式左辺は以前の記事の$(11)$式の証明より、右辺は$(2)$式よりきています。</p>
+<p><div style="overflow-x:auto;">
+  
+$$
+\newcommand{\argmin}{\mathop{\rm arg~min}\limits}
+\argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \rho\sigma^2||\boldsymbol{w}_{-0}||_1^1\right] =
+\argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\cfrac{1}{2N} \left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \lambda P_{\alpha}(\boldsymbol{w}_{-0})\right] \tag{8}
+$$
+
+</div>
+<div style="overflow-x:auto;">
+  
+$$
+\newcommand{\argmin}{\mathop{\rm arg~min}\limits}
+\argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \rho\sigma^2||\boldsymbol{w}_{-0}||_1^1\right] =
+\argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\cfrac{1}{2N} \left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \cfrac{1}{2}\lambda ||\boldsymbol{w}_{-0}||_1^1\right] \tag{9}
+$$
+
+</div>
+<div style="overflow-x:auto;">
+  
+$$
+N\lambda = \rho\sigma^2 \tag{10}
+$$
+
+</div>
+<div style="overflow-x:auto;">
+  
+$$
+\therefore ~ \lambda = \cfrac{\rho\sigma^2}{N} \tag{11}
+$$
+
+</div></p>
+<h3 id="実装-1">実装</h3>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="c1">//model_ridge.stan
+</span><span class="c1"></span><span class="n">data</span><span class="p">{</span>
+  <span class="kt">int</span> <span class="n">N</span><span class="p">;</span> <span class="c1">//標本数
+</span><span class="c1"></span>  <span class="kt">int</span> <span class="n">H</span><span class="p">;</span> <span class="c1">//説明変数の数(切片を除く)
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">y</span><span class="p">;</span> <span class="c1">//目的変数 標準化済み
+</span><span class="c1"></span>  <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span><span class="n">H</span><span class="p">]</span> <span class="n">x</span><span class="p">;</span> <span class="c1">// 説明変数 標準化済み
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">parameters</span><span class="p">{</span>
+  <span class="n">real</span> <span class="n">w_0</span><span class="p">;</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">H</span><span class="p">]</span> <span class="n">w</span><span class="p">;</span> <span class="c1">//係数パラメータ
+</span><span class="c1"></span>  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">sigma</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">rho</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">transformed</span> <span class="n">parameters</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">mu</span><span class="p">;</span>
+
+  <span class="n">mu</span> <span class="o">=</span> <span class="n">w_0</span> <span class="o">+</span> <span class="n">x</span> <span class="o">*</span> <span class="n">w</span><span class="p">;</span>
+
+<span class="p">}</span>
+
+<span class="n">model</span><span class="p">{</span>
+
+  <span class="n">y</span> <span class="o">~</span> <span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">);</span>
+  <span class="n">w</span> <span class="o">~</span> <span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">rho</span><span class="p">)));</span>
+
+<span class="p">}</span>
+
+<span class="n">generated</span> <span class="n">quantities</span><span class="p">{</span>
+  <span class="n">real</span> <span class="n">log_lambda</span><span class="p">;</span>
+
+  <span class="n">log_lambda</span> <span class="o">=</span> <span class="n">log</span><span class="p">(</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">^</span><span class="mi">2</span> <span class="o">/</span> <span class="n">N</span> <span class="p">);</span> <span class="c1">//(11)式
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></div><h3 id="結果-1">結果</h3>
+<p>以下で上記Stanファイルを走らせます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">stanmodel_ridge</span> <span class="o">&lt;-</span> <span class="nf">stan_model</span><span class="p">(</span><span class="s">&#34;model_ridge.stan&#34;</span><span class="p">)</span>
+<span class="nf">rstan_options</span><span class="p">(</span><span class="n">auto_write</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+<span class="nf">options</span><span class="p">(</span><span class="n">mc.cores</span> <span class="o">=</span> <span class="n">parallel</span><span class="o">::</span><span class="nf">detectCores</span><span class="p">())</span>
+<span class="n">fit_ridge</span> <span class="o">&lt;-</span> <span class="nf">sampling</span><span class="p">(</span><span class="n">stanmodel_ridge</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">iter</span><span class="o">=</span><span class="m">2500</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="m">500</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="m">4</span><span class="p">)</span>
+
+<span class="nf">print</span><span class="p">(</span><span class="n">fit_ridge</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;w_0&#34;</span><span class="p">,</span><span class="s">&#34;w&#34;</span><span class="p">,</span><span class="s">&#34;log_lambda&#34;</span><span class="p">))</span>
+
+<span class="c1">## Inference for Stan model: model_ridge.</span>
+<span class="c1">## 4 chains, each with iter=2500; warmup=500; thin=1;</span>
+<span class="c1">## post-warmup draws per chain=2000, total post-warmup draws=8000.</span>
+<span class="c1">##</span>
+<span class="c1">## mean se_mean   sd  2.5%   25%   50%   75% 97.5% n_eff Rhat</span>
+<span class="c1">## w_0         0.00       0 0.02 -0.04 -0.02  0.00  0.02  0.04  9413    1</span>
+<span class="c1">## w[1]       -0.10       0 0.03 -0.15 -0.12 -0.10 -0.07 -0.03  9737    1</span>
+<span class="c1">## w[2]        0.11       0 0.03  0.04  0.09  0.11  0.13  0.17  6719    1</span>
+<span class="c1">## w[3]        0.00       0 0.04 -0.08 -0.03  0.00  0.03  0.09  7186    1</span>
+<span class="c1">## w[4]        0.08       0 0.02  0.03  0.06  0.08  0.09  0.12  8970    1</span>
+<span class="c1">## w[5]       -0.21       0 0.05 -0.30 -0.24 -0.21 -0.17 -0.11  6529    1</span>
+<span class="c1">## w[6]        0.30       0 0.03  0.23  0.28  0.30  0.32  0.36  6418    1</span>
+<span class="c1">## w[7]        0.00       0 0.04 -0.08 -0.03  0.00  0.02  0.08  7222    1</span>
+<span class="c1">## w[8]       -0.32       0 0.04 -0.41 -0.35 -0.32 -0.29 -0.23  5893    1</span>
+<span class="c1">## w[9]        0.25       0 0.06  0.13  0.21  0.25  0.29  0.36  5012    1</span>
+<span class="c1">## w[10]      -0.19       0 0.06 -0.31 -0.23 -0.19 -0.14 -0.06  5198    1</span>
+<span class="c1">## w[11]      -0.22       0 0.03 -0.28 -0.24 -0.22 -0.20 -0.16  7225    1</span>
+<span class="c1">## w[12]       0.09       0 0.03  0.04  0.07  0.09  0.11  0.14  7857    1</span>
+<span class="c1">## w[13]      -0.40       0 0.04 -0.47 -0.43 -0.40 -0.37 -0.32  6705    1</span>
+<span class="c1">## log_lambda -4.38       0 0.41 -5.23 -4.64 -4.36 -4.09 -3.65  7454    1</span>
+</code></pre></div><p>係数パラメータの事後分布は<code>glmnet()</code>による結果と概ね整合しているようです。
+<img src="/post/regularization2/res_plot_ridge.png" alt=""></p>
+<p>$\lambda$の事後分布は以下のとおりになりました。
+<img src="/post/regularization2/res_loglambda_ridge.png" alt=""></p>
+<h1 id="まとめ">まとめ</h1>
+<p>損失関数に係数パラメータのノルム分ペナルティを加えることによる通常の正則化回帰と、Bayesian正則化回帰の整合性を実験により確認することができました。まあまあ楽しかったです。</p>
+<p>実用上の観点から両者を比較すると、通常の正則化回帰は（特にLasso回帰の場合）係数パラメータが0に収束することを用いた変数選択が可能であることが強みです。一方Bayesian正則化回帰では、係数パラメータとともに、係数パラメータのノルム分ペナルティの重み$\lambda$を事後分布の形で最適化できることが強みになるのかなと思います。あとはrstanを用いるので当然様々なモデルへの応用・拡張がきくことも強みです。</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://rmorita-stat.github.io/2020/12/regularization/">以前の記事</a>$(7)$$(8)$式は切片パラメータ$w_0$のノルム分のペナルティも課していましたが、$w_0$は$(2)$$(3)$式のようにペナルティの項から外すのが普通？切片は大きくなっても過学習とは関係ないし… <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0">回帰</a></span>
+        
+        <span><a href="https://rmorita-stat.github.io/tags/rstan">rstan</a></span>
+        
+        
+    </div>
+</div>
+<div class="disqus-comments">
+  <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-rmorita-stat-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計、ロードバイク、古墳が好きです。 </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://rmorita-stat.github.io/r/tokyo-meshdata/modeling/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.12.24 00:00 </div>
+            <div class="pn-el__2"> Soft K-means法とガウス過程 </div>
+        </div>
+    </a>
+    
+    
+</div>
+
+<footer>
+  <script type="text/javascript">
+ MathJax = {
+   tex: {
+     inlineMath: [['$','$'], ['\\(','\\)']],
+     processEscapes: true,
+     tags: "ams",
+     autoload: {
+       color: [],
+       colorV2: ['color']
+     },
+     packages: {'[+]': ['noerrors']}
+   },
+   chtml: {
+     matchFontHeight: true,
+     displayAlign: "left",
+     displayIndent: "2em"
+   },
+   options: {
+     skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+     renderActions: {
+        
+       find_script_mathtex: [10, function (doc) {
+         for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+           const display = !!node.type.match(/; *mode=display/);
+           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+           const text = document.createTextNode('');
+           node.parentNode.replaceChild(text, node);
+           math.start = {node: text, delim: '', n: 0};
+           math.end = {node: text, delim: '', n: 0};
+           doc.math.push(math);
+         }
+       }, '']
+     }
+   },
+   loader: {
+     load: ['[tex]/noerrors']
+   }
+ };
+</script>
+<script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2021
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
