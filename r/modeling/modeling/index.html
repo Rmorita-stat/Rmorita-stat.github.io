@@ -99,7 +99,7 @@
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">GGally</span><span class="p">)</span>
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="n">GGally</span><span class="o">::</span><span class="nf">ggpairs</span><span class="p">(</span><span class="n">iris</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">colour</span><span class="o">=</span><span class="n">Species</span><span class="p">))</span>
 <span class="n">p</span>
-</code></pre></div><p><img src="/post/modeling/unnamed-chunk-1-1.png" alt=""></p>
+</code></pre></div><p><img src="/r/modeling/unnamed-chunk-1-1.png" alt=""></p>
 <p>結果を見ると、花びらの長さ（Peral.Length）と幅（Petal.Width）には強い正の相関（0.963）があることが分かります。他にも様々な関係性が確認できますが、以降では花びらの長さを説明するためのモデルを構築していきます。</p>
 <h2 id="モデル1">モデル1</h2>
 <p>はじめは最も単純なモデルから。まずは花びらの幅のみで花びらの長さを説明する式です。</p>
@@ -129,7 +129,7 @@ $$</p>
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">()</span><span class="o">+</span>
   <span class="nf">geom_line</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">))</span> <span class="o">+</span> <span class="nf">xlab</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span> <span class="o">+</span> <span class="nf">ylab</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span>
 <span class="n">p</span>
-</code></pre></div><p><img src="/post/modeling/unnamed-chunk-1-0.png" alt=""></p>
+</code></pre></div><p><img src="/r/modeling/unnamed-chunk-1-0.png" alt=""></p>
 <p>このように、正規分布は左右対称であり、平均と標準偏差自体がパラメータとなる使いやすい分布であるため、様々な統計解析に活用されます。最もよく用いられるのは、今回の例のように連続型変数の誤差の分布を仮定するときではないだろうか？</p>
 <p><code>glm()</code>を用いてこのモデルのパラメータを推測した結果が以下になります。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">ggeffects</span><span class="p">)</span>
@@ -166,7 +166,7 @@ $$</p>
   <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">iris</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Petal.Width</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Petal.Length</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">predicted</span><span class="p">))</span> <span class="o">+</span>
   <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">conf.low</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">conf.high</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0.1</span><span class="p">)</span>
-</code></pre></div><p><img src="/post/modeling/unnamed-chunk-3-1.png" alt=""></p>
+</code></pre></div><p><img src="/r/modeling/unnamed-chunk-3-1.png" alt=""></p>
 <p>結果がいろいろと書いてありますが、今回は<code>Coefficients</code>のところから、構築したモデルに対する以下の結果を確認するのみとします(Devianceなどについて復習するのが面倒になった顔)。信頼区間の算出方法も実はよくわかっていません…。ベイズ的なアプローチならこのあたりの理論を事後分布で回避できるのに…</p>
 <p>$$
 \mu_n = 1.08356 X_n + 2.22994
@@ -228,7 +228,7 @@ $$</p>
   <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">conf.low</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">conf.high</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">group</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0.3</span><span class="p">)</span> <span class="o">+</span>
     <span class="nf">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span> <span class="o">+</span> <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
 
-</code></pre></div><p><img src="/post/modeling/unnamed-chunk-4-1.png" alt=""></p>
+</code></pre></div><p><img src="/r/modeling/unnamed-chunk-4-1.png" alt=""></p>
 <p>推定結果は以下の通りです。</p>
 <p>$$
 \mu_n = 1.01871 X_n + 1.69779 Versicolor + 2.27669 Virginica + 1.21140
@@ -290,7 +290,7 @@ $$</p>
   <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">predicted</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="n">group</span><span class="p">))</span> <span class="o">+</span>
   <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res_p</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">conf.low</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">conf.high</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">group</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0.3</span><span class="p">)</span> <span class="o">+</span>
     <span class="nf">scale_fill_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span> <span class="o">+</span> <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">col</span><span class="p">)</span>
-</code></pre></div><p><img src="/post/modeling/unnamed-chunk-5-1.png" alt=""></p>
+</code></pre></div><p><img src="/r/modeling/unnamed-chunk-5-1.png" alt=""></p>
 <p>推定結果は以下の通りです。</p>
 <p>$$
 \mu_n = 0.24062 x_{n} + 0.80728 Versicolor + 0.90672 Virginia + 0.31996

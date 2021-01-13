@@ -3,11 +3,6 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://rmorita-stat.github.io/2021/01/regularization2/</loc>
-    <lastmod>2021-01-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/r/regularization2/regularization2/</loc>
     <lastmod>2021-01-05T00:00:00+00:00</lastmod>
   </url>
@@ -19,11 +14,6 @@
   
   <url>
     <loc>https://rmorita-stat.github.io/julia/begin-julia/</loc>
-    <lastmod>2021-01-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/post/</loc>
     <lastmod>2021-01-05T00:00:00+00:00</lastmod>
   </url>
   
@@ -53,11 +43,6 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/2020/12/information-criterion/</loc>
-    <lastmod>2020-12-30T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/stat/information-criterion/information-criterion/</loc>
     <lastmod>2020-12-30T00:00:00+00:00</lastmod>
   </url>
@@ -68,22 +53,12 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/2020/12/regularization/</loc>
-    <lastmod>2020-12-29T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/stat/regularization/regularization/</loc>
     <lastmod>2020-12-29T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/2020/12/modeling/</loc>
-    <lastmod>2020-12-24T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/r/tokyo-meshdata/modeling/</loc>
+    <loc>https://rmorita-stat.github.io/r/tokyo-meshdata/tokyo-meshdata/</loc>
     <lastmod>2020-12-24T00:00:00+00:00</lastmod>
   </url>
   
@@ -98,11 +73,6 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/2020/12/corresp-and-bayes/</loc>
-    <lastmod>2020-12-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/r/corresp-and-bayes/corresp-and-bayes/</loc>
     <lastmod>2020-12-11T00:00:00+00:00</lastmod>
   </url>
@@ -113,18 +83,8 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/2020/11/correspondenceanalysis/</loc>
-    <lastmod>2020-11-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/r/correspondenceanalysis/correspondenceanalysis/</loc>
     <lastmod>2020-11-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/2020/10/modeling/</loc>
-    <lastmod>2020-10-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -138,18 +98,8 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/2020/07/multinom-gp/</loc>
-    <lastmod>2020-07-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/r/multinom-gp/multinom-gp/</loc>
     <lastmod>2020-07-12T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/2020/07/gaussianprocess2/</loc>
-    <lastmod>2020-07-11T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -158,18 +108,8 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/2020/06/gaussianprocess/</loc>
-    <lastmod>2020-06-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/r/gaussianprocess/gaussianprocess/</loc>
     <lastmod>2020-06-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/2020/05/multinom-rstan/</loc>
-    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -178,18 +118,8 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/2020/05/bayesintroduction/</loc>
-    <lastmod>2020-05-29T23:50:14-05:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/stat/bayesintroduction/bayesintroduction/</loc>
     <lastmod>2020-05-29T23:50:14-05:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/2020/05/multinom/</loc>
-    <lastmod>2020-05-27T21:13:14-05:00</lastmod>
   </url>
   
   <url>

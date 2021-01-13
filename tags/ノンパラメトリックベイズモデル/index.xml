@@ -13,29 +13,11 @@
     
     <item>
       <title>多項ロジスティック回帰・ガウス過程モデル</title>
-      <link>https://rmorita-stat.github.io/2020/07/multinom-gp/</link>
-      <pubDate>Sun, 12 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/2020/07/multinom-gp/</guid>
-      <description>はじめに いい夢の色は緑色だそうだ。私もうさぎさんにとっての牧草色の夢を見ることもありますが、現実は柵に引っかかってばかりです。 さて、回帰に関</description>
-    </item>
-    
-    <item>
-      <title>多項ロジスティック回帰・ガウス過程モデル</title>
       <link>https://rmorita-stat.github.io/r/multinom-gp/multinom-gp/</link>
       <pubDate>Sun, 12 Jul 2020 00:00:00 +0000</pubDate>
       
       <guid>https://rmorita-stat.github.io/r/multinom-gp/multinom-gp/</guid>
       <description>はじめに いい夢の色は緑色だそうだ。私もうさぎさんにとっての牧草色の夢を見ることもありますが、現実は柵に引っかかってばかりです。 さて、回帰に関</description>
-    </item>
-    
-    <item>
-      <title>ガウス過程の応用</title>
-      <link>https://rmorita-stat.github.io/2020/07/gaussianprocess2/</link>
-      <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/2020/07/gaussianprocess2/</guid>
-      <description>はじめに 前回の記事では、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、ガウス過程回帰について取</description>
     </item>
     
     <item>

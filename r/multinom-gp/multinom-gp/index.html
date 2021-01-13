@@ -392,9 +392,9 @@ $$</p>
 </code></pre></div><p>計算にかかった時間はsurface laptop2 Corei5-8250Uで約3000秒でした。
 ガウス過程は逆行列の計算などを含むので、工夫をしないとどうしても計算に時間がかかってしまうようです。</p>
 <p>ハイパーパラメータの事後分布は以下のようになりました。</p>
-<p><img src="/post/multinom-gp/fit_cate1_density.png" alt=""></p>
+<p><img src="/r/multinom-gp/fit_cate1_density.png" alt=""></p>
 <p>予測結果は以下のようになりました。描画の為のコードは<a href="https://rmorita-stat.github.io/2020/05/multinom-rstan/">以前の記事</a>を参照してください。</p>
-<p><img src="/post/multinom-gp/fit_cate1_res.png" alt=""></p>
+<p><img src="/r/multinom-gp/fit_cate1_res.png" alt=""></p>
 <p>rのパッケージnnetのmultinom()関数を使ったときや、Rstanで線形予測子Versionの多項ロジスティック回帰を実行したときの結果と同じ結果が得られていることが分かります。</p>
 <p>以上、sotropic correlationカーネルを含んだモデル全体が正常に動くことを確認し、次の分析に進みます。</p>
 <h2 id="モデル２の実装と結果の確認">モデル２の実装と結果の確認</h2>
@@ -603,10 +603,10 @@ $c$については、0付近の値をとることが想定されるため、期�
 <span class="n">g2</span><span class="o">$</span><span class="n">heights</span> <span class="o">&lt;-</span> <span class="n">Height</span>
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="n">gridExtra</span><span class="o">::</span><span class="nf">grid.arrange</span><span class="p">(</span><span class="n">g1</span><span class="p">,</span><span class="n">g2</span><span class="p">,</span><span class="n">ncol</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="s">&#34;Posterior distribution of hyper parameters (with medians and 95% intervals)&#34;</span><span class="p">)</span>
 
-</code></pre></div><p><img src="/post/multinom-gp/fit_cate2_density.png" alt=""></p>
+</code></pre></div><p><img src="/r/multinom-gp/fit_cate2_density.png" alt=""></p>
 <p>$\rho$が頑張って大きな値をとろうとしている様子が見えますが、そこは抑えてもらっています。何だかかわいそう&hellip;</p>
 <p>最後に、予測結果を描画します。</p>
-<p><img src="/post/multinom-gp/fit_cate2_res.png" alt=""></p>
+<p><img src="/r/multinom-gp/fit_cate2_res.png" alt=""></p>
 <p>線形モデルでは読み取ることが出来なかった傾向がうまく捉えられています。例えば、読み書きの能力が50前後のses=lowの生徒はgeneralの授業をとる傾向にあること、読み書きの能力が45前後のses=highの生徒はacademicの授業をとる確率とvocationの授業をとる確率が同程度である様子などが確認できます。</p>
 <p><strong>It&rsquo;s so brilliant</strong>&gt;🐢</p>
 <p>このように、線形モデルでは誤差として結果に反映されなかった事象もうまくとらえることが出来るのがガウス過程の魅力です。パラメータの事後分布や推測値よりデータの生成過程を考察する、という目的には不向きかもしれませんが、予測の観点から見れば非常に便利ではないでしょうか？。</p>
