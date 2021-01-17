@@ -317,7 +317,7 @@ $$</p>
 <span class="n">p0</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">lpp</span><span class="p">,</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">write</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">probability</span><span class="p">,</span><span class="n">colour</span><span class="o">=</span><span class="n">ses</span><span class="p">))</span> <span class="o">+</span> <span class="nf">geom_line</span><span class="p">()</span> <span class="o">+</span> <span class="nf">facet_grid</span><span class="p">(</span><span class="n">variable</span> <span class="o">~</span><span class="n">.)</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;bottom&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">scale_color_manual</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span> <span class="o">+</span> <span class="nf">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#34;With multinom&#34;</span><span class="p">)</span>
 <span class="n">p0</span>
-</code></pre></div><p><img src="/post/multinom/multinom.png" alt="aai"></p>
+</code></pre></div><p><img src="/r/multinom/multinom.png" alt="aai"></p>
 <p>上図では3つの授業が選ばれる確率を別々に描画しています。同じ色の線がとる確率値の割をとると1になります。
 図の全体的な傾向と前節で確認した内容に不一致は見られないようです。</p>
 <h1 id="まとめ">まとめ</h1>
@@ -372,7 +372,7 @@ $$</p>
         </div>
         <div class="main-profile__description">
             
-            <p> 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計、ロードバイク、古墳が好きです。 </p>
+            <p> 得意なのは統一された洋服とダンスのステップです </p>
             
         </div>
     </div>
@@ -381,11 +381,11 @@ $$</p>
 <div class="main-pn">
     
     
-    <a class="next" href="https://rmorita-stat.github.io/2020/05/bayesintroduction/">
+    <a class="next" href="https://rmorita-stat.github.io/2020/05/multinom-rstan/">
         <div class="pn-dec"></div>
         <div class="pn-els">
-            <div class="pn-el__1"> 2020.05.29 23:50 </div>
-            <div class="pn-el__2"> ベイズ統計モデリング入門 </div>
+            <div class="pn-el__1"> 2020.05.31 00:00 </div>
+            <div class="pn-el__2"> rstanを使った多項ロジスティック回帰 </div>
         </div>
     </a>
     

@@ -13,10 +13,10 @@
     
     <item>
       <title>Soft K-means法とガウス過程</title>
-      <link>https://rmorita-stat.github.io/r/tokyo-meshdata/tokyo-meshdata/</link>
+      <link>https://rmorita-stat.github.io/2020/12/tokyo-meshdata/</link>
       <pubDate>Thu, 24 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/r/tokyo-meshdata/tokyo-meshdata/</guid>
+      <guid>https://rmorita-stat.github.io/2020/12/tokyo-meshdata/</guid>
       <description>はじめに 今回は分類についての記事です。 正規分布の混合モデルをによるsoft K-Means法を扱います。 タイトルにガウス過程とありますが、今回</description>
     </item>
     

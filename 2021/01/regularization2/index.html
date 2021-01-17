@@ -251,7 +251,7 @@ $$
 
 </code></pre></div><p>結果の図には13の変数に対する標準化偏回帰係数が$(1)$式の$\lambda$の変化とともにどのような値をとるかを示しています。また点線で通常の回帰分析における標準化偏回帰係数も示しています。
 $\lambda$が大きくなるにつれて各回帰係数の値が小さくなる傾向が分かります。特に変数<code>indus</code>と<code>age</code>の係数パラメータははやいうちから0となっており、変数の選択が行われていることが分かります。
-<img src="/post/regularization2/Lasso_res.png" alt=""></p>
+<img src="/r/regularization2/Lasso_res.png" alt=""></p>
 <h2 id="ridge回帰">Ridge回帰</h2>
 <p>Lasso回帰のときとほぼ同様ですが、<code>glmnet::glmnet(alpha=0)</code>で$(2)$式が$P_{\alpha}(\boldsymbol{w}) = \cfrac{1}{2} ||\boldsymbol{w}||_2^2$となることにより、Ridge回帰をすることができます。</p>
 <p>同様にして…</p>
@@ -285,7 +285,7 @@ $\lambda$が大きくなるにつれて各回帰係数の値が小さくなる�
 <span class="c1">## b            9.215636e-02</span>
 <span class="c1">## lstat       -4.006555e-01</span>
 </code></pre></div><p>結果の図からはLasso回帰と同様、$\lambda$が大きくなるほどに各係数の値が小さくなる傾向が見てとれます。また0に近づく推移傾向はLasso回帰より緩やかであることも分かります。
-<img src="/post/regularization2/Ridge_res.png" alt=""></p>
+<img src="/r/regularization2/Ridge_res.png" alt=""></p>
 <h1 id="rstanを用いた正則化回帰">rstanを用いた正則化回帰</h1>
 <p><a href="https://rmorita-stat.github.io/2020/12/regularization/">以前の記事</a>後半を参考に、rstanを用いて今までの正則化回帰と同様の分析を再現します。</p>
 <h2 id="lasso回帰-1">Lasso回帰</h2>
@@ -389,9 +389,9 @@ $$
 <span class="c1">## w[13]      -0.40       0 0.04 -0.48 -0.43 -0.40 -0.38 -0.33  7017    1</span>
 <span class="c1">## log_lambda -5.93       0 0.31 -6.57 -6.14 -5.92 -5.71 -5.36  7056    1</span>
 </code></pre></div><p>係数パラメータの事後分布は<code>glmnet()</code>による結果と概ね整合しているようです。ただし、<code>glmnet()</code>によるLassoでは一部の係数パラメータが0となり、変数選択が可能であったのに対し、Bayesian Lassoでは中央値0付近の事後分布が得られるので、変数選択は難しくなります。
-<img src="/post/regularization2/res_plot_lasso.png" alt=""></p>
+<img src="/r/regularization2/res_plot_lasso.png" alt=""></p>
 <p>$\lambda$を係数パラメータとともに最適化できることがBayesian Lassoの強みかもしれません。<code>glmnet()</code>では$\lambda$をいくつか指定して交差検証により比較するしか方法が無かったので…
-<img src="/post/regularization2/res_loglambda_lasso.png" alt=""></p>
+<img src="/r/regularization2/res_loglambda_lasso.png" alt=""></p>
 <p>結果の描画のためのRスクリプトは以下になります。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">bayesplot</span><span class="p">)</span>
 
@@ -523,9 +523,9 @@ $$
 <span class="c1">## w[13]      -0.40       0 0.04 -0.47 -0.43 -0.40 -0.37 -0.32  6705    1</span>
 <span class="c1">## log_lambda -4.38       0 0.41 -5.23 -4.64 -4.36 -4.09 -3.65  7454    1</span>
 </code></pre></div><p>係数パラメータの事後分布は<code>glmnet()</code>による結果と概ね整合しているようです。
-<img src="/post/regularization2/res_plot_ridge.png" alt=""></p>
+<img src="/r/regularization2/res_plot_ridge.png" alt=""></p>
 <p>$\lambda$の事後分布は以下のとおりになりました。
-<img src="/post/regularization2/res_loglambda_ridge.png" alt=""></p>
+<img src="/r/regularization2/res_loglambda_ridge.png" alt=""></p>
 <h1 id="まとめ">まとめ</h1>
 <p>損失関数に係数パラメータのノルム分ペナルティを加えることによる通常の正則化回帰と、Bayesian正則化回帰の整合性を実験により確認することができました。まあまあ楽しかったです。</p>
 <p>実用上の観点から両者を比較すると、通常の正則化回帰は（特にLasso回帰の場合）係数パラメータが0に収束することを用いた変数選択が可能であることが強みです。一方Bayesian正則化回帰では、係数パラメータとともに、係数パラメータのノルム分ペナルティの重み$\lambda$を事後分布の形で最適化できることが強みになるのかなと思います。あとはrstanを用いるので当然様々なモデルへの応用・拡張がきくことも強みです。</p>
@@ -584,7 +584,7 @@ $$
         </div>
         <div class="main-profile__description">
             
-            <p> 洛中で6年間大学生活を過ごし、今は難波の地で働いています。統計、ロードバイク、古墳が好きです。 </p>
+            <p> 得意なのは統一された洋服とダンスのステップです </p>
             
         </div>
     </div>
@@ -592,11 +592,11 @@ $$
 <div class="main-line"></div>
 <div class="main-pn">
     
-    <a class="previous" href="https://rmorita-stat.github.io/2020/12/information-criterion/">
+    <a class="previous" href="https://rmorita-stat.github.io/2020/12/tokyo-meshdata/">
         <div class="pn-dec"></div>
         <div class="pn-els">
-            <div class="pn-el__1"> 2020.12.30 00:00 </div>
-            <div class="pn-el__2"> モデル選択基準 </div>
+            <div class="pn-el__1"> 2020.12.24 00:00 </div>
+            <div class="pn-el__2"> Soft K-means法とガウス過程 </div>
         </div>
     </a>
     

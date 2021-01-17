@@ -77,86 +77,79 @@
 <div class="main">
 
 <div class="main-content">
-    
-    <div class="main-content__title title-type__custom u-font">
-        <h1 id="title">With R</h1>
-        <br>
-        <h1font-size: 1.125em>統計解析はRで。気の赴くままにRで遊ぶページはこちらです </h1>
+    <div class="main-content__date">
+        <h4 id="date"> 2021.01.05 00:00 </h4>
     </div>
+    <div class="main-content__title">
+        <h1 id="title">Julia始めました</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <p>ふと、R言語以外も使っていろいろとできるようになりたいと思い立ちました。</p>
+<p>特にきっかけがあったわけではないのです。まだR歴も浅く綺麗なコードにもほど遠いですし、Rを使って試したいこともまだまだたくさんあります。shinyを使ったアプリ開発とか・・・</p>
+<p>ただ趣味でやっている以上、興味をもった対象には少しでも触れてみたいのです。</p>
+<p>JuliaはRはPython等の動的型付け言語と比べて計算速度が速く、C言語にも迫る速度だという。</p>
+<p>個人的にも、仕事でビックデータを扱う場面があるし、MCMCの計算時間を短縮したいので、計算速度の速い言語に手をつけるのはメリットが多そうだ。</p>
+<p>ということでJuliaを勉強していこうと思います。</p>
+<div class="highlight"><pre class="chroma"><code class="language-Julia" data-lang="Julia"><span class="k">using</span> <span class="n">LinearAlgebra</span>
+<span class="n">dot</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="c">## 32</span>
+<span class="n">cross</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<span class="c">## 3-element Array{Int64,1}:</span>
+<span class="c">## 1</span>
+<span class="c">## 0</span>
+<span class="c">## 0</span>
+</code></pre></div><p>…こんな感じで！</p>
 
-    <article>
-        <div class="main-content__posts index-posts">
-            <div class="index-posts">
-              
-                <div class="index-posts__list">
-                    <div class="l-time"><a href="https://rmorita-stat.github.io/2021/01/regularization2/">2021.01.05 00:00</a></div>
-                    <div class="l-title"><a href="https://rmorita-stat.github.io/2021/01/regularization2/">Bayesian RidgeとBayesian Lasso 通常の正則化回帰との比較</a></div>
-                </div>
-              
-                <div class="index-posts__list">
-                    <div class="l-time"><a href="https://rmorita-stat.github.io/2020/12/tokyo-meshdata/">2020.12.24 00:00</a></div>
-                    <div class="l-title"><a href="https://rmorita-stat.github.io/2020/12/tokyo-meshdata/">Soft K-means法とガウス過程</a></div>
-                </div>
-              
-                <div class="index-posts__list">
-                    <div class="l-time"><a href="https://rmorita-stat.github.io/2020/12/corresp-and-bayes/">2020.12.11 00:00</a></div>
-                    <div class="l-title"><a href="https://rmorita-stat.github.io/2020/12/corresp-and-bayes/">Stanで対応分析の付置にベイズ信頼区間をもたせる</a></div>
-                </div>
-              
-                <div class="index-posts__list">
-                    <div class="l-time"><a href="https://rmorita-stat.github.io/2020/11/correspondenceanalysis/">2020.11.07 00:00</a></div>
-                    <div class="l-title"><a href="https://rmorita-stat.github.io/2020/11/correspondenceanalysis/">対応分析について</a></div>
-                </div>
-              
-                <div class="index-posts__list">
-                    <div class="l-time"><a href="https://rmorita-stat.github.io/2020/10/modeling/">2020.10.03 00:00</a></div>
-                    <div class="l-title"><a href="https://rmorita-stat.github.io/2020/10/modeling/">モデリングと情報量基準その１～モデリングとは？～</a></div>
-                </div>
-              
-                <div class="index-posts__list">
-                    <div class="l-time"><a href="https://rmorita-stat.github.io/2020/07/multinom-gp/">2020.07.12 00:00</a></div>
-                    <div class="l-title"><a href="https://rmorita-stat.github.io/2020/07/multinom-gp/">多項ロジスティック回帰・ガウス過程モデル</a></div>
-                </div>
-              
-                <div class="index-posts__list">
-                    <div class="l-time"><a href="https://rmorita-stat.github.io/2020/06/gaussianprocess/">2020.06.14 00:00</a></div>
-                    <div class="l-title"><a href="https://rmorita-stat.github.io/2020/06/gaussianprocess/">ガウス過程入門</a></div>
-                </div>
-              
-                <div class="index-posts__list">
-                    <div class="l-time"><a href="https://rmorita-stat.github.io/2020/05/multinom-rstan/">2020.05.31 00:00</a></div>
-                    <div class="l-title"><a href="https://rmorita-stat.github.io/2020/05/multinom-rstan/">rstanを使った多項ロジスティック回帰</a></div>
-                </div>
-              
-                <div class="index-posts__list">
-                    <div class="l-time"><a href="https://rmorita-stat.github.io/2020/05/multinom/">2020.05.27 21:13</a></div>
-                    <div class="l-title"><a href="https://rmorita-stat.github.io/2020/05/multinom/">multinom()を使った多項ロジスティック回帰</a></div>
-                </div>
-              
-            </div>
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+    </div>
+</div>
+<div class="disqus-comments">
+  <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-rmorita-stat-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
         </div>
-        <div class="index-paginate">
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        <div class="main-profile__description">
+            
+            <p> 得意なのは統一された洋服とダンスのステップです </p>
+            
         </div>
-    </article>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    
 </div>
 
 <footer>
@@ -221,3 +214,4 @@
 </body>
 <script src="https://rmorita-stat.github.io/js/page.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
+
