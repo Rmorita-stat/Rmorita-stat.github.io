@@ -48,6 +48,15 @@
     </item>
     
     <item>
+      <title>積率と母関数</title>
+      <link>https://rmorita-stat.github.io/2020/12/moment/</link>
+      <pubDate>Tue, 29 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2020/12/moment/</guid>
+      <description>本記事では確率論の勉強ということで、期待値など確率変数の特徴を表す量について定義し、それらにまつわる便利なアイテム（関数）群を整理しようと思</description>
+    </item>
+    
+    <item>
       <title>Soft K-means法とガウス過程</title>
       <link>https://rmorita-stat.github.io/2020/12/tokyo-meshdata/</link>
       <pubDate>Thu, 24 Dec 2020 00:00:00 +0000</pubDate>

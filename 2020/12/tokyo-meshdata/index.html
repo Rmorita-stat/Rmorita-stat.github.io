@@ -209,7 +209,10 @@ $$
 <span class="nf">library</span><span class="p">(</span><span class="n">gridExtra</span><span class="p">)</span>
 
 <span class="n">p_extra</span> <span class="o">&lt;-</span> <span class="n">gridExtra</span><span class="o">::</span><span class="nf">grid.arrange</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">p2</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
-</code></pre></div><p><img src="/r/tokyo-meshdata/distribution.png" alt=""></p>
+</code></pre></div><figure>
+    <img src="/r/tokyo-meshdata/distribution.png" width="600"/> 
+</figure>
+
 <p>このデータに対してソフトクラスタリングを実行し、事業所ごと・従業員毎の生産性が高い（High Efficiency）地域と低い（Low Efficiency）にメッシュを二分することを目的にします。</p>
 <h2 id="実装">実装</h2>
 <p>実装は基本的に理論編での数式に倣いますが、標準偏差$\sigma_1,\ldots,\sigma_D$はすべて1とします（個人的に$\sigma_k$を軽視しているのと、$\sigma_k$をパラメータにすると収束しなかったため）。</p>
@@ -328,7 +331,10 @@ $$
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="n">p</span> <span class="o">+</span> <span class="nf">xlab</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">ylab</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">)</span>
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="n">p</span> <span class="o">+</span> <span class="nf">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">19</span><span class="p">))</span>
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="n">p</span> <span class="o">+</span> <span class="nf">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#34;Estimated Status&#34;</span><span class="p">)</span>
-</code></pre></div><p><img src="/r/tokyo-meshdata/Result-model.png" alt=""></p>
+</code></pre></div><figure>
+    <img src="/r/tokyo-meshdata/Result-model.png" width="600"/> 
+</figure>
+
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># パラメータや生成量の事後分布を描画 -------------------------------------------------------</span>
 
 <span class="nf">library</span><span class="p">(</span><span class="n">bayesplot</span><span class="p">)</span>
@@ -365,7 +371,10 @@ $$
           <span class="s">&#34;with medians and 80% intervals&#34;</span><span class="p">)</span>
 
 <span class="n">p_extra</span> <span class="o">&lt;-</span> <span class="n">gridExtra</span><span class="o">::</span><span class="nf">grid.arrange</span><span class="p">(</span><span class="n">plot1</span><span class="p">,</span><span class="n">plot2</span><span class="p">,</span><span class="n">plot3</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
-</code></pre></div><p><img src="/r/tokyo-meshdata/mcmcareas-model.png" alt=""></p>
+</code></pre></div><figure>
+    <img src="/r/tokyo-meshdata/mcmcareas-model.png" width="600"/> 
+</figure>
+
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># 推定した混合正規分布の確率密度を描画 ------------------------------------------------------</span>
 
 <span class="n">posterior</span> <span class="o">&lt;-</span> <span class="nf">as.data.frame</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span>
@@ -424,7 +433,10 @@ $$
 <span class="n">q2</span> <span class="o">&lt;-</span> <span class="n">q2</span> <span class="o">+</span> <span class="nf">coord_cartesian</span><span class="p">(</span><span class="n">ylim</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">150</span><span class="p">))</span>
 
 <span class="n">q</span> <span class="o">&lt;-</span> <span class="n">gridExtra</span><span class="o">::</span><span class="nf">grid.arrange</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span><span class="n">q1</span><span class="p">,</span><span class="n">ncol</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
-</code></pre></div><p><img src="/r/tokyo-meshdata/mixnormdensity-model.png" alt=""></p>
+</code></pre></div><figure>
+    <img src="/r/tokyo-meshdata/mixnormdensity-model.png" width="600"/> 
+</figure>
+
 <p>無難な結果が得られているのではないかなあ、という感じです。はじめのタイル図がクラスタリングの推定結果ですが、タイルごとに「High Efficiency」である確率の事後分布の中央値を示しています。このように各クラスターへ分類される確率で結果が得られるのがSoft K-means法の特徴です。</p>
 <h1 id="ガウス過程をあてはめてみる">ガウス過程をあてはめてみる</h1>
 <p>問題はここからです。ただクラスタリングを試すだけなら空間データを扱う必要はありません。なぜ今回空間データを扱ったかというと、普遍的なモデルにガウス過程を組み込む練習がしたかったからです。</p>
@@ -542,17 +554,32 @@ $$
 <span class="c1">## p[2,1]        0.04    0.00 0.06     0.00     0.01     0.02     0.04     0.20   599 1.00</span>
 <span class="c1">## p[2,2]        0.96    0.00 0.06     0.80     0.96     0.98     0.99     1.00   599 1.00</span>
 
-</code></pre></div><p><img src="/r/tokyo-meshdata/result-model2.png" alt=""></p>
-<p><img src="/r/tokyo-meshdata/mcmcareas-model2.png" alt=""></p>
-<p><img src="/r/tokyo-meshdata/mixnormdensity-model2.png" alt=""></p>
+</code></pre></div><figure>
+    <img src="/r/tokyo-meshdata/result-model2.png" width="600"/> 
+</figure>
+
+<figure>
+    <img src="/r/tokyo-meshdata/mcmcareas-model2.png" width="600"/> 
+</figure>
+
+<figure>
+    <img src="/r/tokyo-meshdata/mixnormdensity-model2.png" width="600"/> 
+</figure>
+
 <p>ん、確かに確率が空間的に滑らかにつながったように見えなくもないが、依然として隣り合ったセル間の差が大きいところもあるな…
 $\rho$を微妙に大きく1.2にして、いびつさをもう少し和らげたガウス過程にしてみよう。</p>
 <div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">data</span> <span class="o">&lt;-</span> <span class="n">list</span><span class="p">(</span><span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">,</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span><span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">delta_sq</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">)</span>
 <span class="n">fit2</span> <span class="o">&lt;-</span><span class="n">sampling</span><span class="p">(</span><span class="n">stanmodel2</span><span class="p">,</span> <span class="n">pars</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s">&#34;Z_mu&#34;</span><span class="p">,</span><span class="s">&#34;theta&#34;</span><span class="p">,</span><span class="s">&#34;p&#34;</span><span class="p">),</span>
                 <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">iter</span><span class="o">=</span><span class="mi">1300</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
 <span class="p">(</span><span class="err">以降、省略</span><span class="p">)</span>
-</code></pre></div><p><img src="/r/tokyo-meshdata/Result-model2-2.png" alt=""></p>
-<p><img src="/r/tokyo-meshdata/mcmcareas-model2-2.png" alt=""></p>
+</code></pre></div><figure>
+    <img src="/r/tokyo-meshdata/Result-model2-2.png" width="600"/> 
+</figure>
+
+<figure>
+    <img src="/r/tokyo-meshdata/mcmcareas-model2-2.png" width="600"/> 
+</figure>
+
 <p>ハイパーパラメータの値を少しだけ変えただけなのに、今度は手のひらを返したかのように優柔不断な分類結果が得られてしまった。どのセルも確率がほぼ0.5ではないか。</p>
 <p>もっと、クラスター平均がある程度離れたまま、空間的に滑らかで急な変化の少ない確率群が得られるかと予想していたのだが…</p>
 <p>はじめは実装に問題があるのかと思ったのですが、組み立てたモデルの動作を想像すると原因がすぐにわかりました。</p>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="google-site-verification" content="qrt5G5NouQQVS-0Ss9qHlEuMYt3uKuifbUIOkPd4cPc" />
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/stat" >STAT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/r" >With R</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/julia" >With Julia</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2020.12.29 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">積率と母関数</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <p>本記事では確率論の勉強ということで、期待値など確率変数の特徴を表す量について定義し、それらにまつわる便利なアイテム（関数）群を整理しようと思います。<br>
+本記事の内容をマスターすれば、確率分布の各特徴を表す量について明るくなったり、確率分布が関係する計算に少し強くなったりできます。</p>
+<p>本記事の構成は以下の通りです。</p>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p><a href="#%E6%9C%9F%E5%BE%85%E5%80%A4%E3%81%A8%E7%A9%8D%E7%8E%87">期待値と積率</a></p>
+<ul>
+<li><a href="#%E6%9C%9F%E5%BE%85%E5%80%A4">期待値</a></li>
+<li><a href="#%E7%A9%8D%E7%8E%87">積率</a></li>
+</ul>
+</li>
+<li>
+<p><a href="#%E5%88%86%E6%95%A3%E3%81%A8%E4%B8%AD%E5%BF%83%E7%A9%8D%E7%8E%87">分散と中心積率</a></p>
+<ul>
+<li><a href="#%E5%88%86%E6%95%A3">分散</a></li>
+<li><a href="#%E4%B8%AD%E5%BF%83%E7%A9%8D%E7%8E%87">中心積率</a></li>
+</ul>
+</li>
+<li>
+<p><a href="#%E6%A8%99%E6%BA%96%E5%8C%96%E7%A9%8D%E7%8E%87%E3%81%A8%E6%AD%AA%E5%BA%A6%E3%83%BB%E5%B0%96%E5%BA%A6">標準化積率と歪度・尖度</a></p>
+<ul>
+<li><a href="#%E6%A8%99%E6%BA%96%E5%8C%96%E7%A9%8D%E7%8E%87">標準化積率</a></li>
+<li><a href="#%E6%AD%AA%E5%BA%A6%E3%81%A8%E5%B0%96%E5%BA%A6">歪度と尖度</a></li>
+</ul>
+</li>
+<li>
+<p><a href="#%E7%A9%8D%E7%8E%87%E6%AF%8D%E9%96%A2%E6%95%B0">積率母関数</a></p>
+</li>
+<li>
+<p><a href="#%E3%82%AD%E3%83%A5%E3%83%9F%E3%83%A5%E3%83%A9%E3%83%B3%E3%83%88%E6%AF%8D%E9%96%A2%E6%95%B0">キュミュラント母関数</a></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h1 id="期待値と積率">期待値と積率</h1>
+<h2 id="期待値">期待値</h2>
+<p>まず、確率変数$X$の<strong>期待値</strong>について定義します。 以下、慣例に従い確率変数は大文字（例：$X$）、確率変数からの実現地は同じアルファベットの小文字（例：$x$）で、$A$という事象が起こる確率を$P(A)$で表します。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆確率変数の期待値</strong></legend>
+ 
+離散型の確率変数$X$が確率質量関数$p_{X}(x_k)$$(k = 1,2,\ldots)$をもつとき、$X$の期待値は下記で定義される。
+
+$$
+\mathbb{E}[X] = \sum_{k=1}^{∞}x_kP(X = x_k) = \sum_{k=1}^{∞}x_k p_{X}(x_k) \tag{1}
+$$
+連続型の確率変数$X$が確率密度関数$f_{X}(x)$をもつとき、$X$の期待値は下記で定義される。
+
+$$
+\mathbb{E}[X] = \int_{-∞}^{∞} xf_{X}(x)dx \tag{2}
+$$
+
+</fieldset></p>
+<p>感覚的には$(1)$式$(2)$式ともに$X$がとりうる値についてその値をとる確率で重みづけしたものが期待値になります。通常の平均と同じ考えかたですね。</p>
+<h2 id="積率">積率</h2>
+<p><strong>積率</strong>（moment）は、期待値にまつわる重要な概念です。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆積率</strong></legend>
+ 
+確率変数$X$及び自然数$k$について、$X^k$の期待値$\mu^{'}_{X,k} = \mathbb{E}[X^k]$を確率変数$X$の$k$次の積率（moment）という。
+特に$X$の1次の積率は平均といい$\mathbb{E}[X]$である。
+$$
+\mu^{'}_{X,1} = \mathbb{E}[X] \tag{3}
+$$
+
+</fieldset></p>
+<p>上の定義だけでは積率をわざわざ定義する意味が分からないと思いますが、のちのち紹介するように分散や歪度、尖度の計算に2次、3次、4次の積率が利用されます。</p>
+<p>試しにガンマ分布の積率を導出し、ガンマ分布に従う確率変数の期待値を求めてみましょう。<br>
+<br>
+<div style="overflow-x:auto;">
+  
+<div class="memo" >
+    <span class="memo-title">memo</span>
+    <p>
+ガンマ分布の確率密度は下記式で与えられる。ここで、$x ∈ \mathbb{R}^+, \alpha∈ \mathbb{R}^+, \beta ∈ \mathbb{R}^+$である。
+$$
+\mathrm{Gamma}(x | \alpha, \beta) = \cfrac{\beta^{\alpha}}{\Gamma(\alpha)}x^{\alpha -1} e^{-\beta x}
+$$
+$\Gamma(z)$はガンマ関数といい、下記で定義される。
+$$
+\Gamma (z)= \int_0^{\infty}t^{z-1}e^{-t}dt ~~~ (z > 0)
+$$
+</p>
+</div>
+
+</div></p>
+<div style="overflow-x:auto;">
+  
+<fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆ガンマ分布の積率・期待値</strong></legend>
+
+
+ガンマ分布を確率密度にもつ確率変数$X$について、
+
+$$
+\begin{split}
+\mu^{'}_{X,k} &= \mathbb{E}[X^k] \\\\
+&= \int _{0}^{∞}\cfrac{\beta^{\alpha}}{\Gamma(\alpha)}x^{\alpha-1}e^{-\beta x} x^k dx \\\\
+&= \cfrac{\beta^{\alpha}}{\Gamma(\alpha)} \int _{0}^{∞}x^{\alpha+k-1}e^{-\beta x} dx \\\\
+&= \cfrac{\beta^{\alpha}}{\Gamma(\alpha)} \int _{0}^{∞}\left(\cfrac{y}{\beta}\right)^{k + \alpha-1}e^{-y}\cfrac{1}{\beta} dy ~~~(y = \beta x とおいた置換積分) \\\\
+&= \cfrac{\beta^{\alpha}}{\Gamma(\alpha)} \cfrac{1}{\beta^{k + \alpha}} \int_{0}^{∞} y^{k + \alpha - 1}e^{-y}dy \\\\
+&= \cfrac{\beta^{\alpha}}{\Gamma(\alpha)} \cfrac{\Gamma(k + \alpha)}{\beta^{k + \alpha}} \\\\
+&= \beta^{-k} \prod_{i=1}^{k-1}(\alpha + i - 1) ~~~ (\Gamma(s + 1) = s\Gamma(s)を利用)
+\end{split}
+$$
+
+よって、
+$$
+\mu^{'}_{X,1} = \mathbb{E}(X) = \cfrac{\alpha}{\beta}
+$$
+
+</fieldset>
+
+</div>
+<h1 id="分散と中心積率">分散と中心積率</h1>
+<h2 id="分散">分散</h2>
+<p>次に確率変数の<strong>分散</strong>について定義します。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆分散</strong></legend>
+ 
+確率変数$X$の分散は下記で定義される。ここで$X$の平均を$\mu_X$とする。
+$$
+\mathbb{V}[X] = \mathbb{E}[(X - \mu_X)^2] \tag{4}
+$$
+
+</fieldset></p>
+<p>確率変数の平均も分散も、通常のデータに対する平均と分散と同じ考え方で定義されています。</p>
+<h2 id="中心積率">中心積率</h2>
+<p>積率に関連した概念として、<strong>中心積率</strong>について定義します。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆中心積率</strong></legend>
+ 
+確率変数$X$とその平均$\mu_X$及び自然数$k$について、$(X-\mu_X)^k$の期待値を確率変数$X$の$k$次の中心積率（central moment）といい、$\mu_{X,k}$であらわす。特に2次の中心積率は分散である。
+$$
+\mu_{X,k} = \mathbb{E}[(X-\mu_X)^k] \tag{5}
+$$
+$$
+\mu_{X,2} = \mathbb{E}[(X-\mu_X)^2] = \mathbb{V}[X] \tag{6}
+$$
+
+</fieldset></p>
+<p>このように、確率変数の分散は中心積率を用いて計算することができます。</p>
+<p>試しに、ガンマ分布の分散を求めてみましょう。</p>
+<fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆ガンマ分布の分散</strong></legend>
+
+
+$(5)$式を変形して、
+$$
+\begin{split}
+\mathbb{V}[X] &= \mathbb{E}[(X-\mu_X)^2]\\\\
+&= \mathbb{E}[X^2] -2\mathbb{E}[X]\mu_X +\mu_X^2\\\\
+&= \mu^{'} _{X,2} - \mu^{'2} _{X,1}
+\end{split}
+$$
+
+よって、ガンマ分布を確率密度に持つ確率変数$X$の分散は、
+$$
+\begin{split}
+\mathbb{V}[X] &= \mu^{'} _{X,2} - \mu^{'2} _{X,1}\\\\
+&= \beta^{-2}\alpha(\alpha+1) - (\beta^{-1}\alpha)^2\\\\
+&= \cfrac{\alpha}{\beta^2}
+\end{split}
+$$
+
+
+</fieldset>
+<h1 id="標準化積率と歪度尖度">標準化積率と歪度・尖度</h1>
+<h2 id="標準化積率">標準化積率</h2>
+<p>平均$\mu_X$、標準偏差$\sigma_X$である確率変数$X$に対する標準化は</p>
+<p>$$
+Z = \cfrac{X - \mu_X}{\sigma_X} \tag{7}
+$$</p>
+<p>となりますが、これに関連して<strong>標準化積率</strong>が定義されます。</p>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆標準化積率</strong></legend>
+ 
+平均$\mu_X$、標準偏差$\sigma_X$である確率変数$X$および自然数$k$に対して、$\left(\cfrac{X - \mu_X}{\sigma_X}\right)^k$の期待値を標準化積率と呼び、$\alpha_{X,k}$であらわす。
+
+$$
+\alpha_{X,k} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^k \right] \tag{8}
+$$
+
+</fieldset>
+<h2 id="歪度と尖度">歪度と尖度</h2>
+<p>確率分布の形状を把握するための量に<strong>歪度</strong>と<strong>尖度</strong>があり、これらは上記の標準化積率を用いて定義されます。</p>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆歪度と尖度</strong></legend>
+ 
+3次の標準化積率を歪度とよび確率変数$X$の歪度を$\gamma_{X,1}$とあらわす。
+$$
+\gamma_{X,1} = \alpha_{X,3} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^3 \right] \tag{9}
+$$
+4次の標準化積率を歪度とよび確率変数$X$の尖度を$\gamma_{X,2}$とあらわす。
+$$
+\gamma_{X,2} = \alpha_{X,4} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^4 \right] \tag{10}
+$$
+
+</fieldset>
+<p>歪度は確率分布の対称性・非対称性の指標となります。<br>
+歪度が$\gamma_{X,1} = 0$となるとき、その確率変数の確率分布は左右対称であるといえます。<br>
+一方、歪度$\gamma_{X,1}&gt; 0$となるとき、$X$は平均以上の値をとることが多いことから、分布の形状は平均より正の方向に長い右歪分布となります。<br>
+逆に歪度$\gamma_{X,1}&lt; 0$のとき、分布の形状は平均より負の方向に長い左歪分布となります。</p>
+<p>尖度は確率分布の密集度を示します。尖度が大きいと、$\sigma_X$が小さくなるため、分布は中心付近に密集するとともに、$X - \mu_X$が大きくなるため、分布の裾が重い分布となります。</p>
+<p>例として、ガンマ分布の歪度と尖度を求めてみましょう。</p>
+<div style="overflow-x:auto;">
+  
+<fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆ガンマ分布の歪度・尖度</strong></legend>
+
+ガンマ分布を確率密度にもつ確率変数$X$について、
+
+$$
+\begin{split}
+\gamma_{X,1} &= \alpha_{X,4} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^4 \right]\\\\
+&= \cfrac{\mu^{'}_{X,3} - 3\mu^{'}_{X,2}\mu^{'}_{X,1} + 2\mu^{'3}_{X,1}}{\sigma_X^3}\\\\
+&= \left( \cfrac{\alpha(\alpha+1)(\alpha+2)}{\beta^3} -3\cfrac{\alpha(\alpha+1)}{\beta^2}\cfrac{\alpha}{\beta} +2\cfrac{\alpha^3}{\beta^3} \right)\cfrac{\beta^3}{\alpha\sqrt{\alpha}}\\\\
+&= \cfrac{2}{\sqrt{\alpha}}
+\end{split}
+$$
+
+$$
+\begin{split}
+\gamma_{X,2} &= \alpha_{X,4} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^4\right] \\\\
+&= \cfrac{\mu^{'}_{X,4} - 4\mu^{'}_{X,3}\mu^{'}_{X,1} + 6\mu^{'}_{X,2}\mu^{'2}_{X,1}  - 3\mu^{'4}_{X,1}}{\sigma_X^4} \\\\
+&= \cfrac{3(\alpha + 2)}{\alpha}
+\end{split}
+$$
+
+</fieldset>
+
+</div>
+<h1 id="積率母関数">積率母関数</h1>
+<p>次に積率母関数を定義します。積率母関数は、積率を生成する関数であることからこのような名前がついています。
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆積率母関数</strong></legend>
+ 
+確率変数$X$及び実数$t$に対して、$e^{tX}$の期待値を積率母関数といい、$\mathrm{M}_{X}(t)$であらわす。
+$$
+\mathrm{M}_{X}(t) = \mathbb{E}\left[e^{tX}\right] \tag{11}
+$$
+積率と積率母関数には以下の関係がある。
+$$
+\mu^{'}_{X,k} = \left.\mathrm{M}_{X}^{(k)}(0) = \cfrac{d^k}{dt^k}\mathrm{M}_X(t) \right|_{t=0} \tag{12}
+$$
+
+</fieldset></p>
+<fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆証明～積率と積率母関数の関係～</strong></legend>
+
+確率変数$X$についての積率母関数$\mathrm{M}_{X}(t)$をマクローリン展開すると、
+$$
+\begin{split}
+\mathrm{M}_{X}(t) &= \mathbb{E}\left[1 + tX + \cfrac{t^2X^2}{2!} + \cdots + \cfrac{t^nX^n}{n!}\right]\\\\
+&= 1 + t\mathbb{E}[X] + \cfrac{t^2}{2!}\mathbb{E}[X] + \cdots + \cfrac{t^n}{n!}\mathbb{E}[X^n]
+\end{split}
+$$
+上記結果から、$\mathrm{M}_{X}(t)$を$t$で微分し$t=0$とすると、
+$$
+\mathrm{M}^{'}_{X}(0) = \mathbb{E}[X] = \mu^{'}_{X,1}
+$$
+$$
+\mathrm{M}^{''}_{X}(0) = \mathbb{E}[X^2] = \mu^{'}_{X,2}
+$$
+$$
+\vdots
+$$
+$$
+\mathrm{M}^{(k)}_{X}(0) = \mathbb{E}[X^k] = \mu^{'}_{X,k}
+$$
+よって、$(12)$式が成り立つ。
+
+</fieldset>
+<p>例として、積率母関数を使ってガンマ分布の平均と分散を求めてみましょう。</p>
+<div style="overflow-x:auto;">
+  
+<fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆ガンマ分布の積率母関数と平均・分散</strong></legend>
+
+ガンマ分布を確率密度にもつ確率変数$X$に対して、積率母関数は、
+$$
+\begin{split}
+\mathrm{M}_{X}(t) &= \mathbb{E}[e^{tX}]\\\\
+&= \int_{0}^{∞} e^{tx}\cfrac{\beta^{\alpha}x^{\alpha -1} e^{-\beta x}}{\Gamma(\alpha)} dx\\\\
+&= \beta^{\alpha}(\beta - t)^{-\alpha}\int_{0}^{∞}\cfrac{(\beta - t)^{\alpha}x^{\alpha -1} e^{-(\beta-t) x}}{\Gamma(\alpha)} dx\\\\
+&= \beta^{\alpha}(\beta - t)^{-\alpha}\int_{0}^{∞} f_{\Gamma(\alpha, \beta-t)}(x)dx~~(t<\beta)\\\\
+&= \left(1 - \cfrac{t}{\beta}\right)^{-\alpha}~~(t<\beta)
+\end{split}
+$$
+
+よって、
+$$
+\begin{split}
+\mathbb{E}[X] &= \mu^{'}_{X,1} = \left.\cfrac{d}{dt}\mathrm{M}_{X}(t)\right|_{t=0}\\\\
+&= \left.-\alpha\left(1- \cfrac{t}{\beta}\right)^{-(\alpha+1)}-\cfrac{1}{\beta}\right|_{t=0}\\\\
+&= \cfrac{\alpha}{\beta}
+\end{split}
+$$
+$$
+\begin{split}
+\mathbb{V}[X] &= \mu^{'} _{X,2} - \mu^{'2} _{X,1}\\\\
+&=\left.\cfrac{d^2}{dt^2}\mathrm{M}_{X}(t)\right|_{t=0} - \left(\left.\cfrac{d}{dt}\mathrm{M}_{X}(t)\right|_{t=0}\right)^2\\\\
+&= \left. \cfrac{\alpha}{\beta} (-(\alpha+1))\left(1-\cfrac{t}{\beta}\right)^{-(\alpha+2)} \left(-\cfrac{1}{\beta}\right) \right|_{t=0} -\cfrac{\alpha-2}{\beta^2}\\\\
+&= \cfrac{\alpha(\alpha+1)}{\beta^2} - \cfrac{\alpha^2}{\beta^2}\\\\
+&= \cfrac{\alpha}{\beta^2}
+\end{split}
+$$
+
+</fieldset>
+
+</div>
+<p>積率が簡単に求められない場合でも、積率母関数を使えば比較的簡単に積率を求められることがあります。</p>
+<h1 id="キュミュラント母関数">キュミュラント母関数</h1>
+<p><strong>キュミュラント母関数</strong>も、積率や平均・分散・歪度・尖度の計算に使える便利な関数なのですが、核となる部分の証明に手も足も出なかったので、ちゃんと理解出来たらupしたいと思います。</p>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://rmorita-stat.github.io/tags/%E7%A2%BA%E7%8E%87%E8%AB%96">確率論</a></span>
+        
+        
+    </div>
+</div>
+<div class="disqus-comments">
+  <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-rmorita-stat-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 得意なのは統一された洋服とダンスのステップです </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://rmorita-stat.github.io/2020/07/gaussianprocess2/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.07.11 00:00 </div>
+            <div class="pn-el__2"> ガウス過程の応用 </div>
+        </div>
+    </a>
+    
+    
+    <a class="next" href="https://rmorita-stat.github.io/2020/12/regularization/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2020.12.29 00:00 </div>
+            <div class="pn-el__2"> 正則化（Ridge回帰とLasso回帰）について </div>
+        </div>
+    </a>
+    
+</div>
+
+<footer>
+  <script type="text/javascript">
+ MathJax = {
+   tex: {
+     inlineMath: [['$','$'], ['\\(','\\)']],
+     processEscapes: true,
+     tags: "ams",
+     autoload: {
+       color: [],
+       colorV2: ['color']
+     },
+     packages: {'[+]': ['noerrors']}
+   },
+   chtml: {
+     matchFontHeight: true,
+     displayAlign: "left",
+     displayIndent: "2em"
+   },
+   options: {
+     skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+     renderActions: {
+        
+       find_script_mathtex: [10, function (doc) {
+         for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+           const display = !!node.type.match(/; *mode=display/);
+           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+           const text = document.createTextNode('');
+           node.parentNode.replaceChild(text, node);
+           math.start = {node: text, delim: '', n: 0};
+           math.end = {node: text, delim: '', n: 0};
+           doc.math.push(math);
+         }
+       }, '']
+     }
+   },
+   loader: {
+     load: ['[tex]/noerrors']
+   }
+ };
+</script>
+<script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2021
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
