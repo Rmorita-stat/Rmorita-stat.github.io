@@ -6,10 +6,19 @@
     <description>Recent content in Stats on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Wed, 30 Dec 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 31 Jan 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/stat/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>積率と母関数</title>
+      <link>https://rmorita-stat.github.io/2021/01/moment/</link>
+      <pubDate>Sun, 31 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/01/moment/</guid>
+      <description>本記事では確率論の勉強ということで、期待値など確率変数の特徴を表す量について定義し、それらにまつわる便利なアイテム（関数）群を整理しようと思</description>
+    </item>
     
     <item>
       <title>モデル選択基準</title>
@@ -45,15 +54,6 @@
       
       <guid>https://rmorita-stat.github.io/2020/05/bayesintroduction/</guid>
       <description>はじめに 本記事では今後の記事でも頻繁に扱う予定のベイズ統計について理解してもらうため、その理論を簡単に説明します。 本記事の構成は以下の通りで</description>
-    </item>
-    
-    <item>
-      <title>積率と母関数</title>
-      <link>https://rmorita-stat.github.io/2020/01/moment/</link>
-      <pubDate>Fri, 31 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/2020/01/moment/</guid>
-      <description>本記事では確率論の勉強ということで、期待値など確率変数の特徴を表す量について定義し、それらにまつわる便利なアイテム（関数）群を整理しようと思</description>
     </item>
     
   </channel>

@@ -3,6 +3,26 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://rmorita-stat.github.io/stat/</loc>
+    <lastmod>2021-01-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/tags/</loc>
+    <lastmod>2021-01-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/tags/%E7%A2%BA%E7%8E%87%E8%AB%96/</loc>
+    <lastmod>2021-01-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/2021/01/moment/</loc>
+    <lastmod>2021-01-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://rmorita-stat.github.io/2021/01/regularization2/</loc>
     <lastmod>2021-01-05T00:00:00+00:00</lastmod>
   </url>
@@ -28,18 +48,8 @@
   </url>
   
   <url>
-    <loc>https://rmorita-stat.github.io/tags/</loc>
-    <lastmod>2021-01-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0/</loc>
     <lastmod>2021-01-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/stat/</loc>
-    <lastmod>2020-12-30T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -135,16 +145,6 @@
   <url>
     <loc>https://rmorita-stat.github.io/about/</loc>
     <lastmod>2020-05-22T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/tags/%E7%A2%BA%E7%8E%87%E8%AB%96/</loc>
-    <lastmod>2020-01-31T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/2020/01/moment/</loc>
-    <lastmod>2020-01-31T00:00:00+00:00</lastmod>
   </url>
   
   <url>
