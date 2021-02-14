@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="google-site-verification" content="qrt5G5NouQQVS-0Ss9qHlEuMYt3uKuifbUIOkPd4cPc" />
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/stat" >STAT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/r" >With R</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/julia" >With Julia</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2021.02.14 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">ベイズファクター</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <p>本記事ではベイジアンモデルに対するモデル評価の指標である<strong>ベイズファクター</strong>について理論を整理します。</p>
+<p>まず、情報量について、エントロピーを踏まえながら理解します。次に、情報量から自由エネルギーを定義し、これが周辺尤度とも深く関連することを理解します。以上の理論的な準備を踏まえ、ベイズファクターを定義します。</p>
+<p>後半では、具体的な確率分布を用いた計算を例に自由エネルギーやベイズファクターを計算し、それらを用いたモデル評価の性質をシミュレーションで確認します。</p>
+<p>参考にした本は<a href="http://www.asakura.co.jp/books/isbn/978-4-254-12842-0/">こちら</a>です。モデル評価の指標について分かりやすい説明が並んでいます。この本によれば、モデル評価の指標は自由エネルギーに着目したもの（BIC、WBIC、ベイズファクター）と、汎化誤差に着目したもの（AIC、WAIC）に二分されるようですが、本記事ではそのうち前者の方の、ベイズファクターのみに着目して考えます。</p>
+<h1 id="情報量">情報量</h1>
+<p>確率がからむある試行について考えたとき、その試行の結果得られた事象が持っている情報の多さはどのくらいなのか？</p>
+<p>事象のもつ情報の多さ、すなわち<strong>情報量</strong>を定量的に表現するための関数$f$の条件について考えます。</p>
+<p>連続型の確率変数$X$及びその実現値$x$について、情報量は$P(x)$に依存すると考えられることから、まず関数$f$は$P(x)$を変数にとることとします。</p>
+<p>次に、情報量をあらわす$f(P(x))$について望ましい性質として、以下が考えられます。</p>
+<p>$$
+P(x_i) \leq P(x_j) \Rightarrow f(P(x_i)) \geq f(P(x_j)) \tag{1}
+$$</p>
+<p>$$
+f(P(x_i)P(x_j)) = f(P(x_i))f(P(x_j)) \tag{2}
+$$</p>
+<p>$$
+f(P(x_i)=1) = 0 \tag{3}
+$$</p>
+<p>$(1)$式は、事象が起きる確率が低い程、その事象が持つ驚きの強さ（情報量）が大きくなるような条件です。<br>
+$(2)$式は、2つの事象を1回の試行で同時に得るようなときと、それらの事象を2回の試行で一つひとつ得るようなときの情報量が同じになることを意味する条件です。<br>
+$(3)$式は、ある事象が起きる確率が1のとき、情報量が0であることを意味する条件です。</p>
+<p>これらの条件を満たす関数として、以下の情報量が導出されます。</p>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆情報量</strong></legend>
+ 
+連続型の確率変数$X$から実現値$x$が得られたときの情報量は、以下で定義される。
+$$
+I(X = x) = -\log{P(X = x)}　\tag{4}
+$$
+
+</fieldset>
+<p><br>
+<fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆情報量の証明</strong></legend>
+
+$x ∈ \mathbb{R}$について微分可能な関数$f(x)$について、条件$(2)$より、
+$$
+f(x(1 + \delta)) = f(x + x\delta) = f(x) + f(1 + \delta)
+$$
+二つ目の等号より、
+$$
+\cfrac{f(x + x\delta) - f(x)}{x\delta} = \cfrac{f(1 + \delta)}{x\delta}
+$$
+左辺は導関数の定義であるから、
+$$
+f^{'}(x) = K\cfrac{1}{x}
+$$
+ただし、$K = \cfrac{f(1 + \delta)}{\delta}$。
+
+上式を積分して、
+$$
+f(x) = K\log{x} + C
+$$
+ここで、条件(1)より、$K$は任意の負の実数である。  
+また条件$(3)$より、$C=1$。
+
+よって、$K=-1$とすることにより$(4)$式が導かれる。
+
+</fieldset></p>
+<h1 id="エントロピー">エントロピー</h1>
+<p><strong>エントロピー</strong>は、前節で定義した情報量の期待値です。そのため平均情報量とも呼ばれます。</p>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆エントロピー</strong></legend>
+ 
+$A ∈ \mathbb{R}$上で定義された確率密度関数$f(x)$をもつ連続型の確率変数$x$のエントロピー$H(X)$を情報量の期待値として下記のとおり定義する。
+$$
+H(X) = - \int_{A} f(x)\log{f(x)}dx \tag{5}
+$$
+
+同様に、確率質量関数$g(x)$をもつ離散型の確率変数$X$のエントロピー$H(X)$を以下の通り定義する。
+$$
+H(X) = \sum_{i=1}^{n}-g(x_i)\log{g(x_i)} \tag{6}
+$$
+
+</fieldset>
+<p>エントロピーは、情報量の期待値ですから、確率分布の分散が大きいような、不確実性の大きな条件下でより大きな値を取ることが想定されます。これをガンマ分布を例に確認してみましょう。</p>
+<p>shapeパラメータ$a$、rateパラメータ$b$をもつガンマ分布</p>
+<p>$$
+\mathrm{Gamma}(\lambda | \alpha, \beta) = \cfrac{\beta^{\alpha}}{\Gamma(\alpha)}\lambda^{\alpha -1} e^{-\beta x} \tag{7}
+$$</p>
+<p>の形状は、下図ようになっています。ここで、$\lambda ∈ \mathbb{R}^+, \alpha∈ \mathbb{R}^+, \beta ∈ \mathbb{R}^+$です。</p>
+<figure class="left"><a href="/stat/bayesfactor/d_gamma%28alpha%29.png">
+    <img src="/stat/bayesfactor/d_gamma%28alpha%29.png" width="630" height="540"/> </a>
+</figure>
+
+<figure class="left"><a href="/stat/bayesfactor/d_gamma%28beta%29.png">
+    <img src="/stat/bayesfactor/d_gamma%28beta%29.png" width="630" height="540"/> </a>
+</figure>
+
+<p>1つ目の図はrateパラメータ固定、shapeパラメータを変化させたときのガンマ分布の形状を示しています。また2つ目の図はshapeパラメータ固定、rateパラメータを変化させたときのガンマ分布の形状を示しています。</p>
+<p>これらの図から、shapeパラメータが大きくなるほどまたrateパラメータが小さくなるほど分散は大きくなりそうだと確認できます。実際、<a href="https://rmorita-stat.github.io/2021/01/moment/#分散と中心積率">以前の記事</a>で確認した通り、ガンマ分布の分散は$\cfrac{\alpha}{\beta^2}$です。</p>
+<p>では、同様に片方のパラメータを固定したままもう片方のパラメータを変化させたとき、エントロピーはどのように変化するでしょうか。</p>
+<p>それを確認するため、まずガンマ分布のパラメータを変数としてエントロピーを計算します。</p>
+<fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆ガンマ分布のエントロピー</strong></legend>
+
+
+shapeパラメータ$\alpha$、rateパラメータ$\beta$のガンマ分布に従う確率変数$\lambda$のエントロピーは、
+
+$$
+\begin{split}
+H(\lambda) &= \mathbb{E}\left[-\log{\lambda}\right] \\\\
+&= - \mathbb{E}\left[\alpha\log{\beta} - \log{\Gamma(\alpha)} + (\alpha - 1) \log{\lambda} -\beta\lambda\right] \\\\
+&= -\alpha\log{\beta} + \log{\Gamma(\alpha)} + (1-\alpha)\mathbb{E}\left[\log\lambda\right] + \beta\mathbb{E}\left[\lambda\right]
+\end{split}
+$$
+ここで、$\mathbb{E}\left[\lambda\right] = \cfrac{\alpha}{\beta}$、$\mathbb{E}\left[\log{\lambda}\right] = \psi(\alpha) - \log{\beta}$を用いて、
+$$
+\begin{split}
+H(\lambda) &= -\alpha\log{\beta} + \log{\Gamma(\alpha)} + (1-\alpha)(\psi(\alpha) - \log{\beta}) + \beta\left(\cfrac{\alpha}{\beta}\right) \\\\
+&= \log{\Gamma(\alpha)} + (1 - \alpha){\psi(\alpha)} - \log{\beta} + \alpha
+\end{split}
+$$
+
+ただし、$\psi(x)$はディガンマ関数であり、ガンマ関数を対数微分したもの。
+
+</fieldset>
+<p>これを用いてガンマ分布のエントロピーを図示したものが、以下になります。</p>
+<figure class="left"><a href="/stat/bayesfactor/H_gamma%28alpha%29.png">
+    <img src="/stat/bayesfactor/H_gamma%28alpha%29.png" width="630" height="540"/> </a>
+</figure>
+
+<figure class="left"><a href="/stat/bayesfactor/H_gamma%28beta%29.png">
+    <img src="/stat/bayesfactor/H_gamma%28beta%29.png" width="630" height="540"/> </a>
+</figure>
+
+<p>一つ目の図から、ガンマ分布のエントロピーは、shapeパラメータが大きく、すなわち、分散が大きくなるにつれてエントロピーが増大していることが確認できます。<br>
+一方、二つ目の図からは、rateパラメータが小さく、すなわち分散が大きくなるにつれてエントロピーが増大していることが確認できます。</p>
+<p>以上、分布のばらつきが大きくなるほどエントロピーが大きくなる例を確認しました。エントロピーを通して、情報量が何をはかろうとしているのかイメージしてもらえるかなと思います。</p>
+<h1 id="ベイズ自由エネルギー">ベイズ自由エネルギー</h1>
+<p>(逆温度$\beta = -1$の)ベイズ自由エネルギーは、はじめに述べた情報量について、複数の確率変数$X^n = (X_1, X_2,\ldots,X_n)$の同時確率分布の場合の拡張について考え、さらにパラメータの事前分布を想定し、パラメータを周辺化消去したものになります。</p>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆ベイズ自由エネルギー</strong></legend>
+ 
+確率変数$X^n=(X_1, X_2,\ldots,X_n)$とそれらの同時確率分布$f(x^n)$が与えられたとき、ベイズ自由エネルギー$F_n$は以下のとおり定義される。
+$$
+F_n = -logf(x^n) = -\log\int_S f(x^n | \theta)\varphi(\theta) d\theta \tag{8}
+$$
+ここで$\theta$は$S ∈ \mathbb{R}$で定義されるパラメータ、$\varphi(\theta)$はパラメータの事前分布、$x^n = (x_1, x_2, \ldots, x_n)$は$X^n$の実現値である。
+
+</fieldset>
+<p>特に、$X^n$が独立同分布($\mathrm{i.i.d}$)であるとき、その確率関数を$g(x)$とすると、$(8)$式は</p>
+<p>$$
+F_n = -\log \int \prod_{i=1}^{n}g(x_i | \theta)\varphi(\theta)d\theta \tag{9}
+$$</p>
+<p>となります。</p>
+<p>これまで見てきた内容を踏まえると、ベイズ自由エネルギーは、確率変数の実現値（複数）がどれくらい驚きが大きい値かを示す指標であることから、<strong>その値が小さいほど、想定したモデルがデータをうまく説明できることを意味している</strong>と理解できます。</p>
+<h1 id="周辺尤度">周辺尤度</h1>
+<p>実は、$(9)$式は、ベイズに触れたことのある人ならばまず一回は触れたことのある関数とも関連しています。その関数とは、ベイズの定理における正規化定数、すなわち周辺尤度です。</p>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆事後分布と周辺尤度</strong></legend>
+ 
+標本空間$A ∈ \mathbb{R}$で定義される確率変数$X^n$に関する確率モデル$p(x^n|\theta)$と、$S ∈ \mathbb{R}$で定義されるパラメータ$\theta$の事前分布$\varphi(\theta)$を考えたとき、パラメータの事後分布$p(\theta|x^n)$は下記で定義される。
+$$
+p(\theta|x^n) = \cfrac{p(x^n|\theta)\varphi(\theta)}{Z_n} \tag{10}
+$$
+$Z_n$は正規化（$\int_S p(\theta|x^n)d\theta = 1$を確約すること）の為の定数であり、周辺尤度という。
+$$
+Z_n = \int_{S} p(x^n|\theta)\varphi(\theta) d\theta \tag{11}
+$$
+
+</fieldset>
+<p>特に、$x^n = (x_1,\ldots,x_n)$が独立同分布（$\mathrm{i.i.d}$）の確率変数からの実現値であるとき、その確率関数を$f(x)$とすると、</p>
+<p>$$
+p(\theta|x^n) =　\cfrac{\prod_{i=1}^{n} f(x_i|\theta)\varphi(\theta)}{Z_n} \tag{12}
+$$</p>
+<p>$(12)$式が成り立つとき、
+$$
+Z_n = \int_{S} \prod_{i=1}^{n} f(x_i|\theta)\varphi(\theta) d\theta \tag{13}
+$$</p>
+<p>$Z_n$はパラメータの事後分布の正規化定数であると同時に、確率変数$X^n$の同時確率密度になっています。</p>
+<p>$$
+\begin{split}
+\int_A \ldots \int_A Z_n dx_1\ldots dx_n &amp;=
+\int_A \ldots \int_A \int_S \prod_{i=1}^{n}f(x_i|\theta)\varphi(\theta)d\theta dx_1\ldots dx_n\\<br>
+&amp;= \int_S \varphi(\theta)d\theta \prod_{i=1}^{n}\int_A f(x_i|\theta)dx_i \\<br>
+&amp;= 1
+\end{split} \tag{13}
+$$</p>
+<p>よって、$Z_n$は実現値$x^n$が得られる同時確率の$\theta$に関する周辺分布($\theta$について周辺化した後の分布)であり、0から1の値をとります。つまり$Z_n$は確率モデル$p(x^n|\theta)$と事前分布$\varphi(\theta)$でデータをうまく説明できているかの指標になります。</p>
+<p>$(9)$式と$(12)$式を比較すると、自由エネルギーと周辺尤度の関係が見えてきます。</p>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆自由エネルギーと周辺尤度の関係</strong></legend>
+ 
+自由エネルギー$F_n$と周辺尤度$Z_n$は以下の関係にある。
+$$
+F_n = - \log{Z_n} \tag{13}
+$$
+
+</fieldset>
+<p>情報量から導かれた自由エネルギー$F_n$は結局のところ$X^n$の同時確率の対数符号反転になることが分かります。</p>
+<h1 id="ベイズファクター">ベイズファクター</h1>
+<p>ベイズファクターは、2つのモデルを考えたとき、どちらの方が優勢かをはかる指標となります。</p>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆ベイズファクター</strong></legend>
+ 
+2つの異なるモデル$M_0$、$M_1$を考えたとき、ベイズファクター$BF_{10}$は2つの異なるモデルの周辺尤度の比として定義される。
+$$
+BF_{10} = \cfrac{p(x^n | M_1)}{p(x^n |M_0)} \tag{14}
+$$
+ここで、$p(x^n | M)$はモデル$M$における周辺尤度である。また$(14)$式を変形することで、自由エネルギーを用いても定義される。
+$$
+BF_{10} = \exp{(F_{M_0} - F_{M_1})} \tag{15}
+$$
+ここで、$F_M$はモデル$M$における自由エネルギーである。
+
+</fieldset>
+<p>定義より、$BF_{10}$はモデル$M_0$に比べてモデル$M_1$がどの程度データを説明できているかを表しており、1より大きい値をとるにつれて$M_1$の方が優勢になっていくことが分かります。</p>
+<p><strong>判断の目安</strong></p>
+<h1 id="ベイズファクターを計算する">ベイズファクターを計算する</h1>
+<p>ベイズファクターの計算は解析的には困難な場合が多いですが、<strong>共役事前分布</strong>を用いて解析的に計算できる場合もあります。</p>
+<div class="memo" >
+    <span class="memo-title">memo</span>
+    <p>
+共役事前分布とは、事前分布と尤度関数を設定したとき、尤度関数のパラメーターの事後分布が事前分布と同じ関数系になるような事前分布のことである。
+</p>
+</div>
+<p>以下では、$A ∈ \mathbb{R}^+$で定義される独立同分布の$n$個の連続型確率変数$X^n=(X_1,\ldots,X_n)$からの実現値$x^n=(x_1,\ldots,x_n)$をもとに、確率変数$X^n$の分布を推定することを考えます。候補モデルには事後分布を解析的に計算可能なモデルを2つ用意し、どちらのモデルが優勢かをベイズファクターによって判断することを考えます。</p>
+<p>モデル1は上述の共役事前分布による事後分布の解析的計算が可能なモデルです。尤度関数には指数分布を設定し、事前分布にはガンマ分布を用いました。</p>
+<p><fieldset style="border: #000000 1px solid; padding: 4px; background-color: #EEFFFF; margin: 0px; color: #333333; border-radius: 10px"><legend><strong>◆モデル１</strong></legend>
+ 
+$$
+x_i \sim \mathrm{Exponential}(\gamma)  ~~~~ i=1,\ldots,n \tag{16}
+$$
+$$
+\gamma \sim \mathrm{Gamma}(\alpha, \beta) \tag{17}
+$$
+
+</fieldset>
+<br>
+<fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆指数分布の共役事前分布がガンマ分布であることの証明</strong></legend>
+
+
+尤度関数をパラメータ$\gamma$の指数分布
+
+$$
+p(x^n | \gamma) = \prod_{i=i}^{n}\left(\gamma\exp(-\gamma x_i)\right)
+$$
+
+パラメータ$\gamma$の事前分布をshapeパラメータ$\alpha$、rateパラメータ$\beta$のガンマ分布
+$$
+p(\gamma) = \cfrac{\beta^{\alpha}}{\Gamma(\alpha)}\gamma^{\alpha -1} e^{-\beta \gamma}
+$$
+
+とするとき、パラメータ$\gamma$の事後分布は、以下の通りガンマ分布である。
+$$
+\begin{split}
+p(\gamma | x^n) &\varpropto  p(x^n | \gamma)p(\gamma) \\\\
+&= \prod_{i=i}^{n}\left(\gamma\exp(-\gamma x_i)\right) \cfrac{\beta^{\alpha}}{\Gamma(\alpha)}\gamma^{\alpha -1} e^{-\beta \gamma} \\\\
+&= \gamma ^n \exp(-\gamma \sum_{i=1}^{n}x_i)\cfrac{\beta^{\alpha}}{\Gamma(\alpha)}\gamma^{\alpha -1} e^{-\beta \gamma} \\\\
+&= \cfrac{\beta^{\alpha}}{\Gamma(\alpha)} \gamma^{n+\alpha-1}\exp(-(\beta + \sum_{i=1}^{n}x_i)\gamma)\\\\
+&\propto \cfrac{\beta^{n + \alpha}}{\Gamma(n + \alpha)} \gamma^{n+\alpha-1}\exp(-(\beta + \sum_{i=1}^{n}x_i)\gamma) \\\\
+&= \mathrm{Gamma}(n+\alpha, \beta + \sum_{i=1}^{n}x_i )
+\end{split}
+$$
+
+</fieldset></p>
+<p>モデル2は、モデル1と同様、尤度関数に指数分布を設定します。一方、事前分布については設定しないこととします。</p>
+<fieldset style="border: #000000 1px solid; padding: 4px; background-color: #EEFFFF; margin: 0px; color: #333333; border-radius: 10px"><legend><strong>◆モデル２</strong></legend>
+ 
+$$
+x_i \sim \mathrm{Exponemtial}(\gamma)  ~~~~ i=1,\ldots,n \tag{18}
+$$
+
+</fieldset>
+<p>ベイズファクターは周辺尤度または自由エネルギーのモデル間比較を行うので、次に上記２モデルの周辺尤度・自由エネルギーを計算します。</p>
+<p>モデル1の周辺尤度$p(x^n|M_1)$は、</p>
+<div style="overflow-x:auto;">
+  
+$$
+\begin{split}
+p(x^n|M_1) &= \int_{0}^{∞}p(x^n | \gamma) \varphi(\gamma) d\gamma \\\\
+&= \int_{0}^{∞} \mathrm{Exponential}(x^n | \gamma)\mathrm{Gamma}(\gamma | \alpha, \beta) d\gamma \\\\
+&= \int_{0}^{∞} \prod_{i=i}^{n}\left(\gamma\exp(-\gamma x_i)\right) \cfrac{\beta^{\alpha}}{\Gamma(\alpha)}\gamma^{\alpha -1} e^{-\beta \gamma} d\gamma \\\\
+&= \cfrac{\beta^{\alpha}}{\Gamma(\alpha)} \int_{0}^{∞} \gamma^{n + \alpha - 1}\exp(-\gamma(\beta +\sum_{i=1}^{n}x_i)) d\gamma \\\\
+&= \cfrac{\beta^{\alpha}}{\Gamma(\alpha)} \int_{0}^{∞} \left(\cfrac{\gamma^{'}}{\beta + \sum_{i=1}^{n}x_i }\right)^{(n+\alpha-1)} e^{-\gamma^{'}}\cfrac{1}{\beta + \sum_{i=1}^{n}x_i}d\gamma^{'}  ~~~~~\left( (\beta + \sum_{i=1}^{n}x_i)\gamma = \gamma^{'} とした置換積分 \right) \\\\
+&= \cfrac{\beta^{\alpha}}{\Gamma(\alpha)(\beta + \sum_{i=1}^{n}x_i)^{n+\alpha}} \int_0^{∞} \gamma^{'(n+\alpha -1)} e^{-\gamma^{'}} d\gamma^{'} \\\\
+&= \cfrac{\beta^{\alpha}\Gamma(n+\alpha)}{\Gamma(\alpha)(\beta + \sum_{i=1}^{n}x_i)^{n+\alpha}} ~~~~~(ガンマ関数の定義より) \\\\
+&= \cfrac{\beta^{\alpha} n!}{(\beta + \sum_{i=1}^{n}x_i)^{n+\alpha}} ~~~~~(\Gamma(s+1) = s\Gamma(s)より)
+\end{split}
+$$
+
+</div>
+<p>自由エネルギー$F_{M_{1}}$は、
+<div style="overflow-x:auto;">
+  
+$$
+F_{M_{1}} = -log(p(x^n|M_1)) = -\alpha\log\beta - \sum_{i=1}^{n}i + (n + \alpha)\log(\beta + \sum_{i=1}^{n}x_i) \tag{19}
+$$
+
+</div></p>
+<p>同様に、モデル2の周辺尤度$p(x^n|M_2)$と自由エネルギー$F_{M_{2}}$を求めます。</p>
+<p>ここで、モデル2についてはパラメーターに事前分布を設定していないので、周辺尤度の計算の際にパラメータで周辺化する必要がありません。よって、</p>
+<p>$$
+p(x^n|M_2) = \mathrm{Exponential}(x^n | \gamma) = \prod_{i=1}^{n} \gamma \exp(-x_i\gamma) = \gamma^n \exp(-\sum_{i=1}^{n}x_i \gamma)
+$$</p>
+<p>$$
+F_{M_2} = -\log(p(x^n | M_2)) = -n\log\gamma + \sum_{i=1}^{n}x_i\gamma \tag{20}
+$$</p>
+<p>では、上記$(19)$、$(20)$式を用いて一つの観測値を例にベイズファクターを計算しましょう。</p>
+<p>いま、独立同分布の確率変数の組$X^5$から実現地$x^n = (0.198,0.561,0.572,0.094,0.213)$が得られたとします。このとき、$\alpha=3$、$\beta=1$としたときのモデル1と、$\gamma=3$としたときのモデル2のどちらがよいモデルであるのかを自由エネルギーを用いて比較します。</p>
+<p>このときのモデル1の自由エネルギーは、</p>
+<p>$$
+F_{M_{1}} = -3\log1 - \sum_{i=1}^{5}i + (5 + 3)\log(1 + \sum_{i=1}^{5}x_i) = 2.972677
+$$</p>
+<p>モデル2の自由エネルギーは、</p>
+<p>$$
+F_{M_2} = -n\log\gamma + \sum_{i=1}^{n}x_i\gamma = -5\log3 + 3\sum_{i=1}^{5}x_i = 4.914
+$$</p>
+<p>よって、パラメータに事前分布を設定したモデル1の方がデータをよく説明出来ていることが分かります。また、ベイズファクターを求めると</p>
+<p>$$
+exp(F_{M_2} - F_{M_1}) = 6.967966
+$$</p>
+<p>となることから、モデル1の方がやや優勢であると判断することができます。</p>
+<h1 id="ベイズファクターの性質を確認する">ベイズファクターの性質を確認する</h1>
+<p>もうすこし掘り下げて、<a href="http://www.asakura.co.jp/books/isbn/978-4-254-12842-0/">参考文献</a>を参考に、設定したモデルに対しどのようなデータが得られた時に自由エネルギーの値が大きく（小さく）なるのか見ていきます。ここでは、前節と同じ例を用いて、$X^n$に真の分布を設定し、モデル1($\alpha=3,\beta=1$)、モデル2($\gamma=3$)の比較を行います。</p>
+<p>まず、実現値の数を$n=30$とし、真の分布を</p>
+<p>$$
+X^{30} \sim \mathrm{Exponential}(8)
+$$</p>
+<p>としたとき。実現値の組を1000回発生させ、$F_{M_1}$、$F_{M_2}$をそれぞれ1000回計算し、結果を要約したものが以下になります。</p>
+<figure class="left"><a href="/stat/bayesfactor/Free-ebergy-boxplot1.png">
+    <img src="/stat/bayesfactor/Free-ebergy-boxplot1.png" width="630" height="540"/> </a>
+</figure>
+
+<p>モデル1の方が自由エネルギーがが小さい傾向にあります。<br>
+解釈としては、事前分布を設定しない単純なモデルであるモデル2は、$\gamma=3$と真のモデルとパラメータがやや異なっているので、当てはまりが比較的悪いのに対し、事前分布を設定したより複雑なモデルであるモデル1は、モデル2に比較しより広い範囲の実現値をカバーできるため、ということになります。</p>
+<p>一方、実現値をモデル2のパラメータ3に合わせた場合、結果は以下のように変わってきます。
+$$
+X^{30} \sim \mathrm{Exponential}(3)
+$$
+<figure class="left"><a href="/stat/bayesfactor/Free-ebergy-boxplot2.png">
+    <img src="/stat/bayesfactor/Free-ebergy-boxplot2.png" width="630" height="540"/> </a>
+</figure>
+</p>
+<p>今度はモデル2方が自由エネルギーが小さくなりました。このことから、自由エネルギーは、モデルを複雑にすれば小さくなりやすいというわけではなく、データの当てはまりが良い場合については、より単純なモデルほど小さくなる傾向にあることがわかります。</p>
+<p>この傾向を再確認するため、実現値の数を$n=1$とし、実現値を0.1から3まで与えたときの2つのモデルの自由エネルギーを確認したところ、以下のような結果になりました。</p>
+<figure class="left"><a href="/stat/bayesfactor/Free-ebergy.png">
+    <img src="/stat/bayesfactor/Free-ebergy.png" width="700" height="600"/> </a>
+</figure>
+
+<p>単純なモデルであるモデル2が想定している値である0.1から0.8あたりまでが得られた場合、モデル2の自由エネルギーの方が小さくなり、それ以外の範囲では複雑なモデルであるモデル1の方が自由エネルギーが小さくなることが分かります。このことから、自由エネルギー（ベイズファクター）を用いたモデル評価では<strong>過学習（データにフィットするようむやみにモデルを複雑にし過ぎること）を抑えることができる</strong>と言えます。またこの例からも分かるように、自由エネルギーがパラメーターに対し周辺化した値であることから、自由エネルギー（ベイズファクター）を用いたモデル評価では<strong>事前分布が大きく影響する</strong>、ということが分かります。</p>
+<h1 id="おわりに">おわりに</h1>
+<p>以上、ベイズファクターについてみていきました。</p>
+<p>ベイズファクターはパラメータに対し周辺化した尤度である周辺尤度に基づいて計算されますが、モデルの設定によってはこの計算が解析的に行えない場合があります。この場合、MCMCの結果からWBICを計算したり、ブリッジ・サンプリングを行うことで近似的に周辺尤度を計算する方法が提案されているようです。今後勉強し、まとめていこうと思っています。</p>
+<p>また別の始点（汎化誤差）に着目したモデル評価の指標であるWAIC等についても、もう一度整理し投稿したいと思っています。</p>
+<p>最後に、関数形の確認やシミュレーションの為に用いたRコードを載せておきます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r">
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+
+<span class="c1"># ガンマ分布の形状を確認 -------------------------------------------------------------</span>
+
+<span class="c1">#形状パラメータaを動かしたときのガンマ分布の確率密度</span>
+
+<span class="n">alpha</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">.5</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="m">5</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">40</span><span class="p">)),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">mapply</span><span class="p">(</span>
+    <span class="nf">function</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span><span class="n">beta</span><span class="p">,</span><span class="n">co</span><span class="p">)</span> <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="m">40</span><span class="p">,</span><span class="m">0.05</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><span class="nf">dgamma</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span><span class="n">rate</span><span class="o">=</span><span class="n">beta</span><span class="p">)),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">co</span><span class="p">)),</span>
+    <span class="n">alpha</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="n">alpha</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">coord_cartesian</span><span class="p">(</span><span class="n">ylim</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0.75</span><span class="p">))</span> <span class="o">+</span> <span class="nf">labs</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#34;α&#34;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s">&#34;λ&#34;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s">&#34;Gamma(λ | α,β=4)&#34;</span><span class="p">)</span>
+<span class="n">p</span>
+
+<span class="c1">#rateパラメータbを動かしたときのガンマ分布の確率密度</span>
+
+<span class="n">beta</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">.5</span><span class="p">,</span> <span class="m">10</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="m">.5</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">40</span><span class="p">)),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">mapply</span><span class="p">(</span>
+    <span class="nf">function</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span><span class="n">beta</span><span class="p">,</span><span class="n">co</span><span class="p">)</span> <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><span class="nf">dgamma</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">shape</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span><span class="n">rate</span><span class="o">=</span><span class="n">beta</span><span class="p">)),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">co</span><span class="p">)),</span>
+    <span class="m">4</span><span class="p">,</span><span class="n">beta</span><span class="p">,</span><span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="nf">labs</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#34;β&#34;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s">&#34;λ&#34;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s">&#34;Gamma(λ | α=4,β)&#34;</span><span class="p">)</span>
+<span class="n">p</span>
+
+<span class="c1"># ガンマ分布のエントロピーを確認 -------------------------------------------------------------</span>
+
+<span class="n">H_gamma</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">){</span>
+  <span class="nf">return</span><span class="p">(</span><span class="nf">lgamma</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="m">1</span><span class="o">-</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="nf">digamma</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">-</span> <span class="nf">log</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">+</span> <span class="n">a</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># 形状パラメータaを動かしたとき</span>
+
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">geom_path</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="m">100</span><span class="p">,</span><span class="m">0.1</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><span class="nf">H_gamma</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="m">1</span><span class="p">)),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">))</span>
+
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">mapply</span><span class="p">(</span>
+  <span class="nf">function</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span><span class="n">co</span><span class="p">)</span> <span class="nf">geom_path</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="m">50</span><span class="p">,</span><span class="m">0.1</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><span class="nf">H_gamma</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">beta</span><span class="p">)),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">co</span><span class="p">)),</span>
+  <span class="nf">seq</span><span class="p">(</span><span class="m">0.01</span><span class="p">,</span><span class="m">10</span><span class="p">,</span><span class="n">len</span><span class="o">=</span><span class="m">20</span><span class="p">),</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0.01</span><span class="p">,</span><span class="m">10</span><span class="p">,</span><span class="n">len</span><span class="o">=</span><span class="m">20</span><span class="p">)</span>
+  <span class="p">)</span> <span class="o">+</span> <span class="nf">labs</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#34;β&#34;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s">&#34;α&#34;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s">&#34;H(Gamma(α,β))&#34;</span><span class="p">)</span>
+<span class="n">p</span>
+
+<span class="c1">#rateパラメータbを動かしたときのガンマ分布のエントロピー</span>
+
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">mapply</span><span class="p">(</span>
+  <span class="nf">function</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span><span class="n">co</span><span class="p">)</span> <span class="nf">geom_path</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="m">50</span><span class="p">,</span><span class="m">0.1</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><span class="nf">H_gamma</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span><span class="n">x</span><span class="p">)),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">co</span><span class="p">)),</span>
+  <span class="nf">seq</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="m">10</span><span class="p">,</span><span class="n">len</span><span class="o">=</span><span class="m">20</span><span class="p">),</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="m">10</span><span class="p">,</span><span class="n">len</span><span class="o">=</span><span class="m">20</span><span class="p">)</span>
+<span class="p">)</span> <span class="o">+</span> <span class="nf">labs</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#34;α&#34;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s">&#34;β&#34;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s">&#34;H(Gamma(α,β))&#34;</span><span class="p">)</span>
+<span class="n">p</span>
+
+<span class="c1"># ベイズファクターの計算 -------------------------------------------------------------</span>
+
+<span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">round</span><span class="p">(</span><span class="nf">rexp</span><span class="p">(</span><span class="m">5</span><span class="p">,</span> <span class="m">3</span><span class="p">),</span><span class="m">3</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">&lt;-</span> <span class="m">0.01</span>
+
+<span class="n">F_model1</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">beta</span><span class="p">){</span>
+  <span class="nf">return</span><span class="p">(</span><span class="o">-</span><span class="n">alpha</span><span class="o">*</span><span class="nf">log</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">-</span><span class="nf">sum</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="nf">length</span><span class="p">(</span><span class="n">X</span><span class="p">))))</span> <span class="o">+</span> <span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">+</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="nf">log</span><span class="p">(</span><span class="n">beta</span> <span class="o">+</span> <span class="nf">sum</span><span class="p">(</span><span class="n">X</span><span class="p">))</span> <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">F_model2</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">gamma</span><span class="p">){</span>
+  <span class="nf">return</span><span class="p">(</span> <span class="o">-</span><span class="nf">length</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">*</span> <span class="nf">log</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="nf">sum</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma</span> <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">gamma</span> <span class="o">&lt;-</span> <span class="m">3</span>
+<span class="n">alpha</span> <span class="o">&lt;-</span> <span class="m">3</span>
+<span class="n">beta</span> <span class="o">&lt;-</span> <span class="m">1</span>
+
+
+<span class="c1">#計算結果</span>
+<span class="nf">exp</span><span class="p">(</span><span class="o">-</span><span class="nf">F_model1</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">)</span>
+ <span class="o">+</span> <span class="nf">F_model2</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">))</span>
+
+<span class="c1"># lineplot ---------------------------------------------------------------</span>
+
+<span class="n">F_model1_p</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">beta</span><span class="p">){</span>
+  <span class="nf">return</span><span class="p">(</span><span class="o">-</span><span class="n">alpha</span><span class="o">*</span><span class="nf">log</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="m">1</span> <span class="o">+</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="nf">log</span><span class="p">(</span><span class="n">beta</span> <span class="o">+</span> <span class="n">X</span><span class="p">)</span> <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">F_model2_p</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">gamma</span><span class="p">){</span>
+  <span class="nf">return</span><span class="p">(</span> <span class="m">-1</span> <span class="o">*</span> <span class="nf">log</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="n">X</span> <span class="o">*</span> <span class="n">gamma</span> <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">mapply</span><span class="p">(</span>
+    <span class="nf">function</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span> <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x2</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><span class="nf">F_model2_p</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span><span class="n">gamma</span><span class="p">)),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span><span class="n">lty</span><span class="o">=</span><span class="s">&#34;model2&#34;</span><span class="p">)),</span>
+    <span class="n">gamma</span>
+  <span class="p">)</span> <span class="o">+</span> <span class="nf">mapply</span><span class="p">(</span>
+    <span class="nf">function</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span><span class="n">beta</span><span class="p">)</span> <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x2</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><span class="nf">F_model1_p</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span><span class="n">alpha</span><span class="p">,</span><span class="n">beta</span><span class="p">)),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span><span class="n">lty</span><span class="o">=</span><span class="s">&#34;model1&#34;</span><span class="p">)),</span>
+    <span class="n">alpha</span><span class="p">,</span><span class="n">beta</span>
+  <span class="p">)</span> <span class="o">+</span> <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&#34;x&#34;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s">&#34;Free Energy&#34;</span><span class="p">)</span>
+<span class="n">p</span>
+
+<span class="c1"># boxplot -----------------------------------------------------------------</span>
+
+<span class="n">n</span> <span class="o">&lt;-</span> <span class="m">30</span> <span class="c1">#sample size</span>
+
+<span class="n">gamma_prime</span> <span class="o">&lt;-</span> <span class="m">1</span>
+<span class="nf">set.seed</span><span class="p">(</span><span class="m">123</span><span class="p">)</span>
+<span class="n">m1</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">()</span>
+<span class="n">m2</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">()</span>
+<span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="m">1000</span><span class="p">){</span>
+  <span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">rexp</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">gamma_prime</span><span class="p">)</span>
+  <span class="n">m2[i]</span> <span class="o">&lt;-</span> <span class="nf">sum</span><span class="p">(</span><span class="o">-</span><span class="nf">dexp</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="n">log</span><span class="o">=</span><span class="bp">T</span><span class="p">))</span>
+  <span class="n">m1[i]</span> <span class="o">&lt;-</span> <span class="nf">F_model1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nf">mean</span><span class="p">(</span><span class="n">m1</span><span class="p">)</span>
+<span class="nf">mean</span><span class="p">(</span><span class="n">m2</span><span class="p">)</span>
+
+<span class="n">plot_title</span> <span class="o">&lt;-</span> <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;Comparison of free energy&#34;</span><span class="p">,</span>
+                      <span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;Real param = %.0f&#34;</span><span class="p">,</span><span class="n">gamma_prime</span><span class="p">))</span>
+
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">data_frame</span><span class="p">(</span><span class="n">M1</span><span class="o">=</span><span class="n">m1</span><span class="p">,</span><span class="n">M2</span><span class="o">=</span><span class="n">m2</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">gather</span><span class="p">(</span><span class="n">key</span> <span class="o">=</span> <span class="s">&#34;x&#34;</span><span class="p">,</span><span class="n">value</span> <span class="o">=</span> <span class="s">&#34;y&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">geom_boxplot</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span><span class="n">lwd</span><span class="o">=</span><span class="m">0.5</span><span class="p">,</span><span class="n">outlier.shape</span> <span class="o">=</span> <span class="m">21</span><span class="p">,</span> <span class="n">outlier.size</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme_light</span><span class="p">()</span> <span class="o">+</span> <span class="nf">xlab</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">ylab</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.text</span><span class="o">=</span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">4</span><span class="p">),</span>
+        <span class="n">legend.title</span><span class="o">=</span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">8</span><span class="p">,</span><span class="n">face</span><span class="o">=</span><span class="s">&#34;bold&#34;</span><span class="p">),</span>  
+        <span class="n">axis.text</span><span class="o">=</span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">6</span><span class="p">),</span>
+        <span class="n">axis.title</span><span class="o">=</span><span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">8</span><span class="p">,</span><span class="n">face</span><span class="o">=</span><span class="s">&#34;bold&#34;</span><span class="p">),</span>
+        <span class="n">strip.text.x</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="m">6</span><span class="p">,</span><span class="n">face</span><span class="o">=</span><span class="s">&#34;bold&#34;</span><span class="p">),</span>
+        <span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;right&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="n">plot_title</span>
+<span class="n">p</span>
+</code></pre></div>
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://rmorita-stat.github.io/tags/%E7%A2%BA%E7%8E%87%E8%AB%96">確率論</a></span>
+        
+        <span><a href="https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
+        
+        
+    </div>
+</div>
+<div class="disqus-comments">
+  <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-rmorita-stat-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 得意なのは統一された洋服とダンスのステップです </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://rmorita-stat.github.io/2021/01/moment/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2021.01.31 00:00 </div>
+            <div class="pn-el__2"> 積率と母関数 </div>
+        </div>
+    </a>
+    
+    
+</div>
+
+<footer>
+  <script type="text/javascript">
+ MathJax = {
+   tex: {
+     inlineMath: [['$','$'], ['\\(','\\)']],
+     processEscapes: true,
+     tags: "ams",
+     autoload: {
+       color: [],
+       colorV2: ['color']
+     },
+     packages: {'[+]': ['noerrors']}
+   },
+   chtml: {
+     matchFontHeight: true,
+     displayAlign: "left",
+     displayIndent: "2em"
+   },
+   options: {
+     skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+     renderActions: {
+        
+       find_script_mathtex: [10, function (doc) {
+         for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+           const display = !!node.type.match(/; *mode=display/);
+           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+           const text = document.createTextNode('');
+           node.parentNode.replaceChild(text, node);
+           math.start = {node: text, delim: '', n: 0};
+           math.end = {node: text, delim: '', n: 0};
+           doc.math.push(math);
+         }
+       }, '']
+     }
+   },
+   loader: {
+     load: ['[tex]/noerrors']
+   }
+ };
+</script>
+<script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2021
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+

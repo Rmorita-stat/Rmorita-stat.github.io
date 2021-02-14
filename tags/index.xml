@@ -6,15 +6,24 @@
     <description>Recent content in Tags on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sun, 31 Jan 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 14 Feb 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>ベイズファクター</title>
+      <link>https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/</link>
+      <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>確率論</title>
       <link>https://rmorita-stat.github.io/tags/%E7%A2%BA%E7%8E%87%E8%AB%96/</link>
-      <pubDate>Sun, 31 Jan 2021 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
       
       <guid>https://rmorita-stat.github.io/tags/%E7%A2%BA%E7%8E%87%E8%AB%96/</guid>
       <description></description>
