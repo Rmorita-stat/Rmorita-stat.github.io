@@ -173,12 +173,10 @@ $$
 <p>このとき、以下の公式が得られます。   <br>
 <br>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆線形回帰モデルの解</strong></legend>
- 
 線形回帰モデル$\hat{\boldsymbol{y}} = \boldsymbol{\Phi}\boldsymbol{w}$における$\boldsymbol{w}$の最小二乗解は
 $$
 \boldsymbol{w} = \left(\boldsymbol{\Phi}^T\boldsymbol{\Phi}\right)^{-1}\boldsymbol{\Phi}^T\boldsymbol{y} \tag{4}
-$$  
-
+$$
 </fieldset><br>
 <br>
 <div style="overflow-x:auto;">
@@ -241,7 +239,6 @@ $$
 <p>係数パラメータの絶対値が大きくなるのを避けるための工夫が<strong>正則化</strong>です。正則化では、$(5)$式で得られたデータ全体の誤差に、$\boldsymbol{w}$の絶対値が大きくなることによるペナルティを課すように設定します。  このペナルティの設定方法が、Ridge回帰とLasso回帰の唯一の違いです。<br>
 <br>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Ridge回帰とLasso回帰の損失関数</strong></legend>
- 
 Ridge回帰における損失関数は、
 $$
 E =  (\boldsymbol{y}-\boldsymbol{\Phi}\boldsymbol{w})^T(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}) + \alpha||\boldsymbol{w}||_2^2 \tag{7}
@@ -251,7 +248,6 @@ $$
 E =  (\boldsymbol{y}-\boldsymbol{\Phi}\boldsymbol{w})^T(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}) + \alpha||\boldsymbol{w}||_1^1 \tag{8}
 $$
 ただし、$\alpha \geq 0$
-
 </fieldset><br>
 <br>
 <div style="overflow-x:auto;">
@@ -318,16 +314,14 @@ $$
 <h1 id="確率モデルでridge回帰を捉える">確率モデルでRidge回帰を捉える</h1>
 <p>前節で説明したRidge回帰は確率分布を用いた以下のモデルでも説明できます。</p>
 <p><fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Ridge回帰の確率モデル</strong></legend>
- 
 $(7)$のRidge回帰と等価の確率モデルは、
 $$
 \begin{cases}
-p(y | \boldsymbol{w}, \boldsymbol{x}) = \mathrm{Normal}(y | \boldsymbol{w}^T\boldsymbol{\phi}(\boldsymbol{x}), \sigma^2) \\\\
+p(y | \boldsymbol{w}, \boldsymbol{x}) = \mathrm{Normal}(y | \boldsymbol{w}^T\boldsymbol{\phi}(\boldsymbol{x}), \sigma^2) \\<br>
 p(\boldsymbol{w}) = \mathrm{Normal}(\boldsymbol{w}|0, \rho^{-1}\boldsymbol{I}_H)
 \end{cases} \tag{11}
 $$
 ただし、$\alpha = \rho\sigma^2$
-
 </fieldset><br>
 <br>
 <div style="overflow-x:auto;">
@@ -359,16 +353,14 @@ $$
 <h1 id="確率モデルでlasso回帰を捉える">確率モデルでLasso回帰を捉える</h1>
 <p>Lasso回帰は確率分布を用いた以下のモデルでも説明できます。</p>
 <p><fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Lasso回帰の確率モデル</strong></legend>
- 
 $(8)$のLasso回帰と等価の確率モデルは、
 $$
 \begin{cases}
-p(y | \boldsymbol{w}, \boldsymbol{x}) = \mathrm{Normal}(y | \boldsymbol{w}^T\boldsymbol{\phi}(\boldsymbol{x}), \sigma^2) \\\\
+p(y | \boldsymbol{w}, \boldsymbol{x}) = \mathrm{Normal}(y | \boldsymbol{w}^T\boldsymbol{\phi}(\boldsymbol{x}), \sigma^2) \\<br>
 p(\boldsymbol{w}) = \prod_{h=1}^{H}\mathrm{Laplace}(w_h | 0, b)
 \end{cases} \tag{12}
 $$
 ただし、$\alpha = \cfrac{2\sigma^2}{b}$
-
 </fieldset><br>
 <br>
 <div style="overflow-x:auto;">

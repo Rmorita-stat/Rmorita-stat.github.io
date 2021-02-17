@@ -175,27 +175,19 @@
 <p><a href="https://rmorita-stat.github.io/2020/12/regularization/">以前の記事</a>と同様に記号を定義したとき、
 <code>glmnet::glmnet(alpha, lambda)</code>は下記式に基づいて係数パラメータ$\boldsymbol{w}$を最適化するようです<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。</p>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆glmnetにおけるパラメータの最適化方法</strong></legend>
- 
-
-係数パラメータ$\boldsymbol{w}$の解は、
-
-$$
+<p>係数パラメータ$\boldsymbol{w}$の解は、</p>
+<p>$$
 \newcommand{\argmin}{\mathop{\rm arg~min}\limits}
 \argmin_{\boldsymbol{w}∈\mathbb{R}^{H+1}}\left[\cfrac{1}{2N} \left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right)^T\left(\boldsymbol{y} - \boldsymbol{\Phi}\boldsymbol{w}\right) + \lambda P_{\alpha}(\boldsymbol{w}_{-0})\right] \tag{1}
-$$
-
-ここで、
-
-$$
+$$</p>
+<p>ここで、</p>
+<p>$$
 P_{\alpha}(\boldsymbol{w}) = (1-\alpha)\cfrac{1}{2}||\boldsymbol{w}||_2^2 + \alpha||\boldsymbol{w}_{-0}||_1^1 \tag{2}
-$$
-
-$$
+$$</p>
+<p>$$
 \boldsymbol{w}_{-0} = (w_1,\ldots, w_H)^T \tag{3}
-$$
-
-である。
-
+$$</p>
+<p>である。</p>
 
 </fieldset>
 <p><code>glmnet::glmnet(alpha=1)</code>で$(2)$式が$P_{\alpha}(\boldsymbol{w}) = ||\boldsymbol{w}||_1^1$となることにより、Lasso回帰をすることができます。引数の<code>lambda</code>は$\boldsymbol{w}$が大きくなることによるペナルティ$P_\alpha(\boldsymbol{w})$の重みになり、大きくなるほど係数パラメータは小さくなる傾向にあります。<code>lambda</code>の値は交差検証法を行う<code>glmet::cv.glmet()</code>で<code>nfolds=nrow(BostonHousing)</code>とすることにより1個抜き交差検証法を行い決定します。</p>

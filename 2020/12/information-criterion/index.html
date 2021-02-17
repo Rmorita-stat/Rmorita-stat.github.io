@@ -101,15 +101,12 @@
 カルバック・ライブラー情報量基準は、$y$についての2つの生成分布に比の対数について、真のデータ生成分布で期待値をとったものとみなすことができる。<br>
 <br>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>カルバック・ライブラー(KL)情報量基準</strong></legend>
- 
-$q(x)$を真のデータ生成分布、$f(x)$をデータ予測モデルとしたとき、カルバック・ライブラー情報量基準は以下で定義される。
-<div style="overflow-x:auto;">
-  
-$$
+<p>$q(x)$を真のデータ生成分布、$f(x)$をデータ予測モデルとしたとき、カルバック・ライブラー情報量基準は以下で定義される。</p>
+<!-- raw HTML omitted -->
+<p>$$
 \mathcal{D}(f;q) = E_{q}\left[\log\cfrac{q(x)}{f(x)}\right] = \int_{-∞}^{∞}~q(x)\log\cfrac{q(x)}{f(x)}~d(x) \tag{1}
-$$
-
-</div>
+$$</p>
+<!-- raw HTML omitted -->
 
 </fieldset></p>
 <h3 id="12-性質">1.2. 性質</h3>
@@ -176,13 +173,11 @@ $$
 <p>と近似する。さらに母数の数についてバイアス補正し、$-2N$倍することにより、下記AICが導出される。<br>
 <br>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>AIC</strong></legend>
- 
 AICは下記式で定義される。
 $$
 -2\log L_{max}(\boldsymbol{x}|\hat{\theta}) + 2p \tag{7}
 $$
 ただし、$p$はモデル中の未制約母数の数。
-
 </fieldset><br>
 <br>
 AICの値が小さい程よいモデルであるとみなす。$(7)$式は対数尤度が高いモデルをなるべく少ない母数の数で達成しようとするものであるとみなすことが出来る。</p>
@@ -246,18 +241,13 @@ $$
 <p>あとはすべての$k$について$(12)$式を足し上げればよい。<br>
 <br>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>LOOCVによる平均対数尤度の推定量（対数点別予測密度）</strong></legend>
- 
-LOOCVにおける候補モデルのデータに対する予測精度は、
-
-<div style="overflow-x:auto;">
-  
-$$
+<p>LOOCVにおける候補モデルのデータに対する予測精度は、</p>
+<!-- raw HTML omitted -->
+<p>$$
 lppd_{loo} \approx \sum_{k=1}^{N} \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{k} | \theta^{(t)})\right]^{(-k)} \tag{13}
-$$
-
-</div>
-
-で与えられる。これを対数点別予測密度という。
+$$</p>
+<!-- raw HTML omitted -->
+<p>で与えられる。これを対数点別予測密度という。</p>
 
 </fieldset></p>
 <h1 id="4-waic">4. WAIC</h1>
@@ -299,12 +289,10 @@ $$
 <p>以上を踏まえ、また式の形をAICに合わせることで、WAICは下記の通り定義される。<br>
 <br>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>WAIC</strong></legend>
- 
 Waicは下記式で定義される。
 $$
 WAIC = -2\sum_{i=1}^{N} \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{i} | \theta^{(t)})\right] + 2\sum_{i=1}^{N} V_{post}\left[\log f(x_{i}|\theta)\right] \tag{18}
 $$
-
 </fieldset><br>
 <br>
 WAICは、事後分布が正規分布で近似できないような多くのベイジアンモデルにおいても適用可能な情報量基準量である。</p>

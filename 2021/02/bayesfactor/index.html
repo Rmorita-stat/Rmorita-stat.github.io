@@ -94,28 +94,34 @@
 <p>事象のもつ情報の多さ、すなわち<strong>情報量</strong>を定量的に表現するための関数$f$の条件について考えます。</p>
 <p>連続型の確率変数$X$及びその実現値$x$について、情報量は$P(x)$に依存すると考えられることから、まず関数$f$は$P(x)$を変数にとることとします。</p>
 <p>次に、情報量をあらわす$f(P(x))$について望ましい性質として、以下が考えられます。</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 P(x_i) \leq P(x_j) \Rightarrow f(P(x_i)) \geq f(P(x_j)) \tag{1}
-$$</p>
-<p>$$
+$$
+
+$$
 f(P(x_i)P(x_j)) = f(P(x_i))f(P(x_j)) \tag{2}
-$$</p>
-<p>$$
+$$
+
+$$
 f(P(x_i)=1) = 0 \tag{3}
-$$</p>
+$$
+
+</div>
 <p>$(1)$式は、事象が起きる確率が低い程、その事象が持つ驚きの強さ（情報量）が大きくなるような条件です。<br>
 $(2)$式は、2つの事象を1回の試行で同時に得るようなときと、それらの事象を2回の試行で一つひとつ得るようなときの情報量が同じになることを意味する条件です。<br>
 $(3)$式は、ある事象が起きる確率が1のとき、情報量が0であることを意味する条件です。</p>
 <p>これらの条件を満たす関数として、以下の情報量が導出されます。</p>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆情報量</strong></legend>
- 
 連続型の確率変数$X$から実現値$x$が得られたときの情報量は、以下で定義される。
 $$
 I(X = x) = -\log{P(X = x)}　\tag{4}
 $$
-
 </fieldset>
 <p><br>
+<div style="overflow-x:auto;">
+  
 <fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆情報量の証明</strong></legend>
 
 $x ∈ \mathbb{R}$について微分可能な関数$f(x)$について、条件$(2)$より、
@@ -141,27 +147,31 @@ $$
 
 よって、$K=-1$とすることにより$(4)$式が導かれる。
 
-</fieldset></p>
+</fieldset>
+
+</div></p>
 <h1 id="エントロピー">エントロピー</h1>
 <p><strong>エントロピー</strong>は、前節で定義した情報量の期待値です。そのため平均情報量とも呼ばれます。</p>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆エントロピー</strong></legend>
- 
-$A ∈ \mathbb{R}$上で定義された確率密度関数$f(x)$をもつ連続型の確率変数$x$のエントロピー$H(X)$を情報量の期待値として下記のとおり定義する。
+<p>$A ∈ \mathbb{R}$上で定義された確率密度関数$f(x)$をもつ連続型の確率変数$x$の<strong>エントロピー</strong>$H(X)$を情報量の期待値として下記のとおり定義する。
 $$
 H(X) = - \int_{A} f(x)\log{f(x)}dx \tag{5}
-$$
-
-同様に、確率質量関数$g(x)$をもつ離散型の確率変数$X$のエントロピー$H(X)$を以下の通り定義する。
+$$</p>
+<p>同様に、確率質量関数$g(x)$をもつ離散型の確率変数$X$のエントロピー$H(X)$を以下の通り定義する。
 $$
 H(X) = \sum_{i=1}^{n}-g(x_i)\log{g(x_i)} \tag{6}
-$$
+$$</p>
 
 </fieldset>
 <p>エントロピーは、情報量の期待値ですから、確率分布の分散が大きいような、不確実性の大きな条件下でより大きな値を取ることが想定されます。これをガンマ分布を例に確認してみましょう。</p>
 <p>shapeパラメータ$a$、rateパラメータ$b$をもつガンマ分布</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 \mathrm{Gamma}(\lambda | \alpha, \beta) = \cfrac{\beta^{\alpha}}{\Gamma(\alpha)}\lambda^{\alpha -1} e^{-\beta x} \tag{7}
-$$</p>
+$$
+
+</div>
 <p>の形状は、下図ようになっています。ここで、$\lambda ∈ \mathbb{R}^+, \alpha∈ \mathbb{R}^+, \beta ∈ \mathbb{R}^+$です。</p>
 <figure class="left"><a href="/stat/bayesfactor/d_gamma%28alpha%29.png">
     <img src="/stat/bayesfactor/d_gamma%28alpha%29.png" width="630" height="540"/> </a>
@@ -175,6 +185,9 @@ $$</p>
 <p>これらの図から、shapeパラメータが大きくなるほどまたrateパラメータが小さくなるほど分散は大きくなりそうだと確認できます。実際、<a href="https://rmorita-stat.github.io/2021/01/moment/#分散と中心積率">以前の記事</a>で確認した通り、ガンマ分布の分散は$\cfrac{\alpha}{\beta^2}$です。</p>
 <p>では、同様に片方のパラメータを固定したままもう片方のパラメータを変化させたとき、エントロピーはどのように変化するでしょうか。</p>
 <p>それを確認するため、まずガンマ分布のパラメータを変数としてエントロピーを計算します。</p>
+<p><br>
+<div style="overflow-x:auto;">
+  
 <fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆ガンマ分布のエントロピー</strong></legend>
 
 
@@ -198,6 +211,8 @@ $$
 ただし、$\psi(x)$はディガンマ関数であり、ガンマ関数を対数微分したもの。
 
 </fieldset>
+
+</div></p>
 <p>これを用いてガンマ分布のエントロピーを図示したものが、以下になります。</p>
 <figure class="left"><a href="/stat/bayesfactor/H_gamma%28alpha%29.png">
     <img src="/stat/bayesfactor/H_gamma%28alpha%29.png" width="630" height="540"/> </a>
@@ -213,67 +228,76 @@ $$
 <h1 id="ベイズ自由エネルギー">ベイズ自由エネルギー</h1>
 <p>(逆温度$\beta = -1$の)ベイズ自由エネルギーは、はじめに述べた情報量について、複数の確率変数$X^n = (X_1, X_2,\ldots,X_n)$の同時確率分布の場合の拡張について考え、さらにパラメータの事前分布を想定し、パラメータを周辺化消去したものになります。</p>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆ベイズ自由エネルギー</strong></legend>
- 
-確率変数$X^n=(X_1, X_2,\ldots,X_n)$とそれらの同時確率分布$f(x^n)$が与えられたとき、ベイズ自由エネルギー$F_n$は以下のとおり定義される。
+確率変数$X^n=(X_1, X_2,\ldots,X_n)$とそれらの同時確率分布$f(x^n)$が与えられたとき、<strong>ベイズ自由エネルギー</strong>$F_n$は以下のとおり定義される。
 $$
 F_n = -logf(x^n) = -\log\int_S f(x^n | \theta)\varphi(\theta) d\theta \tag{8}
 $$
 ここで$\theta$は$S ∈ \mathbb{R}$で定義されるパラメータ、$\varphi(\theta)$はパラメータの事前分布、$x^n = (x_1, x_2, \ldots, x_n)$は$X^n$の実現値である。
-
 </fieldset>
 <p>特に、$X^n$が独立同分布($\mathrm{i.i.d}$)であるとき、その確率関数を$g(x)$とすると、$(8)$式は</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 F_n = -\log \int \prod_{i=1}^{n}g(x_i | \theta)\varphi(\theta)d\theta \tag{9}
-$$</p>
+$$
+
+</div>
 <p>となります。</p>
 <p>これまで見てきた内容を踏まえると、ベイズ自由エネルギーは、確率変数の実現値（複数）がどれくらい驚きが大きい値かを示す指標であることから、<strong>その値が小さいほど、想定したモデルがデータをうまく説明できることを意味している</strong>と理解できます。</p>
 <h1 id="周辺尤度">周辺尤度</h1>
 <p>実は、$(9)$式は、ベイズに触れたことのある人ならばまず一回は触れたことのある関数とも関連しています。その関数とは、ベイズの定理における正規化定数、すなわち周辺尤度です。</p>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆事後分布と周辺尤度</strong></legend>
- 
 標本空間$A ∈ \mathbb{R}$で定義される確率変数$X^n$に関する確率モデル$p(x^n|\theta)$と、$S ∈ \mathbb{R}$で定義されるパラメータ$\theta$の事前分布$\varphi(\theta)$を考えたとき、パラメータの事後分布$p(\theta|x^n)$は下記で定義される。
 $$
 p(\theta|x^n) = \cfrac{p(x^n|\theta)\varphi(\theta)}{Z_n} \tag{10}
 $$
-$Z_n$は正規化（$\int_S p(\theta|x^n)d\theta = 1$を確約すること）の為の定数であり、周辺尤度という。
+$Z_n$は正規化（$\int_S p(\theta|x^n)d\theta = 1$を確約すること）の為の定数であり、<strong>周辺尤度</strong>という。
 $$
 Z_n = \int_{S} p(x^n|\theta)\varphi(\theta) d\theta \tag{11}
 $$
-
 </fieldset>
 <p>特に、$x^n = (x_1,\ldots,x_n)$が独立同分布（$\mathrm{i.i.d}$）の確率変数からの実現値であるとき、その確率関数を$f(x)$とすると、</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 p(\theta|x^n) =　\cfrac{\prod_{i=1}^{n} f(x_i|\theta)\varphi(\theta)}{Z_n} \tag{12}
-$$</p>
-<p>$(12)$式が成り立つとき、
+$$
+
+</div>
+<p>$(12)$式が成り立つとき、</p>
+<div style="overflow-x:auto;">
+  
 $$
 Z_n = \int_{S} \prod_{i=1}^{n} f(x_i|\theta)\varphi(\theta) d\theta \tag{13}
-$$</p>
+$$
+
+</div>
 <p>$Z_n$はパラメータの事後分布の正規化定数であると同時に、確率変数$X^n$の同時確率密度になっています。</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 \begin{split}
-\int_A \ldots \int_A Z_n dx_1\ldots dx_n &amp;=
-\int_A \ldots \int_A \int_S \prod_{i=1}^{n}f(x_i|\theta)\varphi(\theta)d\theta dx_1\ldots dx_n\\<br>
-&amp;= \int_S \varphi(\theta)d\theta \prod_{i=1}^{n}\int_A f(x_i|\theta)dx_i \\<br>
-&amp;= 1
+\int_A \ldots \int_A Z_n dx_1\ldots dx_n &=
+\int_A \ldots \int_A \int_S \prod_{i=1}^{n}f(x_i|\theta)\varphi(\theta)d\theta dx_1\ldots dx_n\\\\
+&= \int_S \varphi(\theta)d\theta \prod_{i=1}^{n}\int_A f(x_i|\theta)dx_i \\\\
+&= 1
 \end{split} \tag{13}
-$$</p>
+$$
+
+</div>
 <p>よって、$Z_n$は実現値$x^n$が得られる同時確率の$\theta$に関する周辺分布($\theta$について周辺化した後の分布)であり、0から1の値をとります。つまり$Z_n$は確率モデル$p(x^n|\theta)$と事前分布$\varphi(\theta)$でデータをうまく説明できているかの指標になります。</p>
 <p>$(9)$式と$(12)$式を比較すると、自由エネルギーと周辺尤度の関係が見えてきます。</p>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆自由エネルギーと周辺尤度の関係</strong></legend>
- 
 自由エネルギー$F_n$と周辺尤度$Z_n$は以下の関係にある。
 $$
 F_n = - \log{Z_n} \tag{13}
 $$
-
 </fieldset>
 <p>情報量から導かれた自由エネルギー$F_n$は結局のところ$X^n$の同時確率の対数符号反転になることが分かります。</p>
 <h1 id="ベイズファクター">ベイズファクター</h1>
 <p>ベイズファクターは、2つのモデルを考えたとき、どちらの方が優勢かをはかる指標となります。</p>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆ベイズファクター</strong></legend>
- 
-2つの異なるモデル$M_0$、$M_1$を考えたとき、ベイズファクター$BF_{10}$は2つの異なるモデルの周辺尤度の比として定義される。
+2つの異なるモデル$M_0$、$M_1$を考えたとき、<strong>ベイズファクター</strong>$BF_{10}$は2つの異なるモデルの周辺尤度の比として定義される。
 $$
 BF_{10} = \cfrac{p(x^n | M_1)}{p(x^n |M_0)} \tag{14}
 $$
@@ -282,10 +306,83 @@ $$
 BF_{10} = \exp{(F_{M_0} - F_{M_1})} \tag{15}
 $$
 ここで、$F_M$はモデル$M$における自由エネルギーである。
-
 </fieldset>
-<p>定義より、$BF_{10}$はモデル$M_0$に比べてモデル$M_1$がどの程度データを説明できているかを表しており、1より大きい値をとるにつれて$M_1$の方が優勢になっていくことが分かります。</p>
-<p><strong>判断の目安</strong></p>
+<p>定義より、$BF_{10}$はモデル$M_0$に比べてモデル$M_1$がどの程度うまくデータを説明できているかを表しており、1より大きい値をとるにつれて$M_1$の方が優勢になっていくことが分かります。</p>
+<p>ベイズファクターの評価基準には以下のよく知られたものがあります。</p>
+<p><strong>Jeffreys(1961)</strong>
+
+    <div class = "simple-table">
+
+<table>
+<thead>
+<tr>
+<th>$BF_{ij}$</th>
+<th>$M_i$に反する証拠の強さ</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$1\sim 3.2$</td>
+<td>あまりあるとは言えない(Not worth than a bare mention)</td>
+<td></td>
+</tr>
+<tr>
+<td>$3.2\sim 10$</td>
+<td>十分ある(Substantial)</td>
+<td></td>
+</tr>
+<tr>
+<td>$10 \sim 100$</td>
+<td>強くある(Strong)</td>
+<td></td>
+</tr>
+<tr>
+<td>$&gt;100$</td>
+<td>決定的にある(Decisive)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+</div></p>
+<p><strong>Kass and Raftery(1995)</strong>
+
+    <div class = "simple-table">
+
+<table>
+<thead>
+<tr>
+<th>$BF_{ij}$</th>
+<th>$M_i$に反する証拠の強さ</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$1\sim 3$</td>
+<td>あまりあるとは言えない(Not worth than a bare mention)</td>
+<td></td>
+</tr>
+<tr>
+<td>$3\sim 20$</td>
+<td>肯定的である(Positive)</td>
+<td></td>
+</tr>
+<tr>
+<td>$20 \sim 150$</td>
+<td>強くある(Strong)</td>
+<td></td>
+</tr>
+<tr>
+<td>$&gt;150$</td>
+<td>決定的にある(Very strong)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+</div></p>
 <h1 id="ベイズファクターを計算する">ベイズファクターを計算する</h1>
 <p>ベイズファクターの計算は解析的には困難な場合が多いですが、<strong>共役事前分布</strong>を用いて解析的に計算できる場合もあります。</p>
 <div class="memo" >
@@ -296,7 +393,9 @@ $$
 </div>
 <p>以下では、$A ∈ \mathbb{R}^+$で定義される独立同分布の$n$個の連続型確率変数$X^n=(X_1,\ldots,X_n)$からの実現値$x^n=(x_1,\ldots,x_n)$をもとに、確率変数$X^n$の分布を推定することを考えます。候補モデルには事後分布を解析的に計算可能なモデルを2つ用意し、どちらのモデルが優勢かをベイズファクターによって判断することを考えます。</p>
 <p>モデル1は上述の共役事前分布による事後分布の解析的計算が可能なモデルです。尤度関数には指数分布を設定し、事前分布にはガンマ分布を用いました。</p>
-<p><fieldset style="border: #000000 1px solid; padding: 4px; background-color: #EEFFFF; margin: 0px; color: #333333; border-radius: 10px"><legend><strong>◆モデル１</strong></legend>
+<p><div style="overflow-x:auto;">
+  
+<fieldset style="border: #000000 1px solid; padding: 4px; background-color: #EEFFFF; margin: 0px; color: #333333; border-radius: 10px"><legend><strong>◆モデル１</strong></legend>
  
 $$
 x_i \sim \mathrm{Exponential}(\gamma)  ~~~~ i=1,\ldots,n \tag{16}
@@ -306,7 +405,11 @@ $$
 $$
 
 </fieldset>
+
+</div>
 <br>
+<div style="overflow-x:auto;">
+  
 <fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆指数分布の共役事前分布がガンマ分布であることの証明</strong></legend>
 
 
@@ -333,8 +436,12 @@ p(\gamma | x^n) &\varpropto  p(x^n | \gamma)p(\gamma) \\\\
 \end{split}
 $$
 
-</fieldset></p>
+</fieldset>
+
+</div></p>
 <p>モデル2は、モデル1と同様、尤度関数に指数分布を設定します。一方、事前分布については設定しないこととします。</p>
+<div style="overflow-x:auto;">
+  
 <fieldset style="border: #000000 1px solid; padding: 4px; background-color: #EEFFFF; margin: 0px; color: #333333; border-radius: 10px"><legend><strong>◆モデル２</strong></legend>
  
 $$
@@ -342,6 +449,8 @@ x_i \sim \mathrm{Exponemtial}(\gamma)  ~~~~ i=1,\ldots,n \tag{18}
 $$
 
 </fieldset>
+
+</div>
 <p>ベイズファクターは周辺尤度または自由エネルギーのモデル間比較を行うので、次に上記２モデルの周辺尤度・自由エネルギーを計算します。</p>
 <p>モデル1の周辺尤度$p(x^n|M_1)$は、</p>
 <div style="overflow-x:auto;">
@@ -370,33 +479,54 @@ $$
 </div></p>
 <p>同様に、モデル2の周辺尤度$p(x^n|M_2)$と自由エネルギー$F_{M_{2}}$を求めます。</p>
 <p>ここで、モデル2についてはパラメーターに事前分布を設定していないので、周辺尤度の計算の際にパラメータで周辺化する必要がありません。よって、</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 p(x^n|M_2) = \mathrm{Exponential}(x^n | \gamma) = \prod_{i=1}^{n} \gamma \exp(-x_i\gamma) = \gamma^n \exp(-\sum_{i=1}^{n}x_i \gamma)
-$$</p>
-<p>$$
+$$
+
+$$
 F_{M_2} = -\log(p(x^n | M_2)) = -n\log\gamma + \sum_{i=1}^{n}x_i\gamma \tag{20}
-$$</p>
+$$
+
+</div>
 <p>では、上記$(19)$、$(20)$式を用いて一つの観測値を例にベイズファクターを計算しましょう。</p>
 <p>いま、独立同分布の確率変数の組$X^5$から実現地$x^n = (0.198,0.561,0.572,0.094,0.213)$が得られたとします。このとき、$\alpha=3$、$\beta=1$としたときのモデル1と、$\gamma=3$としたときのモデル2のどちらがよいモデルであるのかを自由エネルギーを用いて比較します。</p>
 <p>このときのモデル1の自由エネルギーは、</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 F_{M_{1}} = -3\log1 - \sum_{i=1}^{5}i + (5 + 3)\log(1 + \sum_{i=1}^{5}x_i) = 2.972677
-$$</p>
+$$
+
+</div>
 <p>モデル2の自由エネルギーは、</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 F_{M_2} = -n\log\gamma + \sum_{i=1}^{n}x_i\gamma = -5\log3 + 3\sum_{i=1}^{5}x_i = 4.914
-$$</p>
+$$
+
+</div>
 <p>よって、パラメータに事前分布を設定したモデル1の方がデータをよく説明出来ていることが分かります。また、ベイズファクターを求めると</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 exp(F_{M_2} - F_{M_1}) = 6.967966
-$$</p>
+$$
+
+</div>
 <p>となることから、モデル1の方がやや優勢であると判断することができます。</p>
 <h1 id="ベイズファクターの性質を確認する">ベイズファクターの性質を確認する</h1>
 <p>もうすこし掘り下げて、<a href="http://www.asakura.co.jp/books/isbn/978-4-254-12842-0/">参考文献</a>を参考に、設定したモデルに対しどのようなデータが得られた時に自由エネルギーの値が大きく（小さく）なるのか見ていきます。ここでは、前節と同じ例を用いて、$X^n$に真の分布を設定し、モデル1($\alpha=3,\beta=1$)、モデル2($\gamma=3$)の比較を行います。</p>
 <p>まず、実現値の数を$n=30$とし、真の分布を</p>
-<p>$$
+<div style="overflow-x:auto;">
+  
+$$
 X^{30} \sim \mathrm{Exponential}(8)
-$$</p>
+$$
+
+</div>
 <p>としたとき。実現値の組を1000回発生させ、$F_{M_1}$、$F_{M_2}$をそれぞれ1000回計算し、結果を要約したものが以下になります。</p>
 <figure class="left"><a href="/stat/bayesfactor/Free-ebergy-boxplot1.png">
     <img src="/stat/bayesfactor/Free-ebergy-boxplot1.png" width="630" height="540"/> </a>
@@ -404,14 +534,18 @@ $$</p>
 
 <p>モデル1の方が自由エネルギーがが小さい傾向にあります。<br>
 解釈としては、事前分布を設定しない単純なモデルであるモデル2は、$\gamma=3$と真のモデルとパラメータがやや異なっているので、当てはまりが比較的悪いのに対し、事前分布を設定したより複雑なモデルであるモデル1は、モデル2に比較しより広い範囲の実現値をカバーできるため、ということになります。</p>
-<p>一方、実現値をモデル2のパラメータ3に合わせた場合、結果は以下のように変わってきます。
+<p>一方、実現値をモデル2のパラメータ3に合わせた場合、結果は以下のように変わってきます。</p>
+<div style="overflow-x:auto;">
+  
 $$
 X^{30} \sim \mathrm{Exponential}(3)
 $$
+
+</div>
 <figure class="left"><a href="/stat/bayesfactor/Free-ebergy-boxplot2.png">
     <img src="/stat/bayesfactor/Free-ebergy-boxplot2.png" width="630" height="540"/> </a>
 </figure>
-</p>
+
 <p>今度はモデル2方が自由エネルギーが小さくなりました。このことから、自由エネルギーは、モデルを複雑にすれば小さくなりやすいというわけではなく、データの当てはまりが良い場合については、より単純なモデルほど小さくなる傾向にあることがわかります。</p>
 <p>この傾向を再確認するため、実現値の数を$n=1$とし、実現値を0.1から3まで与えたときの2つのモデルの自由エネルギーを確認したところ、以下のような結果になりました。</p>
 <figure class="left"><a href="/stat/bayesfactor/Free-ebergy.png">
