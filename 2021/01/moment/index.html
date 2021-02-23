@@ -139,11 +139,13 @@ $$</p>
 <p><strong>積率</strong>（moment）は、期待値にまつわる重要な概念です。<br>
 <br>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆積率</strong></legend>
-確率変数$X$及び自然数$k$について、$X^k$の期待値$\mu^{'}<em>{X,k} = \mathbb{E}[X^k]$を確率変数$X$の$k$次の積率（moment）という。
-特に$X$の1次の積率は平均といい$\mathbb{E}[X]$である。
+確率変数$X$及び自然数$k$について、
+$X^k$の期待値
 $$
-\mu^{'}</em>{X,1} = \mathbb{E}[X] \tag{3}
+\mu^{'}_{X,k} = \mathbb{E}[X^k] \tag{3}
 $$
+を確率変数$X$の$k$次の積率（moment）という。
+特に$X$の1次の積率は平均($\mathbb{E}[X]$)である。
 </fieldset></p>
 <p>上の定義だけでは積率をわざわざ定義する意味が分からないと思いますが、のちのち紹介するように分散や歪度、尖度の計算に2次、3次、4次の積率が利用されます。</p>
 <p>試しにガンマ分布の積率を導出し、ガンマ分布に従う確率変数の期待値を求めてみましょう。<br>
@@ -305,15 +307,17 @@ $$
 <h1 id="積率母関数">積率母関数</h1>
 <p>次に積率母関数を定義します。積率母関数は、積率を生成する関数であることからこのような名前がついています。
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆積率母関数</strong></legend>
-確率変数$X$及び実数$t$に対して、$e^{tX}$の期待値を積率母関数といい、$\mathrm{M}<em>{X}(t)$であらわす。
-$$
-\mathrm{M}</em>{X}(t) = \mathbb{E}\left[e^{tX}\right] \tag{11}
-$$
-積率と積率母関数には以下の関係がある。
-$$
-\mu^{'}<em>{X,k} = \left.\mathrm{M}</em>{X}^{(k)}(0) = \cfrac{d^k}{dt^k}\mathrm{M}<em>X(t) \right|</em>{t=0} \tag{12}
-$$
-</fieldset></p>
+<p>確率変数$X$及び実数$t$に対して、$e^{tX}$の期待値を積率母関数といい、$\mathrm{M}_{X}(t)$であらわす。</p>
+<p>$$
+\mathrm{M}_{X}(t) = \mathbb{E}\left[e^{tX}\right] \tag{11}
+$$</p>
+<p>積率と積率母関数には以下の関係がある。</p>
+<p>$$
+\mu^{'}_ {X,k} = \mathrm{M}_{X}^{(k)}(0) = \left.\cfrac{d^k}{dt^k}\mathrm{M}_X(t)\right|_{t=0} \tag{12}
+$$</p>
+
+</fieldset>
+<br>
 <div style="overflow-x:auto;">
   
 <fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆証明～積率と積率母関数の関係～</strong></legend>
@@ -342,7 +346,7 @@ $$
 
 </fieldset>
 
-</div>
+</div></p>
 <p>例として、積率母関数を使ってガンマ分布の平均と分散を求めてみましょう。</p>
 <div style="overflow-x:auto;">
   
