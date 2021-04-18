@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>ベイズファクターを用いた仮説検定～比率の差の検定～</title>
+      <link>https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/</link>
+      <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/</guid>
+      <description>◆この記事のテーマ ベイズファクターを使って比率の差を検定する方法を実践します。 この手法は、例えば下図のようなシーンに適用できます。下図では交</description>
+    </item>
+    
+    <item>
       <title>ベイジアン仮説検定とSavage-Dickey法</title>
       <link>https://rmorita-stat.github.io/2021/04/savage-dickey-method/</link>
       <pubDate>Sat, 03 Apr 2021 00:00:00 +0000</pubDate>

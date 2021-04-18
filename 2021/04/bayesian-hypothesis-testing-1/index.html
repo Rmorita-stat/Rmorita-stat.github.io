@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="google-site-verification" content="qrt5G5NouQQVS-0Ss9qHlEuMYt3uKuifbUIOkPd4cPc" />
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/stat" >STAT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/r" >With R</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/julia" >With Julia</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2021.04.18 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">ベイズファクターを用いた仮説検定～比率の差の検定～</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <fieldset style="border: #d9c68c 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆この記事のテーマ</strong></legend>
+<p>ベイズファクターを使って比率の差を検定する方法を実践します。
+この手法は、例えば下図のようなシーンに適用できます。下図では交差点の安全対策設計施工前後の危険挙動発生割合の比較をしています。
+<img src="/r/bayesian-hypothesis-testing-1/picture_twosample.JPG" alt="uni"></p>
+<p>※この例では対応のない（two-sampe）グループ同士の比較となっています。対応のある（one-sample）グループ同士の検定のためには本記事で紹介するモデルとは異なるモデルを組む必要があります。</p>
+
+</fieldset>
+<h1 id="モデル">モデル</h1>
+<p><a href="https://www.sciencedirect.com/science/article/abs/pii/S0010028509000826">参考文献</a>に掲載されたグラフィカルモデルを拝借して以下に示します。<br>
+<br>
+<figure class="left"><a href="/r/bayesian-hypothesis-testing-1/graphicalmodel.png">
+    <img src="/r/bayesian-hypothesis-testing-1/graphicalmodel.png" width="630" height="540"/> </a>
+</figure>
+</p>
+<p>ここで、$n_1$、$n_2$はそれぞれ交差点1、交差点2における車両毎の危険挙動に関するデータ（0=「危険挙動無し」 OR 1「危険挙動あり」）の標本数、$s_1$、$s_2$はそれぞれ交差点1、交差点2において危険挙動をした車両の台数です。交差点ごとに、独立の二項分布に従い危険挙動をした車両が観測されたと仮定し、発生確率を$\theta_1$、$\theta_2$とおきモデルモデル化します。<br>
+<br>
+<fieldset style="border: #000000 1px solid; padding: 4px; background-color: #EEFFFF; margin: 0px; color: #333333; border-radius: 10px"><legend><strong>比率の差の検定モデル</strong></legend>
+ 
+$$
+s_1 \sim \mathrm{Binomial}(\theta_1,n_1) \tag{1}
+$$
+$$
+\theta_1 \sim \mathrm{Uniform}(0,1) \tag{2}
+$$
+$$
+s_2 \sim \mathrm{Binomial}(\theta_2,n_2) \tag{3}
+$$
+$$
+\theta_2 \sim \mathrm{Uniform}(0,1) \tag{4}
+$$
+
+</fieldset></p>
+<p>このとき、我々の興味の対象となる確率変数は$\delta=\theta_1 - \theta_2$です。$\theta_1$、$\theta_2$の大小関係についての事前知識がある場合と無い場合に分け、2つの帰無仮説・対立仮説の組を設定します。交差点の比較の例では、交差点2は交差点1と同じ形状であり、信号機が設置されていることから、危険挙動発生率は交差点1より少ない、すなわち$\theta_1 &gt; \theta_2$ではないか、と考えることができます。</p>
+<p>$\theta_1$、$\theta_2$には、無情報事前分布$\mathrm{Uniform}(0,1)$を設定することとします。<br>
+<br>
+<fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>帰無仮説と対立仮説</strong></legend>
+
+$\theta_1$と$\theta_2$の大小関係が明らかでないときの仮説は、
+$$
+\mathrm{Unrestricted~~Model:} \begin{cases}
+H_0:\delta=0 \\\\
+H_1:\delta\neq0
+\end{cases}
+$$
+$\theta_1 \geq \theta_2$が明らかな場合の仮説は、
+$$
+\mathrm{Order-restricted~~Model:} \begin{cases}
+H_0:\delta=0 \\\\
+H_2:\delta \geq 0
+\end{cases}
+$$
+
+</fieldset></p>
+<h1 id="ベイズファクターを解析的に求める">ベイズファクターを解析的に求める</h1>
+<p>設定した仮説から分かる通り、本検定はネストされたモデル間の比較を行うので、<a href="https://rmorita-stat.github.io/2021/04/savage-dickey-method/">以前の記事</a>で紹介したSavage-Dickey法を使えばよいと分かります。Savage-Dickey法は、$H_1$に対応するモデルにおける事前分布と事後分布を一点比較をすればベイズファクターを算出できると主張しています。今回の事例では比較する点は$\delta=0$です。つまり</p>
+<p>$$
+BF_{01} = \cfrac{p(\delta=0 | D, H_1)}{p(\delta=0 |H_1)} \tag{5}
+$$</p>
+<p>ということになります。ここで$D$は全データセットを示します。</p>
+<p>この節では本モデルにおける$\delta$の事前分布、事後分布について考え、ベイズファクターを解析的に求めてみます。</p>
+<p>まずは$\delta$の事前分布です。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆$\delta$の事前分布</strong></legend>
+$\delta$の事前分布$p(\delta | H_1)$は重心0の三角分布となる。
+$$
+p(\delta | H_1) = \begin{cases}
+1+\delta ~~~ \mathrm{for} ~ \delta \le 0 \\<br>
+1-\delta ~~~ \mathrm{for} ~ \delta &gt; 0
+\end{cases} \tag{6}
+$$
+</fieldset></p>
+<p>Appendixに証明を示しますが、証明では確率変数の変換公式を応用して確率変数の和（差）の分布を求めるテクニックを用います。<br>
+事前分布について$p(\delta=0 |H_1)=1$であることがわかりました。よって、$BF_{01} = p(\delta=0 | D, H_1)$となります。
+これを求めた結果を示します。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆比率の差の検定におけるベイズファクター</strong></legend>
+比率の差を検定するためのベイズファクター$BF_{01}$は
+$$
+BF_{01} = \cfrac{{}_{n_{1}} C _ {s_{1}} {}_ {n_{2}} C _ {s_{2}}}{{}_ {n_1+n_2} C _ {s_1+s_2}}\cfrac{(n_1+1)(n_2+1)}{n_1+n_2+1} \tag{7}
+$$
+</fieldset></p>
+<p>$p(\delta=0 | D, H_1)$は、周辺尤度を無視した事後分布の計算と、確率変数の変換公式を応用して確率変数の和（差）の分布を求めるテクニックを用います。こちらの証明もAppendixに載せました。</p>
+<h1 id="unrestricted-model">Unrestricted Model</h1>
+<p>では、$\theta_1$と$\theta_2$の大小関係が明らかでないときの仮説から検定してみます。Rstanを用いて$(1)～(4)$式をモデル化し、$\delta$の周辺事後分布をMCMCによって近似推定し、Savage-Dickeyによる$(5)$式を用いて$BF_{01}$を求める方針です。また$(7)$式による解析的な結果との整合性も確認してみます。</p>
+<p>まずはサンプルデータを準備します。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># sample data</span>
+
+<span class="c1">#x1:Group1</span>
+<span class="n">x1</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="nf">rbinom</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">40</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="m">0.4</span><span class="p">),</span><span class="nf">rbinom</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">60</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="m">0.5</span><span class="p">))</span>
+<span class="c1">#x2:Group2</span>
+<span class="n">x2</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="nf">rbinom</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">40</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="m">0.2</span><span class="p">),</span><span class="nf">rbinom</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">60</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="m">0.5</span><span class="p">))</span>
+
+<span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">gridExtra</span><span class="p">)</span>
+
+<span class="n">p1</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x1</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">geom_bar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">),</span> <span class="n">fill</span><span class="o">=</span><span class="s">&#34;#004C98&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span> <span class="n">labels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;-&#34;</span><span class="p">,</span><span class="s">&#34;危険挙動&#34;</span><span class="p">))</span> <span class="o">+</span> <span class="nf">xlab</span><span class="p">(</span><span class="s">&#34;Group1&#34;</span><span class="p">)</span>
+<span class="n">p2</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x2</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">geom_bar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">),</span> <span class="n">fill</span><span class="o">=</span><span class="s">&#34;#004C98&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span> <span class="n">labels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;-&#34;</span><span class="p">,</span><span class="s">&#34;危険挙動&#34;</span><span class="p">))</span> <span class="o">+</span> <span class="nf">xlab</span><span class="p">(</span><span class="s">&#34;Group2&#34;</span><span class="p">)</span>
+
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">grid.arrange</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
+</code></pre></div><figure class="left"><a href="/r/bayesian-hypothesis-testing-1/data.png">
+    <img src="/r/bayesian-hypothesis-testing-1/data.png" width="1000" height="540"/> </a>
+</figure>
+
+<p>このデータに対し、通常の比率の差の検定を関数<code>prop.test()</code>で行います。原理は昔紹介した<a href="https://rmorita-stat.github.io/2020/12/corresp-and-bayes/#分割表の一様性の検定">分割表の一様性の検定</a>と同じものです。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">prop.test</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span><span class="nf">sum</span><span class="p">(</span><span class="n">x2</span><span class="p">)),</span> <span class="n">n</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span><span class="nf">length</span><span class="p">(</span><span class="n">x2</span><span class="p">)),</span> <span class="n">correct</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
+
+<span class="c1">## 2-sample test for equality of proportions without continuity correction</span>
+<span class="c1">##</span>
+<span class="c1">## data:  c(sum(x1), sum(x2)) out of c(length(x1), length(x2))</span>
+<span class="c1">## X-squared = 1.6807, df = 1, p-value = 0.1948</span>
+<span class="c1">## alternative hypothesis: two.sided</span>
+<span class="c1">## 95 percent confidence interval:</span>
+<span class="c1">## -0.04549292  0.22549292</span>
+<span class="c1">## sample estimates:</span>
+<span class="c1">## 0.45   0.36</span>
+<span class="c1">## prop 1 prop 2</span>
+</code></pre></div><p>２グループの比率が同じであるという帰無仮説を設定した検定に対し、p値$0.1948$となり、比率に差があるとは言えない結果となりました。<br>
+次に$(7)$式に基づいてベイズファクターによる検定を行います。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">N1</span><span class="o">=</span><span class="nf">length</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="n">N2</span><span class="o">=</span><span class="nf">length</span><span class="p">(</span><span class="n">x2</span><span class="p">),</span> <span class="n">S1</span><span class="o">=</span><span class="nf">sum</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="n">S2</span><span class="o">=</span><span class="nf">sum</span><span class="p">(</span><span class="n">x2</span><span class="p">))</span>
+
+<span class="c1"># calculate BF_01 by closed form</span>
+<span class="c1"># data[[1]]：n1</span>
+<span class="c1"># data[[2]]：n2</span>
+<span class="c1"># data[[3]]：s1</span>
+<span class="c1"># data[[4]]：s2</span>
+
+<span class="nf">cat</span><span class="p">(</span><span class="nf">choose</span><span class="p">(</span><span class="n">data[[1]]</span><span class="p">,</span><span class="n">data[[3]]</span><span class="p">)</span> <span class="o">*</span> <span class="nf">choose</span><span class="p">(</span><span class="n">data[[2]]</span><span class="p">,</span><span class="n">data[[4]]</span><span class="p">)</span> <span class="o">/</span> <span class="nf">choose</span><span class="p">(</span><span class="n">data[[1]]</span><span class="o">+</span><span class="n">data[[2]]</span><span class="p">,</span> <span class="n">data[[3]]</span><span class="o">+</span><span class="n">data[[4]]</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">data[[1]]</span><span class="m">+1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">data[[2]]</span><span class="m">+1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">data[[1]]</span><span class="o">+</span><span class="n">data[[2]]</span><span class="m">+1</span><span class="p">))</span>
+
+<span class="c1">## 2.526656</span>
+</code></pre></div><p>対立仮説$H_1:\delta\neq0$よりも帰無仮説$H_0:\delta=0$の方がデータの説明力（周辺尤度）が約$2.53$倍良く、どちらかというと帰無仮説を支持するようです。しかし<a href="https://rmorita-stat.github.io/2021/02/bayesfactor/#ベイズファクター">Kass and Raftery(1995)</a>の基準ではこの差は対立仮説に対する反証があまり強いとは言えない程度であると評価されました。</p>
+<p>以上、検定結果をひととおり見た上で、次はMCMCにより$\delta$の事後分布を近似推定し、ベイズファクターを推定します。Stanによる実装例を以下に示します。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="c1">//non-restricted aalysis
+</span><span class="c1">//model1.stan
+</span><span class="c1"></span><span class="n">data</span> <span class="p">{</span>
+  <span class="c1">//the number fo sample of Group1
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">N1</span><span class="p">;</span>
+  <span class="c1">//the number fo sample of Group2
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">N2</span><span class="p">;</span>
+  <span class="c1">//the number fo sample which occurs with a probability of theta1 of Group1
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">S1</span><span class="p">;</span>
+  <span class="c1">//the number fo sample which occurs with a probability of theta2 of Group2
+</span><span class="c1"></span>  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">S2</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="n">parameters</span> <span class="p">{</span>
+  <span class="c1">//the parameter of Binomial distribution of Group1
+</span><span class="c1"></span>  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">theta1</span><span class="p">;</span>
+  <span class="c1">//the parameter of Binomial distribution of Group2
+</span><span class="c1"></span>  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">theta2</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">model</span> <span class="p">{</span>
+  <span class="c1">//S1 ~ binomial(N1, theta1)
+</span><span class="c1"></span>  <span class="n">target</span> <span class="o">+=</span> <span class="n">binomial_lpmf</span><span class="p">(</span><span class="n">S1</span> <span class="o">|</span> <span class="n">N1</span><span class="p">,</span> <span class="n">theta1</span><span class="p">);</span>
+  <span class="c1">//S2 ~ binomial(N2, theta2)
+</span><span class="c1"></span>  <span class="n">target</span> <span class="o">+=</span> <span class="n">binomial_lpmf</span><span class="p">(</span><span class="n">S2</span> <span class="o">|</span> <span class="n">N2</span><span class="p">,</span> <span class="n">theta2</span><span class="p">);</span>
+
+  <span class="c1">//uninformative prior
+</span><span class="c1"></span>  <span class="n">target</span> <span class="o">+=</span> <span class="n">beta_lpdf</span><span class="p">(</span><span class="n">theta1</span> <span class="o">|</span> <span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">beta_lpdf</span><span class="p">(</span><span class="n">theta2</span> <span class="o">|</span> <span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">generated</span> <span class="n">quantities</span><span class="p">{</span>
+  <span class="c1">//the difference parameter between theta1 and theta2
+</span><span class="c1"></span>  <span class="n">real</span> <span class="n">delta</span><span class="p">;</span>
+  <span class="n">delta</span> <span class="o">=</span> <span class="n">theta1</span> <span class="o">-</span> <span class="n">theta2</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div><p>iterationを$11000$、warmupを$1000$、chain数を$4$としMCMCを走らせ、結果を確認します。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">options</span><span class="p">(</span><span class="n">mc.cores</span> <span class="o">=</span> <span class="n">parallel</span><span class="o">::</span><span class="nf">detectCores</span><span class="p">())</span>
+<span class="nf">rstan_options</span><span class="p">(</span><span class="n">auto_write</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+<span class="n">fit</span> <span class="o">&lt;-</span> <span class="nf">stan</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="s">&#34;model/model1.stan&#34;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">iter</span><span class="o">=</span><span class="m">11000</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="m">1000</span><span class="p">,</span> <span class="n">chain</span><span class="o">=</span><span class="m">4</span><span class="p">)</span>
+<span class="n">fit</span>
+
+<span class="c1">## Inference for Stan model: model1.</span>
+<span class="c1">## 4 chains, each with iter=11000; warmup=1000; thin=1;</span>
+<span class="c1">## post-warmup draws per chain=10000, total post-warmup draws=40000.</span>
+<span class="c1">##</span>
+<span class="c1">##         mean se_mean   sd   2.5%   25%   50%   75% 97.5% n_eff Rhat</span>
+<span class="c1">## theta1  0.45    0.00 0.05   0.36  0.42  0.45  0.48  0.55 36883    1</span>
+<span class="c1">## theta2  0.36    0.00 0.05   0.27  0.33  0.36  0.39  0.46 36917    1</span>
+<span class="c1">## delta   0.09    0.00 0.07  -0.05  0.04  0.09  0.13  0.22 36034    1</span>
+<span class="c1">## lp__   -8.89    0.01 1.02 -11.60 -9.27 -8.58 -8.17 -7.90 17925    1</span>
+</code></pre></div><p>このシミュレーション結果を使って$\delta$の事後分布を近似推定します。推定手法は<a href="https://www.sciencedirect.com/science/article/abs/pii/S0010028509000826">参考文献</a>が推奨する<strong>対数スプライン</strong>推定を用いました。通常、事後分布の推定にはカーネル密度推定が用いられることが多いと思うのですが、対数スプライン推定はカーネル密度推定と比較し推定値が負の値を取らないという利点があり、この場合推定精度が比較的良いとされているようです。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">ggrepel</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">logspline</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+
+<span class="c1"># non_restricted analysis</span>
+<span class="n">d</span> <span class="o">&lt;-</span> <span class="nf">as.matrix</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span><span class="n">[</span><span class="p">,</span><span class="s">&#34;delta&#34;</span><span class="n">]</span>
+<span class="n">fit_logspline</span> <span class="o">&lt;-</span> <span class="nf">logspline</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+<span class="n">plot_title</span> <span class="o">=</span> <span class="nf">ggtitle</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">&#34;equalty of proportions(unrestricted analysis)&#34;</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_path</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><span class="nf">dlogspline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">fit_logspline</span><span class="p">)),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">&#34;blue&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="n">y</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">)),</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="m">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="nf">dlogspline</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">fit_logspline</span><span class="p">)),</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">&#34;blue&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="m">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="m">1</span><span class="p">),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span><span class="n">y</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="nf">dlogspline</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">fit_logspline</span><span class="p">)),</span><span class="n">label</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="nf">round</span><span class="p">(</span><span class="nf">dlogspline</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">fit_logspline</span><span class="p">),</span><span class="m">2</span><span class="p">))),</span>
+                  <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">annotate</span><span class="p">(</span><span class="s">&#34;text&#34;</span><span class="p">,</span><span class="n">x</span><span class="o">=-</span><span class="kc">Inf</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">Inf</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;BF01=%.2f&#34;</span><span class="p">,</span><span class="nf">dlogspline</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">fit_logspline</span><span class="p">)),</span><span class="n">hjust</span><span class="o">=</span><span class="m">-.2</span><span class="p">,</span><span class="n">vjust</span><span class="o">=</span><span class="m">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">plot_title</span>
+<span class="n">p</span>  
+</code></pre></div><figure class="left"><a href="/r/bayesian-hypothesis-testing-1/unrestricted_model%28twise%20sample%20size%29.png">
+    <img src="/r/bayesian-hypothesis-testing-1/unrestricted_model.png" width="700" height="540"/> </a>
+</figure>
+
+<p>結果は、$BF_{01} \simeq 2.50$と、解析的な解とそれほど大差無い結果となりました。やはりこのデータは確信をもって比率に差があるとは言えないようですな。</p>
+<p>同じ危険挙動発生率でも標本数が倍になると、確信をもって差があると言える程度も変わってくるはずです。ちょっと確認してみましょう。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># data with same probability but twice sample size</span>
+<span class="c1">#new_x1:Group1</span>
+<span class="n">new_x1</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="m">10</span><span class="p">)</span>
+<span class="c1">#new_x2:Group2</span>
+<span class="n">new_x2</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span><span class="m">10</span><span class="p">)</span>
+
+～（以下略）～
+
+<span class="nf">cat</span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="nf">dlogspline</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">fit_logspline</span><span class="p">))</span>
+<span class="c1">## 147.1852</span>
+
+</code></pre></div><figure class="left"><a href="/r/bayesian-hypothesis-testing-1/unrestricted_model.png">
+    <img src="/r/bayesian-hypothesis-testing-1/unrestricted_model%28twise%20sample%20size%29.png" width="700" height="540"/> </a>
+</figure>
+
+<p>$BF_{10} \eqsim 147.19$と、期待通り対立仮説を強く支持する結果となりました。</p>
+<h1 id="order-restricted-model">Order-restricted Model</h1>
+<p>次に、$\theta_1 \geq \theta_2$が明らかな場合のOrder-restricted Modelについて考えます。モデル構成はUnrestricted Modelと同じで、あらかじめ分かっている事前情報が違うだけなので、新たに別のモデルでMCMCする必要はありません。方針としては、先ほど得たMCMCサンプルより推定した事後分布のうち、$\theta_1 \geq \theta_2$を満たす範囲のみを抽出し、事後分布とします。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># restricted analysis</span>
+<span class="n">fit_logspline</span> <span class="o">&lt;-</span> <span class="nf">logspline</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+<span class="n">dens</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">){</span>
+  <span class="nf">dlogspline</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">fit_logspline</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="m">1</span><span class="o">-</span><span class="nf">plogspline</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">fit_logspline</span><span class="p">))}</span>
+
+<span class="n">plot_title</span> <span class="o">=</span> <span class="nf">ggtitle</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s">&#34;equalty of proportions(restricted analysis)&#34;</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_path</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0.001</span><span class="p">),</span> <span class="n">Y</span><span class="o">=</span><span class="nf">dens</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">Y</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">&#34;blue&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_line</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="n">y</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">)),</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="m">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="nf">dens</span><span class="p">(</span><span class="m">0</span><span class="p">)),</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">&#34;blue&#34;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="m">0</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="m">2</span><span class="p">),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">geom_text_repel</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span><span class="n">y</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="nf">dens</span><span class="p">(</span><span class="m">0</span><span class="p">)),</span><span class="n">label</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="nf">round</span><span class="p">(</span><span class="nf">dens</span><span class="p">(</span><span class="m">0</span><span class="p">),</span><span class="m">2</span><span class="p">))),</span>
+                  <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">annotate</span><span class="p">(</span><span class="s">&#34;text&#34;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="kc">Inf</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">Inf</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;BF01=%.2f&#34;</span><span class="p">,</span><span class="nf">dens</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="o">/</span><span class="m">2</span><span class="p">),</span><span class="n">hjust</span><span class="o">=</span><span class="m">1.2</span><span class="p">,</span><span class="n">vjust</span><span class="o">=</span><span class="m">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">plot_title</span>
+<span class="n">p</span>
+
+<span class="nf">cat</span><span class="p">(</span><span class="nf">dens</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="o">/</span><span class="m">2</span><span class="p">)</span>
+<span class="c1">## 1.385902</span>
+</code></pre></div><figure class="left"><a href="/r/bayesian-hypothesis-testing-1/unrestricted_model.png">
+    <img src="/r/bayesian-hypothesis-testing-1/restricted_model.png" width="700" height="540"/> </a>
+</figure>
+
+<p>検定の結果は、Unrestricted Modelが$BF_{01} \eqsim 2.50$に対し、Order-restricred Modelが$BF_{02} \eqsim 1.39$となり、帰無仮説$H_0$を支持する傾向は同じものの、やや確信度が小さくなる結果となりました。直感的には、グループ2よりグループ1の事故発生率が大きいことから、$\theta_1 \geq \theta_2$としたOrder-Restricted Modelに対するデータの当てはまりが良く、$BF_{01} \geq BF_{02}$となりそうだと考えられ、実際には事前分布の$\delta=0$での値が$2$倍になったことにより、直感通りの結果が得られたと言えます。</p>
+<p>またベイズファクターは相対比較ですから、$BF_{01}$と$BF_{02}$が求まれば$BF_{12}$も一意に定まります。</p>
+<p>$$
+BF_{12} =\cfrac{p(D|H_1)}{p(D|H_2)} = \cfrac{p(D|H_1)}{p(D|H_0)}\cfrac{p(D|H_0)}{p(D|H_2)} = BF_{10}BF_{02} \eqsim 0.554
+$$</p>
+<p>よって、$H_2$の方が$H_1$よりも$\cfrac{1}{0.554} \eqsim 1.80$倍データをうまく説明している、と判断することができます。</p>
+<p>ここまで、対応の無い比率のさの検定をベイズファクターを使って実践してみました。従来通りの結果と比べて理論が簡潔で私は好みのベイズファクター、「分かりやすい」統計のために今後重要になってくるのではないでしょうか。</p>
+<p>一方、本例のような危険挙動データの例の場合、本来、危険挙動を観測した車両の全体に占める割合は非常に小さく、通常1割にも達しません（私の経験）。
+このようなデータに対し、二項分布のパラメータ$\theta$に無情報事前分布を設定すると、周辺尤度の性質から、$BF_{01}$は必ず帰無仮説$H_0:\delta=0$を強く支持する値となるでしょう。事前分布をどうするかについては、今後の研究が待たれるところです（？）。</p>
+<h1 id="appendix">Appendix</h1>
+<p>ここでは$\delta$の事前分布（$(6)$式）と$BF_{01}$（$(7)$式）の証明を説明しています。両証明ともできるようになっておいて損は無いと思ったので、少し長いですが気になった人は確認してみてください。
+まずは$(6)$式の証明です。<br>
+<br>
+<div style="overflow-x:auto;">
+  
+<fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆$\delta$の事前分布の導出</strong></legend>
+
+確率密度$f_{\boldsymbol{X}^n}$を持つ$n$次元確率ベクトル$\boldsymbol{X}^n$に一対一の写像$\boldsymbol{\phi}^n$で$\boldsymbol{X}^n = \boldsymbol{\phi}^n(\boldsymbol{Y}^n)$と対応付けされる$n$次元確率ベクトル$\boldsymbol{Y}^n$の確率密度$g_{\boldsymbol{Y}^n}$を求める。
+
+$$
+\begin{cases}
+X_1 = \phi_1(Y_1,Y_2,\ldots,Y_n) \\\\
+X_2 = \phi_2(Y_1,Y_2,\ldots,Y_n) \\\\
+\vdots \\\\
+X_n = \phi_n(Y_1,Y_2,\ldots,Y_n)
+\end{cases}
+$$
+
+領域$B = \prod_{i=1}^{n}(-\inf,y_i] \in \mathbb{R}^n$ での$g_{\boldsymbol{Y^n}}$の積分値と領域$\boldsymbol{\phi}(B)$での$f_{\boldsymbol{X^n}}$の積分値が一致することから、
+
+$$
+\int\cdots\int_B g_{\boldsymbol{Y^n}}(y_1,\ldots,y_n) dy_1\ldots dy_n = \left|\int\cdots\int_{\boldsymbol{\phi}(B)} f_{\boldsymbol{X^n}}(x_1,\ldots,x_n) dx_1 \ldots dx_n\right|
+$$
+
+右辺の多重積分について、積分変数を$(x_1,\ldots,x_n)$から$(y_1.\ldots,y_n)$に変換する。
+
+$$
+\left|\int\cdots\int_{\boldsymbol{\phi}(B)} f_{\boldsymbol{X^n}}(x_1,\ldots,x_n) dx_1\ldots dx_n\right| = \int\cdots\int_{B} f_{\boldsymbol{X^n}}(\phi_1(y_1,\ldots,y_n),\ldots,\phi_n(y_1,\ldots,y_n)) || J_{\boldsymbol{\phi}^n} || dy_1 \ldots dy_n
+$$
+
+ここで$\left|\left|J_{\boldsymbol{\phi}^n}\right|\right|$はヤコビアンであり変数変換後の単位面積のスケールを調整する役割をもつ。
+
+$$
+\left|\left|J_{\boldsymbol{\phi}^n}\right|\right| = \cfrac{dy_1 dy_2\ldots dy_n}{dx_1 dx_2\ldots dx_n}
+$$
+
+以上より
+
+$$
+\int\cdots\int_B g_{\boldsymbol{Y^n}}(y_1,\ldots,y_n) dy_1\ldots dy_n = \int\cdots\int_{B} f_{\boldsymbol{X^n}}(\phi_1(y_1,\ldots,y_n),\ldots,\phi_n(y_1,\ldots,y_n)) || J_{\boldsymbol{\phi}^n} || dy_1 \ldots dy_n
+$$
+
+すなわち
+$$
+g_{\boldsymbol{Y^n}}(y_1,\ldots,y_n) = f_{\boldsymbol{X^n}}(\phi_1(y_1,\ldots,y_n),\ldots,\phi_n(y_1,\ldots,y_n)) || J_{\boldsymbol{\phi}^n} || \tag{確率変数の変換公式}
+$$
+
+次に、確率変数$\Theta_1$、$\Theta_2$に対して、$\Delta = \Theta_1 - \Theta_2$の分布を求める。以下の一対一写像
+
+$$
+{\boldsymbol{\phi}^{2}}^{-1} = \begin{cases}
+\Delta = \Theta_1 - \Theta_2 \\\\
+Ε = \Theta_2
+\end{cases}
+$$
+
+を考える。このとき、
+
+$$
+\boldsymbol{\phi}^{2} = \begin{cases}
+\Theta_1 = \Delta + Ε \\\\
+\Theta_2 = Ε
+\end{cases}
+$$
+
+ヤコビアン$\left|J_{\boldsymbol{\phi}^n}\right|$は、
+
+$$
+\left|J_{\boldsymbol{\phi}^n}\right| = \cfrac{d\delta d\epsilon}{d\theta_1 d\theta_2 } = \left|  \begin{array}{ccc}
+\cfrac{\partial \theta_1}{\partial \epsilon} & \cfrac{\partial \theta_1}{\partial \delta} \\
+\cfrac{\partial \theta_2}{\partial \epsilon} & \cfrac{\partial \theta_2}{\partial \delta}
+\end{array} \right| = \left|\begin{array}{ccc}
+1 & 1 \\\\
+1 & 0
+\end{array}\right| = -1
+$$
+
+$\Theta_1$、$\Theta_2$が独立の一様分布に従うと仮定したとき、確率変数の変数変換の公式より、$\Delta$、$Ε$の結合確率密度は、
+
+$$
+\begin{split}
+g_{\Delta,Ε}(\delta, ϵ) &=& f_{\Theta_1,\Theta_2}(\delta+\epsilon,\epsilon)\left|\left|J_{\boldsymbol{\phi}^2}\right|\right| = f_{\Theta_1,\Theta_2}(\delta+\epsilon,\epsilon)
+= f_{\Theta_1}(\delta+\epsilon)f_{\Theta_2}\epsilon\\\\
+&=& \begin{cases}
+1~~~\mathrm{for}~~~ 0 \leq \delta + \epsilon \leq 1~~\cap~~0 \leq \epsilon \leq 1 \\\\
+0~~~\mathrm{for~~~otherwise}
+\end{cases}
+\end{split}
+$$
+
+これを$Ε$について積分し、$\Delta$の周辺確率密度を求める。
+$-1\leq \delta < 0$のとき、$-\delta\leq \epsilon \leq 1$で$g_{\Delta,Ε}(\delta, ϵ)$は$1$をとるから、
+$$
+g_{\Delta}(\delta) = \int_{-\delta}^{1}1d\epsilon = 1 + \delta
+$$
+$0 \leq \delta \leq 1$のとき、$0 \leq 1-\delta$で$g_{\Delta,Ε}(\delta, ϵ)$は$1$をとるから、
+$$
+g_{\Delta}(\delta) = \int_{0}^{1-\delta}1d\epsilon = 1 - \delta
+$$
+
+以上より、$\Delta$の確率密度は重心0の三角分布となる。
+$$
+g_{\Delta}(\delta) = \begin{cases}
+1+\delta ~~~ \mathrm{for} ~ \delta \le 0 \\\\
+1-\delta ~~~ \mathrm{for} ~ \delta > 0
+\end{cases}
+$$
+
+</fieldset>
+
+</div></p>
+<p>次に$(7)$式の証明です。<br>
+<br>
+<div style="overflow-x:auto;">
+  
+<fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>◆$p(\delta=0 | D, H_1)$の導出</strong></legend>
+
+$\delta = \theta_1 - \theta_2$であるから、$p(\theta_1 | D^{n_1},H_1)$と$p(\theta_2 | D^{n_2},H_1)$を求め、これらの差の分布を求めることを考える$(D = D^{n_1}+D^{n_2})$。一様分布$\mathrm{Uniform}(0,1)$はベータ分布$\mathrm{Beta}(1,1)$に等しいから、
+
+$$
+\begin{cases}
+p(\theta_1 | D^{n_1}, H_1) ∝ \mathrm{Binomial}(s_1|\theta_1, n_1) \mathrm{Beta}(\theta_1 | 1,1)　\\\\
+p(\theta_2 | D^{n_2}, H_1) ∝ \mathrm{Binomial}(s_2|\theta_2, n_2) \mathrm{Beta}(\theta_2 | 1,1)
+\end{cases}
+$$
+
+ここで、
+
+$$
+\begin{split}
+p(\theta_1 | D^{n_1}, H_1) &=& \cfrac{{}_{n_{1}} C _ {s_{1}}}{\mathrm{B}(1,1)}\theta_1^{s_1}(1-\theta_1)^{n_1 - s_1} \\\\
+&∝& \mathrm{Beta}(\theta_1 | s_1+1, n_1-s_1+1)
+\end{split}
+$$
+
+よって、
+
+$$
+\begin{cases}
+p(\theta_1 | D^{n_1}, H_1) = \mathrm{Beta}(\theta_1 | s_1+1, n_1-s_1+1)　\\\\
+p(\theta_2 | D^{n_2}, H_1) = \mathrm{Beta}(\theta_2 | s_2+1, n_2-s_2+1)
+\end{cases}
+$$
+
+ここで、確率変数$\Theta_1$、$\Theta_2$に対して、$\Delta = \Theta_1 - \Theta_2$の分布を求めると、
+
+$$
+g_{\Delta,Ε}(\delta, ϵ) = f_{\Theta_1,\Theta_2}(\delta+\epsilon,\epsilon)\left|\left|J_{\boldsymbol{\phi}^2}\right|\right| = f_{\Theta_1,\Theta_2}(\delta+\epsilon,\epsilon)
+= f_{\Theta_1}(\delta+\epsilon)f_{\Theta_2}\epsilon
+$$
+
+これを$\epsilon$について積分して、
+
+$$
+g_{\Delta}(\delta) = \int_{-1}^{1}f_{\Theta_1}(\delta+\epsilon)f_{\Theta_2}\epsilon d\epsilon
+$$
+
+$f_{\Theta_1}(\theta_1)$、$f_{\Theta_1}(\theta_1)$について
+
+$$
+\begin{cases}
+f_{\Theta_1}(\theta_1) = \mathrm{Beta}(\theta_1 | s_1+1, n_1-s_1+1)　\\\\
+f_{\Theta_1}(\theta_2) = \mathrm{Beta}(\theta_2 | s_2+1, n_2-s_2+1)
+\end{cases}
+$$
+
+を代入すると、
+
+$$
+\begin{split}
+g_{\Delta}(\delta) &=& \int_{-1}^{1}f_{\Theta_1}(\delta+\epsilon)f_{\Theta_2}\epsilon d\epsilon \\\\
+&=& \int_{-1}^{1} \mathrm{Beta}( \delta+\epsilon | s_1+1, n_1-s_1+1)\mathrm{Beta}(\delta | s_2+1, n_2-s_2+1) d\epsilon \\\\
+&=& \int_{-1}^{1}\cfrac{(\delta+\epsilon)^{s_1}(1-\delta-\epsilon)^{n_1-s_1}\epsilon^{s_2}(1-\epsilon)^{n_2-s_2}}{\mathrm{B}(s_1+1,n_1-s_1+1)\mathrm{B}(s_2+1,n_2-s_2+1)}d\epsilon
+\end{split}
+$$
+
+求めたいのは $\left.g_{\Delta}(\delta)\right|_{\delta=0}$なので、
+
+$$
+\begin{split}
+\left.g_{\Delta}(\delta)\right|_{\delta=0} &=& \cfrac{1}{\mathrm{B}(s_1+1,n_1-s_1+1)\mathrm{B}(s_2+1,n_2-s_2+1)} \int_{-1}^{1}\epsilon^{s_1}(1-\epsilon)^{n_1-s_1}\epsilon^{s_2}(1-\epsilon)^{n_2-s_2}d\epsilon \\\\
+&=& \cfrac{\mathrm{B}(s_1+s_2+1,n_1+n_2-s_1-s_2+1)}{\mathrm{B}(s_1+1,n_1-s_1+1)\mathrm{B}(s_2+1,n_2-s_2+1)} \int_{-1}^{1} \mathrm{Beta}(\epsilon | s_1+s_2+1,n_1+n_2-s_1-s_2+1)d \epsilon \\\\
+&=&\cfrac{\mathrm{B}(s_1+s_2+1,n_1+n_2-s_1-s_2+1)}{\mathrm{B}(s_1+1,n_1-s_1+1)\mathrm{B}(s_2+1,n_2-s_2+1)} \\\\
+&=& \cfrac{{}_{n_{1}} C _ {s_{1}} {}_ {n_{2}} C _ {s_{2}}}{{}_ {n_1+n_2} C _ {s_1+s_2}}\cfrac{(n_1+1)(n_2+1)}{n_1+n_2+1}~~~(\mathrm{B}(a,b)=\cfrac{(a-1)!(b-1)!}{(a+b-1)!}より)
+\end{split}
+$$
+
+よって、
+
+$$
+\begin{split}
+p(\delta=0 | D, H_1) &=& \left( \left. \mathrm{Binomial}(s_1|\theta_1, n_1) \mathrm{Beta}(\theta_1 | 1,1) - \mathrm{Binomial}(s_2|\theta_2, n_2) \mathrm{Beta}(\theta_2 | 1,1) \right) \right | _{\theta_1 - \theta_2=0} \\\\
+&=& \cfrac{{}_ {n_{1}} C _ {s_{1}} {}_ {n_{2}} C _ {s_{2}}}{{}_ {n_1+n_2} C _ {s_1+s_2}}\cfrac{(n_1+1)(n_2+1)}{n_1+n_2+1}
+\end{split}
+$$
+
+
+</fieldset>
+
+</div></p>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
+        
+        
+    </div>
+</div>
+<div class="disqus-comments">
+  <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-rmorita-stat-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 得意なのは統一された洋服とダンスのステップです </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://rmorita-stat.github.io/2021/01/regularization2/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2021.01.05 00:00 </div>
+            <div class="pn-el__2"> Bayesian RidgeとBayesian Lasso 通常の正則化回帰との比較 </div>
+        </div>
+    </a>
+    
+    
+</div>
+
+<footer>
+  <script type="text/javascript">
+ MathJax = {
+   tex: {
+     inlineMath: [['$','$'], ['\\(','\\)']],
+     processEscapes: true,
+     tags: "ams",
+     autoload: {
+       color: [],
+       colorV2: ['color']
+     },
+     packages: {'[+]': ['noerrors']}
+   },
+   chtml: {
+     matchFontHeight: true,
+     displayAlign: "left",
+     displayIndent: "2em"
+   },
+   options: {
+     skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+     renderActions: {
+        
+       find_script_mathtex: [10, function (doc) {
+         for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+           const display = !!node.type.match(/; *mode=display/);
+           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+           const text = document.createTextNode('');
+           node.parentNode.replaceChild(text, node);
+           math.start = {node: text, delim: '', n: 0};
+           math.end = {node: text, delim: '', n: 0};
+           doc.math.push(math);
+         }
+       }, '']
+     }
+   },
+   loader: {
+     load: ['[tex]/noerrors']
+   }
+ };
+</script>
+<script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2021
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
