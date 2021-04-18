@@ -88,18 +88,20 @@
             <fieldset style="border: #d9c68c 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆この記事のテーマ</strong></legend>
 <p>ベイズファクターを使って比率の差を検定する方法を実践します。
 この手法は、例えば下図のようなシーンに適用できます。下図では異なる交差点の危険挙動発生割合を比較しています。
-<img src="/r/bayesian-hypothesis-testing-1/picture_twosample.JPG" alt="uni"></p>
-<p>※この例では対応のない（two-sampe）グループ同士の比較となっています。対応のある（one-sample）グループ同士の検定のためには本記事で紹介するモデルとは異なるモデルを組む必要があります。</p>
+<img src="/r/bayesian-hypothesis-testing-1/picture_twosample.JPG" alt=""></p>
+<p>交通安全対策実施前後の危険挙動発生割合の変化を判定したいときにも同じ方法論が活用できます。
+<img src="/r/bayesian-hypothesis-testing-1/picture_onesample.JPG" alt=""></p>
+<p>※一つ目の例は対応のない（two-sampe）グループ間の検定、二つ目の例は対応のある（one-sample）グループ間の検定ですが、どちらの検定も一つのモデルで包括して説明されます。</p>
 
 </fieldset>
 <h1 id="モデル">モデル</h1>
-<p><a href="https://www.sciencedirect.com/science/article/abs/pii/S0010028509000826">参考文献</a>に掲載されたグラフィカルモデルを拝借して以下に示します。<br>
+<p><a href="https://www.sciencedirect.com/science/article/abs/pii/S0010028509000826">参考文献</a>に掲載されたグラフィカルモデルを拝借して以下に示します。またここでは、一つ目の例の対応の無い交差点間の危険挙動割合の比較に着目して考えます。 <br>
 <br>
 <figure class="left"><a href="/r/bayesian-hypothesis-testing-1/graphicalmodel.png">
     <img src="/r/bayesian-hypothesis-testing-1/graphicalmodel.png" width="630" height="540"/> </a>
 </figure>
 </p>
-<p>ここで、$n_1$、$n_2$はそれぞれ交差点1、交差点2における車両毎の危険挙動に関するデータ（0=「危険挙動無し」 OR 1「危険挙動あり」）の標本数、$s_1$、$s_2$はそれぞれ交差点1、交差点2において危険挙動をした車両の台数です。交差点ごとに、独立の二項分布に従い危険挙動をした車両が観測されたと仮定し、発生確率を$\theta_1$、$\theta_2$とおきモデルモデル化します。<br>
+<p>ここで、$n_1$、$n_2$はそれぞれ交差点1、交差点2における車両毎の危険挙動に関するデータ（0=「危険挙動無し」 OR 1「危険挙動あり」）の標本数、$s_1$、$s_2$はそれぞれ交差点1、交差点2において危険挙動をした車両の台数です。交差点ごとに、独立の二項分布に従い危険挙動をした車両が観測されたと仮定し、発生確率を$\theta_1$、$\theta_2$とおきモデル化します。<br>
 <br>
 <fieldset style="border: #000000 1px solid; padding: 4px; background-color: #EEFFFF; margin: 0px; color: #333333; border-radius: 10px"><legend><strong>比率の差の検定モデル</strong></legend>
  
@@ -138,6 +140,13 @@ H_2:\delta \geq 0
 $$
 
 </fieldset></p>
+<p>ところで、ここまでグラフィカルモデルは対応のないグループ間の比率の差の検定を考えていましたが、冒頭で言ったように、対応のあるグループについても同じモデルで包括出来てしまいます。ここではその理由について説明しようと思います。</p>
+<p>対応のあるグループ間の比率の差を考えたい場合のグラフィカルモデルは以下のようになります。</p>
+<figure class="left"><a href="/r/bayesian-hypothesis-testing-1/graphicalmodel.png">
+    <img src="/r/bayesian-hypothesis-testing-1/graphicalmodel_onesample.JPG" width="630" height="540"/> </a>
+</figure>
+
+<p>$\theta_1$、$\theta_2$、$\delta$の三角関係が変わっていますが、$\theta_1$と$\theta_2$まわりの尤度計算は対応の無い場合と同じです。さらに$\theta_1$、$\delta$に図示の無情報事前分布を設定してやると、$\theta_2$の事前分布は$\mathrm{Uniform}(0,1)$と、対応の無い場合と同じ事前分布になってしまいます。つまり、$\theta_1$、$\theta_2$の尤度関数と事前分布が対応の場合と同じになってしまうのです。$\delta$は$\theta_2-\theta_1$と、二つの確率変数の差の分布から求まりますから、$\delta$の事後分布は対応の無い場合の事後分布の$y$軸反転になります。よって、比率の差の検定においてはモデル上、対応の有無を問わず一つのモデルで説明出来てしまうのです。（以上、色々考えた上での私見なんですが、どうなんでしょう？）</p>
 <h1 id="ベイズファクターを解析的に求める">ベイズファクターを解析的に求める</h1>
 <p>設定した仮説から分かる通り、本検定はネストされたモデル間の比較を行うので、<a href="https://rmorita-stat.github.io/2021/04/savage-dickey-method/">以前の記事</a>で紹介したSavage-Dickey法を使えばよいと分かります。Savage-Dickey法は、$H_1$に対応するモデルにおける事前分布と事後分布を一点比較をすればベイズファクターを算出できると主張しています。今回の事例では比較する点は$\delta=0$です。つまり</p>
 <p>$$
