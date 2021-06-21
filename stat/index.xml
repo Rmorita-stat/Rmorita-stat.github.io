@@ -6,17 +6,17 @@
     <description>Recent content in Stats on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Wed, 12 May 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 21 Jun 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/stat/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>ベイズファクターを用いた仮説検定～平均値の差の検定～</title>
-      <link>https://rmorita-stat.github.io/2021/05/bayesian-hypothesis-testing-2theory/</link>
-      <pubDate>Wed, 12 May 2021 00:00:00 +0000</pubDate>
+      <link>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/</link>
+      <pubDate>Mon, 21 Jun 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/05/bayesian-hypothesis-testing-2theory/</guid>
+      <guid>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/</guid>
       <description>◆この記事のテーマ ベイズファクターを使って平均値の差を検定する方法を整理します。 この手法は、例えば下図のようなシーンに適用できます。下図左側</description>
     </item>
     
