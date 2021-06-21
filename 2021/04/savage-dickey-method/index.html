@@ -170,7 +170,7 @@ $$</p>
 <p>・<strong>計算が困難な場合が多い</strong></p>
 <p>ベイズファクターは、定義に従うならば以下のように計算しなければなりません。</p>
 <p>$$
-BF_{01} =\cfrac{\int_{S_{\theta_1}}\int_{S_{\theta_2}}\ldots\int_{S_{\theta_n}} p(x^n|M_0)\varphi(M_0) d\theta_n \ldots d\theta_2  d\theta_1}{\int_{S_{\theta_1}}\int_{S_{\theta_2}}\ldots\int_{S_{\theta_n}} p(x^n|M_1)\varphi(M_1) d\theta_n \ldots d\theta_2  d\theta_1}  \tag{4}
+BF_{01} =\cfrac{\int_{S_{\theta_1}}\int_{S_{\theta_2}}\ldots\int_{S_{\theta_n}} p(x^n|\boldsymbol{\theta},M_0)\varphi(\boldsymbol{\theta}|M_0) d\theta_n \ldots d\theta_2  d\theta_1}{\int_{S_{\theta_1}}\int_{S_{\theta_2}}\ldots\int_{S_{\theta_n}} p(x^n|\boldsymbol{\theta},M_1)\varphi(\boldsymbol{\theta}|M_1) d\theta_n \ldots d\theta_2  d\theta_1}  \tag{4}
 $$</p>
 <p>ここで、$p(x^n | M)$は観測値$x^n$が与えられたときのモデル$M
 $の尤度関数、$\varphi(M)$はモデル$M$の事前分布です。$\boldsymbol{\theta}$はモデル$M_1$、$M_2$に共通するパラメータであり、$\boldsymbol{\theta}=(\theta_1,\theta_2,\ldots,\theta_n),~~~\theta_1 \in S_{\theta_{1}},\theta_2 \in S_{\theta_{2}},\ldots,\theta_n \in S_{\theta_{n}},~~~S_{\theta} ∈ \mathbb{R}$です。</p>
@@ -322,6 +322,14 @@ $$
         </div>
     </a>
     
+    
+    <a class="next" href="https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2021.04.18 00:00 </div>
+            <div class="pn-el__2"> ベイズファクターを用いた仮説検定～比率の差の検定～ </div>
+        </div>
+    </a>
     
 </div>
 

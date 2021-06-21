@@ -6,10 +6,37 @@
     <description>Recent content in ベイズファクター on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sun, 18 Apr 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 12 May 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ベイズファクターを用いた仮説検定を実践する～平均値の差の検定～</title>
+      <link>https://rmorita-stat.github.io/2021/05/bayesian-hypothesis-testing-2practice/</link>
+      <pubDate>Wed, 12 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/05/bayesian-hypothesis-testing-2practice/</guid>
+      <description>◆この記事のテーマ ベイズファクターを使って平均値の差を検定する方法を実践します。 この手法は、例えば下図のようなシーンに適用できます。下図左側</description>
+    </item>
+    
+    <item>
+      <title>ベイズファクターを用いた仮説検定～平均値の差の検定～</title>
+      <link>https://rmorita-stat.github.io/2021/05/bayesian-hypothesis-testing-2theory/</link>
+      <pubDate>Wed, 12 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/05/bayesian-hypothesis-testing-2theory/</guid>
+      <description>◆この記事のテーマ ベイズファクターを使って平均値の差を検定する方法を整理します。 この手法は、例えば下図のようなシーンに適用できます。下図左側</description>
+    </item>
+    
+    <item>
+      <title>ベイズファクターを用いた仮説検定を実践する～比率の差の検定～</title>
+      <link>https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1practice/</link>
+      <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1practice/</guid>
+      <description>◆この記事のテーマ ベイズファクターを使って比率の差を検定する方法を実践します。 この手法は、例えば下図のようなシーンに適用できます。下図では異</description>
+    </item>
     
     <item>
       <title>ベイズファクターを用いた仮説検定～比率の差の検定～</title>
@@ -17,7 +44,7 @@
       <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>
       
       <guid>https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/</guid>
-      <description>◆この記事のテーマ ベイズファクターを使って比率の差を検定する方法を実践します。 この手法は、例えば下図のようなシーンに適用できます。下図では異</description>
+      <description>◆この記事のテーマ ベイズファクターを使って比率の差を検定する方法を整理します。 この手法は、例えば下図のようなシーンに適用できます。下図では異</description>
     </item>
     
     <item>
