@@ -338,16 +338,16 @@ $H_{1PO}$、$H_{1NO}$に対応するモデルをそれぞれ$M_{1PO}$、$M_{1NO}
 <p>$$
 \begin{cases}
 p(\delta = 0 | M_{1NO}) = p(\delta = 0 | M_{1PO}) = \cfrac{2}{\pi r} \\<br>
-p(\delta=0 | \mathcal{D}, M_{1PO}) = \cfrac{p(\delta=0 | \mathcal{D}, M_1)}{\Phi(0 | \delta_{\mu}, \delta_{\sigma})} \eqsim \cfrac{1}{T} \sum_{t=1}^{T} \cfrac{p(\delta=0 | \boldsymbol{\psi}^{(t)},\mathcal{D},M_1)}{\Phi(0 | \delta_{\mu}^{(t)}, \delta_{\sigma}^{(t)})} \\<br>
-p(\delta=0 | \mathcal{D}, M_{1NO}) = \cfrac{p(\delta=0 | \mathcal{D}, M_1)}{1 - \Phi(0 | \delta_{\mu}, \delta_{\sigma})} \eqsim \cfrac{1}{T} \sum_{t=1}^{T} \cfrac{p(\delta=0 | \boldsymbol{\psi}^{(t)},\mathcal{D},M_1)}{1 - \Phi(0 | \delta_{\mu}^{(t)}, \delta_{\sigma}^{(t)})} \\<br>
+p(\delta=0 | \mathcal{D}, M_{1PO}) = \cfrac{p(\delta=0 | \mathcal{D}, M_1)}{\Phi(0 | \mu_{\delta}, \sigma_{\delta})} \eqsim \cfrac{1}{T} \sum_{t=1}^{T} \cfrac{p(\delta=0 | \boldsymbol{\psi}^{(t)},\mathcal{D},M_1)}{\Phi(0 | \mu_{\delta}^{(t)}, \sigma_{\delta}^{(t)})} \\<br>
+p(\delta=0 | \mathcal{D}, M_{1NO}) = \cfrac{p(\delta=0 | \mathcal{D}, M_1)}{1 - \Phi(0 | \mu_{\delta}, \sigma_{\delta})} \eqsim \cfrac{1}{T} \sum_{t=1}^{T} \cfrac{p(\delta=0 | \boldsymbol{\psi}^{(t)},\mathcal{D},M_1)}{1 - \Phi(0 | \mu_{\delta}^{(t)}, \sigma_{\delta}^{(t)})} \\<br>
 \end{cases}<br>
 $$</p>
 <p>だから、Savage-Dickey法より</p>
 <p>$$
-BF_{01PO} = \cfrac{p(\delta=0 | \mathcal{D}, M_{1PO})}{p(\delta=0 | M_{1PO})} \eqsim \cfrac{\pi r}{2} \cfrac{1}{T} \sum_{t=1}^{T} \cfrac{p(\delta=0 | \boldsymbol{\psi}^{(t)},\mathcal{D},M_1)}{\Phi(0 | \delta_{\mu}^{(t)}, \delta_{\sigma}^{(t)})} = \cfrac{1}{T} \sum_{t=1}^{T}\cfrac{BF_{01}^{(t)}}{2\Phi(0 | \delta_{\mu}^{(t)}, \delta_{\sigma}^{(t)}) }
+BF_{01PO} = \cfrac{p(\delta=0 | \mathcal{D}, M_{1PO})}{p(\delta=0 | M_{1PO})} \eqsim \cfrac{\pi r}{2} \cfrac{1}{T} \sum_{t=1}^{T} \cfrac{p(\delta=0 | \boldsymbol{\psi}^{(t)},\mathcal{D},M_1)}{\Phi(0 | \mu_{\delta}^{(t)}, \sigma_{\delta}^{(t)})} = \cfrac{1}{T} \sum_{t=1}^{T}\cfrac{BF_{01}^{(t)}}{2\Phi(0 | \mu_{\delta}^{(t)}, \sigma_{\delta}^{(t)}) }
 $$</p>
 <p>$$
-BF_{01NO} = \cfrac{p(\delta=0 | \mathcal{D}, M_{1NO})}{p(\delta=0 | M_{1NO})} \eqsim \cfrac{\pi r}{2} \cfrac{1}{T} \sum_{t=1}^{T} \cfrac{p(\delta=0 | \boldsymbol{\psi}^{(t)},\mathcal{D},M_1)}{1 - \Phi(0 | \delta_{\mu}^{(t)}, \delta_{\sigma}^{(t)})} = \cfrac{1}{T} \sum_{t=1}^{T}\cfrac{BF_{01}^{(t)}}{2\left(1 - \Phi(0 | \delta_{\mu}^{(t)}, \delta_{\sigma}^{(t)})\right) }
+BF_{01NO} = \cfrac{p(\delta=0 | \mathcal{D}, M_{1NO})}{p(\delta=0 | M_{1NO})} \eqsim \cfrac{\pi r}{2} \cfrac{1}{T} \sum_{t=1}^{T} \cfrac{p(\delta=0 | \boldsymbol{\psi}^{(t)},\mathcal{D},M_1)}{1 - \Phi(0 | \mu_{\delta}^{(t)}, \sigma_{\delta}^{(t)})} = \cfrac{1}{T} \sum_{t=1}^{T}\cfrac{BF_{01}^{(t)}}{2\left(1 - \Phi(0 | \mu_{\delta}^{(t)}, \sigma_{\delta}^{(t)})\right) }
 $$</p>
 <p>です(*´Д`)ﾊｧﾊｧ。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">res_ordered</span> <span class="o">&lt;-</span> <span class="n">ms1</span> <span class="o">%&gt;%</span> <span class="nf">data.frame</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">BF_01_NO</span> <span class="o">=</span> <span class="n">BF_01</span> <span class="o">/</span> <span class="p">(</span><span class="m">2</span> <span class="o">*</span> <span class="p">(</span><span class="m">1</span><span class="o">-</span><span class="nf">pnorm</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean_delta</span><span class="p">,</span> <span class="n">sd</span><span class="o">=</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">variance_delta</span><span class="p">)))),</span>
