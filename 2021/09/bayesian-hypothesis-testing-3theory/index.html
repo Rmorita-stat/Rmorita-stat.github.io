@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="google-site-verification" content="qrt5G5NouQQVS-0Ss9qHlEuMYt3uKuifbUIOkPd4cPc" />
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/stat" >STAT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/r" >With R</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/julia" >With Julia</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2021.09.11 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">ベイズファクターを用いた仮説検定～線形回帰分析～</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <p>今回は、ベイズファクターを使った線形回帰分析におけるモデル選択について理論を整理します。
+ベイズファクターとはなんぞや？という方は<a href="https://rmorita-stat.github.io/2021/02/bayesfactor/">こちら</a>を、Savage-Dickey法については<a href="https://rmorita-stat.github.io/2021/04/savage-dickey-method/">こちら</a>を参照のこと。</p>
+<p>主な参考文献は<a href="https://www.tandfonline.com/doi/abs/10.1198/016214507000001337" target="_blank">こちら</a>です。</p>
+<h1 id="線形回帰モデル">線形回帰モデル</h1>
+<p>まずは線形回帰モデルの導出と、周辺尤度について整理します。</p>
+<p>$\boldsymbol{Y} = \left( y_1, \ldots, y_N \right)^T$を応答変数、$\boldsymbol{X}_ 1 = \left( x_ {11} - \bar{x}_1, \ldots, x_{1N}- \bar{x}_1 \right)^T, \ldots, \boldsymbol{X}_ p = \left( x_ {p1} - \bar{x}_p, \ldots, x_{pN} - \bar{x}_p \right)^T$を説明変数とします($\bar{x}_i = \mathbb{E}[\boldsymbol{X}_ i], i=1,\ldots,p$ )。</p>
+<p>線形回帰モデルでは、応答変数$\boldsymbol{Y}$が平均ベクトル$\boldsymbol{\mu} = \left( \mu_1, \ldots, \mu_N \right)^T$をパラメータにもつ正規分布に従うと仮定します。</p>
+<p>$$
+p(\boldsymbol{Y}) = \mathrm{Normal}\left(\boldsymbol{\mu}, \sigma^2 \boldsymbol{I}_N\right) = \cfrac{1}{(2\pi)^{n/2}\sigma^N}\exp\left( -\cfrac{1}{2\sigma^{2}}\left( \boldsymbol{Y} - \boldsymbol{\mu} \right)^T\left(\boldsymbol{Y} - \boldsymbol{\mu}\right) \right) \tag{1}
+$$</p>
+<p>ここで、$\boldsymbol{I}_N$は$N×N$の単位行列です。</p>
+<p>平均ベクトル$\boldsymbol{\mu}$は、$\boldsymbol{1}_ N$(1で構成されるN行の列ベクトル)、$\boldsymbol{X}_ 1,\ldots,\boldsymbol{X}_ N$のいずれかもしくはすべての線形結合で説明できるものと仮定します。ここで常に考えなければならない問題は、$\boldsymbol{\mu}$の説明に用いる説明変数の組をどうするかです。これが線形回帰分析においての所謂モデル選択の問題と呼ばれます。</p>
+<p>本記事では参考文献と同様、説明変数の選び方を一般化して説明するため、$p$次元ベクトル$\boldsymbol{\gamma} = \left( \gamma_1,\ldots, \gamma_p \right)$をおき、$\gamma_i = 1$のとき、$\boldsymbol{X}_ i$を用いる説明変数に含め、$\gamma_i = 0$のときは逆に含めないこととすることで切片と説明変数によって張られるモデル空間を示すことにし、$\gamma_i = 1$の$\boldsymbol{X}_ i$で構成される$N$×$p_{\boldsymbol{\gamma}}$行列を$\boldsymbol{X}_ {\boldsymbol{\gamma}}$と示します。さらに$\boldsymbol{\gamma}$を用いたモデルを$\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}$とおき、$\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}$での係数パラメータを下付き文字で同様に示します。</p>
+<p>$$
+\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}　: ~~~ \boldsymbol{\mu} = \boldsymbol{1}_ N \alpha + \boldsymbol{X}_ {\boldsymbol{\gamma}} \boldsymbol{\beta}_{\boldsymbol{\gamma}} \tag{2}
+$$</p>
+<p>ここで、$\alpha$はスカラー、$\boldsymbol{\beta}_　{\boldsymbol{\gamma}}$は$p_　{\boldsymbol{\gamma}}$次元ベクトルです。$\boldsymbol{X}_ {\boldsymbol{\gamma}}$は各変数で中心化されているので、変数のばらつきのみが係数パラメータ$\boldsymbol{\beta}_　{\boldsymbol{\gamma}}$に反映され、変数のスケールはすべて$\alpha$で表現されることになります。</p>
+<p>また、どの説明変数も用いないモデルを<strong>ヌルモデル</strong>と呼び、$\mathcal{\boldsymbol{M}}_N$と表現します（下付き文字の$N$はサンプル数ではなく、Null-modelの頭文字）。</p>
+<p>$$
+\mathcal{\boldsymbol{M}}_ N　: ~~~ \boldsymbol{\mu} = \boldsymbol{1}_ N \alpha \tag{3}
+$$</p>
+<h1 id="線形回帰モデルの評価">線形回帰モデルの評価</h1>
+<p>ベイズ統計におけるモデル評価方法を整理します。ここで述べることは線形回帰に限定されないより一般的な議論です。</p>
+<h2 id="モデル確率の更新">モデル確率の更新</h2>
+<p>モデル選択やモデルの不確実性の評価にあたっては、不明なパラメータ$\boldsymbol{\theta}_ \boldsymbol{\gamma} = \left( \alpha, \boldsymbol{\beta}_{\boldsymbol{\gamma}}, \sigma^2 \right) ∈ \boldsymbol{\Theta}_\boldsymbol{\gamma}$の事前分布を決め、各モデル$\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}$の事前確率$p\left(\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}\right)$を新しく得られたデータに基づきアップデートすることが一つのアプローチとして考えられます。</p>
+<p>$$
+p(\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} | \boldsymbol{Y}) = \cfrac{p(\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}})p( \boldsymbol{Y} | \mathcal{\boldsymbol{M}}_\boldsymbol{\gamma} )}{\sum_ {\boldsymbol{\gamma}} p(\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}})p( \boldsymbol{Y} | \mathcal{\boldsymbol{M}}_ \boldsymbol{\gamma} ) } \tag{4}
+$$</p>
+<p>$(4)$式はモデル確率の更新方法を示したもので、ベイズの定理そのままですが、右辺に現れた$p(\boldsymbol{Y} | \mathcal{\boldsymbol{M}}_\boldsymbol{\gamma})$が本記事の鍵となる値、<strong>周辺尤度</strong>です。$(5)$式に示す通り、周辺尤度は尤度をパラメータの事前分布で重みづけ（積分）したもので、データ$\boldsymbol{Y}$に対するモデルの平均的な説明力を示します。</p>
+<p>$$
+p(\boldsymbol{Y} |\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}) = \int_{\boldsymbol{\Theta}_{\boldsymbol{\gamma}}} p(\boldsymbol{Y}|\boldsymbol{\theta}_{{\boldsymbol{\gamma}}},\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}})p(\boldsymbol{\theta}_{{\boldsymbol{\gamma}}} | \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} ) d\boldsymbol{\theta} _ {\boldsymbol{\gamma}} \tag{5}
+$$</p>
+<h2 id="ベイズファクター">ベイズファクター</h2>
+<p><strong>ベイズファクター</strong>は$(6)$式に示す通り2つのモデル間の周辺尤度比として定義され、データ$\boldsymbol{Y}$に対する2つのモデルの説明力の比と捉えることができます。</p>
+<p>$$
+BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}^{'}} : \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} \rbrack = \cfrac{p(\boldsymbol{Y} |\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}^{'}})}{p(\boldsymbol{Y} |\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}})} = \cfrac{\int_{\boldsymbol{\Theta}_{\boldsymbol{\gamma}^{'}}} p(\boldsymbol{Y}|\boldsymbol{\theta}_{{\boldsymbol{\gamma}^{'}}},\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}^{'}})p(\boldsymbol{\theta}_{{\boldsymbol{\gamma}^{'}}} | \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}^{'}} ) d\boldsymbol{\theta} _ {\boldsymbol{\gamma}^{'}}}{\int_{\boldsymbol{\Theta}_{\boldsymbol{\gamma}}} p(\boldsymbol{Y}|\boldsymbol{\theta}_{{\boldsymbol{\gamma}}},\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}})p(\boldsymbol{\theta}_{{\boldsymbol{\gamma}}} | \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} ) d\boldsymbol{\theta} _ {\boldsymbol{\gamma}}} \tag{6}
+$$</p>
+<p>ベイズファクターを使うと、$(4)$式は以下のように変形できます。</p>
+<p>$$
+p(\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} | \boldsymbol{Y}) = \cfrac{p(\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}})BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {b}\rbrack}{\sum_ {\boldsymbol{\gamma}^{'}} p(\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}^{'}})BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}^{'}} : \mathcal{\boldsymbol{M}}_b \rbrack} \tag{7}
+$$</p>
+<p>$\mathcal{\boldsymbol{M}}_b$はベイズファクターを算出する際のベースとなるモデルで任意のモデルを選択できますが、通常はどの選択をとってもモデル同士がネストされた関係となるよう、ヌルモデルもしくはフルモデル（すべての説明変数を用いたモデル）が用いられます。</p>
+<p>Null-Based Model</p>
+<p>$$
+BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack = \cfrac{p(\boldsymbol{Y} |\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}})}{p(\boldsymbol{Y} |\mathcal{\boldsymbol{M}}_ {N})} \tag{8}
+$$</p>
+<p>また、任意のモデル間を比較するベイズファクターについても、すべてのモデルに対して包含(Encompassing)関係にあるヌルモデルを基準に計算することができます。</p>
+<p>Encompassing approach</p>
+<p>$$
+BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}^{'}} : \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} \rbrack = \cfrac{BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}^{'}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack}{BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack} \tag{9}
+$$</p>
+<div style="color:red; font-size:18px">
+  
+
+個人的にはベイズファクターとモデル確率更新によるモデル評価手法はものすごく可能性があると思っています。ベイズファクターは新しく得られたデータに対する各モデルの説明力を評価でき、これまでの情報から既に算出されたモデル確率を、ベイズファクターに基づいて更新する・・・とても近未来的なにおいを感じます。
+
+
+</div>
+<h1 id="事前分布">事前分布</h1>
+<p>これまでの議論から、ベイズファクターは事前分布の影響を強く受けることは明白です。客観ベイズの立場から見れば、客観的で研究者間で合意のとれた事前分布の設定方法を確立することで、ベイズファクターやモデル確率の不確定性を克服することが重要です。以下では、望ましい事前分布の設定について整理します。</p>
+<h2 id="事前分布に求められる性質">事前分布に求められる性質</h2>
+<p>事前分布に求められる性質を列挙します。</p>
+<p><strong>・ Location and Scale Invariance</strong>
+<p style="margin-left:3em;">
+気温や距離など、説明変数の単位や値の大きさに影響しないこと。
+</p></p>
+<p><strong>・ Consistency</strong>
+<p style="margin-left:3em;">
+サンプル数が極大に近づくと、ベイズファクターが適切な値に収束すること。つまり$\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}$と$\mathcal{\boldsymbol{M}}_ N$を比較するとき、「真の」モデルが$\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}$であるならば、$BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack \rightarrow \infty$に、「真の」モデルが$\mathcal{\boldsymbol{M}}_ N$ならば$BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack \rightarrow 0$にそれぞれ収束すること。
+</p></p>
+<p><strong>・ Consistent in Information</strong>
+<p style="margin-left:3em;">
+データが、モデルの比較に用いられる値（線形回帰分析の場合、決定係数）を介してのみベイズファクターに影響すること。線形回帰分析の場合、$R^2 = 1$のとき$BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack \rightarrow \infty$となること。
+</p></p>
+<p><strong>・ Computationally Convenience</strong>
+<p style="margin-left:3em;">
+ベイズファクターが解析的に計算可能であること。ただし近年ではMCMC法やブリッジサンプリング等の推定手法が進歩しているので、必ずしもこの条件にとらわれる必要はないかもしれません。
+</p></p>
+<h2 id="zellner-siows-priors">Zellner-Siow&rsquo;s Priors</h2>
+<p>前節で挙げた事前分布の望ましい性質を満たす線形回帰分析におけるパラメータの事前分布として、<strong>Zellner-Siow&rsquo;s Priors</strong>が提案されています。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Zellner-Siow&#39;s Priors</strong></legend>
+<p>$(1)$、$(2)$式の$\boldsymbol{\beta}_\boldsymbol{{\gamma}}$、$\alpha$、$\sigma^2$に対する事前分布である下記$(8)$～$(10)$式を、Zellner-Siow&rsquo;s Priorsとよぶ。</p>
+<p>$$
+\alpha,\sigma^2 \propto \cfrac{1}{\sigma^2} \tag{10}
+$$</p>
+<p>$$
+\boldsymbol{\beta}_ \boldsymbol{{\gamma}} | \sigma^2, g \sim \mathrm{Normal}\left(\boldsymbol{0}, g\sigma^2\left( \cfrac{\boldsymbol{X}_ \boldsymbol{{\gamma}}^{T} \boldsymbol{X}_ \boldsymbol{{\gamma}}}{N} \right)^{-1}\right) \tag{11}
+$$</p>
+<p>$$
+g \sim \mathrm{InvGamma}\left( \cfrac{1}{2}, \cfrac{r}{2} \right) \tag{12}
+$$</p>
+<p>ここで、$\bar{\boldsymbol{X}_ \boldsymbol{{\gamma}}}$は$\gamma_{i}=1$である$\boldsymbol{X}_i$における平均値で構成された$N$×$\sum{\boldsymbol{\gamma}}$行列である。</p>
+
+</fieldset></p>
+<p>$(10)$、$(11)$式はZellner(1986)が提案した事前分布で、<strong>Zellner&rsquo;s g-Priors</strong>と呼ばれます。この事前分布は次元のペナルティとしての役割を持つパラメータ$g$について特定の値を与える必要があり、それが前述のConsistencyを満たせない要因となっていました。一方、ZellnerとSiow(1980)が提案したZellner-Siow&rsquo;s Priorsは、パラメータgについて事前分布を与えることで、事前分布の望ましい性質を満たすことに成功しています。</p>
+<p>また、下記$(11)$式に示すように、$(10)$、$(11)$式は$\boldsymbol{\beta}_\boldsymbol{{\gamma}}$の事前分布としてコーシー分布を採用することと等価です。これは$g$について積分することで確認できます（筆者未導出）。</p>
+<p>$$
+\begin{split}
+\int_{0}^{∞} \boldsymbol{\beta}_\boldsymbol{{\gamma}} | \sigma^2,g ~~ dg &amp;=&amp;
+\int_{0}^{∞} \mathrm{Normal}\left(\boldsymbol{0}, g\sigma^2\left( \cfrac{\boldsymbol{X}_ \boldsymbol{{\gamma}}^{T} \boldsymbol{X}_ \boldsymbol{{\gamma}}}{N} \right)^{-1}\right) dg \\ &amp;=&amp; \mathrm{Multivariate-Cauchy}\left( \boldsymbol{\beta} _\boldsymbol{\gamma} | \boldsymbol{0}, N r \sigma^2 \left( \boldsymbol{X}_ \boldsymbol{{\gamma}}^{T} \boldsymbol{X}_ \boldsymbol{{\gamma}} \right) ^{-1} \right) \\<br>
+&amp;=&amp; \cfrac{\Gamma\left( \cfrac{1 + p _\boldsymbol{\gamma}}{2} \right)}{\Gamma\left(\cfrac{1}{2}\right) \pi^{\cfrac{p _\boldsymbol{\gamma}}{2}} \left| N r \sigma^2 \left( \boldsymbol{X}_ \boldsymbol{{\gamma}}^{T} \boldsymbol{X}_ \boldsymbol{{\gamma}} \right) ^{-1} \right|^{\cfrac{1}{2}} \left( 1 + \cfrac{1}{N r \sigma^2} \boldsymbol{\beta} _\boldsymbol{\gamma}^{T} \boldsymbol{X}_ \boldsymbol{{\gamma}}^{T} \boldsymbol{X}_ \boldsymbol{{\gamma}} \boldsymbol{\beta} _\boldsymbol{\gamma} \right)^{\cfrac{1 + p _\boldsymbol{\gamma}}{2}} }
+\end{split} \tag{13}
+$$</p>
+<p>ハイパーパラメータ$r$は、$\boldsymbol{\beta} _\boldsymbol{\gamma}$の事前分布（$(13)$式の多変量コーシー分布）のscale matrixの大きさを調整する役割を持ちます。Richard D. Morey氏は現在のところ$r = \cfrac{\sqrt{2}}{4}$を標準値として推奨しているようです。</p>
+<p>$\boldsymbol{\beta} _\boldsymbol{\gamma}$について説明変数や応答変数のスケール等に配慮した事前分布を与えている$(11)$式の解釈は直感的です。まず$g$は各スケールについて標準化した係数パラメータの分散の意味をもちます。次に$\sigma^2$はその値を応答変数の単位にスケーリングします。</p>
+<p>$\left( \cfrac{\boldsymbol{X}_ \boldsymbol{{\gamma}}^{T} \boldsymbol{X}_ \boldsymbol{{\gamma}}}{N} \right)^{-1}$ですが、これは$\boldsymbol{X}_ \boldsymbol{{\gamma}}$の分散共分散行列になるので、$g$を$\boldsymbol{X}_ \boldsymbol{{\gamma}}$の単位にスケーリングする役割をもちます。</p>
+<h1 id="ベイズファクターの計算">ベイズファクターの計算</h1>
+<p>以降ではZellner-Siow&rsquo;s Priorsをおいたときのベイズファクターの計算方法を整理します。</p>
+<h2 id="1変数積分近似による推定">1変数積分近似による推定</h2>
+<p>概要を以下に示します。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆1変数積分近似による推定方法</strong></legend>
+<p>ベイズファクター$BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack$ は下記の通り計算できる。</p>
+<p>$$
+BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack = \int _{0} ^{∞}(1 + g)^{(N - 1 - p _\boldsymbol{\gamma})/2} \left( 1 + \left( 1 - R _\boldsymbol{\gamma}^2 \right) g \right)^{-(n-1)/2} \pi(g) dg \tag{14}
+$$</p>
+<p>ここで、$\pi(g)$は$g$の事前分布を、$R_ \boldsymbol{\gamma}^2$は$\mathcal{\boldsymbol{M}}_ \boldsymbol{\gamma}$での通常の線形回帰における残差の平方和、決定係数を示す。</p>
+
+</fieldset></p>
+<p>$(14)$式の$\pi(g)$以外の部分は、$(10)$$(11)$式で表現されるZellner&rsquo;s g-Priorsにおける周辺尤度を解析的に求めることで算出されたものです。但し、Zellner&rsquo;s g-Priorsはパラメータ$g$については固定値を想定していたようで、さらに$g$の事前分布$(10)$式が加わったZellner-Siow&rsquo;s Priorsについては、$g$についてのみ解析的な計算が不可能となってしまっています。そのため、$(14)$式は$g$についての一変数積分が残っていますが、これは<strong>ガウス求積法</strong>などの手法を使って高精度に推定することが可能です。</p>
+<p>ちなみに、本手法を使ったベイズファクターの計算はRichard D. Morey氏らが開発しているBayesFactorパッケージの<code>regressionBF()</code>関数で可能です。</p>
+<h2 id="savage-dickey法による推定">Savage-Dickey法による推定</h2>
+<p>Savage-Dickey法の概要を以下に示します。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Savage-Dickey法による推定方法</strong></legend>
+<p>モデル$\mathcal{\boldsymbol{M}}_ {N}$と$\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}$は</p>
+<p>$$
+p(\boldsymbol{Y} | \mathcal{\boldsymbol{M}}_ {N} ) = p( \boldsymbol{Y} | \boldsymbol{\beta}_{\boldsymbol{\gamma}} = \boldsymbol{0}, \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}) \tag{15}
+$$</p>
+<p>という関係にあるため、ベイズファクター$BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack$は下記のとおり計算できる。</p>
+<p>$$
+BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack = \cfrac{p(\boldsymbol{\beta}_{\boldsymbol{\gamma}} = \boldsymbol{0} |\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}})}{p(\boldsymbol{\beta}_{\boldsymbol{\gamma}} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}})} \tag{16}
+$$</p>
+<p>ここで、$p(\boldsymbol{\beta} _{\boldsymbol{\gamma}} = \boldsymbol{0} |\mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}})$はモデル$\mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}}$における$\boldsymbol{\beta} _{\boldsymbol{\gamma}}$の事前分布の$\boldsymbol{\beta} _{\boldsymbol{\gamma}}=\boldsymbol{0}$での確率密度を示す。
+同様に$p(\boldsymbol{\beta} _{\boldsymbol{\gamma}} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}})$はモデル$\mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}}$における$\boldsymbol{\beta} _{\boldsymbol{\gamma}}$の事後分布の$\boldsymbol{\beta} _{\boldsymbol{\gamma}}=\boldsymbol{0}$での確率密度を示す。</p>
+
+</fieldset></p>
+<p>$(11)$式より、
+$$
+p(\boldsymbol{\beta}_ {\boldsymbol{\gamma}} = \boldsymbol{0} |\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}) = \left| N r \sigma^2 \left( \boldsymbol{X}_ \boldsymbol{\gamma}^T \boldsymbol{X}_ \boldsymbol{\gamma}\right) ^{-1} \right|^{-\cfrac{1}{2}}
+$$</p>
+<p>であることは明らかですから、あとは、$p(\boldsymbol{\beta} _\boldsymbol{\gamma} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}} _\boldsymbol{\gamma})$をどうやって求めるかが問題です。</p>
+<p>ここでは、<a href="https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/">以前の記事</a>でも採用したConditional Marginal Density Estimator(<strong>CMDE</strong>) を使って$p(\boldsymbol{\beta} _{\boldsymbol{\gamma}} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}})$を推定する方法を提案します。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆線形回帰分析のCMDE</strong></legend>
+<p>条件付事後分布$p(\boldsymbol{\beta} _{\boldsymbol{\gamma}} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}})$は以下である。</p>
+<p>$$
+p(\boldsymbol{\beta} _{\boldsymbol{\gamma}} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}}) =
+\mathrm{Normal}\left(\cfrac{1}{\sigma^2}\Sigma \boldsymbol{X} _{\boldsymbol{\gamma}}^{T} \boldsymbol{Y}, \Sigma \right) \tag{17}
+$$</p>
+<p>ここで、</p>
+<p>$$
+\Sigma = \cfrac{\sigma^2}{1+\cfrac{1}{g}} \left(\boldsymbol{X}_ {\boldsymbol{\gamma}}^{T}\boldsymbol{X}_ {\boldsymbol{\gamma}} \right)^{-1} \tag{18}
+$$</p>
+
+</fieldset></p>
+<p>※上記の証明はストレートかつ冗長なので割愛します。自分で導出したい人は<a href="https://www.iwanttobeacat.com/entry/2018/02/17/000815">こちら</a>が大いに参考になります。</p>
+<h1 id="まとめ">まとめ</h1>
+<p>本記事では以下の内容について整理しました。</p>
+<ul>
+<li>
+<p>ベイズファクターを使ったモデル確率の更新</p>
+</li>
+<li>
+<p>ベイズファクターを計算する際に求められる事前分布の性質</p>
+</li>
+<li>
+<p>線形回帰モデルにおいて提案された適切な事前分布</p>
+</li>
+</ul>
+<p>実践編は<a href="https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-3practice/">こちら</a>です。ベイズファクターを実際に算出し、モデルをどのように評価できるのか見ていきます。</p>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
+        
+        <span><a href="https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0">回帰</a></span>
+        
+        
+    </div>
+</div>
+<div class="disqus-comments">
+  <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-rmorita-stat-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 得意なのは統一された洋服とダンスのステップです </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2021.06.21 00:00 </div>
+            <div class="pn-el__2"> ベイズファクターを用いた仮説検定～平均値の差の検定～ </div>
+        </div>
+    </a>
+    
+    
+</div>
+
+<footer>
+  <script type="text/javascript">
+ MathJax = {
+   tex: {
+     inlineMath: [['$','$'], ['\\(','\\)']],
+     processEscapes: true,
+     tags: "ams",
+     autoload: {
+       color: [],
+       colorV2: ['color']
+     },
+     packages: {'[+]': ['noerrors']}
+   },
+   chtml: {
+     matchFontHeight: true,
+     displayAlign: "left",
+     displayIndent: "2em"
+   },
+   options: {
+     skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+     renderActions: {
+        
+       find_script_mathtex: [10, function (doc) {
+         for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+           const display = !!node.type.match(/; *mode=display/);
+           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+           const text = document.createTextNode('');
+           node.parentNode.replaceChild(text, node);
+           math.start = {node: text, delim: '', n: 0};
+           math.end = {node: text, delim: '', n: 0};
+           doc.math.push(math);
+         }
+       }, '']
+     }
+   },
+   loader: {
+     load: ['[tex]/noerrors']
+   }
+ };
+</script>
+<script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2021
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
