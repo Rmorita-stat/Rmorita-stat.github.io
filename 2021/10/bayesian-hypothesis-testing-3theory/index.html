@@ -225,7 +225,7 @@ $$</p>
 </fieldset></p>
 <p>$(11)$式より、
 $$
-p(\boldsymbol{\beta}_ {\boldsymbol{\gamma}} = \boldsymbol{0} |\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}) = \left| N r \sigma^2 \left( \boldsymbol{X}_ \boldsymbol{\gamma}^T \boldsymbol{X}_ \boldsymbol{\gamma}\right) ^{-1} \right|^{-\cfrac{1}{2}}
+p(\boldsymbol{\beta}_ {\boldsymbol{\gamma}} = \boldsymbol{0} |\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}) = \cfrac{\Gamma\left(\cfrac{p_\boldsymbol{\gamma}+1}{2}\right)}{ \pi^{\cfrac{p_\boldsymbol{\gamma}+1}{2}} \left| N r \sigma^2 \left( \boldsymbol{X}_ \boldsymbol{\gamma}^T \boldsymbol{X}_ \boldsymbol{\gamma}\right) ^{-1} \right|^{-\cfrac{1}{2}}}
 $$</p>
 <p>であることは明らかですから、あとは、$p(\boldsymbol{\beta} _\boldsymbol{\gamma} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}} _\boldsymbol{\gamma})$をどうやって求めるかが問題です。</p>
 <p>ここでは、<a href="https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/">以前の記事</a>でも採用したConditional Marginal Density Estimator(<strong>CMDE</strong>) を使って$p(\boldsymbol{\beta} _{\boldsymbol{\gamma}} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}})$を推定する方法を提案します。<br>
