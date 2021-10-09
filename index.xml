@@ -12,11 +12,20 @@
     
     
     <item>
-      <title>ベイズファクターを用いた仮説検定～線形回帰分析～</title>
-      <link>https://rmorita-stat.github.io/2021/09/bayesian-hypothesis-testing-3theory/</link>
-      <pubDate>Sat, 11 Sep 2021 00:00:00 +0000</pubDate>
+      <title>ベイズファクターを用いた仮説検定を実践する～線形回帰分析～</title>
+      <link>https://rmorita-stat.github.io/2021/10/bayesian-hypothesis-testing-3practice/</link>
+      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/09/bayesian-hypothesis-testing-3theory/</guid>
+      <guid>https://rmorita-stat.github.io/2021/10/bayesian-hypothesis-testing-3practice/</guid>
+      <description>このページは現在執筆です。気長にお待ち下さい！</description>
+    </item>
+    
+    <item>
+      <title>ベイズファクターを用いた仮説検定～線形回帰分析～</title>
+      <link>https://rmorita-stat.github.io/2021/10/bayesian-hypothesis-testing-3theory/</link>
+      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/10/bayesian-hypothesis-testing-3theory/</guid>
       <description>今回は、ベイズファクターを使った線形回帰分析におけるモデル選択について理論を整理します。 ベイズファクターとはなんぞや？という方はこちらを、S</description>
     </item>
     
@@ -27,15 +36,6 @@
       
       <guid>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2practice/</guid>
       <description>◆この記事のテーマ ベイズファクターを使って平均値の差を検定する方法を実践します。 この手法は、例えば下図のようなシーンに適用できます。下図左側</description>
-    </item>
-    
-    <item>
-      <title>ベイズファクターを用いた仮説検定を実践する～線形回帰分析～</title>
-      <link>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-3practice/</link>
-      <pubDate>Mon, 21 Jun 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-3practice/</guid>
-      <description>このページは現在執筆です。気長にお待ち下さい！</description>
     </item>
     
     <item>

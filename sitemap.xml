@@ -3,47 +3,47 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://rmorita-stat.github.io/stat/</loc>
-    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/tags/</loc>
-    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/</loc>
-    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/2021/09/bayesian-hypothesis-testing-3theory/</loc>
-    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0/</loc>
-    <lastmod>2021-09-11T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://rmorita-stat.github.io/r/</loc>
-    <lastmod>2021-06-21T00:00:00+00:00</lastmod>
+    <lastmod>2021-10-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://rmorita-stat.github.io/tags/stan/</loc>
-    <lastmod>2021-06-21T00:00:00+00:00</lastmod>
+    <lastmod>2021-10-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/stat/</loc>
+    <lastmod>2021-10-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/tags/</loc>
+    <lastmod>2021-10-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/</loc>
+    <lastmod>2021-10-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/2021/10/bayesian-hypothesis-testing-3practice/</loc>
+    <lastmod>2021-10-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/2021/10/bayesian-hypothesis-testing-3theory/</loc>
+    <lastmod>2021-10-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0/</loc>
+    <lastmod>2021-10-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2practice/</loc>
-    <lastmod>2021-06-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-3practice/</loc>
     <lastmod>2021-06-21T00:00:00+00:00</lastmod>
   </url>
   
