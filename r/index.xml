@@ -6,18 +6,27 @@
     <description>Recent content in Rs on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Fri, 08 Oct 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 23 Oct 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://rmorita-stat.github.io/r/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>線形回帰モデルのベイズファクター計算手法を検討する</title>
+      <link>https://rmorita-stat.github.io/2021/10/regressionbf-comparing/</link>
+      <pubDate>Sat, 23 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/10/regressionbf-comparing/</guid>
+      <description>はじめに 本記事では線形回帰モデルを例にベイズファクターの計算手法を複数実践します。また結果を比較しそれぞれの手法の特徴をみていきます。 実践す</description>
+    </item>
+    
+    <item>
       <title>ベイズファクターを用いた仮説検定を実践する～線形回帰分析～</title>
       <link>https://rmorita-stat.github.io/2021/10/bayesian-hypothesis-testing-3practice/</link>
-      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 22 Oct 2021 00:00:00 +0000</pubDate>
       
       <guid>https://rmorita-stat.github.io/2021/10/bayesian-hypothesis-testing-3practice/</guid>
-      <description>このページは現在執筆です。気長にお待ち下さい！</description>
+      <description>はじめに 本記事ではベイズファクターを使った線形回帰モデルの評価方法を紹介します。 サンプルデータの分析 今回使用するサンプルデータはR標準的サン</description>
     </item>
     
     <item>

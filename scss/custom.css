@@ -54,3 +54,25 @@ div.simple-table table td {
 div.simple-table table th {
 	background-color: #f3f0f0;
 }
+
+div.table, th, td {
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+  line-height: 1.5;
+}
+
+div.table.type06 th {
+  width: 150px;
+  padding: 10px;
+  font-weight: bold;
+  vertical-align: top;
+  background: #3f3f3f;
+  color: #ffffff;
+}
+
+
+div.table.type06 td {
+  width: 350px;
+  padding: 10px;
+  vertical-align: top;
+}

@@ -78,18 +78,397 @@
 
 <div class="main-content">
     <div class="main-content__date">
-        <h4 id="date"> 2021.10.08 00:00 </h4>
+        <h4 id="date"> 2021.10.22 00:00 </h4>
     </div>
     <div class="main-content__title">
         <h1 id="title">ベイズファクターを用いた仮説検定を実践する～線形回帰分析～</h1>
     </div>
     <div class="main-content__article">
         <article id="content">
-            <div style="color:red; font-size:30px">
-  
-このページは現在執筆です。気長にお待ち下さい！
+            <h1 id="はじめに">はじめに</h1>
+<p>本記事ではベイズファクターを使った線形回帰モデルの評価方法を紹介します。</p>
+<h1 id="サンプルデータの分析">サンプルデータの分析</h1>
+<p>今回使用するサンプルデータはR標準的サンプルデータ、Attitudeです。
+Attitudeは従業員が自信の所属する会社の評価に関する質問結果のデータで、ratingが会社の総合評価となります。以降は、会社の総合評価がどの要素によって説明されるのかをみていくことにします。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">head</span><span class="p">(</span><span class="n">attitude</span><span class="p">)</span>
+<span class="c1"># rating complaints privileges learning raises critical advance</span>
+<span class="c1"># 1     43         51         30       39     61       92      45</span>
+<span class="c1"># 2     63         64         51       54     63       73      47</span>
+<span class="c1"># 3     71         70         68       69     76       86      48</span>
+<span class="c1"># 4     61         63         45       47     54       84      35</span>
+<span class="c1"># 5     81         78         56       66     71       83      47</span>
+<span class="c1"># 6     43         55         49       44     54       49      34</span>
 
-</div>
+</code></pre></div><h2 id="尤度に基づく線形回帰分析">尤度に基づく線形回帰分析</h2>
+<p>従来通りの手法としては尤度に基づく線形回帰分析があります。まずは何も考えずに全説明変数を用いて分析にかけてみましょう。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">d</span> <span class="o">&lt;-</span> <span class="n">attitude</span>
+<span class="n">res_full</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">rating</span><span class="o">~</span><span class="n">. </span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">res_full</span><span class="p">)</span>
+
+<span class="c1"># Call:</span>
+<span class="c1">#   lm(formula = rating ~ ., data = d)</span>
+<span class="c1">#</span>
+<span class="c1"># Residuals:</span>
+<span class="c1">#   Min       1Q   Median       3Q      Max</span>
+<span class="c1"># -10.9418  -4.3555   0.3158   5.5425  11.5990</span>
+<span class="c1">#</span>
+<span class="c1"># Coefficients:</span>
+<span class="c1">#   Estimate Std. Error t value Pr(&gt;|t|)    </span>
+<span class="c1"># (Intercept) 10.78708   11.58926   0.931 0.361634    </span>
+<span class="c1"># complaints   0.61319    0.16098   3.809 0.000903 ***</span>
+<span class="c1"># privileges  -0.07305    0.13572  -0.538 0.595594    </span>
+<span class="c1"># learning     0.32033    0.16852   1.901 0.069925 .  </span>
+<span class="c1"># raises       0.08173    0.22148   0.369 0.715480    </span>
+<span class="c1"># critical     0.03838    0.14700   0.261 0.796334    </span>
+<span class="c1"># advance     -0.21706    0.17821  -1.218 0.235577    </span>
+<span class="c1"># ---</span>
+<span class="c1">#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class="c1">#</span>
+<span class="c1"># Residual standard error: 7.068 on 23 degrees of freedom</span>
+<span class="c1"># Multiple R-squared:  0.7326,	Adjusted R-squared:  0.6628</span>
+<span class="c1"># F-statistic:  10.5 on 6 and 23 DF,  p-value: 1.24e-05</span>
+
+</code></pre></div><p>complaintsの正の傾きのみに対し十分小さいp値が得られ、他の変数のp値は有意でないという結果が得られました。</p>
+<p>ここで、p値が示す意味には注意が必要です。回りくどい表現になってしまいますが、p値の意味は「係数が0と仮定したとき、新たにデータを取るとt分布に従う検定統計量がこれより極端な値をとる確率」となります。簡単にいうと各係数を採用する積極的な証拠を与えていないんです。</p>
+<p>ともあれ、complaints以外の変数は消去の余地がありそうですが、尤度に基づく方法でのモデル選択にはAIC（赤池情報量基準）がよく使用されます。</p>
+<p>$$
+\mathrm{AIC} = -2×最大対数尤度 + 2×自由パラメータ数　\tag{1}
+$$</p>
+<p>AICを小さくするモデルほど良いモデルとされます。また冗長なモデルには第２項の自由パラメータ数によってペナルティが与えられます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">step</span><span class="p">(</span><span class="n">res_full</span><span class="p">)</span>
+
+<span class="c1"># Start:  AIC=123.36</span>
+<span class="c1"># rating ~ complaints + privileges + learning + raises + critical +</span>
+<span class="c1">#   advance</span>
+<span class="c1">#</span>
+<span class="c1">#              Df Sum of Sq    RSS    AIC</span>
+<span class="c1"># - critical    1      3.41 1152.4 121.45</span>
+<span class="c1"># - raises      1      6.80 1155.8 121.54</span>
+<span class="c1"># - privileges  1     14.47 1163.5 121.74</span>
+<span class="c1"># - advance     1     74.11 1223.1 123.24</span>
+<span class="c1"># &lt;none&gt;                    1149.0 123.36</span>
+<span class="c1"># - learning    1    180.50 1329.5 125.74</span>
+<span class="c1"># - complaints  1    724.80 1873.8 136.04</span>
+<span class="c1">#</span>
+<span class="c1"># Step:  AIC=121.45</span>
+<span class="c1"># rating ~ complaints + privileges + learning + raises + advance</span>
+<span class="c1">#</span>
+<span class="c1"># Df Sum of Sq    RSS    AIC</span>
+<span class="c1"># - raises      1     10.61 1163.0 119.73</span>
+<span class="c1"># - privileges  1     14.16 1166.6 119.82</span>
+<span class="c1"># - advance     1     71.27 1223.7 121.25</span>
+<span class="c1"># &lt;none&gt;                    1152.4 121.45</span>
+<span class="c1"># - learning    1    177.74 1330.1 123.75</span>
+<span class="c1"># - complaints  1    724.70 1877.1 134.09</span>
+<span class="c1">#</span>
+<span class="c1"># Step:  AIC=119.73</span>
+<span class="c1"># rating ~ complaints + privileges + learning + advance</span>
+<span class="c1">#</span>
+<span class="c1"># Df Sum of Sq    RSS    AIC</span>
+<span class="c1"># - privileges  1     16.10 1179.1 118.14</span>
+<span class="c1"># - advance     1     61.60 1224.6 119.28</span>
+<span class="c1"># &lt;none&gt;                    1163.0 119.73</span>
+<span class="c1"># - learning    1    197.03 1360.0 122.42</span>
+<span class="c1"># - complaints  1   1165.94 2328.9 138.56</span>
+<span class="c1">#</span>
+<span class="c1"># Step:  AIC=118.14</span>
+<span class="c1"># rating ~ complaints + learning + advance</span>
+<span class="c1">#</span>
+<span class="c1"># Df Sum of Sq    RSS    AIC</span>
+<span class="c1"># - advance     1     75.54 1254.7 118.00</span>
+<span class="c1"># &lt;none&gt;                    1179.1 118.14</span>
+<span class="c1"># - learning    1    186.12 1365.2 120.54</span>
+<span class="c1"># - complaints  1   1259.91 2439.0 137.94</span>
+<span class="c1">#</span>
+<span class="c1"># Step:  AIC=118</span>
+<span class="c1"># rating ~ complaints + learning</span>
+<span class="c1">#</span>
+<span class="c1"># Df Sum of Sq    RSS    AIC</span>
+<span class="c1"># &lt;none&gt;                    1254.7 118.00</span>
+<span class="c1"># - learning    1    114.73 1369.4 118.63</span>
+<span class="c1"># - complaints  1   1370.91 2625.6 138.16</span>
+<span class="c1">#</span>
+<span class="c1"># Call:</span>
+<span class="c1">#   lm(formula = rating ~ complaints + learning, data = d)</span>
+<span class="c1">#</span>
+<span class="c1"># Coefficients:</span>
+<span class="c1">#   (Intercept)   complaints     learning  </span>
+<span class="c1"># 9.8709       0.6435       0.2112  </span>
+</code></pre></div><p>AICに基づくステップワイズ法の結果、採用されたモデルは「rating ~ complaints + learning (+ 切片)」となりました。採用モデルのp値を確認してみましょう。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">res_best</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">rating</span> <span class="o">~</span> <span class="n">complaints</span> <span class="o">+</span> <span class="n">learning</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">res_best</span><span class="p">)</span>
+
+<span class="c1"># Call:</span>
+<span class="c1">#   lm(formula = rating ~ complaints + learning, data = d)</span>
+<span class="c1">#</span>
+<span class="c1"># Residuals:</span>
+<span class="c1">#   Min       1Q   Median       3Q      Max</span>
+<span class="c1"># -11.5568  -5.7331   0.6701   6.5341  10.3610</span>
+<span class="c1">#</span>
+<span class="c1"># Coefficients:</span>
+<span class="c1">#   Estimate Std. Error t value Pr(&gt;|t|)    </span>
+<span class="c1"># (Intercept)   9.8709     7.0612   1.398    0.174    </span>
+<span class="c1"># complaints    0.6435     0.1185   5.432 9.57e-06 ***</span>
+<span class="c1">#   learning      0.2112     0.1344   1.571    0.128    </span>
+<span class="c1"># ---</span>
+<span class="c1">#   Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1</span>
+<span class="c1">#</span>
+<span class="c1"># Residual standard error: 6.817 on 27 degrees of freedom</span>
+<span class="c1"># Multiple R-squared:  0.708,	Adjusted R-squared:  0.6864</span>
+<span class="c1"># F-statistic: 32.74 on 2 and 27 DF,  p-value: 6.058e-08</span>
+</code></pre></div><p>complaintsは相も変わらず有意なp値が得られていますが、learningはモデルに含まれるもののp値は有意でありません。このデータは小サンプルなので、これだけで判断することは危険ですが、complaintsはratingの決定要因になっていると考えてよさそうです。</p>
+<h2 id="ベイズファクターによるモデル評価">ベイズファクターによるモデル評価</h2>
+<p>一方のベイズファクターではどんな結果が得られるでしょうか。分析により、下記の通りベイズファクターが算出されたとしましょう。</p>
+<p><strong>Jeffreys(1961)</strong>
+
+    <div class = "simple-table">
+
+<table>
+<thead>
+<tr>
+<th>model</th>
+<th>$BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>privileges</td>
+<td>3.177784</td>
+</tr>
+<tr>
+<td>learning</td>
+<td>103.393</td>
+</tr>
+<tr>
+<td>raises</td>
+<td>47.00917</td>
+</tr>
+<tr>
+<td>critical</td>
+<td>0.4493186</td>
+</tr>
+<tr>
+<td>advance</td>
+<td>0.4472295</td>
+</tr>
+<tr>
+<td>complaints + privileges</td>
+<td>75015.23</td>
+</tr>
+<tr>
+<td>$\vdots$</td>
+<td>$\vdots$</td>
+</tr>
+<tr>
+<td>complaints + privileges + learning + raises + critical</td>
+<td>3826.973</td>
+</tr>
+<tr>
+<td>complaints + privileges + learning + raises + advance</td>
+<td>7144.828</td>
+</tr>
+<tr>
+<td>complaints + privileges + learning + critical + advance</td>
+<td>6926.973</td>
+</tr>
+<tr>
+<td>complaints + privileges + raises + critical + advance</td>
+<td>1608.397</td>
+</tr>
+<tr>
+<td>complaints + learning + raises + critical + advance</td>
+<td>6461.751</td>
+</tr>
+<tr>
+<td>privileges + learning + raises + critical + advance</td>
+<td>51.02312</td>
+</tr>
+<tr>
+<td>complaints + privileges + learning + raises + critical + advance</td>
+<td>2211.912</td>
+</tr>
+</tbody>
+</table>
+
+</div></p>
+<p>このとき、どのように線形回帰モデルを評価していけるのか見ていきましょう。</p>
+<h3 id="モデル間比較">モデル間比較</h3>
+<p>モデル間の比較には下記式を用います。これはEncompassing approachと呼ばれ、ベースとなるモデルの自由エネルギーを介して各モデルの自由エネルギーの大きさを評価するものです。</p>
+<p>$$
+BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}^{'}} : \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} \rbrack = \cfrac{BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}^{'}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack}{BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack} \tag{2}
+$$</p>
+<p>モデルの冗長性は、パラメータの事前分布と真分布との乖離によって評価されます（モデル自体仮定のものだがここでは真の分布があるとする）。事前分布が、真の分布からおよそ離れた広範囲のパラメータ空間を考慮したものの場合、そのモデルの周辺尤度は0に近づくため、比較的説明力の低いモデルと判断されやすくなってしまいます。</p>
+<p>ベースとなるモデルをフルモデルとしたときの比較結果は次のようになります。<br>
+<br>
+<figure class="left"><a href="/r/bayesian-hypothesis-testing-3/res1.png">
+    <img src="/r/bayesian-hypothesis-testing-3/res1.png" width="1000" height="540"/> </a>
+</figure>
+</p>
+<p><br>
+最も優れたモデルはcomplaintsのみのモデルという結果になりました。complaintsのみのモデルとの比較ではフルモデルを決定的に否定するベイズファクターが得られています（<a href="https://rmorita-stat.github.io/2021/02/bayesfactor/#ベイズファクター">Kass and Raftery</a>の指標参照）。一方、complaintsのみのモデルと、さらにlearningを加えた二番目に優れたモデルを比較するベイズファクター(「complaints」/「complaints + learning」 )は2.016となり、二番目のモデルを棄却する証拠はあまりあるとは言えない結果になりました。</p>
+<p>これらの結果の優れているところは、モデルを積極的に肯定するエビデンス＝周辺尤度を比較することでモデル間の比較をできることにあります。これはp値に基づく枠組みでは不可能でした。これについては<a href="https://rmorita-stat.github.io/2021/02/bayesfactor/#ベイズ自由エネルギー">こちら</a>も参照のこと。</p>
+<h3 id="説明変数の選択">説明変数の選択</h3>
+<p>モデル間比較ではなく、各説明変数が必要かどうかを知りたい、という場合もあると思います。その場合、ベースとなるモデルから確認したい変数1つだけを除いた（または追加した）モデルと、ベースモデルを、ベイズファクターによって比較するという方法が考えられます。</p>
+<p>ベースモデルをフルモデルとしたとき、各変数を1個ずつ取り除いたモデルとの比較を行った結果を下に示します。<br>
+<br>
+<figure class="left"><a href="/r/bayesian-hypothesis-testing-3/res2.png">
+    <img src="/r/bayesian-hypothesis-testing-3/res2.png" width="600" height="540"/> </a>
+</figure>
+</p>
+<p><br>
+complaintsの必要性を測るベイズファクター(「フルモデル」/「フルモデル -complaints」 )は43.35と、強くcomplaintsを除いたモデルを棄却する結果となったため、complaintsはratingを説明するのに需要な指標と言えそうです。一方、それ以外の変数についてはあまり根拠があるとは言えない結果ばかりでした。</p>
+<p>ベースモデルをヌルモデルとしたときの結果も下に示します。</p>
+<p><br>
+<figure class="left"><a href="/r/bayesian-hypothesis-testing-3/res3.png">
+    <img src="/r/bayesian-hypothesis-testing-3/res3.png" width="600" height="540"/> </a>
+</figure>
+
+<br>
+complaintsについては決定的にヌルモデルを棄却する結果が得られています。またlearning、raises、privilegesについても肯定的な結果が得られています。あれ、じゃあこれら4つの変数を採用したモデルがいいのでは？…そうでもありません。この4変数を採用したモデルとフルモデルを比較したベイズファクターはそれほど大きくありません。ここには落とし穴があります。</p>
+<p>下の表は7変数の相関関係を表しています。これを見ると、有力な変数complaintsは、上で挙げたlearning、raises、privilegesの3変数と有意に正の相関関係にあります。つまり、この3変数はcomplaintsのもつ傾向の一部分を表現できるために、ヌルモデルとの比較の際も肯定的な結果が得られていたのです。<br>
+<br>
+<figure class="left"><a href="/r/bayesian-hypothesis-testing-3/res4.png">
+    <img src="/r/bayesian-hypothesis-testing-3/res4.png" width="700" height="540"/> </a>
+</figure>
+</p>
+<p><br>
+あるモデルに相関関係が高い変数の組み合わせがあることを<strong>多重共線性</strong>と呼びます。多重共線性のあるモデルは係数の値が不安定となり、また冗長であるために望ましくないとされます。</p>
+<p>ベイズファクターを用いたモデル間比較の場合、各変数に着目した比較よりも前節の全モデル間比較の手法の方が、より多重共線性に強い検討手法と言えそうです。</p>
+<h3 id="事後モデル確率の更新">事後モデル確率の更新</h3>
+<p>ベイズファクターは、得られたデータのモデルへの当てはまりの良さを測る相対的な指標ですが、モデル自体を評価するものではありません。モデルを評価するためには、各モデル$\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}$の事前確率$p\left(\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}\right)$を、新しく得られたデータから算出したベイズファクターに基づき下記式のようにアップデートすることで、事後モデルオッズを導く必要があります。</p>
+<p>$$
+p(\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} | \boldsymbol{Y}) = \cfrac{p(\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}})BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {b}\rbrack}{\sum_ {\boldsymbol{\gamma}^{'}} p(\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}^{'}})BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}^{'}} : \mathcal{\boldsymbol{M}}_b \rbrack} \tag{3}
+$$</p>
+<p>事前モデルオッズは、データに完全依存して決定されるベイズファクターとは対照的に、データとは無関係に事前に想定するモデル確率の組み合わせで決定されます。もしあるモデルが何らかの確証のもったメカニズムを背景に持つ場合、そのモデル確率を分子とした事前モデルオッズは大きくなるでしょう。逆に、なんのメカニズムも想定されない無関係な変数同士の関係性を表現したモデルなんかの確率を分子とした事前モデルオッズは、相対的に小さくするべきです。</p>
+<p>このように、事前モデルオッズは、データを取る前から分かりきっているような情報や意見を事後モデルオッズに与える役目をもちます。</p>
+<p>Attitudeに対し、得られたベイズファクターと事前モデルオッズを基に事後モデルオッズを算出した結果（TOP6）を下記に示します。ここで、事前モデルオッズはモデル間で一律としました。<br>
+<br>
+
+    <div class = "simple-table">
+
+<table>
+<thead>
+<tr>
+<th>model</th>
+<th>$p(\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} \mid \boldsymbol{Y})$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>complaints</td>
+<td>0.296</td>
+</tr>
+<tr>
+<td>complaints + learning</td>
+<td>0.147</td>
+</tr>
+<tr>
+<td>complaints + learning + advance</td>
+<td>0.062</td>
+</tr>
+<tr>
+<td>complaints + raises</td>
+<td>0.055</td>
+</tr>
+<tr>
+<td>complaints + privileges</td>
+<td>0.053</td>
+</tr>
+<tr>
+<td>complaints + advance</td>
+<td>0.052</td>
+</tr>
+</tbody>
+</table>
+
+</div><br>
+<br>
+事前モデルオッズを一定にした場合、事後モデルオッズはあるモデルの周辺尤度と全モデルの周辺尤度和の比となります。<br>
+表から読み取れるように、最も大きい周辺尤度を持つComplaintsのみのモデルが最も事後モデル確率が大きく、全体の約3割を占めました。</p>
+<h1 id="bayesfactorパッケージを使ったベイズファクターの計算">BayesFactorパッケージを使ったベイズファクターの計算</h1>
+<p>最後に、R言語で簡単にベイズファクターを求める方法を載せて終わりにします。<br>
+ベイズファクターの計算にはMoreyさんの作成したBayesFactorパっケージが直感的に使えて便利です。これまでの節で示したAttitudeデータのベイズファクターも、このパッケージを使って算出したものになります。</p>
+<p>下のスクリプトは単純にAttitudeデータでベイズファクターを求めたものです。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">BayesFactor</span><span class="p">)</span>
+<span class="n">bf</span> <span class="o">&lt;-</span> <span class="nf">regressionBF</span><span class="p">(</span><span class="n">rating</span> <span class="o">~</span> <span class="n">.,</span> <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">rscaleCont</span> <span class="o">=</span> <span class="s">&#34;medium&#34;</span><span class="p">)</span>
+
+<span class="n">bf</span>
+
+<span class="c1"># Bayes factor analysis</span>
+<span class="c1"># --------------</span>
+<span class="c1"># [1] complaints                                                        : 417938.6  ±0.01%</span>
+<span class="c1"># [2] privileges                                                        : 3.177784  ±0%</span>
+<span class="c1"># [3] learning                                                          : 103.393   ±0%</span>
+<span class="c1"># [4] raises                                                            : 47.00917  ±0.01%</span>
+<span class="c1"># [5] critical                                                          : 0.4493186 ±0%</span>
+<span class="c1"># [6] advance                                                           : 0.4472295 ±0%</span>
+<span class="c1"># [58] complaints + privileges + learning + raises + advance            : 7144.828  ±0%</span>
+<span class="c1"># ～～略～～</span>
+<span class="c1"># [59] complaints + privileges + learning + critical + advance          : 6926.973  ±0%</span>
+<span class="c1"># [60] complaints + privileges + raises + critical + advance            : 1608.397  ±0%</span>
+<span class="c1"># [61] complaints + learning + raises + critical + advance              : 6461.751  ±0%</span>
+<span class="c1"># [62] privileges + learning + raises + critical + advance              : 51.02312  ±0%</span>
+<span class="c1"># [63] complaints + privileges + learning + raises + critical + advance : 2211.912  ±0%</span>
+<span class="c1">#</span>
+<span class="c1"># Against denominator:</span>
+<span class="c1">#   Intercept only</span>
+<span class="c1"># ---</span>
+<span class="c1"># Bayes factor type: BFlinearModel, JZS</span>
+</code></pre></div><p>下のスクリプトは説明変数の選択を目的とした分析をしています。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">bf2</span> <span class="o">=</span> <span class="nf">regressionBF</span><span class="p">(</span><span class="n">rating</span> <span class="o">~</span> <span class="n">.,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">attitude</span><span class="p">,</span> <span class="n">whichModels</span> <span class="o">=</span> <span class="s">&#34;top&#34;</span><span class="p">)</span>
+<span class="n">bf2</span>
+<span class="c1"># Bayes factor top-down analysis</span>
+<span class="c1"># --------------</span>
+<span class="c1">#   When effect is omitted from complaints + privileges + learning + raises + critical + advance , BF is...</span>
+<span class="c1"># [1] Omit advance    : 1.730165   ±0%</span>
+<span class="c1"># [2] Omit critical   : 3.230159   ±0%</span>
+<span class="c1"># [3] Omit raises     : 3.131667   ±0%</span>
+<span class="c1"># [4] Omit learning   : 0.7271523  ±0%</span>
+<span class="c1"># [5] Omit privileges : 2.921341   ±0%</span>
+<span class="c1"># [6] Omit complaints : 0.02306743 ±0%</span>
+<span class="c1">#</span>
+<span class="c1"># Against denominator:</span>
+<span class="c1">#   rating ~ complaints + privileges + learning + raises + critical + advance</span>
+<span class="c1"># ---</span>
+<span class="c1">#   Bayes factor type: BFlinearModel, JZS</span>
+
+<span class="n">bf3</span> <span class="o">=</span> <span class="nf">regressionBF</span><span class="p">(</span><span class="n">rating</span> <span class="o">~</span> <span class="n">.,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">attitude</span><span class="p">,</span> <span class="n">whichModels</span> <span class="o">=</span> <span class="s">&#34;bottom&#34;</span><span class="p">)</span>
+<span class="n">bf3</span>
+<span class="c1"># Bayes factor analysis</span>
+<span class="c1"># --------------</span>
+<span class="c1"># [1] complaints : 417938.6  ±0.01%</span>
+<span class="c1"># [2] privileges : 3.177784  ±0%</span>
+<span class="c1"># [3] learning   : 103.393   ±0%</span>
+<span class="c1"># [4] raises     : 47.00917  ±0.01%</span>
+<span class="c1"># [5] critical   : 0.4493186 ±0%</span>
+<span class="c1"># [6] advance    : 0.4472295 ±0%</span>
+<span class="c1">#</span>
+<span class="c1"># Against denominator:</span>
+<span class="c1">#   Intercept only</span>
+<span class="c1"># ---</span>
+<span class="c1">#   Bayes factor type: BFlinearModel, JZS</span>
+</code></pre></div><p>下のスクリプトでは事前モデルオッズを一定としたときの事後モデルオッズを算出しています。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">prior.odds</span> <span class="o">&lt;-</span> <span class="nf">newPriorOdds</span><span class="p">(</span><span class="n">bf</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&#34;equal&#34;</span><span class="p">)</span>
+<span class="n">post.odds</span> <span class="o">=</span> <span class="n">prior.odds</span> <span class="o">*</span> <span class="n">bf</span>
+<span class="n">post.prob</span> <span class="o">=</span> <span class="nf">as.BFprobability</span><span class="p">(</span><span class="n">post.odds</span><span class="p">)</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">post.prob</span><span class="p">)</span>
+<span class="c1"># Posterior probabilities</span>
+<span class="c1"># --------------</span>
+<span class="c1"># [1] complaints                      : 0.296141   ±NA%</span>
+<span class="c1"># [2] complaints + learning           : 0.1468678  ±NA%</span>
+<span class="c1"># [3] complaints + learning + advance : 0.06238406 ±NA%</span>
+<span class="c1"># [4] complaints + raises             : 0.05491387 ±NA%</span>
+<span class="c1"># [5] complaints + privileges         : 0.05315394 ±NA%</span>
+<span class="c1"># [6] complaints + advance            : 0.05155578 ±NA%</span>
+<span class="c1">#</span>
+<span class="c1"># Normalized probability:  0.6650164  </span>
+<span class="c1"># ---</span>
+<span class="c1">#   Model type: BFlinearModel, JZS</span>
+
+</code></pre></div><h1 id="まとめ">まとめ</h1>
+<p>本記事ではベイズファクターを使った線形回帰モデルの評価方法を紹介しました。<br>
+<a href="https://rmorita-stat.github.io/2021/10/bayesian-hypothesis-testing-3theory/">こちらの記事</a>では線形回帰分析での客観ベイズ的な事前分布の設定方法等、理論を少し詳しく説明しています。<br>
+<a href="https://rmorita-stat.github.io/2021/10/regressionbf-comparing/">こちらの記事</a>ではベイズファクターを推定するための手法を複数実践しているので、読んでみてください。</p>
 
         </article>
     </div>
@@ -97,8 +476,6 @@
         
         
         <span><a href="https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
-        
-        <span><a href="https://rmorita-stat.github.io/tags/stan">Stan</a></span>
         
         
     </div>
@@ -153,6 +530,14 @@
         </div>
     </a>
     
+    
+    <a class="next" href="https://rmorita-stat.github.io/2021/10/regressionbf-comparing/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2021.10.23 00:00 </div>
+            <div class="pn-el__2"> 線形回帰モデルのベイズファクター計算手法を検討する </div>
+        </div>
+    </a>
     
 </div>
 
