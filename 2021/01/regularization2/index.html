@@ -9,15 +9,15 @@
         
     </title>
     <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
-    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
-    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    <link rel='icon' type='image/x-icon' href="https://sucre-stat.com/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://sucre-stat.com/images/logo2.png"><link rel="stylesheet" href="https://sucre-stat.com/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link rel="stylesheet" href="https://sucre-stat.com/css/syntax.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
-    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    <script src="https://sucre-stat.com/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/highlight.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/custom.css">
     
     
     <script>
@@ -41,7 +41,7 @@
         </div>
         
         <div class=' site-logo '>
-            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+            <a href="https://sucre-stat.com/"><img src="https://sucre-stat.com/images/logo.png" /></a>
         </div>
     </div>
     
@@ -86,7 +86,7 @@
     <div class="main-content__article">
         <article id="content">
             <h1 id="はじめに">はじめに</h1>
-<p>今回は、<a href="https://rmorita-stat.github.io/2020/12/regularization/">以前の記事</a>で紹介したRidge回帰とLasso回帰をRのパッケージglmnetで試してみます。さらにRstanを用いてBayesian RigdeとBayesian Lasso を実装して、glmnetの結果との比較をしてみたいと思います。</p>
+<p>今回は、<a href="https://sucre-stat.com/2020/12/regularization/">以前の記事</a>で紹介したRidge回帰とLasso回帰をRのパッケージglmnetで試してみます。さらにRstanを用いてBayesian RigdeとBayesian Lasso を実装して、glmnetの結果との比較をしてみたいと思います。</p>
 <p>目次は以下のとおりです。</p>
 <!-- raw HTML omitted -->
 <ul>
@@ -172,7 +172,7 @@
 <span class="c1">## Multiple R-squared:  0.7406,	Adjusted R-squared:  0.7338</span>
 <span class="c1">## F-statistic: 108.1 on 13 and 492 DF,  p-value: &lt; 2.2e-16</span>
 </code></pre></div><h2 id="lasso回帰">Lasso回帰</h2>
-<p><a href="https://rmorita-stat.github.io/2020/12/regularization/">以前の記事</a>と同様に記号を定義したとき、
+<p><a href="https://sucre-stat.com/2020/12/regularization/">以前の記事</a>と同様に記号を定義したとき、
 <code>glmnet::glmnet(alpha, lambda)</code>は下記式に基づいて係数パラメータ$\boldsymbol{w}$を最適化するようです<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。</p>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆glmnetにおけるパラメータの最適化方法</strong></legend>
 <p>係数パラメータ$\boldsymbol{w}$の解は、</p>
@@ -279,7 +279,7 @@ $\lambda$が大きくなるにつれて各回帰係数の値が小さくなる�
 </code></pre></div><p>結果の図からはLasso回帰と同様、$\lambda$が大きくなるほどに各係数の値が小さくなる傾向が見てとれます。また0に近づく推移傾向はLasso回帰より緩やかであることも分かります。
 <img src="/r/regularization2/Ridge_res.png" alt=""></p>
 <h1 id="rstanを用いた正則化回帰">rstanを用いた正則化回帰</h1>
-<p><a href="https://rmorita-stat.github.io/2020/12/regularization/">以前の記事</a>後半を参考に、rstanを用いて今までの正則化回帰と同様の分析を再現します。</p>
+<p><a href="https://sucre-stat.com/2020/12/regularization/">以前の記事</a>後半を参考に、rstanを用いて今までの正則化回帰と同様の分析を再現します。</p>
 <h2 id="lasso回帰-1">Lasso回帰</h2>
 <p>lambdaの計算だけ注意が必要です。
 $(4)$式左辺は以前の記事の$(12)$式の証明より、右辺は$(2)$式よりきています。</p>
@@ -525,7 +525,7 @@ $$
 <hr>
 <ol>
 <li id="fn:1" role="doc-endnote">
-<p><a href="https://rmorita-stat.github.io/2020/12/regularization/">以前の記事</a>$(7)$$(8)$式は切片パラメータ$w_0$のノルム分のペナルティも課していましたが、$w_0$は$(2)$$(3)$式のようにペナルティの項から外すのが普通？切片は大きくなっても過学習とは関係ないし… <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://sucre-stat.com/2020/12/regularization/">以前の記事</a>$(7)$$(8)$式は切片パラメータ$w_0$のノルム分のペナルティも課していましたが、$w_0$は$(2)$$(3)$式のようにペナルティの項から外すのが普通？切片は大きくなっても過学習とは関係ないし… <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>
@@ -535,9 +535,9 @@ $$
     <div class="main-content__tags u-font">
         
         
-        <span><a href="https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0">回帰</a></span>
+        <span><a href="https://sucre-stat.com/tags/%E5%9B%9E%E5%B8%B0">回帰</a></span>
         
-        <span><a href="https://rmorita-stat.github.io/tags/rstan">rstan</a></span>
+        <span><a href="https://sucre-stat.com/tags/rstan">rstan</a></span>
         
         
     </div>
@@ -584,7 +584,7 @@ $$
 <div class="main-line"></div>
 <div class="main-pn">
     
-    <a class="previous" href="https://rmorita-stat.github.io/2020/12/tokyo-meshdata/">
+    <a class="previous" href="https://sucre-stat.com/2020/12/tokyo-meshdata/">
         <div class="pn-dec"></div>
         <div class="pn-els">
             <div class="pn-el__1"> 2020.12.24 00:00 </div>
@@ -593,7 +593,7 @@ $$
     </a>
     
     
-    <a class="next" href="https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1practice/">
+    <a class="next" href="https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1practice/">
         <div class="pn-dec"></div>
         <div class="pn-els">
             <div class="pn-el__1"> 2021.04.18 00:00 </div>
@@ -663,6 +663,6 @@ $$
     </div>
 </div>
 </body>
-<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script src="https://sucre-stat.com/js/page.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 

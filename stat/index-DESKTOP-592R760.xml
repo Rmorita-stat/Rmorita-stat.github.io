@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Stats on SUCRE HECACHA</title>
+    <link>https://rmorita-stat.github.io/stat/</link>
+    <description>Recent content in Stats on SUCRE HECACHA</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Fri, 08 Oct 2021 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://rmorita-stat.github.io/stat/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>ベイズファクターを用いた仮説検定～線形回帰分析～</title>
+      <link>https://rmorita-stat.github.io/2021/10/bayesian-hypothesis-testing-3theory/</link>
+      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/10/bayesian-hypothesis-testing-3theory/</guid>
+      <description>今回は、ベイズファクターを使った線形回帰分析におけるモデル選択について理論を整理します。 ベイズファクターとはなんぞや？という方はこちらを、S</description>
+    </item>
+    
+    <item>
+      <title>ベイズファクターを用いた仮説検定～平均値の差の検定～</title>
+      <link>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/</link>
+      <pubDate>Mon, 21 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/</guid>
+      <description>◆この記事のテーマ ベイズファクターを使って平均値の差を検定する方法を整理します。 この手法は、例えば下図のようなシーンに適用できます。下図左側</description>
+    </item>
+    
+    <item>
+      <title>ベイズファクターを用いた仮説検定～比率の差の検定～</title>
+      <link>https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/</link>
+      <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/</guid>
+      <description>◆この記事のテーマ ベイズファクターを使って比率の差を検定する方法を整理します。 この手法は、例えば下図のようなシーンに適用できます。下図では異</description>
+    </item>
+    
+    <item>
+      <title>ベイジアン仮説検定とSavage-Dickey法</title>
+      <link>https://rmorita-stat.github.io/2021/04/savage-dickey-method/</link>
+      <pubDate>Sat, 03 Apr 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/04/savage-dickey-method/</guid>
+      <description>今回はベイジアン仮説検定とSavage-Dickey法について取り上げます。 ベイジアン仮説検定は、従来の頻度論に基づく考え型とは異なるベイズ</description>
+    </item>
+    
+    <item>
+      <title>ベイズファクター</title>
+      <link>https://rmorita-stat.github.io/2021/02/bayesfactor/</link>
+      <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/02/bayesfactor/</guid>
+      <description>本記事ではベイジアンモデルに対するモデル評価の指標であるベイズファクターについて理論を整理します。 まず、情報量について、エントロピーを踏まえ</description>
+    </item>
+    
+    <item>
+      <title>積率と母関数</title>
+      <link>https://rmorita-stat.github.io/2021/01/moment/</link>
+      <pubDate>Sun, 31 Jan 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2021/01/moment/</guid>
+      <description>本記事では確率論の勉強ということで、期待値など確率変数の特徴を表す量について定義し、それらにまつわる便利なアイテム（関数）群を整理しようと思</description>
+    </item>
+    
+    <item>
+      <title>モデル選択基準</title>
+      <link>https://rmorita-stat.github.io/2020/12/information-criterion/</link>
+      <pubDate>Wed, 30 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2020/12/information-criterion/</guid>
+      <description>この記事について 情報量基準などのモデル選択基準について得た断片的な知識をまとめたい。自分の力では一生断片的な知識としかならないだろうが、ブロ</description>
+    </item>
+    
+    <item>
+      <title>正則化（Ridge回帰とLasso回帰）について</title>
+      <link>https://rmorita-stat.github.io/2020/12/regularization/</link>
+      <pubDate>Tue, 29 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2020/12/regularization/</guid>
+      <description>はじめに 今回は、回帰分析において過学習を防いだり、多重共線性に対応したりするために使われるRidge回帰や、変数の数が標本数より多いような時</description>
+    </item>
+    
+    <item>
+      <title>ガウス過程の応用</title>
+      <link>https://rmorita-stat.github.io/2020/07/gaussianprocess2/</link>
+      <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2020/07/gaussianprocess2/</guid>
+      <description>はじめに 前回の記事では、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、ガウス過程回帰について取</description>
+    </item>
+    
+    <item>
+      <title>ベイズ統計モデリング入門</title>
+      <link>https://rmorita-stat.github.io/2020/05/bayesintroduction/</link>
+      <pubDate>Fri, 29 May 2020 23:50:14 -0500</pubDate>
+      
+      <guid>https://rmorita-stat.github.io/2020/05/bayesintroduction/</guid>
+      <description>はじめに 本記事では今後の記事でも頻繁に扱う予定のベイズ統計について理解してもらうため、その理論を簡単に説明します。 本記事の構成は以下の通りで</description>
+    </item>
+    
+  </channel>
+</rss>

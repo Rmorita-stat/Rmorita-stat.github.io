@@ -9,15 +9,15 @@
         
     </title>
     <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
-    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
-    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    <link rel='icon' type='image/x-icon' href="https://sucre-stat.com/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://sucre-stat.com/images/logo2.png"><link rel="stylesheet" href="https://sucre-stat.com/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link rel="stylesheet" href="https://sucre-stat.com/css/syntax.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
-    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    <script src="https://sucre-stat.com/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/highlight.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/custom.css">
     
     
     <script>
@@ -41,7 +41,7 @@
         </div>
         
         <div class=' site-logo '>
-            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+            <a href="https://sucre-stat.com/"><img src="https://sucre-stat.com/images/logo.png" /></a>
         </div>
     </div>
     
@@ -94,7 +94,7 @@
 
 </fieldset>
 <h1 id="方針">方針</h1>
-<p><a href="https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/">理論編</a>で整理した内容の再現を基本とします。ゆえに断りなく理論編で用いた変数を使用します。</p>
+<p><a href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2theory/">理論編</a>で整理した内容の再現を基本とします。ゆえに断りなく理論編で用いた変数を使用します。</p>
 <p>事前分布はJZSの事前分布のみ試します。というものこの理論の先駆者であるRichard D. Moreyさんが開発している<code>BayesFactor</code>パッケージではJZSの事前分布を用いており、氏もこちらを推しているようなので。</p>
 <p>本記事で検証する仮説は以下3組です。$\delta$はスケーリングされた平均値の差と解釈できる値で、ベイズ版平均値の差の検定で着目する値になります。</p>
 <p><br>
@@ -285,7 +285,7 @@ BF_{01} \fallingdotseq 0.225　\\<br>
 BF_{10}  \fallingdotseq 4.443
 \end{cases}
 $$</p>
-<p>となりました。<a href="https://rmorita-stat.github.io/2021/02/bayesfactor/#ベイズファクター">Kass and Raftery(1995)の評価基準</a>では、$H_0$に対する反証の強さは十分であると判断できます。つまり、$\delta = 0$を棄却し$\delta \neq 0$を採択し、対策後の事故件数は対策前から変化したと判断してよさそうです。</p>
+<p>となりました。<a href="https://sucre-stat.com/2021/02/bayesfactor/#ベイズファクター">Kass and Raftery(1995)の評価基準</a>では、$H_0$に対する反証の強さは十分であると判断できます。つまり、$\delta = 0$を棄却し$\delta \neq 0$を採択し、対策後の事故件数は対策前から変化したと判断してよさそうです。</p>
 <p>$BF_{01}$の分布も確認しておきましょう。</p>
 <figure class="left"><a href="/r/bayesian-hypothesis-testing-2/res1.png">
     <img src="/r/bayesian-hypothesis-testing-2/res1.png" width="630" height="540"/> </a>
@@ -381,7 +381,7 @@ BF_{01NO}  \fallingdotseq 0.113 \\<br>
 BF_{10NO}  \fallingdotseq 8.845 \\<br>
 \end{cases}
 $$</p>
-<p>でした。<a href="https://rmorita-stat.github.io/2021/02/bayesfactor/#ベイズファクター">Kass and Raftery(1995)の評価基準</a>では、$H_{1PO}$に反する証拠は強く、$H_{0NO}$に反する証拠は十分にあると判断できます。つまり、$\delta \leq 0$と$\delta=0$の比較では$\delta=0$が採択されることから、事故件数平均値は対策後増加していないと判断され、さらに$\delta \geq 0$と$\delta=0$の比較では$\delta \geq 0$が採択されることから、やはり対策後の事故件数の平均値は減少したのだと判断されます。</p>
+<p>でした。<a href="https://sucre-stat.com/2021/02/bayesfactor/#ベイズファクター">Kass and Raftery(1995)の評価基準</a>では、$H_{1PO}$に反する証拠は強く、$H_{0NO}$に反する証拠は十分にあると判断できます。つまり、$\delta \leq 0$と$\delta=0$の比較では$\delta=0$が採択されることから、事故件数平均値は対策後増加していないと判断され、さらに$\delta \geq 0$と$\delta=0$の比較では$\delta \geq 0$が採択されることから、やはり対策後の事故件数の平均値は減少したのだと判断されます。</p>
 <p><code>BayesFactor</code>パッケージとの整合を確認します。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># bayesfactorパッケージでordered restrictionのベイズファクターを計算</span>
 <span class="n">bf</span> <span class="o">&lt;-</span> <span class="nf">ttestBF</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">d</span><span class="o">$</span><span class="n">pre</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">d</span><span class="o">$</span><span class="n">pro</span><span class="p">,</span> <span class="n">nullInterval</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="kc">Inf</span><span class="p">)</span> <span class="p">,</span><span class="n">paired</span><span class="o">=</span><span class="bp">T</span><span class="p">)</span>
@@ -427,7 +427,7 @@ p(\delta \notin A | \mathcal{D}, M_E) \eqsim 1 - p(\delta \in A | \mathcal{D}, M
 \end{cases}
 $$</p>
 <p>を計算すればいいのですが、$\delta$の密度関数の平均$\mu_{\delta}^{(t)}$、分散$\sigma_{\delta}^{(t)}$を精度よく推定してやる工夫が必要と考えられます。
-しかしこれも<a href="https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/">理論編</a>をしっかり抑えていれば、理論編$(18)$式、$(20)$式を用いてやればよいと分かるはずです(*´Д`)ﾊｧﾊｧ。</p>
+しかしこれも<a href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2theory/">理論編</a>をしっかり抑えていれば、理論編$(18)$式、$(20)$式を用いてやればよいと分かるはずです(*´Д`)ﾊｧﾊｧ。</p>
 <p>これもモデル構成は両側検定のときから変わらないので、両側検定のMCMCサンプルをこねくり回します。2つの仮説の境界は$\delta_l = -2 / \sigma$、 $\delta_u &lt; -2 / \sigma$、つまり事故発生件数$\pm2$程度の微小な増減は無視したいという志向で仮説を設定します。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r">
 <span class="c1"># Area null</span>
@@ -459,7 +459,7 @@ BF_{01Area} \fallingdotseq 2.408 \\<br>
 BF_{10Area}  \fallingdotseq 0.415  \\<br>
 \end{cases}
 $$</p>
-<p>となりました。$H_{0Area}$の方が支持されるものの、<a href="https://rmorita-stat.github.io/2021/02/bayesfactor/#ベイズファクター">Kass and Raftery(1995)の評価基準</a>では、$H_{1Area}$に反する証拠は十分でないと判断されます。つまり、$\pm2$以上の事故件数の増減はなかったといえそうだが、その証拠は十分ではない、ということです。</p>
+<p>となりました。$H_{0Area}$の方が支持されるものの、<a href="https://sucre-stat.com/2021/02/bayesfactor/#ベイズファクター">Kass and Raftery(1995)の評価基準</a>では、$H_{1Area}$に反する証拠は十分でないと判断されます。つまり、$\pm2$以上の事故件数の増減はなかったといえそうだが、その証拠は十分ではない、ということです。</p>
 <p><code>BayesFactor</code>パッケージとの整合を確認します。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">X</span> <span class="o">&lt;-</span> <span class="nf">scale</span><span class="p">(</span><span class="n">d</span><span class="o">$</span><span class="n">pre</span> <span class="o">-</span> <span class="n">d</span><span class="o">$</span><span class="n">pro</span><span class="p">)</span>
 
@@ -736,9 +736,9 @@ $$</p>
     <div class="main-content__tags u-font">
         
         
-        <span><a href="https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
+        <span><a href="https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
         
-        <span><a href="https://rmorita-stat.github.io/tags/stan">Stan</a></span>
+        <span><a href="https://sucre-stat.com/tags/stan">Stan</a></span>
         
         
     </div>
@@ -785,14 +785,22 @@ $$</p>
 <div class="main-line"></div>
 <div class="main-pn">
     
-    <a class="previous" href="https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1practice/">
+    <a class="previous" href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/">
         <div class="pn-dec"></div>
         <div class="pn-els">
-            <div class="pn-el__1"> 2021.04.18 00:00 </div>
-            <div class="pn-el__2"> ベイズファクターを用いた仮説検定を実践する～比率の差の検定～ </div>
+            <div class="pn-el__1"> 2021.06.21 00:00 </div>
+            <div class="pn-el__2"> ベイズファクターを用いた仮説検定を実践する～平均値の差の検定～ </div>
         </div>
     </a>
     
+    
+    <a class="next" href="https://sucre-stat.com/2021/10/bayesian-hypothesis-testing-3practice/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2021.10.22 00:00 </div>
+            <div class="pn-el__2"> ベイズファクターを用いた仮説検定を実践する～線形回帰分析～ </div>
+        </div>
+    </a>
     
 </div>
 
@@ -856,6 +864,6 @@ $$</p>
     </div>
 </div>
 </body>
-<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script src="https://sucre-stat.com/js/page.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 

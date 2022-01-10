@@ -9,15 +9,15 @@
         
     </title>
     <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
-    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
-    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    <link rel='icon' type='image/x-icon' href="https://sucre-stat.com/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://sucre-stat.com/images/logo2.png"><link rel="stylesheet" href="https://sucre-stat.com/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link rel="stylesheet" href="https://sucre-stat.com/css/syntax.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
-    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    <script src="https://sucre-stat.com/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/highlight.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/custom.css">
     
     
     <script>
@@ -41,7 +41,7 @@
         </div>
         
         <div class=' site-logo '>
-            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+            <a href="https://sucre-stat.com/"><img src="https://sucre-stat.com/images/logo.png" /></a>
         </div>
     </div>
     
@@ -87,7 +87,7 @@
         <article id="content">
             <p>今回は<strong>ベイジアン仮説検定</strong>と<strong>Savage-Dickey法</strong>について取り上げます。</p>
 <p>ベイジアン仮説検定は、従来の頻度論に基づく考え型とは異なるベイズの考え方を用いた仮説検定です。一般的な仮説検定には無いメリットを持っており、近年注目されています。</p>
-<p>Savage-Dickey法は、<a href="https://rmorita-stat.github.io/2021/02/bayesfactor/">以前の記事</a>で紹介したベイズファクターを簡単に求めるための手法の一つです。この手法が適用できる場面は、比較対象となる2つのモデルがネストされた関係にある場合（後述）に限られるのですが、これは多くの一般的な仮説検定の枠組みへ応用できる条件であることから、ベイジアン仮説検定のための重要な手法とされています。</p>
+<p>Savage-Dickey法は、<a href="https://sucre-stat.com/2021/02/bayesfactor/">以前の記事</a>で紹介したベイズファクターを簡単に求めるための手法の一つです。この手法が適用できる場面は、比較対象となる2つのモデルがネストされた関係にある場合（後述）に限られるのですが、これは多くの一般的な仮説検定の枠組みへ応用できる条件であることから、ベイジアン仮説検定のための重要な手法とされています。</p>
 <p>参考記事を以下に列挙します。</p>
 <ul>
 <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0010028509000826">Bayesian hypothesis testing for psychologists: A tutorial on the Savage–Dickey method</a></li>
@@ -95,7 +95,7 @@
 <li><a href="https://www.jstage.jst.go.jp/article/sjpr/61/1/61_101/_article/-char/ja/">ベイズファクターによる心理学的仮説・モデルの評価</a></li>
 </ul>
 <h1 id="ベイジアン仮説検定">ベイジアン仮説検定</h1>
-<p>ベイジアン仮説検定は、文字通りベイズの考え方を用いた仮説検定です。そしてこれは<a href="https://rmorita-stat.github.io/2021/02/bayesfactor/">以前の記事</a>で紹介したベイズファクターを用いた検定になります。<br>
+<p>ベイジアン仮説検定は、文字通りベイズの考え方を用いた仮説検定です。そしてこれは<a href="https://sucre-stat.com/2021/02/bayesfactor/">以前の記事</a>で紹介したベイズファクターを用いた検定になります。<br>
 <br>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆ベイズファクター</strong></legend>
 2つの異なるモデル$M_0$、$M_1$を考えたとき、<strong>ベイズファクター</strong>$BF_{01}$は2つの異なるモデルの周辺尤度の比として定義される。
@@ -143,7 +143,7 @@ $$
 <h2 id="ベイズファクターの特長">ベイズファクターの特長</h2>
 <p>上のようにベイズファクターを用いて帰無仮説と対立仮説の比較をするメリットを列挙していきます。</p>
 <p>・<strong>基本的な量である</strong></p>
-<p><a href="https://rmorita-stat.github.io/2021/02/bayesfactor/">以前の記事</a>で見たように、ベイズファクターは自由エネルギーや周辺尤度から計算される、モデルの説明力の指標となる基本的な量です。この指標を用いて簡潔に仮説の比較を行うことが可能となります。<br>
+<p><a href="https://sucre-stat.com/2021/02/bayesfactor/">以前の記事</a>で見たように、ベイズファクターは自由エネルギーや周辺尤度から計算される、モデルの説明力の指標となる基本的な量です。この指標を用いて簡潔に仮説の比較を行うことが可能となります。<br>
 またこの特徴から（周辺尤度がcoherenceな量であるため）、以下のように3モデル以上の比較も可能です。</p>
 <p>$$
 \cfrac{p(x^n | M_1)}{p(x^n | M_3)} = \cfrac{p(x^n | M_1)}{p(x^n | M_2)} \cfrac{p(x^n | M_2)}{p(x^n | M_3)} \tag{3}
@@ -159,7 +159,7 @@ $$</p>
 <p>・<strong>複数のモデルの組み合わせに利用できる</strong></p>
 <p>ベイズファクターを2つのモデルの重みづけ係数として利用し、回帰係数を算出することも可能です。</p>
 <p>・<strong>オッカムの剃刀効果をもつ</strong></p>
-<p>つまり、同程度の説明力をもつモデルがあるとすれば、ベイズファクターはよりシンプルなモデルを選択する、ということです。この性質は<a href="https://rmorita-stat.github.io/2021/02/bayesfactor/#ベイズファクターの性質を確認する">以前の記事での実験</a>で確認したものになります。<br>
+<p>つまり、同程度の説明力をもつモデルがあるとすれば、ベイズファクターはよりシンプルなモデルを選択する、ということです。この性質は<a href="https://sucre-stat.com/2021/02/bayesfactor/#ベイズファクターの性質を確認する">以前の記事での実験</a>で確認したものになります。<br>
 この理由は、周辺分布$p(x^n |M)$が、事前分布と事後分布の積をモデル$M$のパラメータについて周辺化消去した値であることからイメージすることが可能です。つまり、モデルを複雑にする（パラメータ空間をむやみに拡張する）と、尤度が0に近くなる空間が大部分を占めることとなり、それが平均的な周辺尤度を小さくする要因となるんです。</p>
 <h2 id="ベイズファクターの課題">ベイズファクターの課題</h2>
 <p>ベイズファクターを用いたモデル比較には課題もあります。以下、課題を列挙します。</p>
@@ -174,7 +174,7 @@ BF_{01} =\cfrac{\int_{S_{\theta_1}}\int_{S_{\theta_2}}\ldots\int_{S_{\theta_n}} 
 $$</p>
 <p>ここで、$p(x^n | M)$は観測値$x^n$が与えられたときのモデル$M
 $の尤度関数、$\varphi(M)$はモデル$M$の事前分布です。$\boldsymbol{\theta}$はモデル$M_1$、$M_2$に共通するパラメータであり、$\boldsymbol{\theta}=(\theta_1,\theta_2,\ldots,\theta_n),~~~\theta_1 \in S_{\theta_{1}},\theta_2 \in S_{\theta_{2}},\ldots,\theta_n \in S_{\theta_{n}},~~~S_{\theta} ∈ \mathbb{R}$です。</p>
-<p><a href="https://rmorita-stat.github.io/2021/02/bayesfactor/#ベイズファクターの性質を確認する">以前の記事での実験</a>では、事前分布に尤度関数と共役な関係にある共役事前分布を用いたため、上記の計算が可能だったのですが、多くの場面でこの計算は解析的には困難です。</p>
+<p><a href="https://sucre-stat.com/2021/02/bayesfactor/#ベイズファクターの性質を確認する">以前の記事での実験</a>では、事前分布に尤度関数と共役な関係にある共役事前分布を用いたため、上記の計算が可能だったのですが、多くの場面でこの計算は解析的には困難です。</p>
 <p>これに対する解決策として、以降では<strong>Savage-Dickey法</strong>について説明していきます。</p>
 <h1 id="savage-dickey法">Savage-Dickey法</h1>
 <p>Savage-Dickey法の概要を以下に示します。<br>
@@ -259,7 +259,7 @@ $$
 <p>上記証明では両モデルに共通するパラメータを、我々の関心対象である$\boldsymbol{\theta}$と、それ以外の関心のない（nuisance、厄介な）$\boldsymbol{\psi}$に分けています。$(★)$及び$(☆)$が成立するとき、最終的な$BF_{01}$の導出にパラメータ$\boldsymbol{\theta}$は出てきているが$\boldsymbol{\psi}$は出てきていないので、上記証明は、$\boldsymbol{\psi}$は$\boldsymbol{\theta}$を介してのみしか$BF_{01}$に影響しない、ということを示しています。</p>
 <h1 id="おわりに">おわりに</h1>
 <p>前回に引き続き、今回もベイズファクターにまつわる内容を書きました。</p>
-<p><a href="https://rmorita-stat.github.io/2021/02/bayesfactor/">前回の記事</a>では、ベイズファクターについて一からその正体を見ていきました。今回はその続編的な内容で、ベイズファクターが仮説検定に利用可能であること、また仮説検定にベイズファクターを用いることの利点や課題、さらに簡便なベイズファクターの計算手法であるSavage-Dickey法について書きました。</p>
+<p><a href="https://sucre-stat.com/2021/02/bayesfactor/">前回の記事</a>では、ベイズファクターについて一からその正体を見ていきました。今回はその続編的な内容で、ベイズファクターが仮説検定に利用可能であること、また仮説検定にベイズファクターを用いることの利点や課題、さらに簡便なベイズファクターの計算手法であるSavage-Dickey法について書きました。</p>
 <p>これでベイジアン仮説検定を実践するための準備が整ったので、次回以降では実際にベイジアン仮説検定をやっていきたいと思います。</p>
 
         </article>
@@ -267,7 +267,7 @@ $$
     <div class="main-content__tags u-font">
         
         
-        <span><a href="https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
+        <span><a href="https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
         
         
     </div>
@@ -314,7 +314,7 @@ $$
 <div class="main-line"></div>
 <div class="main-pn">
     
-    <a class="previous" href="https://rmorita-stat.github.io/2021/02/bayesfactor/">
+    <a class="previous" href="https://sucre-stat.com/2021/02/bayesfactor/">
         <div class="pn-dec"></div>
         <div class="pn-els">
             <div class="pn-el__1"> 2021.02.14 00:00 </div>
@@ -323,7 +323,7 @@ $$
     </a>
     
     
-    <a class="next" href="https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/">
+    <a class="next" href="https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1/">
         <div class="pn-dec"></div>
         <div class="pn-els">
             <div class="pn-el__1"> 2021.04.18 00:00 </div>
@@ -393,6 +393,6 @@ $$
     </div>
 </div>
 </body>
-<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script src="https://sucre-stat.com/js/page.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 

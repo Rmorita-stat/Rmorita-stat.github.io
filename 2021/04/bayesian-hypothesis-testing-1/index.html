@@ -9,15 +9,15 @@
         
     </title>
     <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
-    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
-    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    <link rel='icon' type='image/x-icon' href="https://sucre-stat.com/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://sucre-stat.com/images/logo2.png"><link rel="stylesheet" href="https://sucre-stat.com/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link rel="stylesheet" href="https://sucre-stat.com/css/syntax.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
-    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    <script src="https://sucre-stat.com/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/highlight.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/custom.css">
     
     
     <script>
@@ -41,7 +41,7 @@
         </div>
         
         <div class=' site-logo '>
-            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+            <a href="https://sucre-stat.com/"><img src="https://sucre-stat.com/images/logo.png" /></a>
         </div>
     </div>
     
@@ -148,7 +148,7 @@ $$
 
 <p>$\theta_1$、$\theta_2$、$\delta$の三角関係が変わっていますが、$\theta_1$と$\theta_2$まわりの尤度計算は対応の無い場合と同じです。さらに$\theta_1$、$\delta$に図示の無情報事前分布を設定してやると、$\theta_2$の事前分布は$\mathrm{Uniform}(0,1)$と、対応の無い場合と同じ事前分布になってしまいます。つまり、$\theta_1$、$\theta_2$の尤度関数と事前分布が対応の場合と同じになってしまうのです。$\delta$は$\theta_2-\theta_1$と、二つの確率変数の差の分布から求まりますから、$\delta$の事後分布は対応の無い場合の事後分布の$y$軸反転になります。よって、比率の差の検定においてはモデル上、対応の有無を問わず一つのモデルで説明出来てしまうのです。（以上、色々考えた上での私見なんですが、どうなんでしょう？）</p>
 <h1 id="ベイズファクターを解析的に求める">ベイズファクターを解析的に求める</h1>
-<p>設定した仮説から分かる通り、本検定はネストされたモデル間の比較を行うので、<a href="https://rmorita-stat.github.io/2021/04/savage-dickey-method/">以前の記事</a>で紹介したSavage-Dickey法を使えばよいと分かります。Savage-Dickey法は、$H_1$に対応するモデルにおける事前分布と事後分布を一点比較をすればベイズファクターを算出できると主張しています。今回の事例では比較する点は$\delta=0$です。つまり</p>
+<p>設定した仮説から分かる通り、本検定はネストされたモデル間の比較を行うので、<a href="https://sucre-stat.com/2021/04/savage-dickey-method/">以前の記事</a>で紹介したSavage-Dickey法を使えばよいと分かります。Savage-Dickey法は、$H_1$に対応するモデルにおける事前分布と事後分布を一点比較をすればベイズファクターを算出できると主張しています。今回の事例では比較する点は$\delta=0$です。つまり</p>
 <p>$$
 BF_{01} = \cfrac{p(\delta=0 | D, H_1)}{p(\delta=0 |H_1)} \tag{5}
 $$</p>
@@ -376,14 +376,14 @@ $$
 
 </div></p>
 <h1 id="おわりに">おわりに</h1>
-<p>今回は、比率の差をベイズファクターを使って検定する手法を整理しました。本内容の実践版は<a href="https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1practice/">こちらの姉妹記事</a>を参照してください。姉妹記事では解析的にベイズファクターを計算するだけではなく、MCMCを用いた近似手法でも計算しています。なぜ精度の劣る方法で…と思うかもしれませんが、従来通りの検定に対応する帰無仮説・対立仮設の設定に留まらず、片側検定に対応する仮説の比較をすることもできることにそのメリットがあります。詳しくは姉妹記事を参照のこと。</p>
+<p>今回は、比率の差をベイズファクターを使って検定する手法を整理しました。本内容の実践版は<a href="https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1practice/">こちらの姉妹記事</a>を参照してください。姉妹記事では解析的にベイズファクターを計算するだけではなく、MCMCを用いた近似手法でも計算しています。なぜ精度の劣る方法で…と思うかもしれませんが、従来通りの検定に対応する帰無仮説・対立仮設の設定に留まらず、片側検定に対応する仮説の比較をすることもできることにそのメリットがあります。詳しくは姉妹記事を参照のこと。</p>
 
         </article>
     </div>
     <div class="main-content__tags u-font">
         
         
-        <span><a href="https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
+        <span><a href="https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
         
         
     </div>
@@ -430,7 +430,7 @@ $$
 <div class="main-line"></div>
 <div class="main-pn">
     
-    <a class="previous" href="https://rmorita-stat.github.io/2021/04/savage-dickey-method/">
+    <a class="previous" href="https://sucre-stat.com/2021/04/savage-dickey-method/">
         <div class="pn-dec"></div>
         <div class="pn-els">
             <div class="pn-el__1"> 2021.04.03 00:00 </div>
@@ -439,7 +439,7 @@ $$
     </a>
     
     
-    <a class="next" href="https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/">
+    <a class="next" href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2theory/">
         <div class="pn-dec"></div>
         <div class="pn-els">
             <div class="pn-el__1"> 2021.06.21 00:00 </div>
@@ -509,6 +509,6 @@ $$
     </div>
 </div>
 </body>
-<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script src="https://sucre-stat.com/js/page.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 

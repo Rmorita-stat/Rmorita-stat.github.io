@@ -2,30 +2,48 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Stan on SUCRE HECACHA</title>
-    <link>https://rmorita-stat.github.io/tags/stan/</link>
+    <link>https://sucre-stat.com/tags/stan/</link>
     <description>Recent content in Stan on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Mon, 21 Jun 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 23 Oct 2021 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://rmorita-stat.github.io/tags/stan/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://sucre-stat.com/tags/stan/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>線形回帰モデルのベイズファクター計算手法を検討する</title>
+      <link>https://sucre-stat.com/2021/10/regressionbf-comparing/</link>
+      <pubDate>Sat, 23 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/2021/10/regressionbf-comparing/</guid>
+      <description>はじめに 本記事では線形回帰モデルを例にベイズファクターの計算手法を複数実践します。また結果を比較しそれぞれの手法の特徴をみていきます。 実践す</description>
+    </item>
+    
+    <item>
       <title>ベイズファクターを用いた仮説検定を実践する～平均値の差の検定～</title>
-      <link>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2practice/</link>
+      <link>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/</link>
       <pubDate>Mon, 21 Jun 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2practice/</guid>
+      <guid>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/</guid>
       <description>◆この記事のテーマ ベイズファクターを使って平均値の差を検定する方法を実践します。 この手法は、例えば下図のようなシーンに適用できます。下図左側</description>
     </item>
     
     <item>
-      <title>ベイズファクターを用いた仮説検定～平均値の差の検定～</title>
-      <link>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/</link>
+      <title>ベイズファクターを用いた仮説検定を実践する～平均値の差の検定～</title>
+      <link>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/</link>
       <pubDate>Mon, 21 Jun 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/</guid>
+      <guid>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/</guid>
+      <description>今回は、ベイズファクターを使った線形回帰分析におけるモデル選択について ◆この記事のテーマ ベイズファクターを使って平均値の差を検定する方法を実</description>
+    </item>
+    
+    <item>
+      <title>ベイズファクターを用いた仮説検定～平均値の差の検定～</title>
+      <link>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2theory/</link>
+      <pubDate>Mon, 21 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2theory/</guid>
       <description>◆この記事のテーマ ベイズファクターを使って平均値の差を検定する方法を整理します。 この手法は、例えば下図のようなシーンに適用できます。下図左側</description>
     </item>
     

@@ -9,15 +9,15 @@
         
     </title>
     <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
-    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
-    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    <link rel='icon' type='image/x-icon' href="https://sucre-stat.com/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://sucre-stat.com/images/logo2.png"><link rel="stylesheet" href="https://sucre-stat.com/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link rel="stylesheet" href="https://sucre-stat.com/css/syntax.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
-    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    <script src="https://sucre-stat.com/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/highlight.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/custom.css">
     
     
     <script>
@@ -41,7 +41,7 @@
         </div>
         
         <div class=' site-logo '>
-            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+            <a href="https://sucre-stat.com/"><img src="https://sucre-stat.com/images/logo.png" /></a>
         </div>
     </div>
     
@@ -95,7 +95,7 @@
 
 </fieldset>
 <h1 id="モデルの確認">モデルの確認</h1>
-<p>本検定のためのモデルについては<a href="https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/">こちらの姉妹記事</a>で詳細を説明していますので、ここでは要点だけ記載しておくことにします。</p>
+<p>本検定のためのモデルについては<a href="https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1/">こちらの姉妹記事</a>で詳細を説明していますので、ここでは要点だけ記載しておくことにします。</p>
 <p>$n_1$、$n_2$はそれぞれ交差点1、交差点2における車両毎の危険挙動に関するデータ（0=「危険挙動無し」 OR 1「危険挙動あり」）の標本数、$s_1$、$s_2$はそれぞれ交差点1、交差点2において危険挙動をした車両の台数です。交差点ごとに、独立の二項分布に従い危険挙動をした車両が観測されたと仮定し、発生確率を$\theta_1$、$\theta_2$とおきモデル化します。<br>
 <br>
 <fieldset style="border: #000000 1px solid; padding: 4px; background-color: #EEFFFF; margin: 0px; color: #333333; border-radius: 10px"><legend><strong>◆比率の差の検定モデル</strong></legend>
@@ -138,7 +138,7 @@ $$
 
 </fieldset></p>
 <h1 id="unrestricted-model">Unrestricted Model</h1>
-<p>では、$\theta_1$と$\theta_2$の大小関係が明らかでないときの仮説から検定してみます。Rstanを用いて$(1)～(4)$式をモデル化し、$\delta$の周辺事後分布をMCMCによって近似推定し、Savage-Dickeyによる$(5)$式を用いて$BF_{01}$を求める方針です。また<a href="https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/">こちらの記事</a>で導出した解析的な結果との整合性も確認してみます。</p>
+<p>では、$\theta_1$と$\theta_2$の大小関係が明らかでないときの仮説から検定してみます。Rstanを用いて$(1)～(4)$式をモデル化し、$\delta$の周辺事後分布をMCMCによって近似推定し、Savage-Dickeyによる$(5)$式を用いて$BF_{01}$を求める方針です。また<a href="https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1/">こちらの記事</a>で導出した解析的な結果との整合性も確認してみます。</p>
 <p>まずはサンプルデータを準備します。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># sample data</span>
 
@@ -160,7 +160,7 @@ $$
     <img src="/r/bayesian-hypothesis-testing-1/data.png" width="1000" height="540"/> </a>
 </figure>
 
-<p>このデータに対し、通常の比率の差の検定を関数<code>prop.test()</code>で行います。原理は昔紹介した<a href="https://rmorita-stat.github.io/2020/12/corresp-and-bayes/#分割表の一様性の検定">分割表の一様性の検定</a>と同じものです。</p>
+<p>このデータに対し、通常の比率の差の検定を関数<code>prop.test()</code>で行います。原理は昔紹介した<a href="https://sucre-stat.com/2020/12/corresp-and-bayes/#分割表の一様性の検定">分割表の一様性の検定</a>と同じものです。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">prop.test</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span><span class="nf">sum</span><span class="p">(</span><span class="n">x2</span><span class="p">)),</span> <span class="n">n</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span><span class="nf">length</span><span class="p">(</span><span class="n">x2</span><span class="p">)),</span> <span class="n">correct</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
 
 <span class="c1">## 2-sample test for equality of proportions without continuity correction</span>
@@ -174,7 +174,7 @@ $$
 <span class="c1">## 0.45   0.36</span>
 <span class="c1">## prop 1 prop 2</span>
 </code></pre></div><p>２グループの比率が同じであるという帰無仮説を設定した検定に対し、p値$0.1948$となり、比率に差があるとは言えない結果となりました。<br>
-次に<a href="https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/">こちらの記事</a>の$(7)$式に基づいて解析的なベイズファクターの計算による検定を行います。</p>
+次に<a href="https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1/">こちらの記事</a>の$(7)$式に基づいて解析的なベイズファクターの計算による検定を行います。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">N1</span><span class="o">=</span><span class="nf">length</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="n">N2</span><span class="o">=</span><span class="nf">length</span><span class="p">(</span><span class="n">x2</span><span class="p">),</span> <span class="n">S1</span><span class="o">=</span><span class="nf">sum</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="n">S2</span><span class="o">=</span><span class="nf">sum</span><span class="p">(</span><span class="n">x2</span><span class="p">))</span>
 
 <span class="c1"># calculate BF_01 by closed form</span>
@@ -186,7 +186,7 @@ $$
 <span class="nf">cat</span><span class="p">(</span><span class="nf">choose</span><span class="p">(</span><span class="n">data[[1]]</span><span class="p">,</span><span class="n">data[[3]]</span><span class="p">)</span> <span class="o">*</span> <span class="nf">choose</span><span class="p">(</span><span class="n">data[[2]]</span><span class="p">,</span><span class="n">data[[4]]</span><span class="p">)</span> <span class="o">/</span> <span class="nf">choose</span><span class="p">(</span><span class="n">data[[1]]</span><span class="o">+</span><span class="n">data[[2]]</span><span class="p">,</span> <span class="n">data[[3]]</span><span class="o">+</span><span class="n">data[[4]]</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">data[[1]]</span><span class="m">+1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">data[[2]]</span><span class="m">+1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">data[[1]]</span><span class="o">+</span><span class="n">data[[2]]</span><span class="m">+1</span><span class="p">))</span>
 
 <span class="c1">## 2.526656</span>
-</code></pre></div><p>対立仮説$H_1:\delta\neq0$よりも帰無仮説$H_0:\delta=0$の方がデータの説明力（周辺尤度）が約$2.53$倍良く、どちらかというと帰無仮説を支持するようです。しかし<a href="https://rmorita-stat.github.io/2021/02/bayesfactor/#ベイズファクター">Kass and Raftery(1995)</a>の基準ではこの差は対立仮説に対する反証があまり強いとは言えない程度であると評価されました。</p>
+</code></pre></div><p>対立仮説$H_1:\delta\neq0$よりも帰無仮説$H_0:\delta=0$の方がデータの説明力（周辺尤度）が約$2.53$倍良く、どちらかというと帰無仮説を支持するようです。しかし<a href="https://sucre-stat.com/2021/02/bayesfactor/#ベイズファクター">Kass and Raftery(1995)</a>の基準ではこの差は対立仮説に対する反証があまり強いとは言えない程度であると評価されました。</p>
 <p>以上、検定結果をひととおり見た上で、次はMCMCにより$\delta$の事後分布を近似推定し、ベイズファクターを推定します。Stanによる実装例を以下に示します。</p>
 <div class="highlight"><pre class="chroma"><code class="language-c++" data-lang="c++"><span class="c1">//non-restricted aalysis
 </span><span class="c1">//model1.stan
@@ -319,14 +319,14 @@ $$</p>
 <p>一方、本例のような危険挙動データの例の場合、本来、危険挙動を観測した車両の全体に占める割合は非常に小さく、通常1割にも達しません（私の経験）。
 このようなデータに対し、二項分布のパラメータ$\theta$に無情報事前分布を設定すると、周辺尤度の性質から、$BF_{01}$は必ず帰無仮説$H_0:\delta=0$を強く支持する値となるでしょう。事前分布をどうするかについては、今後の研究が待たれるところです（？）。</p>
 <h1 id="おわりに">おわりに</h1>
-<p>今回は、ベイズファクターを使って比率の差を検定する方法を実践しました。解析的に求める方法と、MCMCを使って近似的に求める方法の2通りを実践しましたが、精度の面からいうともちろん解析的に求めるのが妥当です。しかし、後半で実践したような、Order-restricted Modelで検定したいときなどは、解析解をまた別に求めてやらなばなりません。<a href="https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/">こちらの記事</a>で導出した解析解はあくまで従来通りの検定における帰無仮説と対立仮説の（方向性をもたない）比較をしたいときの解であり、この式だけでは他の仮説の比較に応用できないのです。それならOrder-restricted Modelの解析解を求めてやれば良いのですが、目的に応じてその都度解を求めるのは大変です。MCMC法はそういった面倒な計算をすっ飛ばして近似的にベイズファクターやら事後分布やらを求めることができる、という点が魅力的なんですね（といっても今回は片側検定に対応するモデルしかMCMC法で追加検討していませんが）。</p>
+<p>今回は、ベイズファクターを使って比率の差を検定する方法を実践しました。解析的に求める方法と、MCMCを使って近似的に求める方法の2通りを実践しましたが、精度の面からいうともちろん解析的に求めるのが妥当です。しかし、後半で実践したような、Order-restricted Modelで検定したいときなどは、解析解をまた別に求めてやらなばなりません。<a href="https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1/">こちらの記事</a>で導出した解析解はあくまで従来通りの検定における帰無仮説と対立仮説の（方向性をもたない）比較をしたいときの解であり、この式だけでは他の仮説の比較に応用できないのです。それならOrder-restricted Modelの解析解を求めてやれば良いのですが、目的に応じてその都度解を求めるのは大変です。MCMC法はそういった面倒な計算をすっ飛ばして近似的にベイズファクターやら事後分布やらを求めることができる、という点が魅力的なんですね（といっても今回は片側検定に対応するモデルしかMCMC法で追加検討していませんが）。</p>
 
         </article>
     </div>
     <div class="main-content__tags u-font">
         
         
-        <span><a href="https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
+        <span><a href="https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
         
         
     </div>
@@ -373,7 +373,7 @@ $$</p>
 <div class="main-line"></div>
 <div class="main-pn">
     
-    <a class="previous" href="https://rmorita-stat.github.io/2021/01/regularization2/">
+    <a class="previous" href="https://sucre-stat.com/2021/01/regularization2/">
         <div class="pn-dec"></div>
         <div class="pn-els">
             <div class="pn-el__1"> 2021.01.05 00:00 </div>
@@ -382,7 +382,7 @@ $$</p>
     </a>
     
     
-    <a class="next" href="https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2practice/">
+    <a class="next" href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/">
         <div class="pn-dec"></div>
         <div class="pn-els">
             <div class="pn-el__1"> 2021.06.21 00:00 </div>
@@ -452,6 +452,6 @@ $$</p>
     </div>
 </div>
 </body>
-<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script src="https://sucre-stat.com/js/page.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 

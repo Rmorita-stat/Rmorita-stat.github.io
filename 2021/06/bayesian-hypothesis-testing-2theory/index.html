@@ -9,15 +9,15 @@
         
     </title>
     <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
-    <link rel='icon' type='image/x-icon' href="https://rmorita-stat.github.io/images/logo2.png" />
-    <link rel="apple-touch-icon" href="https://rmorita-stat.github.io/images/logo2.png"><link rel="stylesheet" href="https://rmorita-stat.github.io/scss/style.css">
+    <link rel='icon' type='image/x-icon' href="https://sucre-stat.com/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://sucre-stat.com/images/logo2.png"><link rel="stylesheet" href="https://sucre-stat.com/scss/style.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/css/syntax.css">
+    <link rel="stylesheet" href="https://sucre-stat.com/css/syntax.css">
     <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
-    <script src="https://rmorita-stat.github.io/js/highlight.min.js"></script>
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/highlight.css">
+    <script src="https://sucre-stat.com/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/highlight.css">
     
-    <link rel="stylesheet" href="https://rmorita-stat.github.io/scss/custom.css">
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/custom.css">
     
     
     <script>
@@ -41,7 +41,7 @@
         </div>
         
         <div class=' site-logo '>
-            <a href="https://rmorita-stat.github.io/"><img src="https://rmorita-stat.github.io/images/logo.png" /></a>
+            <a href="https://sucre-stat.com/"><img src="https://sucre-stat.com/images/logo.png" /></a>
         </div>
     </div>
     
@@ -270,13 +270,13 @@ $$</p>
 
 <p>図からも、標準コーシー分布は標準正規分布と比較し裾が重く、0から外れた値もとりやすい分布になっていることから、$r=1$の場合、JZSの事前分布は単位情報事前分布より事前情報が少ないことが確認できます。</p>
 <p>また、両設定に共通のパラメータ$\sigma$及び、対応のある検定の時のみ必要な$\mu$については、ともにJeffeysの事前分布と呼ばれる事前分布を用いています。Jeffreysの事前分布はフィッシャー情報量から導かれるもので、事前分布と事後分布のカルバック・ライブラー情報量を最大化する効果がある、という点で無情報事前分布として使えるとされているようです。このあたりは詳しくないですが、Appendixに定義から正規分布の平均及び分散に対するJeffreysの事前分布を導出する方法を載せています。</p>
-<p>ちなみに、$\sigma$のように検定の対象となるパラメータとは別に存在し、かつ両モデルに共通の役割をもつパラメータはnuisance parameterと称され、こうしたパラメータはベイズファクターの値の決定にクリティカルでないことが証明されています。これに関しては<a href="https://rmorita-stat.github.io/2021/04/savage-dickey-method/">以前の記事</a>を参照してくだせえ。</p>
+<p>ちなみに、$\sigma$のように検定の対象となるパラメータとは別に存在し、かつ両モデルに共通の役割をもつパラメータはnuisance parameterと称され、こうしたパラメータはベイズファクターの値の決定にクリティカルでないことが証明されています。これに関しては<a href="https://sucre-stat.com/2021/04/savage-dickey-method/">以前の記事</a>を参照してくだせえ。</p>
 <h1 id="ベイズファクターの解法">ベイズファクターの解法</h1>
 <p>前節でモデルの設定を整理したので、本節ではベイズファクターの求め方を整理します。</p>
 <h2 id="解析的に求める">解析的に求める</h2>
-<p>先に説明したJZSの事前分布と単位情報事前分布は解析的に計算することが可能です。ここでは導出や計算式までは深堀りしません。あまり面白くないので…。式を確認したい場合は<a href="http://pcl.missouri.edu/sites/default/files/Rouder.bf_.pdf">参考文献</a>を参照のこと。この文献の著者らはJZSの事前分布や単位情報事前分布の解析解を求めることができる<a href="http://pcl.missouri.edu/bayesfactor">Webページ</a>や<a href="https://richarddmorey.github.io/BayesFactor/">Rパッケージ</a>を開発しているので、<a href="https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2practice/">実践編</a>で解析解を求める際はこのあたりを活用させてもらいます。</p>
+<p>先に説明したJZSの事前分布と単位情報事前分布は解析的に計算することが可能です。ここでは導出や計算式までは深堀りしません。あまり面白くないので…。式を確認したい場合は<a href="http://pcl.missouri.edu/sites/default/files/Rouder.bf_.pdf">参考文献</a>を参照のこと。この文献の著者らはJZSの事前分布や単位情報事前分布の解析解を求めることができる<a href="http://pcl.missouri.edu/bayesfactor">Webページ</a>や<a href="https://richarddmorey.github.io/BayesFactor/">Rパッケージ</a>を開発しているので、<a href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/">実践編</a>で解析解を求める際はこのあたりを活用させてもらいます。</p>
 <h2 id="mcmc法で近似的に求める">MCMC法で近似的に求める</h2>
-<p>本記事と<a href="https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2practice/">実践編</a>の本題はこちらです。これにはネストされたモデル同士の比較で有効なSavage-Dickey法を使ってベイズファクターを計算します。Savage-Dickey法の概要を以下に示します。詳細は<a href="https://rmorita-stat.github.io/2021/04/savage-dickey-method/">以前の記事</a>を参照のこと。</p>
+<p>本記事と<a href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/">実践編</a>の本題はこちらです。これにはネストされたモデル同士の比較で有効なSavage-Dickey法を使ってベイズファクターを計算します。Savage-Dickey法の概要を以下に示します。詳細は<a href="https://sucre-stat.com/2021/04/savage-dickey-method/">以前の記事</a>を参照のこと。</p>
 <p><br>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Savage-Dickey法</strong></legend>
 <p>モデル$M_0$と$M_1$に共通のパラメータ$\boldsymbol{\delta}=(\delta_1, \ldots, \delta_m)$があるとき、$M_0$と$M_1$が</p>
@@ -314,7 +314,7 @@ p(\delta=0 | \mathcal{D}, M_1) = \int_{\boldsymbol{\psi}}p(\delta=0,\boldsymbol{
 $$
 
 </div>
-<p>$(14)$式はMCMCのサンプルを用いて近似的に求めるなら、$\boldsymbol{\psi}$を無視し、$\delta$のサンプルの分布をカーネル密度推定、もしくは<a href="https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1practice/">以前の記事</a>のように対数スプライン推定をするだけでイケます。簡単で便利です。</p>
+<p>$(14)$式はMCMCのサンプルを用いて近似的に求めるなら、$\boldsymbol{\psi}$を無視し、$\delta$のサンプルの分布をカーネル密度推定、もしくは<a href="https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1practice/">以前の記事</a>のように対数スプライン推定をするだけでイケます。簡単で便利です。</p>
 <h4 id="条件付き周辺事後分布を使う">条件付き周辺事後分布を使う</h4>
 <p>こちらは$\boldsymbol{\psi}$に関する条件付きの$\delta$の事後分布を使って$p(\delta=0 | x^n, M_1)$を求める方法です。<a href="https://www.sciencedirect.com/science/article/abs/pii/S0022249611000666">参考文献</a>に倣ってConditional MArginal Density Estimator を略し、<strong>CMDE</strong>と呼びます。</p>
 <div style="overflow-x:auto;">
@@ -444,7 +444,7 @@ $(21)$式は$(6)$、$(10)$式を用いるので、上述の導出で$g$を$r^2$�
 </fieldset>
 
 </div></p>
-<p>これでベイズファクターを使って平均値の差の検定をする準備が整いました。実践編は<a href="https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2practice/">実践編</a>で！</p>
+<p>これでベイズファクターを使って平均値の差の検定をする準備が整いました。実践編は<a href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/">実践編</a>で！</p>
 <h1 id="appendix">Appendix</h1>
 <h2 id="jaffrayの事前分布">Jaffrayの事前分布</h2>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Jeffreysの事前分布</strong></legend>
@@ -566,9 +566,9 @@ $$
     <div class="main-content__tags u-font">
         
         
-        <span><a href="https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
+        <span><a href="https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
         
-        <span><a href="https://rmorita-stat.github.io/tags/stan">Stan</a></span>
+        <span><a href="https://sucre-stat.com/tags/stan">Stan</a></span>
         
         
     </div>
@@ -615,7 +615,7 @@ $$
 <div class="main-line"></div>
 <div class="main-pn">
     
-    <a class="previous" href="https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/">
+    <a class="previous" href="https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1/">
         <div class="pn-dec"></div>
         <div class="pn-els">
             <div class="pn-el__1"> 2021.04.18 00:00 </div>
@@ -623,6 +623,14 @@ $$
         </div>
     </a>
     
+    
+    <a class="next" href="https://sucre-stat.com/2021/10/bayesian-hypothesis-testing-3theory/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2021.10.08 00:00 </div>
+            <div class="pn-el__2"> ベイズファクターを用いた仮説検定～線形回帰分析～ </div>
+        </div>
+    </a>
     
 </div>
 
@@ -686,6 +694,6 @@ $$
     </div>
 </div>
 </body>
-<script src="https://rmorita-stat.github.io/js/page.js"></script>
+<script src="https://sucre-stat.com/js/page.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 

@@ -2,210 +2,264 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>SUCRE HECACHA</title>
-    <link>https://rmorita-stat.github.io/</link>
+    <link>https://sucre-stat.com/</link>
     <description>Recent content on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <lastBuildDate>Fri, 22 May 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://rmorita-stat.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://sucre-stat.com/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>ベイズファクターを用いた仮説検定～相関の検定～</title>
+      <link>https://sucre-stat.com/2021/12/bayesian-hypothesis-testing-4theory/</link>
+      <pubDate>Sun, 19 Dec 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/2021/12/bayesian-hypothesis-testing-4theory/</guid>
+      <description>今回は、ベイズファクターを使った相関の検定について理論を整理します。 ベイズファクターとはなんぞや？という方はこちらを参照のこと。 参考文献は こ</description>
+    </item>
+    
+    <item>
+      <title>線形回帰モデルのベイズファクター計算手法を検討する</title>
+      <link>https://sucre-stat.com/2021/10/regressionbf-comparing/</link>
+      <pubDate>Sat, 23 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/2021/10/regressionbf-comparing/</guid>
+      <description>はじめに 本記事では線形回帰モデルを例にベイズファクターの計算手法を複数実践します。また結果を比較しそれぞれの手法の特徴をみていきます。 実践す</description>
+    </item>
+    
+    <item>
+      <title>ベイズファクターを用いた仮説検定を実践する～線形回帰分析～</title>
+      <link>https://sucre-stat.com/2021/10/bayesian-hypothesis-testing-3practice/</link>
+      <pubDate>Fri, 22 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/2021/10/bayesian-hypothesis-testing-3practice/</guid>
+      <description>はじめに 本記事ではベイズファクターを使った線形回帰モデルの評価方法を紹介します。 サンプルデータの分析 今回使用するサンプルデータはR標準的サン</description>
+    </item>
+    
+    <item>
+      <title>ベイズファクターを用いた仮説検定～線形回帰分析～</title>
+      <link>https://sucre-stat.com/2021/10/bayesian-hypothesis-testing-3theory/</link>
+      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/2021/10/bayesian-hypothesis-testing-3theory/</guid>
+      <description>今回は、ベイズファクターを使った線形回帰分析におけるモデル選択について理論を整理します。 ベイズファクターとはなんぞや？という方はこちらを、S</description>
+    </item>
+    
+    <item>
       <title>ベイズファクターを用いた仮説検定を実践する～平均値の差の検定～</title>
-      <link>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2practice/</link>
+      <link>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/</link>
       <pubDate>Mon, 21 Jun 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2practice/</guid>
+      <guid>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/</guid>
       <description>◆この記事のテーマ ベイズファクターを使って平均値の差を検定する方法を実践します。 この手法は、例えば下図のようなシーンに適用できます。下図左側</description>
     </item>
     
     <item>
-      <title>ベイズファクターを用いた仮説検定～平均値の差の検定～</title>
-      <link>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/</link>
+      <title>ベイズファクターを用いた仮説検定を実践する～平均値の差の検定～</title>
+      <link>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/</link>
       <pubDate>Mon, 21 Jun 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/06/bayesian-hypothesis-testing-2theory/</guid>
+      <guid>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/</guid>
+      <description>今回は、ベイズファクターを使った線形回帰分析におけるモデル選択について ◆この記事のテーマ ベイズファクターを使って平均値の差を検定する方法を実</description>
+    </item>
+    
+    <item>
+      <title>ベイズファクターを用いた仮説検定～平均値の差の検定～</title>
+      <link>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2theory/</link>
+      <pubDate>Mon, 21 Jun 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2theory/</guid>
       <description>◆この記事のテーマ ベイズファクターを使って平均値の差を検定する方法を整理します。 この手法は、例えば下図のようなシーンに適用できます。下図左側</description>
     </item>
     
     <item>
       <title>ベイズファクターを用いた仮説検定を実践する～比率の差の検定～</title>
-      <link>https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1practice/</link>
+      <link>https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1practice/</link>
       <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1practice/</guid>
+      <guid>https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1practice/</guid>
       <description>◆この記事のテーマ ベイズファクターを使って比率の差を検定する方法を実践します。 この手法は、例えば下図のようなシーンに適用できます。下図では異</description>
     </item>
     
     <item>
       <title>ベイズファクターを用いた仮説検定～比率の差の検定～</title>
-      <link>https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/</link>
+      <link>https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1/</link>
       <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/04/bayesian-hypothesis-testing-1/</guid>
+      <guid>https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1/</guid>
       <description>◆この記事のテーマ ベイズファクターを使って比率の差を検定する方法を整理します。 この手法は、例えば下図のようなシーンに適用できます。下図では異</description>
     </item>
     
     <item>
       <title>ベイジアン仮説検定とSavage-Dickey法</title>
-      <link>https://rmorita-stat.github.io/2021/04/savage-dickey-method/</link>
+      <link>https://sucre-stat.com/2021/04/savage-dickey-method/</link>
       <pubDate>Sat, 03 Apr 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/04/savage-dickey-method/</guid>
+      <guid>https://sucre-stat.com/2021/04/savage-dickey-method/</guid>
       <description>今回はベイジアン仮説検定とSavage-Dickey法について取り上げます。 ベイジアン仮説検定は、従来の頻度論に基づく考え型とは異なるベイズ</description>
     </item>
     
     <item>
       <title>ベイズファクター</title>
-      <link>https://rmorita-stat.github.io/2021/02/bayesfactor/</link>
+      <link>https://sucre-stat.com/2021/02/bayesfactor/</link>
       <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/02/bayesfactor/</guid>
+      <guid>https://sucre-stat.com/2021/02/bayesfactor/</guid>
       <description>本記事ではベイジアンモデルに対するモデル評価の指標であるベイズファクターについて理論を整理します。 まず、情報量について、エントロピーを踏まえ</description>
     </item>
     
     <item>
       <title>積率と母関数</title>
-      <link>https://rmorita-stat.github.io/2021/01/moment/</link>
+      <link>https://sucre-stat.com/2021/01/moment/</link>
       <pubDate>Sun, 31 Jan 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/01/moment/</guid>
+      <guid>https://sucre-stat.com/2021/01/moment/</guid>
       <description>本記事では確率論の勉強ということで、期待値など確率変数の特徴を表す量について定義し、それらにまつわる便利なアイテム（関数）群を整理しようと思</description>
     </item>
     
     <item>
       <title>Bayesian RidgeとBayesian Lasso 通常の正則化回帰との比較</title>
-      <link>https://rmorita-stat.github.io/2021/01/regularization2/</link>
+      <link>https://sucre-stat.com/2021/01/regularization2/</link>
       <pubDate>Tue, 05 Jan 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/01/regularization2/</guid>
+      <guid>https://sucre-stat.com/2021/01/regularization2/</guid>
       <description>はじめに 今回は、以前の記事で紹介したRidge回帰とLasso回帰をRのパッケージglmnetで試してみます。さらにRstanを用いてBay</description>
     </item>
     
     <item>
       <title>Julia始めました</title>
-      <link>https://rmorita-stat.github.io/2021/01/begin-julia/</link>
+      <link>https://sucre-stat.com/2021/01/begin-julia/</link>
       <pubDate>Tue, 05 Jan 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2021/01/begin-julia/</guid>
+      <guid>https://sucre-stat.com/2021/01/begin-julia/</guid>
       <description>ふと、R言語以外も使っていろいろとできるようになりたいと思い立ちました。 特にきっかけがあったわけではないのです。まだR歴も浅く綺麗なコードに</description>
     </item>
     
     <item>
       <title>モデル選択基準</title>
-      <link>https://rmorita-stat.github.io/2020/12/information-criterion/</link>
+      <link>https://sucre-stat.com/2020/12/information-criterion/</link>
       <pubDate>Wed, 30 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2020/12/information-criterion/</guid>
+      <guid>https://sucre-stat.com/2020/12/information-criterion/</guid>
       <description>この記事について 情報量基準などのモデル選択基準について得た断片的な知識をまとめたい。自分の力では一生断片的な知識としかならないだろうが、ブロ</description>
     </item>
     
     <item>
       <title>正則化（Ridge回帰とLasso回帰）について</title>
-      <link>https://rmorita-stat.github.io/2020/12/regularization/</link>
+      <link>https://sucre-stat.com/2020/12/regularization/</link>
       <pubDate>Tue, 29 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2020/12/regularization/</guid>
+      <guid>https://sucre-stat.com/2020/12/regularization/</guid>
       <description>はじめに 今回は、回帰分析において過学習を防いだり、多重共線性に対応したりするために使われるRidge回帰や、変数の数が標本数より多いような時</description>
     </item>
     
     <item>
       <title>Soft K-means法とガウス過程</title>
-      <link>https://rmorita-stat.github.io/2020/12/tokyo-meshdata/</link>
+      <link>https://sucre-stat.com/2020/12/tokyo-meshdata/</link>
       <pubDate>Thu, 24 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2020/12/tokyo-meshdata/</guid>
+      <guid>https://sucre-stat.com/2020/12/tokyo-meshdata/</guid>
       <description>はじめに 今回は分類についての記事です。 正規分布の混合モデルをによるsoft K-Means法を扱います。 タイトルにガウス過程とありますが、今回</description>
     </item>
     
     <item>
       <title>Stanで対応分析の付置にベイズ信頼区間をもたせる</title>
-      <link>https://rmorita-stat.github.io/2020/12/corresp-and-bayes/</link>
+      <link>https://sucre-stat.com/2020/12/corresp-and-bayes/</link>
       <pubDate>Fri, 11 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2020/12/corresp-and-bayes/</guid>
+      <guid>https://sucre-stat.com/2020/12/corresp-and-bayes/</guid>
       <description>はじめに この記事はStan Advent calendar12月12日の記事です。 普段よりもこのページを見る人が多いと思います、私のことはこちらで紹介して</description>
     </item>
     
     <item>
       <title>対応分析について</title>
-      <link>https://rmorita-stat.github.io/2020/11/correspondenceanalysis/</link>
+      <link>https://sucre-stat.com/2020/11/correspondenceanalysis/</link>
       <pubDate>Sat, 07 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2020/11/correspondenceanalysis/</guid>
+      <guid>https://sucre-stat.com/2020/11/correspondenceanalysis/</guid>
       <description>はじめに 秋は晴天の日が多いですネ。晴れた空の日曜日は外に出かけてみたくもなりますが、草野さんは部屋で昨日の夢を思い出しながら妄想するのもいい</description>
     </item>
     
     <item>
       <title>モデリングと情報量基準その１～モデリングとは？～</title>
-      <link>https://rmorita-stat.github.io/2020/10/modeling/</link>
+      <link>https://sucre-stat.com/2020/10/modeling/</link>
       <pubDate>Sat, 03 Oct 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2020/10/modeling/</guid>
+      <guid>https://sucre-stat.com/2020/10/modeling/</guid>
       <description>はじめに 少しご無沙汰してしまい、また読者様から重くないやつを定期的にと助言いただきましたので、少し短めの投稿を記事作成のリハビリもかねてして</description>
     </item>
     
     <item>
       <title>多項ロジスティック回帰・ガウス過程モデル</title>
-      <link>https://rmorita-stat.github.io/2020/07/multinom-gp/</link>
+      <link>https://sucre-stat.com/2020/07/multinom-gp/</link>
       <pubDate>Sun, 12 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2020/07/multinom-gp/</guid>
+      <guid>https://sucre-stat.com/2020/07/multinom-gp/</guid>
       <description>はじめに いい夢の色は緑色だそうだ。私もうさぎさんにとっての牧草色の夢を見ることもありますが、現実は柵に引っかかってばかりです。 さて、回帰に関</description>
     </item>
     
     <item>
       <title>ガウス過程の応用</title>
-      <link>https://rmorita-stat.github.io/2020/07/gaussianprocess2/</link>
+      <link>https://sucre-stat.com/2020/07/gaussianprocess2/</link>
       <pubDate>Sat, 11 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2020/07/gaussianprocess2/</guid>
+      <guid>https://sucre-stat.com/2020/07/gaussianprocess2/</guid>
       <description>はじめに 前回の記事では、特定の分布や関係を仮定せず、与えられたデータに柔軟に対応することのできるモデルということで、ガウス過程回帰について取</description>
     </item>
     
     <item>
       <title>ガウス過程入門</title>
-      <link>https://rmorita-stat.github.io/2020/06/gaussianprocess/</link>
+      <link>https://sucre-stat.com/2020/06/gaussianprocess/</link>
       <pubDate>Sun, 14 Jun 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2020/06/gaussianprocess/</guid>
+      <guid>https://sucre-stat.com/2020/06/gaussianprocess/</guid>
       <description>はじめに 今までに幾度かテーマにしていますが、回帰とよばれる問題があります。 例えば、車の速度とブレーキをかけてから車が止まるまでの距離について</description>
     </item>
     
     <item>
       <title>rstanを使った多項ロジスティック回帰</title>
-      <link>https://rmorita-stat.github.io/2020/05/multinom-rstan/</link>
+      <link>https://sucre-stat.com/2020/05/multinom-rstan/</link>
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2020/05/multinom-rstan/</guid>
+      <guid>https://sucre-stat.com/2020/05/multinom-rstan/</guid>
       <description>はじめに 回帰に関する記事です。本記事では以前の記事で扱った多項ロジスティック回帰をrstanで実行します。 本記事の構成は以下の通りとします。</description>
     </item>
     
     <item>
       <title>ベイズ統計モデリング入門</title>
-      <link>https://rmorita-stat.github.io/2020/05/bayesintroduction/</link>
+      <link>https://sucre-stat.com/2020/05/bayesintroduction/</link>
       <pubDate>Fri, 29 May 2020 23:50:14 -0500</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2020/05/bayesintroduction/</guid>
+      <guid>https://sucre-stat.com/2020/05/bayesintroduction/</guid>
       <description>はじめに 本記事では今後の記事でも頻繁に扱う予定のベイズ統計について理解してもらうため、その理論を簡単に説明します。 本記事の構成は以下の通りで</description>
     </item>
     
     <item>
       <title>multinom()を使った多項ロジスティック回帰</title>
-      <link>https://rmorita-stat.github.io/2020/05/multinom/</link>
+      <link>https://sucre-stat.com/2020/05/multinom/</link>
       <pubDate>Wed, 27 May 2020 21:13:14 -0500</pubDate>
       
-      <guid>https://rmorita-stat.github.io/2020/05/multinom/</guid>
+      <guid>https://sucre-stat.com/2020/05/multinom/</guid>
       <description>はじめに 回帰に関する記事です。本記事では多項ロジスティック回帰について扱います。 本記事の目次は以下の通りです。 はじめに 多項ロジスティック回帰</description>
     </item>
     
     <item>
       <title>このブログについて</title>
-      <link>https://rmorita-stat.github.io/about/</link>
+      <link>https://sucre-stat.com/about-desktop-592r760/</link>
       <pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/about/</guid>
+      <guid>https://sucre-stat.com/about-desktop-592r760/</guid>
+      <description>R.moritaです。 京都で6年間大学生活を過ごしたのち、晴れてニートになりました。 統計学・ロードバイク・古墳巡りが好きです。 色々と好きなも</description>
+    </item>
+    
+    <item>
+      <title>このブログについて</title>
+      <link>https://sucre-stat.com/about/</link>
+      <pubDate>Fri, 22 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/about/</guid>
       <description>R.moritaです。 洛中で6年間大学生活を過ごし、今は大阪で働いています。 統計学・ロードバイク・古墳巡りが好きです。 色々と好きなものが多い</description>
     </item>
     

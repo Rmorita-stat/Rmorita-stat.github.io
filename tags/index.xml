@@ -2,102 +2,102 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on SUCRE HECACHA</title>
-    <link>https://rmorita-stat.github.io/tags/</link>
+    <link>https://sucre-stat.com/tags/</link>
     <description>Recent content in Tags on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Mon, 21 Jun 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 19 Dec 2021 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://rmorita-stat.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://sucre-stat.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Stan</title>
-      <link>https://rmorita-stat.github.io/tags/stan/</link>
-      <pubDate>Mon, 21 Jun 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/tags/stan/</guid>
-      <description></description>
-    </item>
     
     <item>
       <title>ベイズファクター</title>
-      <link>https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/</link>
-      <pubDate>Mon, 21 Jun 2021 00:00:00 +0000</pubDate>
+      <link>https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/</link>
+      <pubDate>Sun, 19 Dec 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/</guid>
+      <guid>https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>確率論</title>
-      <link>https://rmorita-stat.github.io/tags/%E7%A2%BA%E7%8E%87%E8%AB%96/</link>
-      <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
+      <title>Stan</title>
+      <link>https://sucre-stat.com/tags/stan/</link>
+      <pubDate>Sat, 23 Oct 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/tags/%E7%A2%BA%E7%8E%87%E8%AB%96/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>rstan</title>
-      <link>https://rmorita-stat.github.io/tags/rstan/</link>
-      <pubDate>Tue, 05 Jan 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://rmorita-stat.github.io/tags/rstan/</guid>
+      <guid>https://sucre-stat.com/tags/stan/</guid>
       <description></description>
     </item>
     
     <item>
       <title>回帰</title>
-      <link>https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0/</link>
+      <link>https://sucre-stat.com/tags/%E5%9B%9E%E5%B8%B0/</link>
+      <pubDate>Fri, 08 Oct 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/tags/%E5%9B%9E%E5%B8%B0/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>確率論</title>
+      <link>https://sucre-stat.com/tags/%E7%A2%BA%E7%8E%87%E8%AB%96/</link>
+      <pubDate>Sun, 14 Feb 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/tags/%E7%A2%BA%E7%8E%87%E8%AB%96/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rstan</title>
+      <link>https://sucre-stat.com/tags/rstan/</link>
       <pubDate>Tue, 05 Jan 2021 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/tags/%E5%9B%9E%E5%B8%B0/</guid>
+      <guid>https://sucre-stat.com/tags/rstan/</guid>
       <description></description>
     </item>
     
     <item>
       <title>情報量基準</title>
-      <link>https://rmorita-stat.github.io/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/</link>
+      <link>https://sucre-stat.com/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/</link>
       <pubDate>Wed, 30 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/</guid>
+      <guid>https://sucre-stat.com/tags/%E6%83%85%E5%A0%B1%E9%87%8F%E5%9F%BA%E6%BA%96/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ガウス過程</title>
-      <link>https://rmorita-stat.github.io/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/</link>
+      <link>https://sucre-stat.com/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/</link>
       <pubDate>Thu, 24 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/</guid>
+      <guid>https://sucre-stat.com/tags/%E3%82%AC%E3%82%A6%E3%82%B9%E9%81%8E%E7%A8%8B/</guid>
       <description></description>
     </item>
     
     <item>
       <title>分類</title>
-      <link>https://rmorita-stat.github.io/tags/%E5%88%86%E9%A1%9E/</link>
+      <link>https://sucre-stat.com/tags/%E5%88%86%E9%A1%9E/</link>
       <pubDate>Thu, 24 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/tags/%E5%88%86%E9%A1%9E/</guid>
+      <guid>https://sucre-stat.com/tags/%E5%88%86%E9%A1%9E/</guid>
       <description></description>
     </item>
     
     <item>
       <title>多変量解析</title>
-      <link>https://rmorita-stat.github.io/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90/</link>
+      <link>https://sucre-stat.com/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90/</link>
       <pubDate>Fri, 11 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90/</guid>
+      <guid>https://sucre-stat.com/tags/%E5%A4%9A%E5%A4%89%E9%87%8F%E8%A7%A3%E6%9E%90/</guid>
       <description></description>
     </item>
     
     <item>
       <title>ノンパラメトリックベイズモデル</title>
-      <link>https://rmorita-stat.github.io/tags/%E3%83%8E%E3%83%B3%E3%83%91%E3%83%A9%E3%83%A1%E3%83%88%E3%83%AA%E3%83%83%E3%82%AF%E3%83%99%E3%82%A4%E3%82%BA%E3%83%A2%E3%83%87%E3%83%AB/</link>
+      <link>https://sucre-stat.com/tags/%E3%83%8E%E3%83%B3%E3%83%91%E3%83%A9%E3%83%A1%E3%83%88%E3%83%AA%E3%83%83%E3%82%AF%E3%83%99%E3%82%A4%E3%82%BA%E3%83%A2%E3%83%87%E3%83%AB/</link>
       <pubDate>Sun, 12 Jul 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://rmorita-stat.github.io/tags/%E3%83%8E%E3%83%B3%E3%83%91%E3%83%A9%E3%83%A1%E3%83%88%E3%83%AA%E3%83%83%E3%82%AF%E3%83%99%E3%82%A4%E3%82%BA%E3%83%A2%E3%83%87%E3%83%AB/</guid>
+      <guid>https://sucre-stat.com/tags/%E3%83%8E%E3%83%B3%E3%83%91%E3%83%A9%E3%83%A1%E3%83%88%E3%83%AA%E3%83%83%E3%82%AF%E3%83%99%E3%82%A4%E3%82%BA%E3%83%A2%E3%83%87%E3%83%AB/</guid>
       <description></description>
     </item>
     

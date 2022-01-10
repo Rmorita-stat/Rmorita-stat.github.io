@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="google-site-verification" content="qrt5G5NouQQVS-0Ss9qHlEuMYt3uKuifbUIOkPd4cPc" />
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://sucre-stat.com/images/logo2.png" />
+    <link rel="apple-touch-icon" href="https://sucre-stat.com/images/logo2.png"><link rel="stylesheet" href="https://sucre-stat.com/scss/style.css">
+    
+    <link rel="stylesheet" href="https://sucre-stat.com/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <script src="https://sucre-stat.com/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /></head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://sucre-stat.com/"><img src="https://sucre-stat.com/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/" >HOME</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/stat" >STAT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/r" >With R</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/julia" >With Julia</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="/tags/" >TAGS</a>
+    </div>
+    
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2021.10.23 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">線形回帰モデルのベイズファクター計算手法を検討する</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <h1 id="はじめに">はじめに</h1>
+<p>本記事では線形回帰モデルを例にベイズファクターの計算手法を複数実践します。また結果を比較しそれぞれの手法の特徴をみていきます。</p>
+<p>実践する手法は以下の通り。ガウス求積法のみ解析的な手法（積分の推定を含む）で、他の手法はMCMCの結果を使った推定手法となります。上2つの手法は<a href="https://sucre-stat.com/2021/10/bayesian-hypothesis-testing-3theory/">こちらの記事</a>で詳しく説明しています。</p>
+<!-- raw HTML omitted -->
+<ul>
+<li>
+<p><a href="#%E3%82%AC%E3%82%A6%E3%82%B9%E6%B1%82%E7%A9%8D%E6%B3%95">ガウス求積法</a></p>
+</li>
+<li>
+<p><a href="#savage-dickey%E6%B3%95">Savage-Dickey法</a></p>
+</li>
+<li>
+<p><a href="#bridge-sampling%E6%B3%95">BridgeSampling法</a></p>
+</li>
+</ul>
+<!-- raw HTML omitted -->
+<h1 id="線形回帰モデル">線形回帰モデル</h1>
+<p>線形回帰モデルを以下のようにおきます。数式中の文字はこれ以降<a href="https://sucre-stat.com/2021/10/bayesian-hypothesis-testing-3theory/">こちらの記事</a>に従います。</p>
+<p>$$
+p(\boldsymbol{Y}) = \mathrm{Normal}\left(\boldsymbol{\mu}, \sigma^2 \boldsymbol{I}_N\right) = \cfrac{1}{(2\pi)^{n/2}\sigma^N}\exp\left( -\cfrac{1}{2\sigma^{2}}\left( \boldsymbol{Y} - \boldsymbol{\mu} \right)^T\left(\boldsymbol{Y} - \boldsymbol{\mu}\right) \right) \tag{1}
+$$</p>
+<p>事前分布は客観ベイズの考えに基づきZellner-Siow&rsquo;s Priorsを採用します。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Zellner-Siow&#39;s Priors</strong></legend>
+<p>$(1)$、$(2)$式の$\boldsymbol{\beta}_\boldsymbol{{\gamma}}$、$\alpha$、$\sigma^2$に対する事前分布である下記$(8)$～$(10)$式を、Zellner-Siow&rsquo;s Priorsとよぶ。</p>
+<p>$$
+\alpha,\sigma^2 \propto \cfrac{1}{\sigma^2} \tag{2}
+$$</p>
+<p>$$
+\boldsymbol{\beta}_ \boldsymbol{{\gamma}} | \sigma^2, g \sim \mathrm{Normal}\left(\boldsymbol{0}, g\sigma^2\left( \cfrac{\boldsymbol{X}_ \boldsymbol{{\gamma}}^{T} \boldsymbol{X}_ \boldsymbol{{\gamma}}}{N} \right)^{-1}\right) \tag{3}
+$$</p>
+<p>$$
+g \sim \mathrm{InvGamma}\left( \cfrac{1}{2}, \cfrac{r}{2} \right) \tag{4}
+$$</p>
+
+</fieldset></p>
+<h1 id="ガウス求積法">ガウス求積法</h1>
+<p>これは解析的にベイズファクターを求める手法です。算出には  <code>BayesFactor::regressionBF()</code>を使います。</p>
+<p>この関数では下記の積分を含む式を、ガウス求積法を使って高精度に推定することでベイズファクターを算出します。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆1変数積分近似による推定方法</strong></legend>
+<p>ベイズファクター$BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack$ は下記の通り計算できる。</p>
+<p>$$
+BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack = \int _{0} ^{∞}(1 + g)^{(N - 1 - p _\boldsymbol{\gamma})/2} \left( 1 + \left( 1 - R _\boldsymbol{\gamma}^2 \right) g \right)^{-(n-1)/2} \pi(g) dg \tag{5}
+$$</p>
+<p>ここで、$\pi(g)$は$g$の事前分布を、$R_ \boldsymbol{\gamma}^2$は$\mathcal{\boldsymbol{M}}_ \boldsymbol{\gamma}$での通常の線形回帰における残差の平方和、決定係数を示す。</p>
+
+</fieldset><br>
+<br>
+スクリプトは以下の通り。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r">
+<span class="c1"># data preparation --------------------------------------------------------</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+
+<span class="n">d</span> <span class="o">&lt;-</span> <span class="n">attitude</span>
+<span class="n">response_variable</span> <span class="o">&lt;-</span> <span class="n">d</span><span class="o">$</span><span class="n">rating</span>
+<span class="n">predictors</span> <span class="o">&lt;-</span> <span class="n">d</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="n">rating</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_all</span><span class="p">(</span><span class="n">center</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">as_tibble</span><span class="p">()</span>
+
+<span class="c1"># regressionBF ------------------------------------------------------------</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">BayesFactor</span><span class="p">)</span>
+<span class="n">bf</span> <span class="o">&lt;-</span> <span class="nf">regressionBF</span><span class="p">(</span><span class="n">rating</span> <span class="o">~</span> <span class="n">.,</span> <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">,</span> <span class="n">rscaleCont</span> <span class="o">=</span> <span class="s">&#34;medium&#34;</span><span class="p">)</span>
+
+<span class="n">bf</span>
+
+<span class="c1"># Bayes factor analysis</span>
+<span class="c1"># --------------</span>
+<span class="c1"># [1] complaints                                                        : 417938.6  ±0.01%</span>
+<span class="c1"># [2] privileges                                                        : 3.177784  ±0%</span>
+<span class="c1"># [3] learning                                                          : 103.393   ±0%</span>
+<span class="c1"># [4] raises                                                            : 47.00917  ±0.01%</span>
+<span class="c1"># [5] critical                                                          : 0.4493186 ±0%</span>
+<span class="c1"># [6] advance                                                           : 0.4472295 ±0%</span>
+<span class="c1"># [7] complaints + privileges                                           : 75015.23  ±0%</span>
+<span class="c1"># [8] complaints + learning                                             : 207271.9  ±0%</span>
+<span class="c1"># [9] complaints + raises                                               : 77498.99  ±0%</span>
+<span class="c1"># [10] complaints + critical                                            : 70087.3   ±0%</span>
+<span class="c1"># [11] complaints + advance                                             : 72759.76  ±0%</span>
+<span class="c1"># [12] privileges + learning                                            : 42.16342  ±0.01%</span>
+<span class="c1"># [13] privileges + raises                                              : 25.89924  ±0%</span>
+<span class="c1"># [14] privileges + critical                                            : 1.382939  ±0%</span>
+<span class="c1"># [15] privileges + advance                                             : 1.234018  ±0%</span>
+<span class="c1"># [16] learning + raises                                                : 100.5111  ±0.01%</span>
+<span class="c1"># [17] learning + critical                                              : 33.96788  ±0%</span>
+<span class="c1"># [18] learning + advance                                               : 68.89183  ±0.01%</span>
+<span class="c1"># [19] raises + critical                                                : 15.70954  ±0%</span>
+<span class="c1"># [20] raises + advance                                                 : 35.60357  ±0%</span>
+<span class="c1"># [21] critical + advance                                               : 0.2393626 ±0.01%</span>
+<span class="c1"># [22] complaints + privileges + learning                               : 56341.12  ±0%</span>
+<span class="c1"># [23] complaints + privileges + raises                                 : 18230.79  ±0%</span>
+<span class="c1"># [24] complaints + privileges + critical                               : 16235.87  ±0%</span>
+<span class="c1"># [25] complaints + privileges + advance                                : 16482.37  ±0%</span>
+<span class="c1"># [26] complaints + learning + raises                                   : 42847.98  ±0%</span>
+<span class="c1"># [27] complaints + learning + critical                                 : 42374.73  ±0%</span>
+<span class="c1"># [28] complaints + learning + advance                                  : 88041.54  ±0%</span>
+<span class="c1"># [29] complaints + raises + critical                                   : 16913.97  ±0%</span>
+<span class="c1"># [30] complaints + raises + advance                                    : 20641.12  ±0%</span>
+<span class="c1"># [31] complaints + critical + advance                                  : 15821.13  ±0%</span>
+<span class="c1"># [32] privileges + learning + raises                                   : 39.02367  ±0%</span>
+<span class="c1"># [33] privileges + learning + critical                                 : 16.31662  ±0%</span>
+<span class="c1"># [34] privileges + learning + advance                                  : 38.47538  ±0%</span>
+<span class="c1"># [35] privileges + raises + critical                                   : 10.2571   ±0%</span>
+<span class="c1"># [36] privileges + raises + advance                                    : 28.71547  ±0%</span>
+<span class="c1"># [37] privileges + critical + advance                                  : 0.6451984 ±0%</span>
+<span class="c1"># [38] learning + raises + critical                                     : 33.4565   ±0%</span>
+<span class="c1"># [39] learning + raises + advance                                      : 313.3885  ±0%</span>
+<span class="c1"># [40] learning + critical + advance                                    : 35.08545  ±0%</span>
+<span class="c1"># [41] raises + critical + advance                                      : 13.36863  ±0%</span>
+<span class="c1"># [42] complaints + privileges + learning + raises                      : 13707.57  ±0%</span>
+<span class="c1"># [43] complaints + privileges + learning + critical                    : 13604.67  ±0%</span>
+<span class="c1"># [44] complaints + privileges + learning + advance                     : 24141.94  ±0%</span>
+<span class="c1"># [45] complaints + privileges + raises + critical                      : 4737.976  ±0%</span>
+<span class="c1"># [46] complaints + privileges + raises + advance                       : 5450.104  ±0%</span>
+<span class="c1"># [47] complaints + privileges + critical + advance                     : 4280.874  ±0%</span>
+<span class="c1"># [48] complaints + learning + raises + critical                        : 10520.62  ±0%</span>
+<span class="c1"># [49] complaints + learning + raises + advance                         : 23334     ±0%</span>
+<span class="c1"># [50] complaints + learning + critical + advance                       : 22169.3   ±0%</span>
+<span class="c1"># [51] complaints + raises + critical + advance                         : 5302.837  ±0%</span>
+<span class="c1"># [52] privileges + learning + raises + critical                        : 15.13044  ±0%</span>
+<span class="c1"># [53] privileges + learning + raises + advance                         : 134.4662  ±0%</span>
+<span class="c1"># [54] privileges + learning + critical + advance                       : 20.64672  ±0%</span>
+<span class="c1"># [55] privileges + raises + critical + advance                         : 11.7191   ±0.01%</span>
+<span class="c1"># [56] learning + raises + critical + advance                           : 106.5402  ±0%</span>
+<span class="c1"># [57] complaints + privileges + learning + raises + critical           : 3826.973  ±0%</span>
+<span class="c1"># [58] complaints + privileges + learning + raises + advance            : 7144.828  ±0%</span>
+<span class="c1"># [59] complaints + privileges + learning + critical + advance          : 6926.973  ±0%</span>
+<span class="c1"># [60] complaints + privileges + raises + critical + advance            : 1608.397  ±0%</span>
+<span class="c1"># [61] complaints + learning + raises + critical + advance              : 6461.751  ±0%</span>
+<span class="c1"># [62] privileges + learning + raises + critical + advance              : 51.02312  ±0%</span>
+<span class="c1"># [63] complaints + privileges + learning + raises + critical + advance : 2211.912  ±0%</span>
+<span class="c1">#</span>
+<span class="c1"># Against denominator:</span>
+<span class="c1">#   Intercept only</span>
+<span class="c1"># ---</span>
+<span class="c1"># Bayes factor type: BFlinearModel, JZS</span>
+
+</code></pre></div><h1 id="savage-dickey法">Savage-Dickey法</h1>
+<p>これはMCMCを使った推定手法のひとつです。Savage-Dickey法については<a href="https://sucre-stat.com/2021/04/savage-dickey-method/">こちら</a>を参照のこと。ネストされたモデルに対してのみ有効な手法です。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Zellner-Siow&#39;s Priors</strong></legend>
+<p>$(1)$、$(2)$式の$\boldsymbol{\beta}_\boldsymbol{{\gamma}}$、$\alpha$、$\sigma^2$に対する事前分布である下記$(8)$～$(10)$式を、Zellner-Siow&rsquo;s Priorsとよぶ。</p>
+<p>$$
+\alpha,\sigma^2 \propto \cfrac{1}{\sigma^2} \tag{10}
+$$</p>
+<p>$$
+\boldsymbol{\beta}_ \boldsymbol{{\gamma}} | \sigma^2, g \sim \mathrm{Normal}\left(\boldsymbol{0}, g\sigma^2\left( \cfrac{\boldsymbol{X}_ \boldsymbol{{\gamma}}^{T} \boldsymbol{X}_ \boldsymbol{{\gamma}}}{N} \right)^{-1}\right) \tag{11}
+$$</p>
+<p>$$
+g \sim \mathrm{InvGamma}\left( \cfrac{1}{2}, \cfrac{r}{2} \right) \tag{12}
+$$</p>
+<p>ここで、$\bar{\boldsymbol{X}_ \boldsymbol{{\gamma}}}$は$\gamma_{i}=1$である$\boldsymbol{X}_i$における平均値で構成された$N$×$\sum{\boldsymbol{\gamma}}$行列である。</p>
+
+</fieldset></p>
+<p><br>
+stanコードは以下のとおり。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="c1">// for Savage-Dickey method with cmdstanr
+</span><span class="c1"></span><span class="n">data</span> <span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">N</span><span class="p">,</span> <span class="n">p_gamma</span><span class="p">;</span>
+  <span class="c1">// N : sample size  p_gamma : number of predictors
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">Y</span><span class="p">;</span> <span class="c1">// responce_variable
+</span><span class="c1"></span>  <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span> <span class="n">p_gamma</span><span class="p">]</span> <span class="n">X_gamma</span><span class="p">;</span> <span class="c1">// predictors
+</span><span class="c1"></span>  <span class="n">real</span> <span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="p">,</span> <span class="n">r</span><span class="p">;</span>
+  <span class="c1">//r : scale of the Cauchy
+</span><span class="c1"></span>  <span class="c1">//Jeffreys_alpha : mean of prior(sigma^2) (sufficiently small values)
+</span><span class="c1"></span>  <span class="c1">//Jeffreys_beta : variance of prior(sigma^2) (sufficiently small values)
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">parameters</span> <span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">p_gamma</span><span class="p">]</span> <span class="n">beta_gamma</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">g</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">alpha</span><span class="p">;</span>
+  <span class="c1">// sigma : standard deviation of Y
+</span><span class="c1"></span>  <span class="c1">// g : variance of the standardized slope
+</span><span class="c1"></span>  <span class="c1">// alpha : coefficient
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">transformed</span> <span class="n">parameters</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">mu</span><span class="p">;</span>
+  <span class="n">mu</span> <span class="o">=</span> <span class="n">X_gamma</span> <span class="o">*</span> <span class="n">beta_gamma</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">model</span> <span class="p">{</span>
+
+    <span class="c1">//model
+</span><span class="c1"></span>  <span class="n">target</span> <span class="o">+=</span> <span class="n">normal_lpdf</span><span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">rep_vector</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span> <span class="o">|</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">);</span>
+
+  <span class="c1">// prior
+</span><span class="c1"></span>  <span class="n">target</span> <span class="o">+=</span> <span class="n">multi_normal_lpdf</span><span class="p">(</span> <span class="n">beta_gamma</span> <span class="o">|</span> <span class="n">rep_vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">p_gamma</span><span class="p">),</span> <span class="n">N</span> <span class="o">*</span> <span class="n">g</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">^</span><span class="mi">2</span> <span class="o">*</span> <span class="n">inverse</span><span class="p">(</span><span class="n">crossprod</span><span class="p">(</span><span class="n">X_gamma</span><span class="p">)));</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">inv_gamma_lpdf</span><span class="p">(</span><span class="n">g</span> <span class="o">|</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">r</span><span class="o">*</span><span class="mf">0.5</span> <span class="p">);</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">gamma_lpdf</span><span class="p">(</span><span class="n">sigma</span><span class="o">^</span><span class="mi">2</span> <span class="o">|</span> <span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="p">);</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">normal_lpdf</span><span class="p">(</span><span class="n">alpha</span> <span class="o">|</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">generated</span> <span class="n">quantities</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">p_gamma</span><span class="p">]</span> <span class="n">mean_beta</span><span class="p">;</span>
+  <span class="n">matrix</span><span class="p">[</span><span class="n">p_gamma</span><span class="p">,</span><span class="n">p_gamma</span><span class="p">]</span> <span class="n">covariance_beta</span><span class="p">;</span>
+  <span class="c1">//mean_beta : mean of CMDE(beta_gamma)
+</span><span class="c1"></span>  <span class="c1">//covariance_beta : covariance of CMDE(beta_gamma)
+</span><span class="c1"></span>  <span class="n">real</span> <span class="n">logPostDensBeta</span><span class="p">,</span> <span class="n">logPriorDensBeta</span><span class="p">;</span>
+  <span class="c1">//logPriorDensBeta:p(beta_gamma=0_vector | prior)
+</span><span class="c1"></span>  <span class="c1">//logPostDensBeta:p(beta_gamma=0_vector | posterior)
+</span><span class="c1"></span>  <span class="n">real</span> <span class="n">BF_01</span><span class="p">,</span> <span class="n">BF_10</span><span class="p">;</span>
+  <span class="c1">//BF_01 : BF[M_N:M_gamma], BF_10 : BF[M_gamma:M_N]
+</span><span class="c1"></span>  <span class="n">matrix</span><span class="p">[</span><span class="n">p_gamma</span><span class="p">,</span><span class="n">p_gamma</span><span class="p">]</span> <span class="n">ScaleMatrix_PriorDensBeta</span> <span class="o">=</span> <span class="n">N</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">^</span><span class="mi">2</span> <span class="o">*</span> <span class="n">inverse_spd</span><span class="p">(</span><span class="n">crossprod</span><span class="p">(</span><span class="n">X_gamma</span><span class="p">));</span>
+  <span class="c1">//ScaleMatrix_PriorDensBeta:covariance of beta_gamma at prior
+</span><span class="c1"></span>
+  <span class="n">covariance_beta</span> <span class="o">=</span> <span class="p">(</span><span class="n">sigma</span><span class="o">^</span><span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="n">N</span> <span class="o">*</span> <span class="n">g</span><span class="p">)</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">)</span> <span class="o">*</span> <span class="n">inverse_spd</span><span class="p">(</span><span class="n">crossprod</span><span class="p">(</span><span class="n">X_gamma</span><span class="p">));</span>
+
+  <span class="n">mean_beta</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">covariance_beta</span> <span class="o">*</span> <span class="n">X_gamma</span><span class="err">&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">rep_vector</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">N</span><span class="p">));</span>
+
+  <span class="n">logPostDensBeta</span> <span class="o">=</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">p_gamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">()))</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">log_determinant</span><span class="p">(</span><span class="n">covariance_beta</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">mean_beta</span><span class="err">&#39;</span> <span class="o">*</span> <span class="n">inverse_spd</span><span class="p">(</span><span class="n">covariance_beta</span><span class="p">)</span> <span class="o">*</span> <span class="n">mean_beta</span><span class="p">;</span>
+
+  <span class="n">logPriorDensBeta</span> <span class="o">=</span> <span class="n">lgamma</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">p_gamma</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">-</span> <span class="p">((</span><span class="n">p_gamma</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="n">pi</span><span class="p">())</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">log_determinant</span><span class="p">(</span><span class="n">ScaleMatrix_PriorDensBeta</span><span class="p">);</span>
+
+  <span class="n">BF_01</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">logPostDensBeta</span> <span class="o">-</span> <span class="n">logPriorDensBeta</span><span class="p">);</span>
+  <span class="n">BF_10</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">logPriorDensBeta</span> <span class="o">-</span> <span class="n">logPostDensBeta</span><span class="p">);</span>
+<span class="p">}</span>
+
+</code></pre></div><p>これを走らせたい場合は単純に以下のようにすれば走ります。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r">
+<span class="c1"># data preparation ---------------------------------------------------------------</span>
+
+<span class="n">response_variable</span> <span class="o">&lt;-</span> <span class="n">d</span><span class="o">$</span><span class="n">rating</span>
+<span class="n">predictors</span> <span class="o">&lt;-</span> <span class="n">d</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="n">rating</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_all</span><span class="p">(</span><span class="n">center</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">as_tibble</span><span class="p">()</span>
+
+<span class="c1"># run_model ---------------------------------------------------------------</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">cmdstanr</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">rstan</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">response_variable</span><span class="p">,</span> <span class="n">X_gamma</span><span class="o">=</span><span class="n">predictors</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="nf">sqrt</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="o">/</span><span class="m">4</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="nf">length</span><span class="p">(</span><span class="n">attitude</span><span class="o">$</span><span class="n">rating</span><span class="p">),</span>
+             <span class="n">p_gamma</span><span class="o">=</span><span class="nf">ncol</span><span class="p">(</span><span class="n">predictors</span><span class="p">),</span> <span class="n">Jeffreys_alpha</span><span class="o">=</span><span class="m">1e-5</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="o">=</span><span class="m">1e-5</span><span class="p">)</span>
+
+<span class="c1"># cmdstan : for savage-dickey method</span>
+<span class="n">model1</span> <span class="o">&lt;-</span> <span class="nf">cmdstan_model</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="nf">getwd</span><span class="p">(),</span><span class="s">&#34;/model/model1.stan&#34;</span><span class="p">))</span>
+
+<span class="c1"># 単純にsavage-dickey法でベイズファクターを1回だけ計算したいときは下のようにする</span>
+<span class="n">fit_c</span> <span class="o">&lt;-</span> <span class="n">model1</span><span class="o">$</span><span class="nf">sample</span><span class="p">(</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span>
+  <span class="n">parallel_chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+  <span class="n">chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+  <span class="n">iter_warmup</span> <span class="o">=</span> <span class="m">1000</span><span class="p">,</span>
+  <span class="n">iter_sampling</span> <span class="o">=</span> <span class="m">4000</span><span class="p">,</span>
+  <span class="n">refresh</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div><p>ただ、今回の例では試行ごとに得られるベイズファクターがかなりかわってくるので、各モデルに対し100回ずつ総当たり（Bruteforce）でシミュレーションしてみます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r">
+<span class="c1"># BruteForce Regression(Savage-Dickey method) ---------------------------------------------------</span>
+
+<span class="c1"># 準備</span>
+<span class="n">subsetfun</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">kosuu</span><span class="p">){</span>
+  <span class="n">XX</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(,</span><span class="m">2</span><span class="n">^kosuu</span><span class="p">,</span><span class="n">kosuu</span><span class="p">)</span>
+  <span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">kosuu</span><span class="p">){</span>
+    <span class="n">CCC</span> <span class="o">&lt;-</span> <span class="nf">t</span><span class="p">(</span><span class="nf">rbind</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="bp">F</span><span class="p">,</span><span class="m">2</span><span class="nf">^</span><span class="p">(</span><span class="n">kosuu</span><span class="o">-</span><span class="n">i</span><span class="p">)),</span><span class="nf">rep</span><span class="p">(</span><span class="bp">T</span><span class="p">,</span><span class="m">2</span><span class="nf">^</span><span class="p">(</span><span class="n">kosuu</span><span class="o">-</span><span class="n">i</span><span class="p">))))</span>
+    <span class="n">XX[</span><span class="p">,</span><span class="n">i]</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="n">CCC</span><span class="p">,</span><span class="m">2</span><span class="nf">^</span><span class="p">(</span><span class="n">i</span><span class="m">-1</span><span class="p">))</span>
+  <span class="p">}</span>
+  <span class="nf">return</span><span class="p">(</span><span class="n">XX</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># 設定</span>
+<span class="n">trials</span> <span class="o">&lt;-</span> <span class="m">100</span>
+<span class="n">subset</span> <span class="o">&lt;-</span> <span class="nf">subsetfun</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">predictors</span><span class="p">))</span>
+<span class="n">fit_BF</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">nrow</span><span class="o">=</span><span class="n">trials</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="kc">NA</span><span class="p">)</span>
+<span class="n">fit_BF_name</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">nrow</span><span class="o">=</span><span class="n">trials</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="kc">NA</span><span class="p">)</span>
+
+<span class="n">progress_bar_j</span> <span class="o">&lt;-</span> <span class="nf">txtProgressBar</span><span class="p">(</span><span class="n">min</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">max</span><span class="o">=</span><span class="n">trials</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="m">3</span><span class="p">)</span>
+<span class="n">progress_bar_i</span> <span class="o">&lt;-</span> <span class="nf">txtProgressBar</span><span class="p">(</span><span class="n">min</span><span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="n">max</span><span class="o">=</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
+
+<span class="c1"># BruteForce</span>
+<span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">2</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">)){</span>
+  <span class="nf">setTxtProgressBar</span><span class="p">(</span><span class="n">pb</span><span class="o">=</span><span class="n">progress_bar_i</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+  <span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">response_variable</span><span class="p">,</span> <span class="n">X_gamma</span><span class="o">=</span><span class="n">predictors[</span><span class="p">,</span><span class="n">subset[i</span><span class="p">,</span><span class="n">]]</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="nf">sqrt</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="o">/</span><span class="m">4</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="nf">length</span><span class="p">(</span><span class="n">d</span><span class="o">$</span><span class="n">rating</span><span class="p">),</span>
+               <span class="n">p_gamma</span><span class="o">=</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">predictors[</span><span class="p">,</span><span class="n">subset[i</span><span class="p">,</span><span class="n">]]</span><span class="p">),</span> <span class="n">Jeffreys_alpha</span><span class="o">=</span><span class="m">1e-5</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="o">=</span><span class="m">1e-5</span><span class="p">)</span>
+  <span class="nf">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">trials</span><span class="p">){</span>
+    <span class="nf">setTxtProgressBar</span><span class="p">(</span><span class="n">pb</span><span class="o">=</span><span class="n">progress_bar_j</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">fit_c</span> <span class="o">&lt;-</span> <span class="n">model1</span><span class="o">$</span><span class="nf">sample</span><span class="p">(</span>
+      <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span>
+      <span class="n">chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+      <span class="n">iter_warmup</span> <span class="o">=</span> <span class="m">1000</span><span class="p">,</span>
+      <span class="n">iter_sampling</span> <span class="o">=</span> <span class="m">4000</span><span class="p">,</span>
+      <span class="n">refresh</span> <span class="o">=</span> <span class="m">0</span>
+    <span class="p">)</span>
+    <span class="n">stanfit1</span> <span class="o">&lt;-</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">read_stan_csv</span><span class="p">(</span><span class="n">fit_c</span><span class="o">$</span><span class="nf">output_files</span><span class="p">())</span>
+    <span class="n">res1</span> <span class="o">&lt;-</span> <span class="nf">as.matrix</span><span class="p">(</span><span class="n">stanfit1</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">as.data.frame</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="nf">starts_with</span><span class="p">(</span><span class="s">&#34;BF&#34;</span><span class="p">))</span> <span class="o">%&gt;%</span>
+      <span class="nf">summarise_all</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="nf">summarise_all</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">round</span><span class="p">),</span><span class="n">digits</span><span class="o">=</span><span class="m">8</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="nf">everything</span><span class="p">())</span>
+    <span class="n">fit_BF[j</span><span class="p">,</span><span class="n">i]</span> <span class="o">&lt;-</span> <span class="m">1</span><span class="o">/</span><span class="nf">min</span><span class="p">(</span><span class="n">res1</span><span class="o">$</span><span class="n">value</span><span class="p">)</span>
+    <span class="n">fit_BF_name[j</span><span class="p">,</span><span class="n">i]</span> <span class="o">&lt;-</span> <span class="n">res1</span><span class="o">$</span><span class="n">name</span><span class="nf">[which.max</span><span class="p">(</span><span class="n">res1</span><span class="o">$</span><span class="n">value</span><span class="p">)</span><span class="n">]</span>
+    <span class="nf">rm</span><span class="p">(</span><span class="n">fit_c</span><span class="p">)</span>
+  <span class="p">}</span>
+  <span class="nf">save</span><span class="p">(</span><span class="n">fit_BF</span><span class="p">,</span> <span class="n">fit_BF_name</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="nf">paste0</span><span class="p">(</span><span class="nf">getwd</span><span class="p">(),</span><span class="s">&#34;/data/Data_model1.RData&#34;</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="c1"># comparing plot(Savage-Dickey method VS Gaussian Quadrature) ----------------------------------------------------------</span>
+
+<span class="n">fit_BF_rate</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">nrow</span><span class="o">=</span><span class="n">trials</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="kc">NA</span><span class="p">)</span>
+
+<span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">2</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">)){</span>
+
+  <span class="c1">## MCMCの採用BF(generated quantities)がすべてBF_01(or BF_10)で一意でない場合停止</span>
+  <span class="nf">if</span><span class="p">(</span><span class="nf">nrow</span><span class="p">(</span><span class="nf">unique</span><span class="p">(</span><span class="n">fit_BF_name</span><span class="p">))</span> <span class="o">!=</span> <span class="m">1</span><span class="p">)</span>
+    <span class="nf">stop</span><span class="p">(</span><span class="s">&#34;MCMCの採用BF(generated quantities)がすべてBF_01(or BF_10)で一意でない&#34;</span><span class="p">)</span>
+
+  <span class="c1">## regressionBF からの結果抽出用ID</span>
+  <span class="n">id</span> <span class="o">&lt;-</span> <span class="nf">paste</span><span class="p">(</span><span class="nf">attributes</span><span class="p">(</span><span class="n">predictors</span><span class="p">)</span><span class="o">$</span><span class="n">names[subset[i</span><span class="p">,</span><span class="n">]]</span><span class="p">,</span> <span class="n">collapse</span> <span class="o">=</span> <span class="s">&#34; + &#34;</span><span class="p">)</span>
+
+  <span class="c1">## MCMCの結果がBF_01のとき、BF_10に修正</span>
+  <span class="nf">if</span><span class="p">(</span><span class="nf">unique</span><span class="p">(</span><span class="n">fit_BF_name[1</span><span class="p">,</span><span class="n">i]</span><span class="p">)</span> <span class="o">==</span> <span class="s">&#34;BF_01_mean&#34;</span><span class="p">)</span>
+    <span class="n">fit_BF_rate[</span><span class="p">,</span><span class="n">i]</span> <span class="o">&lt;-</span> <span class="m">1</span> <span class="o">/</span> <span class="n">fit_BF[</span><span class="p">,</span><span class="n">i]</span>
+  <span class="n">else</span>
+    <span class="n">fit_BF_rate[</span><span class="p">,</span><span class="n">i]</span> <span class="o">&lt;-</span> <span class="n">fit_BF[</span><span class="p">,</span><span class="n">i]</span>
+
+  <span class="c1">## MCMCの採用BF(generated quantities)をregressionBFの結果で評価</span>
+  <span class="n">fit_BF_rate[</span><span class="p">,</span><span class="n">i]</span> <span class="o">&lt;-</span> <span class="n">fit_BF_rate[</span><span class="p">,</span><span class="n">i]</span> <span class="o">/</span>
+    <span class="nf">exp</span><span class="p">(</span><span class="nf">attributes</span><span class="p">(</span><span class="n">bf[id]</span><span class="p">)</span><span class="o">$</span><span class="n">bayesFactor[[</span><span class="s">&#34;bf&#34;</span><span class="n">]]</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">fit_BF_rate</span> <span class="o">&lt;-</span> <span class="n">fit_BF_rate</span> <span class="o">%&gt;%</span> <span class="nf">as_tibble</span><span class="p">()</span>
+
+<span class="n">ID</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">()</span>
+
+<span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">2</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">)){</span>
+  <span class="n">id</span> <span class="o">&lt;-</span> <span class="nf">paste</span><span class="p">(</span><span class="nf">attributes</span><span class="p">(</span><span class="n">predictors</span><span class="p">)</span><span class="o">$</span><span class="n">names[subset[i</span><span class="p">,</span><span class="n">]]</span><span class="p">,</span> <span class="n">collapse</span> <span class="o">=</span> <span class="s">&#34; + &#34;</span><span class="p">)</span>
+  <span class="n">ID[i</span><span class="m">-1</span><span class="n">]</span> <span class="o">&lt;-</span> <span class="nf">exp</span><span class="p">(</span><span class="nf">attributes</span><span class="p">(</span><span class="n">bf[id]</span><span class="p">)</span><span class="o">$</span><span class="n">bayesFactor[[</span><span class="s">&#34;bf&#34;</span><span class="n">]]</span><span class="p">)</span>
+  <span class="nf">names</span><span class="p">(</span><span class="n">ID</span><span class="p">)</span><span class="n">[i</span><span class="m">-1</span><span class="n">]</span> <span class="o">&lt;-</span> <span class="n">id</span>
+<span class="p">}</span>
+
+<span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">)){</span>
+  <span class="nf">colnames</span><span class="p">(</span><span class="n">fit_BF_rate</span><span class="p">)</span><span class="n">[i]</span> <span class="o">&lt;-</span> <span class="nf">paste</span><span class="p">(</span><span class="nf">attributes</span><span class="p">(</span><span class="n">predictors</span><span class="p">)</span><span class="o">$</span><span class="n">names[subset[i</span><span class="p">,</span><span class="n">]]</span><span class="p">,</span> <span class="n">collapse</span> <span class="o">=</span> <span class="s">&#34; + &#34;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">fit_BF_rate</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="s">&#34;&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">summarise_all</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">median</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="nf">summarise_all</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">round</span><span class="p">),</span><span class="n">digits</span><span class="o">=</span><span class="m">2</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="nf">everything</span><span class="p">())</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">BF</span> <span class="o">=</span> <span class="n">ID[name]</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_at</span><span class="p">(</span><span class="nf">vars</span><span class="p">(</span><span class="n">BF</span><span class="p">),</span> <span class="n">round</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="m">3</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_at</span><span class="p">(</span><span class="nf">vars</span><span class="p">(</span><span class="n">BF</span><span class="p">),</span><span class="n">as.factor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">fit_BF_median</span>
+
+<span class="n">fit_BF_rate</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="s">&#34;&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="n">cols</span> <span class="o">=</span> <span class="nf">everything</span><span class="p">(),</span><span class="n">names_to</span> <span class="o">=</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="n">values_to</span> <span class="o">=</span> <span class="s">&#34;fit_BF&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">BF</span> <span class="o">=</span> <span class="n">ID[name]</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_at</span><span class="p">(</span><span class="nf">vars</span><span class="p">(</span><span class="n">BF</span><span class="p">),</span> <span class="n">round</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="m">3</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_at</span><span class="p">(</span><span class="nf">vars</span><span class="p">(</span><span class="n">BF</span><span class="p">),</span><span class="n">as.factor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">res</span>
+
+<span class="nf">library</span><span class="p">(</span><span class="n">RColorBrewer</span><span class="p">)</span>
+<span class="n">mycol</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">12</span><span class="p">,</span><span class="s">&#34;Set3&#34;</span><span class="p">),</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">8</span><span class="p">,</span><span class="s">&#34;Set2&#34;</span><span class="p">),</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">9</span><span class="p">,</span><span class="s">&#34;Set1&#34;</span><span class="p">)),</span><span class="m">2</span><span class="p">),</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">6</span><span class="p">,</span><span class="s">&#34;Set3&#34;</span><span class="p">))</span>
+
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">BF</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">fit_BF</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="n">name</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">geom_boxplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">geom_text</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">fit_BF_median</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">BF</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">value</span><span class="p">),</span> <span class="n">nudge_y</span> <span class="o">=</span> <span class="m">0.08</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#34;grey20&#34;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="m">3.4</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">scale_y_log10</span><span class="p">(</span><span class="n">limits</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">1e-02</span><span class="p">,</span> <span class="m">1e+02</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme</span><span class="p">(</span><span class="n">axis.text.x</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">angle</span> <span class="o">=</span> <span class="m">90</span><span class="p">,</span> <span class="n">hjust</span> <span class="o">=</span> <span class="m">1</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_fill_manual</span><span class="p">(</span><span class="n">values</span> <span class="o">=</span> <span class="n">mycol</span><span class="p">)</span> <span class="o">+</span> <span class="nf">xlab</span><span class="p">(</span><span class="s">&#34;BF10 by Gaussian quadrature&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">ylab</span><span class="p">(</span><span class="s">&#34;BF10 by Savage-Dickey method&#34;</span><span class="p">)</span>
+
+</code></pre></div><p><code>BayesFactor::regressionBF()</code>との比較結果を示します。<br>
+<br>
+<figure class="left"><a href="/r/bayesian-hypothesis-testing-3/BF_rate_bridgesampler.png">
+    <img src="/r/bayesian-hypothesis-testing-3/BF_rate.png" width="1000" height="540"/> </a>
+</figure>
+</p>
+<p>結果、<code>BayesFactor::regressionBF()</code>による結果から大きく逸脱してはいませんが、BFの値が1000を超えたあたりからMCMC毎の結果のばらつきが大きくなっています。また全体的にBFの値が大きくなるにつれてBFがヌルモデルを過小評価する傾向があります。</p>
+<h1 id="bridgesampling法">BridgeSampling法</h1>
+<p>Bridgesampling法も推定手法のひとつです。モデルの自由エネルギーをMCMC結果から直接推定する手法のようですが、詳細はまだ勉強してません！</p>
+<p>各モデルとヌルモデルの自由エネルギーを推定し、比を取ることでベイズファクターを推定します。</p>
+<p>各モデルの自由エネルギーを推定するためのMCMCを得るStanコードは下記の通り。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">data</span> <span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">N</span><span class="p">;</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">p_gamma</span><span class="p">;</span>
+  <span class="c1">// N : sample size  p_gamma : number of predictors
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">Y</span><span class="p">;</span> <span class="c1">// responce_variable
+</span><span class="c1"></span>  <span class="n">matrix</span><span class="p">[</span><span class="n">N</span><span class="p">,</span> <span class="n">p_gamma</span><span class="p">]</span> <span class="n">X_gamma</span><span class="p">;</span> <span class="c1">// predictors
+</span><span class="c1"></span>  <span class="n">real</span> <span class="n">Jeffreys_alpha</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">Jeffreys_beta</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">r</span><span class="p">;</span>
+  <span class="c1">//r : scale of the Cauchy
+</span><span class="c1"></span>  <span class="c1">//Jeffreys_alpha : mean of prior(sigma^2) (sufficiently small values)
+</span><span class="c1"></span>  <span class="c1">//Jeffreys_beta : variance of prior(sigma^2) (sufficiently small values)
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">parameters</span> <span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">p_gamma</span><span class="p">]</span> <span class="n">beta_gamma</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">sigma</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">g</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">alpha</span><span class="p">;</span>
+  <span class="c1">// sigma : standard deviation of Y
+</span><span class="c1"></span>  <span class="c1">// g : variance of the standardized slope
+</span><span class="c1"></span>  <span class="c1">// alpha : coefficient
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">transformed</span> <span class="n">parameters</span><span class="p">{</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">mu</span><span class="p">;</span>
+  <span class="n">mu</span> <span class="o">=</span> <span class="n">X_gamma</span> <span class="o">*</span> <span class="n">beta_gamma</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">model</span> <span class="p">{</span>
+    <span class="c1">//model
+</span><span class="c1"></span>  <span class="n">target</span> <span class="o">+=</span> <span class="n">normal_lpdf</span><span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">rep_vector</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span> <span class="o">|</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">);</span>
+
+  <span class="c1">// prior
+</span><span class="c1"></span>  <span class="n">target</span> <span class="o">+=</span> <span class="n">multi_normal_lpdf</span><span class="p">(</span> <span class="n">beta_gamma</span> <span class="o">|</span> <span class="n">rep_vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">p_gamma</span><span class="p">),</span> <span class="n">N</span> <span class="o">*</span> <span class="n">g</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">^</span><span class="mi">2</span> <span class="o">*</span> <span class="n">inverse</span><span class="p">(</span><span class="n">crossprod</span><span class="p">(</span><span class="n">X_gamma</span><span class="p">)));</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">inv_gamma_lpdf</span><span class="p">(</span><span class="n">g</span> <span class="o">|</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">r</span><span class="o">*</span><span class="mf">0.5</span> <span class="p">);</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">gamma_lpdf</span><span class="p">(</span><span class="n">sigma</span><span class="o">^</span><span class="mi">2</span> <span class="o">|</span> <span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="p">);</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">normal_lpdf</span><span class="p">(</span><span class="n">alpha</span> <span class="o">|</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><p>ヌルモデルの自由エネルギーを推定するためのMCMCを得るStanコードは下記の通り。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">data</span> <span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">N</span><span class="p">;</span>
+  <span class="n">vector</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">Y</span><span class="p">;</span> <span class="c1">// responce_variable
+</span><span class="c1"></span>  <span class="n">real</span> <span class="n">Jeffreys_alpha</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">Jeffreys_beta</span><span class="p">;</span>
+  <span class="c1">//Jeffreys_alpha : mean of prior(sigma^2) (sufficiently small values)
+</span><span class="c1"></span>  <span class="c1">//Jeffreys_beta : variance of prior(sigma^2) (sufficiently small values)
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">parameters</span> <span class="p">{</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">sigma</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">alpha</span><span class="p">;</span>
+  <span class="c1">// sigma : standard deviation of Y
+</span><span class="c1"></span>  <span class="c1">// g : variance of the standardized slope
+</span><span class="c1"></span>  <span class="c1">// alpha : coefficient
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">model</span> <span class="p">{</span>
+    <span class="c1">//model
+</span><span class="c1"></span>  <span class="n">target</span> <span class="o">+=</span> <span class="n">normal_lpdf</span><span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">rep_vector</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span> <span class="o">|</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">);</span>
+
+  <span class="c1">// prior
+</span><span class="c1"></span>  <span class="n">target</span> <span class="o">+=</span> <span class="n">gamma_lpdf</span><span class="p">(</span><span class="n">sigma</span><span class="o">^</span><span class="mi">2</span> <span class="o">|</span> <span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="p">);</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">normal_lpdf</span><span class="p">(</span><span class="n">alpha</span> <span class="o">|</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div><p>こちらも総当たりで各モデルに対し11回ずつでシミュレーションしてみます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># BruteForce Regression(bridge-sampling) -----------------------------</span>
+
+<span class="c1"># rstan : for bridge-sampling</span>
+<span class="n">model2</span> <span class="o">&lt;-</span> <span class="nf">stan_model</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="nf">getwd</span><span class="p">(),</span><span class="s">&#34;/model/model2.stan&#34;</span><span class="p">))</span>
+<span class="n">model3</span> <span class="o">&lt;-</span> <span class="nf">stan_model</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="nf">getwd</span><span class="p">(),</span><span class="s">&#34;/model/model3.stan&#34;</span><span class="p">))</span>
+
+<span class="nf">library</span><span class="p">(</span><span class="n">bridgesampling</span><span class="p">)</span>
+
+<span class="n">trials</span> <span class="o">&lt;-</span> <span class="m">11</span>
+<span class="n">subset</span> <span class="o">&lt;-</span> <span class="nf">subsetfun</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">predictors</span><span class="p">))</span>
+<span class="n">free_energy_null</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="kc">NA</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">trials</span><span class="p">)</span>
+<span class="n">free_energy_gamma</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">nrow</span><span class="o">=</span><span class="n">trials</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="kc">NA</span><span class="p">)</span>
+<span class="n">BF_bridgesampler</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">nrow</span><span class="o">=</span><span class="n">trials</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="kc">NA</span><span class="p">)</span>
+
+<span class="n">progress_bar_j</span> <span class="o">&lt;-</span> <span class="nf">txtProgressBar</span><span class="p">(</span><span class="n">min</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">max</span><span class="o">=</span><span class="n">trials</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="m">3</span><span class="p">)</span>
+<span class="n">progress_bar_i</span> <span class="o">&lt;-</span> <span class="nf">txtProgressBar</span><span class="p">(</span><span class="n">min</span><span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="n">max</span><span class="o">=</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
+
+<span class="nf">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">trials</span><span class="p">){</span>
+  <span class="n">fit_b</span> <span class="o">&lt;-</span> <span class="nf">sampling</span><span class="p">(</span>
+    <span class="n">model3</span><span class="p">,</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span>
+    <span class="n">chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+    <span class="n">iter</span> <span class="o">=</span> <span class="m">10000</span><span class="p">,</span>
+    <span class="n">warmup</span> <span class="o">=</span> <span class="m">1000</span><span class="p">,</span>
+  <span class="p">)</span>
+  <span class="n">free_energy_null[j]</span> <span class="o">&lt;-</span> <span class="nf">bridge_sampler</span><span class="p">(</span><span class="n">fit_b</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#34;warp3&#34;</span><span class="p">)</span><span class="o">$</span><span class="n">logml</span>
+  <span class="nf">rm</span><span class="p">(</span><span class="n">fit_b</span><span class="p">)</span>
+  <span class="nf">save</span><span class="p">(</span><span class="n">free_energy_null</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="nf">paste0</span><span class="p">(</span><span class="nf">getwd</span><span class="p">(),</span><span class="s">&#34;/data/free_energy_null.RData&#34;</span><span class="p">))</span>
+<span class="p">}</span>
+
+
+<span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">2</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">)){</span>
+  <span class="nf">setTxtProgressBar</span><span class="p">(</span><span class="n">pb</span><span class="o">=</span><span class="n">progress_bar_i</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+  <span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">response_variable</span><span class="p">,</span> <span class="n">X_gamma</span><span class="o">=</span><span class="n">predictors[</span><span class="p">,</span><span class="n">subset[i</span><span class="p">,</span><span class="n">]]</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="nf">sqrt</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="o">/</span><span class="m">4</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="nf">length</span><span class="p">(</span><span class="n">d</span><span class="o">$</span><span class="n">rating</span><span class="p">),</span>
+               <span class="n">p_gamma</span><span class="o">=</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">predictors[</span><span class="p">,</span><span class="n">subset[i</span><span class="p">,</span><span class="n">]]</span><span class="p">),</span> <span class="n">Jeffreys_alpha</span><span class="o">=</span><span class="m">1e-5</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="o">=</span><span class="m">1e-5</span><span class="p">)</span>
+  <span class="nf">for</span><span class="p">(</span><span class="n">j</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">trials</span><span class="p">){</span>
+    <span class="nf">setTxtProgressBar</span><span class="p">(</span><span class="n">pb</span><span class="o">=</span><span class="n">progress_bar_j</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">fit_b</span> <span class="o">&lt;-</span> <span class="nf">sampling</span><span class="p">(</span>
+      <span class="n">model2</span><span class="p">,</span>
+      <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span>
+      <span class="n">chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+      <span class="n">iter</span> <span class="o">=</span> <span class="m">10000</span><span class="p">,</span>
+      <span class="n">warmup</span> <span class="o">=</span> <span class="m">1000</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">free_energy_gamma[j</span><span class="p">,</span><span class="n">i]</span> <span class="o">&lt;-</span> <span class="nf">bridge_sampler</span><span class="p">(</span><span class="n">fit_b</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#34;warp3&#34;</span><span class="p">)</span><span class="o">$</span><span class="n">logml</span>
+    <span class="n">BF_bridgesampler[j</span><span class="p">,</span><span class="n">i]</span> <span class="o">&lt;-</span> <span class="nf">exp</span><span class="p">(</span><span class="n">free_energy_gamma[j</span><span class="p">,</span><span class="n">i]</span> <span class="o">-</span> <span class="n">free_energy_null[j]</span><span class="p">)</span>
+    <span class="nf">rm</span><span class="p">(</span><span class="n">fit_b</span><span class="p">)</span>
+    <span class="nf">save</span><span class="p">(</span><span class="n">free_energy_gamma</span><span class="p">,</span><span class="n">BF_bridgesampler</span><span class="p">,</span> <span class="n">file</span> <span class="o">=</span> <span class="nf">paste0</span><span class="p">(</span><span class="nf">getwd</span><span class="p">(),</span><span class="s">&#34;/data/BF_bridgesampler.RData&#34;</span><span class="p">))</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># comparing plot(Bridge-sampling method VS Gaussian Quadrature) ----------------------------------------------------------</span>
+
+
+<span class="n">fit_BF_rate</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">nrow</span><span class="o">=</span><span class="n">trials</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">),</span> <span class="n">data</span><span class="o">=</span><span class="kc">NA</span><span class="p">)</span>
+
+<span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">2</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">)){</span>
+
+  <span class="c1">## regressionBF からの結果抽出用ID</span>
+  <span class="n">id</span> <span class="o">&lt;-</span> <span class="nf">paste</span><span class="p">(</span><span class="nf">attributes</span><span class="p">(</span><span class="n">predictors</span><span class="p">)</span><span class="o">$</span><span class="n">names[subset[i</span><span class="p">,</span><span class="n">]]</span><span class="p">,</span> <span class="n">collapse</span> <span class="o">=</span> <span class="s">&#34; + &#34;</span><span class="p">)</span>
+
+  <span class="n">fit_BF_rate[</span><span class="p">,</span><span class="n">i]</span> <span class="o">&lt;-</span> <span class="n">BF_bridgesampler[</span><span class="p">,</span><span class="n">i]</span> <span class="o">/</span>
+    <span class="nf">exp</span><span class="p">(</span><span class="nf">attributes</span><span class="p">(</span><span class="n">bf[id]</span><span class="p">)</span><span class="o">$</span><span class="n">bayesFactor[[</span><span class="s">&#34;bf&#34;</span><span class="n">]]</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">fit_BF_rate</span> <span class="o">&lt;-</span> <span class="n">fit_BF_rate</span> <span class="o">%&gt;%</span> <span class="nf">as_tibble</span><span class="p">()</span>
+
+<span class="n">ID</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">()</span>
+
+<span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">2</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">)){</span>
+  <span class="n">id</span> <span class="o">&lt;-</span> <span class="nf">paste</span><span class="p">(</span><span class="nf">attributes</span><span class="p">(</span><span class="n">predictors</span><span class="p">)</span><span class="o">$</span><span class="n">names[subset[i</span><span class="p">,</span><span class="n">]]</span><span class="p">,</span> <span class="n">collapse</span> <span class="o">=</span> <span class="s">&#34; + &#34;</span><span class="p">)</span>
+  <span class="n">ID[i</span><span class="m">-1</span><span class="n">]</span> <span class="o">&lt;-</span> <span class="nf">exp</span><span class="p">(</span><span class="nf">attributes</span><span class="p">(</span><span class="n">bf[id]</span><span class="p">)</span><span class="o">$</span><span class="n">bayesFactor[[</span><span class="s">&#34;bf&#34;</span><span class="n">]]</span><span class="p">)</span>
+  <span class="nf">names</span><span class="p">(</span><span class="n">ID</span><span class="p">)</span><span class="n">[i</span><span class="m">-1</span><span class="n">]</span> <span class="o">&lt;-</span> <span class="n">id</span>
+<span class="p">}</span>
+
+<span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">subset</span><span class="p">)){</span>
+  <span class="nf">colnames</span><span class="p">(</span><span class="n">fit_BF_rate</span><span class="p">)</span><span class="n">[i]</span> <span class="o">&lt;-</span> <span class="nf">paste</span><span class="p">(</span><span class="nf">attributes</span><span class="p">(</span><span class="n">predictors</span><span class="p">)</span><span class="o">$</span><span class="n">names[subset[i</span><span class="p">,</span><span class="n">]]</span><span class="p">,</span> <span class="n">collapse</span> <span class="o">=</span> <span class="s">&#34; + &#34;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">fit_BF_rate</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="s">&#34;&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">summarise_all</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">median</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="nf">summarise_all</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">round</span><span class="p">),</span><span class="n">digits</span><span class="o">=</span><span class="m">2</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="nf">everything</span><span class="p">())</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">BF</span> <span class="o">=</span> <span class="n">ID[name]</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_at</span><span class="p">(</span><span class="nf">vars</span><span class="p">(</span><span class="n">BF</span><span class="p">),</span> <span class="n">round</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="m">3</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_at</span><span class="p">(</span><span class="nf">vars</span><span class="p">(</span><span class="n">BF</span><span class="p">),</span><span class="n">as.factor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">fit_BF_median</span>
+
+<span class="n">fit_BF_rate</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="s">&#34;&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">pivot_longer</span><span class="p">(</span><span class="n">cols</span> <span class="o">=</span> <span class="nf">everything</span><span class="p">(),</span><span class="n">names_to</span> <span class="o">=</span> <span class="s">&#34;name&#34;</span><span class="p">,</span> <span class="n">values_to</span> <span class="o">=</span> <span class="s">&#34;fit_BF&#34;</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">BF</span> <span class="o">=</span> <span class="n">ID[name]</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_at</span><span class="p">(</span><span class="nf">vars</span><span class="p">(</span><span class="n">BF</span><span class="p">),</span> <span class="n">round</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="m">3</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">mutate_at</span><span class="p">(</span><span class="nf">vars</span><span class="p">(</span><span class="n">BF</span><span class="p">),</span><span class="n">as.factor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">res</span>
+
+<span class="nf">library</span><span class="p">(</span><span class="n">RColorBrewer</span><span class="p">)</span>
+<span class="n">mycol</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">12</span><span class="p">,</span><span class="s">&#34;Set3&#34;</span><span class="p">),</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">8</span><span class="p">,</span><span class="s">&#34;Set2&#34;</span><span class="p">),</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">9</span><span class="p">,</span><span class="s">&#34;Set1&#34;</span><span class="p">)),</span><span class="m">2</span><span class="p">),</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="m">6</span><span class="p">,</span><span class="s">&#34;Set3&#34;</span><span class="p">))</span>
+
+<span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">res</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">BF</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">fit_BF</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="n">name</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme_light</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">geom_boxplot</span><span class="p">()</span> <span class="o">+</span>
+  <span class="nf">geom_text</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">fit_BF_median</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">BF</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">value</span><span class="p">),</span> <span class="n">nudge_y</span> <span class="o">=</span> <span class="m">0.08</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#34;grey20&#34;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="m">3.4</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">scale_y_log10</span><span class="p">(</span><span class="n">limits</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">1e-02</span><span class="p">,</span> <span class="m">1e+02</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme</span><span class="p">(</span><span class="n">axis.text.x</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">angle</span> <span class="o">=</span> <span class="m">90</span><span class="p">,</span> <span class="n">hjust</span> <span class="o">=</span> <span class="m">1</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_fill_manual</span><span class="p">(</span><span class="n">values</span> <span class="o">=</span> <span class="n">mycol</span><span class="p">)</span> <span class="o">+</span> <span class="nf">xlab</span><span class="p">(</span><span class="s">&#34;BF10 by Gaussian quadrature&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">ylab</span><span class="p">(</span><span class="s">&#34;BF10 by BridgeSampling&#34;</span><span class="p">)</span>
+
+</code></pre></div><p><code>BayesFactor::regressionBF()</code>との比較結果を示します。<br>
+<br>
+<figure class="left"><a href="/r/bayesian-hypothesis-testing-3/BF_rate_bridgesampler.png">
+    <img src="/r/bayesian-hypothesis-testing-3/BF_rate_bridgesampler.png" width="1000" height="540"/> </a>
+</figure>
+ <br>
+<br>
+こちらも<code>BayesFactor::regressionBF()</code>による結果から大きく逸脱していません。全体的にBFの値が大きくなるにつれてBFがヌルモデルを過小評価する傾向もSavage-Dickey法と同じです。</p>
+<p>おそらくは、$\alpha$に分散が大きく平均$0$の正規分布を、$\sigma^2$にガンマ分布を用いて$(2)$式（Jeffrey&rsquo;s prior）を近似的に表現しているので、本来のモデルとの微妙な差異が結果に影響しているものと思われます。</p>
+<p>また、Savage-Dickey法ではBFの値が1000を超えたあたりからMCMC毎のばらつきが大きくなっていて、結果の収束度合いがゴミのようだったのに対し、BridgeSampling法ではBFがどんな値をとってもMCMC毎のばらつきがかなり小さくなっています。BridgeSampling法がいかに優れた手法か思い知らされますね…せっかく$\boldsymbol{\beta}_\boldsymbol{\gamma}$の条件付き事後分布をせっせと導出したのに残念ながら報われませんでした。</p>
+<h1 id="まとめ">まとめ</h1>
+<p>本記事では線形回帰モデルを例にベイズファクターの計算手法を複数実践し、それぞれの結果を比較してみました。得られた知見は以下の通り。</p>
+<p><strong>・ Jeffrey&rsquo;s priorの近似的表現は、MCMC結果から推定したBFに若干影響する（たぶん）</strong></p>
+<p><strong>・ Savage-Dickey法の推定精度はガバガバ</strong></p>
+<p><strong>・ BridgeSampling法は優秀</strong></p>
+<p>ということで、BridgeSampling法について詳しくなりたいなあと思いました。</p>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
+        
+        <span><a href="https://sucre-stat.com/tags/stan">Stan</a></span>
+        
+        
+    </div>
+</div>
+<div class="disqus-comments">
+  <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-rmorita-stat-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 得意なのは統一された洋服とダンスのステップです </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://sucre-stat.com/2021/10/bayesian-hypothesis-testing-3practice/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2021.10.22 00:00 </div>
+            <div class="pn-el__2"> ベイズファクターを用いた仮説検定を実践する～線形回帰分析～ </div>
+        </div>
+    </a>
+    
+    
+</div>
+
+<footer>
+  <script type="text/javascript">
+ MathJax = {
+   tex: {
+     inlineMath: [['$','$'], ['\\(','\\)']],
+     processEscapes: true,
+     tags: "ams",
+     autoload: {
+       color: [],
+       colorV2: ['color']
+     },
+     packages: {'[+]': ['noerrors']}
+   },
+   chtml: {
+     matchFontHeight: true,
+     displayAlign: "left",
+     displayIndent: "2em"
+   },
+   options: {
+     skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+     renderActions: {
+        
+       find_script_mathtex: [10, function (doc) {
+         for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+           const display = !!node.type.match(/; *mode=display/);
+           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+           const text = document.createTextNode('');
+           node.parentNode.replaceChild(text, node);
+           math.start = {node: text, delim: '', n: 0};
+           math.end = {node: text, delim: '', n: 0};
+           doc.math.push(math);
+         }
+       }, '']
+     }
+   },
+   loader: {
+     load: ['[tex]/noerrors']
+   }
+ };
+</script>
+<script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2021
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://sucre-stat.com/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
