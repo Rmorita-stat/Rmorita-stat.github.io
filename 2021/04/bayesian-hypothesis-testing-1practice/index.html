@@ -48,27 +48,27 @@
 <div class=' site-nav u-font ' id="nav-bar">
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/" >HOME</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/" >HOME</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/stat" >STAT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/stat" >STAT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/r" >With R</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/r" >With R</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/julia" >With Julia</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/julia" >With Julia</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/about" >ABOUT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/about" >ABOUT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/tags/" >TAGS</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/tags/" >TAGS</a>
     </div>
     
 </div>
@@ -88,9 +88,9 @@
             <fieldset style="border: #d9c68c 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆この記事のテーマ</strong></legend>
 <p>ベイズファクターを使って比率の差を検定する方法を実践します。
 この手法は、例えば下図のようなシーンに適用できます。下図では異なる交差点の危険挙動発生割合を比較しています。
-<img src="/r/bayesian-hypothesis-testing-1/picture_twosample.JPG" alt=""></p>
+<img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-1/picture_twosample.JPG" alt=""></p>
 <p>交通安全対策実施前後の危険挙動発生割合の変化を判定したいときにも同じ方法論が活用できます。
-<img src="/r/bayesian-hypothesis-testing-1/picture_onesample.JPG" alt=""></p>
+<img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-1/picture_onesample.JPG" alt=""></p>
 <p>※一つ目の例は対応のない（two-sampe）グループ間の検定、二つ目の例は対応のある（one-sample）グループ間の検定ですが、どちらの検定も一つのモデルで包括して説明されます。</p>
 
 </fieldset>
@@ -156,8 +156,8 @@ $$
   <span class="nf">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span> <span class="n">labels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;-&#34;</span><span class="p">,</span><span class="s">&#34;危険挙動&#34;</span><span class="p">))</span> <span class="o">+</span> <span class="nf">xlab</span><span class="p">(</span><span class="s">&#34;Group2&#34;</span><span class="p">)</span>
 
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">grid.arrange</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
-</code></pre></div><figure class="left"><a href="/r/bayesian-hypothesis-testing-1/data.png">
-    <img src="/r/bayesian-hypothesis-testing-1/data.png" width="1000" height="540"/> </a>
+</code></pre></div><figure class="left"><a href="https://sucre-stat.com/r/bayesian-hypothesis-testing-1/data.png">
+    <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-1/data.png" width="1000" height="540"/> </a>
 </figure>
 
 <p>このデータに対し、通常の比率の差の検定を関数<code>prop.test()</code>で行います。原理は昔紹介した<a href="https://sucre-stat.com/2020/12/corresp-and-bayes/#分割表の一様性の検定">分割表の一様性の検定</a>と同じものです。</p>
@@ -261,8 +261,8 @@ $$
                   <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">))</span> <span class="o">+</span>
   <span class="nf">annotate</span><span class="p">(</span><span class="s">&#34;text&#34;</span><span class="p">,</span><span class="n">x</span><span class="o">=-</span><span class="kc">Inf</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="kc">Inf</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&#34;BF01=%.2f&#34;</span><span class="p">,</span><span class="nf">dlogspline</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">fit_logspline</span><span class="p">)),</span><span class="n">hjust</span><span class="o">=</span><span class="m">-.2</span><span class="p">,</span><span class="n">vjust</span><span class="o">=</span><span class="m">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">plot_title</span>
 <span class="n">p</span>  
-</code></pre></div><figure class="left"><a href="/r/bayesian-hypothesis-testing-1/unrestricted_model%28twise%20sample%20size%29.png">
-    <img src="/r/bayesian-hypothesis-testing-1/unrestricted_model.png" width="700" height="540"/> </a>
+</code></pre></div><figure class="left"><a href="https://sucre-stat.com/r/bayesian-hypothesis-testing-1/unrestricted_model%28twise%20sample%20size%29.png">
+    <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-1/unrestricted_model.png" width="700" height="540"/> </a>
 </figure>
 
 <p>結果は、$BF_{01} \simeq 2.50$と、解析的な解とそれほど大差無い結果となりました。やはりこのデータは確信をもって比率に差があるとは言えないようですな。</p>
@@ -278,8 +278,8 @@ $$
 <span class="nf">cat</span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="nf">dlogspline</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">fit_logspline</span><span class="p">))</span>
 <span class="c1">## 147.1852</span>
 
-</code></pre></div><figure class="left"><a href="/r/bayesian-hypothesis-testing-1/unrestricted_model.png">
-    <img src="/r/bayesian-hypothesis-testing-1/unrestricted_model%28twise%20sample%20size%29.png" width="700" height="540"/> </a>
+</code></pre></div><figure class="left"><a href="https://sucre-stat.com/r/bayesian-hypothesis-testing-1/unrestricted_model.png">
+    <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-1/unrestricted_model%28twise%20sample%20size%29.png" width="700" height="540"/> </a>
 </figure>
 
 <p>$BF_{10} \eqsim 147.19$と、期待通り対立仮説を強く支持する結果となりました。</p>
@@ -305,8 +305,8 @@ $$
 
 <span class="nf">cat</span><span class="p">(</span><span class="nf">dens</span><span class="p">(</span><span class="m">0</span><span class="p">)</span><span class="o">/</span><span class="m">2</span><span class="p">)</span>
 <span class="c1">## 1.385902</span>
-</code></pre></div><figure class="left"><a href="/r/bayesian-hypothesis-testing-1/unrestricted_model.png">
-    <img src="/r/bayesian-hypothesis-testing-1/restricted_model.png" width="700" height="540"/> </a>
+</code></pre></div><figure class="left"><a href="https://sucre-stat.com/r/bayesian-hypothesis-testing-1/unrestricted_model.png">
+    <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-1/restricted_model.png" width="700" height="540"/> </a>
 </figure>
 
 <p>検定の結果は、Unrestricted Modelが$BF_{01} \eqsim 2.50$に対し、Order-restricred Modelが$BF_{02} \eqsim 1.39$となり、帰無仮説$H_0$を支持する傾向は同じものの、やや確信度が小さくなる結果となりました。直感的には、グループ2よりグループ1の事故発生率が大きいことから、$\theta_1 \geq \theta_2$としたOrder-Restricted Modelに対するデータの当てはまりが良く、$BF_{01} \geq BF_{02}$となりそうだと考えられ、実際には事前分布の$\delta=0$での値が$2$倍になったことにより、直感通りの結果が得られたと言えます。</p>

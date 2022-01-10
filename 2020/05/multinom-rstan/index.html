@@ -48,27 +48,27 @@
 <div class=' site-nav u-font ' id="nav-bar">
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/" >HOME</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/" >HOME</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/stat" >STAT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/stat" >STAT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/r" >With R</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/r" >With R</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/julia" >With Julia</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/julia" >With Julia</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/about" >ABOUT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/about" >ABOUT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/tags/" >TAGS</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/tags/" >TAGS</a>
     </div>
     
 </div>
@@ -280,7 +280,7 @@ $$
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">mcmc_trace</span><span class="p">(</span><span class="n">posterior_fit0_1</span><span class="p">,</span> <span class="n">regex_pars</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;b&#34;</span><span class="p">),</span> <span class="n">n_warmup</span> <span class="o">=</span> <span class="m">500</span><span class="p">,</span>
                 <span class="n">facet_args</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">ncol</span> <span class="o">=</span> <span class="m">2</span><span class="p">))</span><span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">12</span><span class="p">)</span> <span class="o">+</span> <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;bottom&#34;</span><span class="p">)</span>
 <span class="n">p</span>
-</code></pre></div><p><img src="/r/multinom-rstan/fit0_mcmc_trace.png" alt=""></p>
+</code></pre></div><p><img src="https://sucre-stat.com/r/multinom-rstan/fit0_mcmc_trace.png" alt=""></p>
 <p>どの係数も早い段階で一つの値に収束しているようです。ここではwarm upを500に設定していますが、十分すぎるwarm up であることが確認できます。</p>
 <p>MCMCの収束を確認する方法はtracsplotを用いた視覚的な判断だけでなく、数値基準も用意されています。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">options</span><span class="p">(</span><span class="n">max.print</span> <span class="o">=</span> <span class="m">80</span><span class="p">)</span>
@@ -440,7 +440,7 @@ $$</p>
 <span class="nf">mcmc_areas</span><span class="p">(</span><span class="nf">as.matrix</span><span class="p">(</span><span class="n">fit0</span><span class="p">),</span>
            <span class="n">pars</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;ratio[2,1]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[3,1]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[4,1]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[2,2]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[3,2]&#34;</span><span class="p">,</span><span class="s">&#34;ratio[4,2]&#34;</span><span class="p">),</span><span class="n">prob</span><span class="o">=</span><span class="m">0.95</span><span class="p">,</span> <span class="n">area_method</span> <span class="o">=</span> <span class="s">&#34;equal height&#34;</span><span class="p">)</span> <span class="o">+</span>
            <span class="n">plot_title</span><span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">12</span><span class="p">)</span>
-</code></pre></div><p><img src="/r/multinom-rstan/fit0_mcmc_density.png" alt=""></p>
+</code></pre></div><p><img src="https://sucre-stat.com/r/multinom-rstan/fit0_mcmc_density.png" alt=""></p>
 <p>上図の事後分布に表現された中央値、95%信頼区間を下で算出しておきます。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">ratio_median</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">posterior_fit0_2</span><span class="o">$</span><span class="n">ratio</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="n">median</span><span class="p">)</span>
 <span class="n">ratio_quant</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">posterior_fit0_2</span><span class="o">$</span><span class="n">ratio</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="n">quantile</span><span class="p">,</span> <span class="n">prob</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0.025</span><span class="p">,</span> <span class="m">0.975</span><span class="p">))</span>
@@ -516,9 +516,9 @@ $$
   <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#34;bottom&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">ylab</span><span class="p">(</span><span class="s">&#34;Probability&#34;</span><span class="p">)</span> <span class="o">+</span> <span class="nf">labs</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#34;With Rstan&#34;</span><span class="p">)</span>
 
 <span class="n">p0</span>
-</code></pre></div><p><img src="/r/multinom-rstan/fit0_mcmc_res.png" alt=""></p>
+</code></pre></div><p><img src="https://sucre-stat.com/r/multinom-rstan/fit0_mcmc_res.png" alt=""></p>
 <p>multinom()による分析の際に描画した図を下に載せますが、この2つの結果はほぼ一致していることがわかります。</p>
-<p><img src="/r/multinom-rstan/multinom.png" alt=""></p>
+<p><img src="https://sucre-stat.com/r/multinom-rstan/multinom.png" alt=""></p>
 <h1 id="まとめ">まとめ</h1>
 <p>本記事では多項ロジスティック回帰をRstanを用いて実行し、最尤法(multinom())による結果との比較を行い、ネイマン・ピアソン型統計とベイズ統計の違いを確認しました。</p>
 <p>両者がやっていることは実質的には変わりありませんが、解釈の違いなどについては実感できたかと思います。</p>

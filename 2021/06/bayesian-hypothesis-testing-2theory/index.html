@@ -48,27 +48,27 @@
 <div class=' site-nav u-font ' id="nav-bar">
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/" >HOME</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/" >HOME</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/stat" >STAT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/stat" >STAT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/r" >With R</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/r" >With R</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/julia" >With Julia</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/julia" >With Julia</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/about" >ABOUT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/about" >ABOUT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/tags/" >TAGS</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/tags/" >TAGS</a>
     </div>
     
 </div>
@@ -88,7 +88,7 @@
             <fieldset style="border: #d9c68c 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆この記事のテーマ</strong></legend>
 <p>ベイズファクターを使って平均値の差を検定する方法を整理します。
 この手法は、例えば下図のようなシーンに適用できます。下図左側では、交通事故対策Aの実施前と実施後の単位時間あたり事故発生件数のデータを蓄積し、対策前後で事故発生件数の平均値に差があるかを検定しています。また、下図右側では交通事故対策Aが実施された交差点と実施されていない交差点の単位時間あたり事故発生件数の平均値に差があるかを検定しています。</p>
-<p><img src="/stat/bayesian-hypothesis-testing-2/image.jpg" alt=""></p>
+<p><img src="https://sucre-stat.com/stat/bayesian-hypothesis-testing-2/image.jpg" alt=""></p>
 <p>※上記の事例は整数データであるからポアソン分布や負の二項分布等を使用するのが理想ですが、ここでは事故発生件数の平均値が十分大きく正規近似が可能であると仮定します。</p>
 <p>※左側は対応のある（one-sample）グループ間の検定、右側は対応のない（two-sampe）グループ間の検定です。設定上、後者の設計では対策実施効果以外の要因（異なる交差点を比較に用いることによるランダム効果）が結果に絡む可能性が高くなるので、対策Aの効果を確かめることが分析の目的であれば前者の対応のある検定の設計がより望ましいといえます。</p>
 
@@ -264,8 +264,8 @@ $$</p>
 </fieldset></p>
 <p>JZSの事前分布と単位情報事前分布の唯一の違いはeffect size $\delta$の事前分布（正規分布）の分散の設定です。JZSの事前分布は分散$g$が逆カイ二乗分布に従うとした一方、単位情報事前分布は分散固定です。その意味では、単位情報事前分布の方がモデルに与える事前情報が多いことになります。また$r=1$のとき、2つの設定は$\delta$の事前分布を標準正規分布にするか、標準コーシー分布にするかの違いに帰着することが分かります。</p>
 <p>標準正規分布と標準コーシー分布を比較した図が以下です。</p>
-<figure class="left"><a href="/stat/bayesian-hypothesis-testing-2/image2.png">
-    <img src="/stat/bayesian-hypothesis-testing-2/image2.png" width="630" height="540"/> </a>
+<figure class="left"><a href="https://sucre-stat.com/stat/bayesian-hypothesis-testing-2/image2.png">
+    <img src="https://sucre-stat.com/stat/bayesian-hypothesis-testing-2/image2.png" width="630" height="540"/> </a>
 </figure>
 
 <p>図からも、標準コーシー分布は標準正規分布と比較し裾が重く、0から外れた値もとりやすい分布になっていることから、$r=1$の場合、JZSの事前分布は単位情報事前分布より事前情報が少ないことが確認できます。</p>

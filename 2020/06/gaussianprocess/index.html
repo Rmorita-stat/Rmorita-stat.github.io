@@ -48,27 +48,27 @@
 <div class=' site-nav u-font ' id="nav-bar">
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/" >HOME</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/" >HOME</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/stat" >STAT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/stat" >STAT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/r" >With R</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/r" >With R</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/julia" >With Julia</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/julia" >With Julia</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/about" >ABOUT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/about" >ABOUT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/tags/" >TAGS</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/tags/" >TAGS</a>
     </div>
     
 </div>
@@ -98,7 +98,7 @@ $$
 n=1, \ldots, N
 $$</p>
 <p>$Y$は目的変数(説明変数によって説明される変数)、$X$は説明変数(目的変数を説明する変数)、それぞれ$Y=(y_1, \ldots, y_n, \ldots, y_N)$、$X=(x_1, \ldots, x_n, \ldots, x_N)$です。
-<img src="/r/gaussianprocess/plot1.png" alt="aai"></p>
+<img src="https://sucre-stat.com/r/gaussianprocess/plot1.png" alt="aai"></p>
 <p>こんな需要もあるかもしれません。
 上のモデルより少し難しいモデルですが、$X$、$Y$ともに非負の実数であることから、$Y$がガンマ分布に従うとし、リンク関数を$log$とした場合。
 $$
@@ -107,7 +107,7 @@ $$
 $$
 y_n \sim \rm{Gamma}(\mu_n, \alpha, \beta)
 $$</p>
-<p><img src="/r/gaussianprocess/plot2.png" alt="aai"></p>
+<p><img src="https://sucre-stat.com/r/gaussianprocess/plot2.png" alt="aai"></p>
 <p>上記の内容について理解が追い付かない場合は、<a href="https://cpp-learning.com/glm/">こちらのサイト</a>などを覗いてみてください。分かりやすくまとめられています。</p>
 <p>分析の目的が変数間の関係把握であるならば、上述のモデルで事足りる場合も多いと思います。しかし「将来得られる可能性のある任意の値$X_{new}$に対応する$Y_{new}$の値を予測したい」というような場合、話は変わってきます。</p>
 <p>これまでに得られたデータ$X$、$Y$の組から将来得られるデータ$X_{new}$に対応する$Y_{new}$の値を予測するとなると、より観測データにフィットできる柔軟なモデルを構築することが理想です(ただし過学習には要注意)。</p>
@@ -297,7 +297,7 @@ $$</p>
 <span class="p">}</span>
 
 <span class="nf">GP_sim</span><span class="p">(</span><span class="n">Gaussian_kernel</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">))</span>
-</code></pre></div><p><img src="/r/gaussianprocess/sim_1.png" alt=""></p>
+</code></pre></div><p><img src="https://sucre-stat.com/r/gaussianprocess/sim_1.png" alt=""></p>
 <p>ガウスカーネルをカーネル関数に設定したガウス過程は、無限回微分可能な滑らかな曲線になるそうです。</p>
 <h2 id="線形カーネルのシミュレーション">線形カーネルのシミュレーション</h2>
 <p>線形カーネルは、ハイパーパラメータを持たないカーネル関数です。</p>
@@ -311,7 +311,7 @@ $$</p>
 <span class="p">}</span>
 
 <span class="nf">GP_sim</span><span class="p">(</span><span class="n">linear_kernel</span><span class="p">,</span> <span class="n">par</span><span class="o">=</span><span class="kc">NULL</span><span class="p">)</span>
-</code></pre></div><p><img src="/r/gaussianprocess/sim_2.png" alt=""></p>
+</code></pre></div><p><img src="https://sucre-stat.com/r/gaussianprocess/sim_2.png" alt=""></p>
 <p>シミュレーションでも直線が引けることが確認できます。</p>
 <h2 id="matern3カーネルのシミュレーション">Matern3カーネルのシミュレーション</h2>
 <p>Maternカーネルは、ガウスカーネルの無限回微分可能という前提がモデル化において強すぎるという主張から提案されたカーネルです。</p>
@@ -330,7 +330,7 @@ $$</p>
 <span class="p">}</span>
 
 <span class="nf">GP_sim</span><span class="p">(</span><span class="n">Matern3_kernel</span><span class="p">,</span><span class="n">par</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">))</span>
-</code></pre></div><p><img src="/r/gaussianprocess/sim_3.png" alt=""></p>
+</code></pre></div><p><img src="https://sucre-stat.com/r/gaussianprocess/sim_3.png" alt=""></p>
 <p>ガウスカーネルと比べていびつな曲線になっていることが分かります。</p>
 <h2 id="ガウスカーネルと線形カーネルの結合">ガウスカーネルと線形カーネルの結合</h2>
 <p>カーネル関数は組み合わせて使うことも可能です。
@@ -345,7 +345,7 @@ $$</p>
 <span class="p">}</span>
 
 <span class="nf">GP_sim</span><span class="p">(</span><span class="n">Gaussian_plus_Linear_kernel</span><span class="p">,</span><span class="nf">c</span><span class="p">(</span><span class="m">0.8</span><span class="p">,</span><span class="m">0.07</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
-</code></pre></div><p><img src="/r/gaussianprocess/sim_4.png" alt=""></p>
+</code></pre></div><p><img src="https://sucre-stat.com/r/gaussianprocess/sim_4.png" alt=""></p>
 <p>ガウスカーネルと線形カーネルがうまく組み合わさっていることが分かります。</p>
 <h1 id="実際に回帰パラメータ推定を実行">実際に回帰・パラメータ推定を実行</h1>
 <p>ひととおりシミュレーションしたので実践です。
@@ -363,7 +363,7 @@ $$</p>
 <span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">),</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span> <span class="nf">theme_bw</span><span class="p">(</span><span class="n">base_size</span><span class="o">=</span><span class="m">11</span><span class="p">)</span> <span class="o">+</span> <span class="nf">geom_point</span><span class="p">()</span>
 <span class="n">p</span>
-</code></pre></div><p><img src="/r/gaussianprocess/data_plot.png" alt=""></p>
+</code></pre></div><p><img src="https://sucre-stat.com/r/gaussianprocess/data_plot.png" alt=""></p>
 <p>分析にあたって、まずはハイパーパラメータの最適な値を推定します。
 <!-- raw HTML omitted -->推定方法にはハイパーパラメータを少しずつ変えてその事後分布を推定するMCMCも使えますが、ここでは計算量の少ない効率的な方法として<strong>勾配法</strong>を用います。
 簡略化のため、ガウス過程のハイパーパラメータを$\theta=(\theta_1, \theta_2,\ldots)$とまとめておき、カーネル行列も$K_{\theta}$とします。
@@ -444,7 +444,7 @@ $$</p>
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="n">p</span> <span class="o">+</span> <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">-2.0</span><span class="p">,</span><span class="m">2.0</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span><span class="n">ymin</span><span class="o">=</span><span class="n">pre[[1]]</span><span class="m">-2</span><span class="o">*</span><span class="nf">sqrt</span><span class="p">(</span><span class="nf">diag</span><span class="p">(</span><span class="n">pre[[2]]</span><span class="p">)),</span> <span class="n">ymax</span><span class="o">=</span><span class="n">pre[[1]]</span><span class="m">+2</span><span class="o">*</span><span class="nf">sqrt</span><span class="p">(</span><span class="nf">diag</span><span class="p">(</span><span class="n">pre[[2]]</span><span class="p">))),</span>
                      <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">ymax</span><span class="o">=</span><span class="n">ymax</span><span class="p">,</span><span class="n">ymin</span><span class="o">=</span><span class="n">ymin</span><span class="p">),</span><span class="n">fill</span><span class="o">=</span><span class="s">&#34;blue&#34;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="m">0.5</span><span class="p">)</span>
 <span class="n">p</span>
-</code></pre></div><p><img src="/r/gaussianprocess/res_1.png" alt=""></p>
+</code></pre></div><p><img src="https://sucre-stat.com/r/gaussianprocess/res_1.png" alt=""></p>
 <p>最適化したカーネル関数は以下になります。$\delta(x,x^{'})$はクロネッカーのデルタと呼ばれ、$x=x^{'}$のとき、つまりカーネル行列の対角成分にときのみ1を、それ以外は0を返す関数です。</p>
 <p>$$
 k(x,x_{'}) = 1.553exp\left(-\cfrac{(x-x^{'})^2}{0.229}\right) + 0.043\delta(x,x^{'})
@@ -481,7 +481,7 @@ $$</p>
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="n">p</span> <span class="o">+</span> <span class="nf">geom_ribbon</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">-2.0</span><span class="p">,</span><span class="m">2.0</span><span class="p">,</span><span class="m">0.01</span><span class="p">),</span><span class="n">ymin</span><span class="o">=</span><span class="n">pre[[1]]</span><span class="m">-2</span><span class="o">*</span><span class="nf">sqrt</span><span class="p">(</span><span class="nf">diag</span><span class="p">(</span><span class="n">pre[[2]]</span><span class="p">)),</span> <span class="n">ymax</span><span class="o">=</span><span class="n">pre[[1]]</span><span class="m">+2</span><span class="o">*</span><span class="nf">sqrt</span><span class="p">(</span><span class="nf">diag</span><span class="p">(</span><span class="n">pre[[2]]</span><span class="p">))),</span>
                      <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">ymax</span><span class="o">=</span><span class="n">ymax</span><span class="p">,</span><span class="n">ymin</span><span class="o">=</span><span class="n">ymin</span><span class="p">),</span><span class="n">fill</span><span class="o">=</span><span class="s">&#34;blue&#34;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="m">0.5</span><span class="p">)</span>
 <span class="n">p</span>
-</code></pre></div><p><img src="/r/gaussianprocess/res_2.png" alt=""></p>
+</code></pre></div><p><img src="https://sucre-stat.com/r/gaussianprocess/res_2.png" alt=""></p>
 <p><strong>It&rsquo;s so brilliant</strong>&gt;🐢</p>
 <p>最適化したカーネル関数は以下になります。</p>
 <p>$$
@@ -496,7 +496,7 @@ $$</p>
 <span class="c1">## [1] 0.22313442 2.81135418 0.50883359 0.09808983</span>
 
 <span class="o">~</span>省略<span class="o">~</span>
-</code></pre></div><p><img src="/r/gaussianprocess/res_3.png" alt=""></p>
+</code></pre></div><p><img src="https://sucre-stat.com/r/gaussianprocess/res_3.png" alt=""></p>
 <p>最適化したカーネル関数は以下になります。</p>
 <p>$$
 k(x,x_{'}) = 0.223exp\left(-\cfrac{(x-x^{'})^2}{2.811}\right) + 0.509x^T x^{'} + 0.098\delta(x,x^{'})

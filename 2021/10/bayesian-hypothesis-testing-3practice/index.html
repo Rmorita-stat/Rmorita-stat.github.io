@@ -48,27 +48,27 @@
 <div class=' site-nav u-font ' id="nav-bar">
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/" >HOME</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/" >HOME</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/stat" >STAT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/stat" >STAT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/r" >With R</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/r" >With R</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/julia" >With Julia</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/julia" >With Julia</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/about" >ABOUT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/about" >ABOUT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/tags/" >TAGS</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/tags/" >TAGS</a>
     </div>
     
 </div>
@@ -300,8 +300,8 @@ $$</p>
 <p>モデルの冗長性は、パラメータの事前分布と真分布との乖離によって評価されます（モデル自体仮定のものだがここでは真の分布があるとする）。事前分布が、真の分布からおよそ離れた広範囲のパラメータ空間を考慮したものの場合、そのモデルの周辺尤度は0に近づくため、比較的説明力の低いモデルと判断されやすくなってしまいます。</p>
 <p>ベースとなるモデルをフルモデルとしたときの比較結果は次のようになります。<br>
 <br>
-<figure class="left"><a href="/r/bayesian-hypothesis-testing-3/res1.png">
-    <img src="/r/bayesian-hypothesis-testing-3/res1.png" width="1000" height="540"/> </a>
+<figure class="left"><a href="https://sucre-stat.com/r/bayesian-hypothesis-testing-3/res1.png">
+    <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-3/res1.png" width="1000" height="540"/> </a>
 </figure>
 </p>
 <p><br>
@@ -311,24 +311,24 @@ $$</p>
 <p>モデル間比較ではなく、各説明変数が必要かどうかを知りたい、という場合もあると思います。その場合、ベースとなるモデルから確認したい変数1つだけを除いた（または追加した）モデルと、ベースモデルを、ベイズファクターによって比較するという方法が考えられます。</p>
 <p>ベースモデルをフルモデルとしたとき、各変数を1個ずつ取り除いたモデルとの比較を行った結果を下に示します。<br>
 <br>
-<figure class="left"><a href="/r/bayesian-hypothesis-testing-3/res2.png">
-    <img src="/r/bayesian-hypothesis-testing-3/res2.png" width="600" height="540"/> </a>
+<figure class="left"><a href="https://sucre-stat.com/r/bayesian-hypothesis-testing-3/res2.png">
+    <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-3/res2.png" width="600" height="540"/> </a>
 </figure>
 </p>
 <p><br>
 complaintsの必要性を測るベイズファクター(「フルモデル」/「フルモデル -complaints」 )は43.35と、強くcomplaintsを除いたモデルを棄却する結果となったため、complaintsはratingを説明するのに需要な指標と言えそうです。一方、それ以外の変数についてはあまり根拠があるとは言えない結果ばかりでした。</p>
 <p>ベースモデルをヌルモデルとしたときの結果も下に示します。</p>
 <p><br>
-<figure class="left"><a href="/r/bayesian-hypothesis-testing-3/res3.png">
-    <img src="/r/bayesian-hypothesis-testing-3/res3.png" width="600" height="540"/> </a>
+<figure class="left"><a href="https://sucre-stat.com/r/bayesian-hypothesis-testing-3/res3.png">
+    <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-3/res3.png" width="600" height="540"/> </a>
 </figure>
 
 <br>
 complaintsについては決定的にヌルモデルを棄却する結果が得られています。またlearning、raises、privilegesについても肯定的な結果が得られています。あれ、じゃあこれら4つの変数を採用したモデルがいいのでは？…そうでもありません。この4変数を採用したモデルとフルモデルを比較したベイズファクターはそれほど大きくありません。ここには落とし穴があります。</p>
 <p>下の表は7変数の相関関係を表しています。これを見ると、有力な変数complaintsは、上で挙げたlearning、raises、privilegesの3変数と有意に正の相関関係にあります。つまり、この3変数はcomplaintsのもつ傾向の一部分を表現できるために、ヌルモデルとの比較の際も肯定的な結果が得られていたのです。<br>
 <br>
-<figure class="left"><a href="/r/bayesian-hypothesis-testing-3/res4.png">
-    <img src="/r/bayesian-hypothesis-testing-3/res4.png" width="700" height="540"/> </a>
+<figure class="left"><a href="https://sucre-stat.com/r/bayesian-hypothesis-testing-3/res4.png">
+    <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-3/res4.png" width="700" height="540"/> </a>
 </figure>
 </p>
 <p><br>

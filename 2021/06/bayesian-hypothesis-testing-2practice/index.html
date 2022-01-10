@@ -48,27 +48,27 @@
 <div class=' site-nav u-font ' id="nav-bar">
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/" >HOME</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/" >HOME</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/stat" >STAT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/stat" >STAT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/r" >With R</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/r" >With R</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/julia" >With Julia</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/julia" >With Julia</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/about" >ABOUT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/about" >ABOUT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/tags/" >TAGS</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/tags/" >TAGS</a>
     </div>
     
 </div>
@@ -88,7 +88,7 @@
             <fieldset style="border: #d9c68c 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆この記事のテーマ</strong></legend>
 <p>ベイズファクターを使って平均値の差を検定する方法を実践します。
 この手法は、例えば下図のようなシーンに適用できます。下図左側では、交通事故対策Aの実施前と実施後の単位時間あたり事故発生件数のデータを蓄積し、対策前後で事故発生件数の平均値に差があるかを検定しています。また、下図右側では交通事故対策Aが実施された交差点と実施されていない交差点の単位時間あたり事故発生件数の平均値に差があるかを検定しています。</p>
-<p><img src="/r/bayesian-hypothesis-testing-2/image.jpg" alt=""></p>
+<p><img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-2/image.jpg" alt=""></p>
 <p>※上記の事例は整数データであるからポアソン分布や負の二項分布等を使用するのが理想ですが、ここでは事故発生件数の平均値が十分大きく正規近似が可能であると仮定します。</p>
 <p>※左側は対応のある（one-sample）グループ間の検定、右側は対応のない（two-sampe）グループ間の検定です。設定上、後者の設計では対策実施効果以外の要因（異なる交差点を比較に用いることによるランダム効果）が結果に絡む可能性が高くなるので、対策Aの効果を確かめることが分析の目的であれば前者の対応のある検定の設計がより望ましいといえます。</p>
 
@@ -156,8 +156,8 @@ $$
 <span class="c1">## 6  32  33</span>
 </code></pre></div><p>これらの差をとり、可視化してみます。
 視覚的にはなんと対策前の事故件数の方が多そうです。しかし可視化で分かるのは「多そう」に留まってしまいます。対策前の事故件数の方が本当に多いと言えるのか、さらに深掘ってみましょうか。</p>
-<figure class="left"><a href="/r/bayesian-hypothesis-testing-2/data_diff.png">
-    <img src="/r/bayesian-hypothesis-testing-2/data_diff.png" width="630" height="540"/> </a>
+<figure class="left"><a href="https://sucre-stat.com/r/bayesian-hypothesis-testing-2/data_diff.png">
+    <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-2/data_diff.png" width="630" height="540"/> </a>
 </figure>
 
 <p>可視化コードはこちら。</p>
@@ -287,8 +287,8 @@ BF_{10}  \fallingdotseq 4.443
 $$</p>
 <p>となりました。<a href="https://sucre-stat.com/2021/02/bayesfactor/#ベイズファクター">Kass and Raftery(1995)の評価基準</a>では、$H_0$に対する反証の強さは十分であると判断できます。つまり、$\delta = 0$を棄却し$\delta \neq 0$を採択し、対策後の事故件数は対策前から変化したと判断してよさそうです。</p>
 <p>$BF_{01}$の分布も確認しておきましょう。</p>
-<figure class="left"><a href="/r/bayesian-hypothesis-testing-2/res1.png">
-    <img src="/r/bayesian-hypothesis-testing-2/res1.png" width="630" height="540"/> </a>
+<figure class="left"><a href="https://sucre-stat.com/r/bayesian-hypothesis-testing-2/res1.png">
+    <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-2/res1.png" width="630" height="540"/> </a>
 </figure>
 
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">plot_title</span> <span class="o">&lt;-</span> <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;Posterior distribution of BF_01&#34;</span><span class="p">,</span>
@@ -500,8 +500,8 @@ $$</p>
 <h2 id="サンプルデータの可視化-1">サンプルデータの可視化</h2>
 <p>データは対応のある検定のときと同じものを用います。命名と実際の意味が少し異なっていて分かりづらいですが、<code>d$pre</code>は対策A未実施の交差点における事故発生件数、<code>d$pro</code>は対策A実施済みの交差点における事故発生件数とします。</p>
 <p>視覚化はこんな感じです。</p>
-<figure class="left"><a href="/r/bayesian-hypothesis-testing-2/data_ori.png">
-    <img src="/r/bayesian-hypothesis-testing-2/data_ori.png" width="630" height="540"/> </a>
+<figure class="left"><a href="https://sucre-stat.com/r/bayesian-hypothesis-testing-2/data_ori.png">
+    <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-2/data_ori.png" width="630" height="540"/> </a>
 </figure>
 
 <p>可視化コードはこちら。</p>
@@ -612,8 +612,8 @@ BF_{10}  \fallingdotseq 7.246  \\<br>
 \end{cases}
 $$</p>
 <p>です。よって$H_1$を採択し、2グループ間の事故件数には差があると判断されます。</p>
-<figure class="left"><a href="/r/bayesian-hypothesis-testing-2/res2.png">
-    <img src="/r/bayesian-hypothesis-testing-2/res2.png" width="630" height="540"/> </a>
+<figure class="left"><a href="https://sucre-stat.com/r/bayesian-hypothesis-testing-2/res2.png">
+    <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-2/res2.png" width="630" height="540"/> </a>
 </figure>
 
 <p><code>BayesFactor</code>パッケージの場合は、</p>

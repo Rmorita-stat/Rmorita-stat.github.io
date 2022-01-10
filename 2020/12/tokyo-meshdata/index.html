@@ -48,27 +48,27 @@
 <div class=' site-nav u-font ' id="nav-bar">
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/" >HOME</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/" >HOME</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/stat" >STAT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/stat" >STAT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/r" >With R</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/r" >With R</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/julia" >With Julia</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/julia" >With Julia</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/about" >ABOUT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/about" >ABOUT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/tags/" >TAGS</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/tags/" >TAGS</a>
     </div>
     
 </div>
@@ -210,7 +210,7 @@ $$
 
 <span class="n">p_extra</span> <span class="o">&lt;-</span> <span class="n">gridExtra</span><span class="o">::</span><span class="nf">grid.arrange</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">p2</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
 </code></pre></div><figure>
-    <img src="/r/tokyo-meshdata/distribution.png" width="600"/> 
+    <img src="https://sucre-stat.com/r/tokyo-meshdata/distribution.png" width="600"/> 
 </figure>
 
 <p>このデータに対してソフトクラスタリングを実行し、事業所ごと・従業員毎の生産性が高い（High Efficiency）地域と低い（Low Efficiency）にメッシュを二分することを目的にします。</p>
@@ -332,7 +332,7 @@ $$
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="n">p</span> <span class="o">+</span> <span class="nf">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">19</span><span class="p">))</span>
 <span class="n">p</span> <span class="o">&lt;-</span> <span class="n">p</span> <span class="o">+</span> <span class="nf">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&#34;Estimated Status&#34;</span><span class="p">)</span>
 </code></pre></div><figure>
-    <img src="/r/tokyo-meshdata/Result-model.png" width="600"/> 
+    <img src="https://sucre-stat.com/r/tokyo-meshdata/Result-model.png" width="600"/> 
 </figure>
 
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># パラメータや生成量の事後分布を描画 -------------------------------------------------------</span>
@@ -372,7 +372,7 @@ $$
 
 <span class="n">p_extra</span> <span class="o">&lt;-</span> <span class="n">gridExtra</span><span class="o">::</span><span class="nf">grid.arrange</span><span class="p">(</span><span class="n">plot1</span><span class="p">,</span><span class="n">plot2</span><span class="p">,</span><span class="n">plot3</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
 </code></pre></div><figure>
-    <img src="/r/tokyo-meshdata/mcmcareas-model.png" width="600"/> 
+    <img src="https://sucre-stat.com/r/tokyo-meshdata/mcmcareas-model.png" width="600"/> 
 </figure>
 
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># 推定した混合正規分布の確率密度を描画 ------------------------------------------------------</span>
@@ -434,7 +434,7 @@ $$
 
 <span class="n">q</span> <span class="o">&lt;-</span> <span class="n">gridExtra</span><span class="o">::</span><span class="nf">grid.arrange</span><span class="p">(</span><span class="n">q2</span><span class="p">,</span><span class="n">q1</span><span class="p">,</span><span class="n">ncol</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
 </code></pre></div><figure>
-    <img src="/r/tokyo-meshdata/mixnormdensity-model.png" width="600"/> 
+    <img src="https://sucre-stat.com/r/tokyo-meshdata/mixnormdensity-model.png" width="600"/> 
 </figure>
 
 <p>無難な結果が得られているのではないかなあ、という感じです。はじめのタイル図がクラスタリングの推定結果ですが、タイルごとに「High Efficiency」である確率の事後分布の中央値を示しています。このように各クラスターへ分類される確率で結果が得られるのがSoft K-means法の特徴です。</p>
@@ -555,15 +555,15 @@ $$
 <span class="c1">## p[2,2]        0.96    0.00 0.06     0.80     0.96     0.98     0.99     1.00   599 1.00</span>
 
 </code></pre></div><figure>
-    <img src="/r/tokyo-meshdata/result-model2.png" width="600"/> 
+    <img src="https://sucre-stat.com/r/tokyo-meshdata/result-model2.png" width="600"/> 
 </figure>
 
 <figure>
-    <img src="/r/tokyo-meshdata/mcmcareas-model2.png" width="600"/> 
+    <img src="https://sucre-stat.com/r/tokyo-meshdata/mcmcareas-model2.png" width="600"/> 
 </figure>
 
 <figure>
-    <img src="/r/tokyo-meshdata/mixnormdensity-model2.png" width="600"/> 
+    <img src="https://sucre-stat.com/r/tokyo-meshdata/mixnormdensity-model2.png" width="600"/> 
 </figure>
 
 <p>ん、確かに確率が空間的に滑らかにつながったように見えなくもないが、依然として隣り合ったセル間の差が大きいところもあるな…
@@ -573,11 +573,11 @@ $\rho$を微妙に大きく1.2にして、いびつさをもう少し和らげ�
                 <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">iter</span><span class="o">=</span><span class="mi">1300</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
 <span class="p">(</span><span class="err">以降、省略</span><span class="p">)</span>
 </code></pre></div><figure>
-    <img src="/r/tokyo-meshdata/Result-model2-2.png" width="600"/> 
+    <img src="https://sucre-stat.com/r/tokyo-meshdata/Result-model2-2.png" width="600"/> 
 </figure>
 
 <figure>
-    <img src="/r/tokyo-meshdata/mcmcareas-model2-2.png" width="600"/> 
+    <img src="https://sucre-stat.com/r/tokyo-meshdata/mcmcareas-model2-2.png" width="600"/> 
 </figure>
 
 <p>ハイパーパラメータの値を少しだけ変えただけなのに、今度は手のひらを返したかのように優柔不断な分類結果が得られてしまった。どのセルも確率がほぼ0.5ではないか。</p>

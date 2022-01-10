@@ -48,27 +48,27 @@
 <div class=' site-nav u-font ' id="nav-bar">
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/" >HOME</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/" >HOME</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/stat" >STAT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/stat" >STAT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/r" >With R</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/r" >With R</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/julia" >With Julia</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/julia" >With Julia</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/about" >ABOUT</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/about" >ABOUT</a>
     </div>
     
     <div class="site-nav__wrap">
-        <a class="site-nav__el" href="/tags/" >TAGS</a>
+        <a class="site-nav__el" href="https://sucre-stat.com/tags/" >TAGS</a>
     </div>
     
 </div>
@@ -97,7 +97,7 @@
 \rho = \cfrac{\mathrm{Cov}\left( XY \right)}{\sqrt{\mathrm{Var}\left(X\right)}\sqrt{\mathrm{Var}\left(Y\right)}} = \cfrac{\mathrm{E}\left(XY\right) - \mu_X \mu_Y}{\sigma_X \sigma_Y} \tag{1}
 $$</p>
 <p>$(1)$式より、相関係数$\rho$は$X$、$Y$に対する線形変換の影響を受けないことが確認できます。</p>
-<p>この性質により、<a href="/2021/06/bayesian-hypothesis-testing-2theory/">平均値の差の検定</a>や<a href="https://sucre-stat.com/2021/10/bayesian-hypothesis-testing-3theory/">線形回帰</a>のときとは異なり、モデル設計において$\rho$を他の平均・分散・共分散等のパラメータから独立させるための再パラメータ化の必要が無いことが、今回のトピックのひとつの特徴です。</p>
+<p>この性質により、<a href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2theory/">平均値の差の検定</a>や<a href="https://sucre-stat.com/2021/10/bayesian-hypothesis-testing-3theory/">線形回帰</a>のときとは異なり、モデル設計において$\rho$を他の平均・分散・共分散等のパラメータから独立させるための再パラメータ化の必要が無いことが、今回のトピックのひとつの特徴です。</p>
 <h1 id="相関を考慮した2変量発生過程のモデル化">相関を考慮した2変量発生過程のモデル化</h1>
 <p>では、相関を考慮して2変数の発生過程をモデル化します。<br>
 <br>
@@ -211,7 +211,7 @@ $$
 </fieldset>
 
 </div></p>
-<p>その他のパラメータ$\mu_X$、$\mu_Y$、$\sigma_X$、$\sigma_Y$は比較するモデルに共通して存在するパラメータなので、それらの事前分布の設定が$\rho$に対する周辺尤度の値にほとんど影響しませんが、<a href="/2021/06/bayesian-hypothesis-testing-2theory/# Appendix ">平均値の差の検定</a>のときと同様に、Jeffreysの事前分布を設定します。<br>
+<p>その他のパラメータ$\mu_X$、$\mu_Y$、$\sigma_X$、$\sigma_Y$は比較するモデルに共通して存在するパラメータなので、それらの事前分布の設定が$\rho$に対する周辺尤度の値にほとんど影響しませんが、<a href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2theory/# Appendix ">平均値の差の検定</a>のときと同様に、Jeffreysの事前分布を設定します。<br>
 <br>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆平均パラメータ、分散パラメータの事前分布</strong></legend>
 <p>平均パラメータ$\mu_X$、$\mu_Y$、分散パラメータ$\sigma_X^2$、$\sigma_Y^2$の事前分布$\pi(\mu_X)$、$\pi(\mu_Y)$、$\pi(\sigma_X^2)$、$\pi(\sigma_Y^2)$はJeffreysの事前分布を適用する。</p>
