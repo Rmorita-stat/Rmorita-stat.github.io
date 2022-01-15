@@ -28,7 +28,8 @@ body {
   text-align: center;
   min-height: 100vh;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: hidden;
+  word-break: break-all;
   -webkit-overflow-scrolling: touch; }
 
 a {
@@ -41,13 +42,14 @@ a {
 article {
   margin: 4vh 0;
   word-wrap: break-word;
+  word-break: break-all;
   color: #111111; }
   article p {
     font-size: 1rem;
     line-height: 30px;
     font-weight: 340;
     margin-top: 20px;
-    word-wrap: break-word;
+    word-wrap: break-word; 
     letter-spacing: 1px; }
     @media screen and (max-width: 800px) {
       article p {
