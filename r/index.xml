@@ -39,15 +39,6 @@
     </item>
     
     <item>
-      <title>ベイズファクターを用いた仮説検定を実践する～平均値の差の検定～</title>
-      <link>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/</link>
-      <pubDate>Mon, 21 Jun 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/</guid>
-      <description>今回は、ベイズファクターを使った線形回帰分析におけるモデル選択について ◆この記事のテーマ ベイズファクターを使って平均値の差を検定する方法を実</description>
-    </item>
-    
-    <item>
       <title>ベイズファクターを用いた仮説検定を実践する～比率の差の検定～</title>
       <link>https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1practice/</link>
       <pubDate>Sun, 18 Apr 2021 00:00:00 +0000</pubDate>

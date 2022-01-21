@@ -246,17 +246,25 @@ $$
 </fieldset>
 
 </div>
+<p>さらに、分散の非負平方根は<strong>標準偏差</strong>と呼びます。<br>
+<br>
+<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆標準偏差</strong></legend>
+標準偏差$\sigma_X$は下記式で定義される。
+$$
+\sigma_X = \sqrt{\mu_{X,2}} \tag{7}
+$$
+</fieldset></p>
 <h1 id="標準化積率と歪度尖度">標準化積率と歪度・尖度</h1>
 <h2 id="標準化積率">標準化積率</h2>
 <p>平均$\mu_X$、標準偏差$\sigma_X$である確率変数$X$に対する標準化は</p>
 <p>$$
-Z = \cfrac{X - \mu_X}{\sigma_X} \tag{7}
+Z = \cfrac{X - \mu_X}{\sigma_X} \tag{8}
 $$</p>
 <p>となりますが、これに関連して<strong>標準化積率</strong>が定義されます。</p>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆標準化積率</strong></legend>
 <p>平均$\mu_X$、標準偏差$\sigma_X$である確率変数$X$および自然数$k$に対して、$\left(\cfrac{X - \mu_X}{\sigma_X}\right)^k$の期待値を標準化積率と呼び、$\alpha_{X,k}$であらわす。</p>
 <p>$$
-\alpha_{X,k} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^k \right] \tag{8}
+\alpha_{X,k} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^k \right] \tag{9}
 $$</p>
 
 </fieldset>
@@ -265,11 +273,11 @@ $$</p>
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆歪度と尖度</strong></legend>
 3次の標準化積率を歪度とよび確率変数$X$の歪度を$\gamma_{X,1}$とあらわす。
 $$
-\gamma_{X,1} = \alpha_{X,3} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^3 \right] \tag{9}
+\gamma_{X,1} = \alpha_{X,3} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^3 \right] \tag{10}
 $$
 4次の標準化積率を歪度とよび確率変数$X$の尖度を$\gamma_{X,2}$とあらわす。
 $$
-\gamma_{X,2} = \alpha_{X,4} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^4 \right] \tag{10}
+\gamma_{X,2} = \alpha_{X,4} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^4 \right] \tag{11}
 $$
 </fieldset>
 <p>歪度は確率分布の対称性・非対称性の指標となります。<br>
@@ -309,11 +317,11 @@ $$
 <fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆積率母関数</strong></legend>
 <p>確率変数$X$及び実数$t$に対して、$e^{tX}$の期待値を積率母関数といい、$\mathrm{M}_{X}(t)$であらわす。</p>
 <p>$$
-\mathrm{M}_{X}(t) = \mathbb{E}\left[e^{tX}\right] \tag{11}
+\mathrm{M}_{X}(t) = \mathbb{E}\left[e^{tX}\right] \tag{12}
 $$</p>
 <p>積率と積率母関数には以下の関係がある。</p>
 <p>$$
-\mu^{'}_ {X,k} = \mathrm{M}_{X}^{(k)}(0) = \left.\cfrac{d^k}{dt^k}\mathrm{M}_X(t)\right|_{t=0} \tag{12}
+\mu^{'}_ {X,k} = \mathrm{M}_{X}^{(k)}(0) = \left.\cfrac{d^k}{dt^k}\mathrm{M}_X(t)\right|_{t=0} \tag{13}
 $$</p>
 
 </fieldset>
