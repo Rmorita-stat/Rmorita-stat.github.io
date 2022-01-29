@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Searches on SUCRE HECACHA</title>
+    <link>https://sucre-stat.com/search/</link>
+    <description>Recent content in Searches on SUCRE HECACHA</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    
+	<atom:link href="https://sucre-stat.com/search/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title></title>
+      <link>https://sucre-stat.com/search/data.js</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/search/data.js</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

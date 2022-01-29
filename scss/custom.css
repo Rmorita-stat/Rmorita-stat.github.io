@@ -76,3 +76,7 @@ div.table.type06 td {
   padding: 10px;
   vertical-align: top;
 }
+
+.my-small {
+  font-size: 0.5em 
+  /*0.8倍の大きさに*/}

@@ -208,7 +208,15 @@
   </url>
   
   <url>
+    <loc>https://sucre-stat.com/search/data.js</loc>
+  </url>
+  
+  <url>
     <loc>https://sucre-stat.com/categories/</loc>
+  </url>
+  
+  <url>
+    <loc>https://sucre-stat.com/search/</loc>
   </url>
   
 </urlset>
