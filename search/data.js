@@ -128,6 +128,12 @@ var data = [
     body: "Julia始めました ふと、R言語以外も使っていろいろとできるようになりたいと思い立ちました。 特にきっかけがあったわけではないのです。まだR歴も浅く綺麗なコードにもほど遠いですし、Rを使って試したいこともまだまだたくさんあります。shinyを使ったアプリ開発とか・・・ ただ趣味でやっている以上、興味をもった対象には少しでも触れてみたいのです。 JuliaはRはPython等の動的型付け言語と比べて計算速度が速く、C言語にも迫る速度だという。 個人的にも、仕事でビックデータを扱う場面があるし、MCMCの計算時間を短縮したいので、計算速度の速い言語に手をつけるのはメリットが多そうだ。 ということでJuliaを勉強していこうと思います。 using LinearAlgebra dot([1,2,3],[4,5,6]) # 32 cross([0,1,0],[0,0,1]) #= 3-element Array{Int64,1}: 1 0 0 =# using Gadfly, RDatasets iris = dataset(\u0026#34;datasets\u0026#34;, \u0026#34;iris\u0026#34;) p = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point) \r SepalLength 4 5 6 7 8 2.0 2.5 3.0 3.5 4.0 4.5 SepalWidth …こんな感じで！"
   },
   {
+    url: "https://sucre-stat.com/2021/01/begin-julia/",
+    title: "Julia始めました",
+    date: "2021-01-05T00:00:00Z",
+    body: "Julia始めました ふと、R言語以外も使っていろいろとできるようになりたいと思い立ちました。 特にきっかけがあったわけではないのです。まだR歴も浅く綺麗なコードにもほど遠いですし、Rを使って試したいこともまだまだたくさんあります。shinyを使ったアプリ開発とか・・・ ただ趣味でやっている以上、興味をもった対象には少しでも触れてみたいのです。 JuliaはRはPython等の動的型付け言語と比べて計算速度が速く、C言語にも迫る速度だという。 個人的にも、仕事でビックデータを扱う場面があるし、MCMCの計算時間を短縮したいので、計算速度の速い言語に手をつけるのはメリットが多そうだ。 ということでJuliaを勉強していこうと思います。 using LinearAlgebra dot([1,2,3],[4,5,6]) # 32 cross([0,1,0],[0,0,1]) #= 3-element Array{Int64,1}: 1 0 0 =# using Gadfly, RDatasets iris = dataset(\u0026#34;datasets\u0026#34;, \u0026#34;iris\u0026#34;) p = plot(iris, x=:SepalLength, y=:SepalWidth, Geom.point) \r SepalLength 4 5 6 7 8 2.0 2.5 3.0 3.5 4.0 4.5 SepalWidth …こんな感じで！"
+  },
+  {
     url: "https://sucre-stat.com/tags/rstan/",
     title: "rstan",
     date: "2021-01-05T00:00:00Z",
@@ -258,6 +264,12 @@ var data = [
     title: "Categories",
     date: "0001-01-01T00:00:00Z",
     body: "Categories"
+  },
+  {
+    url: "https://sucre-stat.com/contact/",
+    title: "Contact",
+    date: "0001-01-01T00:00:00Z",
+    body: "Contact"
   },
   {
     url: "https://sucre-stat.com/search/",
