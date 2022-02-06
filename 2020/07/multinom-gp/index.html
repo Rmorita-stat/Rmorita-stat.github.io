@@ -637,33 +637,54 @@ $c$については、0付近の値をとることが想定されるため、期�
         
         
     </div>
+
+<div class="contact_form">
+<form className='contact_form' id="my-form" action="https://sucre-stat.com/" name="sampleCommentForm" method="post" netlify-honeypot="bot-field" netlify>
+  <p>
+    <label>Name: <input type="text" name="name" /></label>
+  </p>
+  <p>
+    <label>Email(任意): <input type="email" name="email" /></label>
+  </p>
+  <p>
+    <label>Message: <textarea name="content"></textarea></label>
+  </p>
+  <p style="display:none;">
+    <label>Bot Field(ここに値が入るとスパム判定する): <input name="bot-field"/></label>
+  </p>
+  <div>
+    <input type="submit" value="Send" />
+    <p>※ コメントは承認されると表示されます</p>
+    <input type="hidden" name="path" value="index.html" />
+  </div>
+</form>
 </div>
-<div class="disqus-comments">
-  <div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
-    
-    
-    
-    };
-    (function() {
-        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
-            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
-            return;
-        }
-        var d = document, s = d.createElement('script'); s.async = true;
-        s.src = '//' + "https-rmorita-stat-github-io" + '.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<div class="contact_form">
+<form
+        className='contact_form'
+        name="Contact Form"
+        method="POST"
+        action="thank-you" 
+        data-netlify-recaptcha="true" 
+        data-netlify="true"
+        action="https://sucre-stat.com/pages/success"
+      netlify>
+        <input type="hidden" name="form-name" value="Contact Form" />
+        <label>お名前：</label><input type="text" name="name" className="contact__field" placeholder="お名前を入力して下さい"></input>
+        <label>メールアドレス：</label><input name="email" type="email" className="contact__field" placeholder="メールアドレスを入力して下さい"></input>
+        <label>件名：</label><input name='subject' type="text" className="contact__field" placeholder="件名を入力して下さい"></input>
+        <label>お問い合わせ内容：</label><textarea name='message' className="contact__field" placeholder="お問い合わせ内容を入力して下さい"></textarea>
+        <div data-netlify-recaptcha="true"></div>
+        <button type='submit'>送信</button>
+      </form>
 </div>
+
+
 <div class="main-profile">
     <div class="main-profile__avatar">
         
-            <img src="images/avatar.png">
+            <img src="https://sucre-stat.com/images/avatar.JPG">
         
     </div>
     <div class="main-profile__body">
