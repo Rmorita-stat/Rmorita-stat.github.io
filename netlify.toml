@@ -1,0 +1,10 @@
+[build]
+  functions = "functions/"
+  publish = ""
+
+[[plugins]]
+  package = "netlify-plugin-form-submissions2"
+
+  [plugins.inputs]
+    formNames = "sampleApprovedComments"
+    dataDirectory = "comment/_data"
