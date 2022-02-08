@@ -3,7 +3,7 @@
   publish = ""
 
 [[plugins]]
-  package = "netlify-plugin-form-submissions2"
+  package = "netlify-plugin-form-submissions"
 
   [plugins.inputs]
     formNames = "sampleApprovedComments"

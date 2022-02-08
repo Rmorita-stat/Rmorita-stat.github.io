@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "netlify-plugin-form-submissions2": "^0.1.4",
+    "netlify-plugin-form-submissions": "^0.1.4",
     "request": "^2.88.2"
   }
 }
