@@ -684,6 +684,8 @@ $$
         
     </div>
 
+
+
 <div class="contact_form">
     <p>コメントを書く</p>
 <form id="my-form" action="https://sucre-stat.com/" name="sampleCommentForm" method="post" netlify-honeypot="bot-field" netlify>
@@ -703,6 +705,28 @@ $$
   </div>
 </form>
 </div>
+
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+const url = '/comment/_data/sampleApprovedComments_submissions.json'
+$.getJSON(url, (json) => {
+  for (let i = 0; i < json.length; i++) {
+    if (json[i].data.path !== '\/2021\/02\/bayesfactor\/index.html') {
+      continue
+    }
+    $('#approvalCommentsList').append(`<li>お名前　： ${json[i].data.name}<br>コメント： ${json[i].data.content}</li>`)
+  }
+})
+
+// 送信前に一言感謝
+$("#my-form").submit(function(e) {
+  alert("Thank you!");
+});
+</script>
+
 <div class="main-profile">
     <div class="main-profile__avatar">
         
@@ -807,26 +831,3 @@ $$
 <script src="https://sucre-stat.com/js/page.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 
-
-
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script language="javascript" type="text/javascript">
-
-const url = '/comment/_data/sampleApprovedComments_submissions.json'
-$.getJSON(url, (json) => {
-  for (let i = 0; i < json.length; i++) {
-    if (json[i].data.path !== '\/2021\/02\/bayesfactor\/index.html') {
-      continue
-    }
-    $('#approvalCommentsList').append(`<li>お名前　： ${json[i].data.name}<br>コメント： ${json[i].data.content}</li>`)
-  }
-})
-
-// 送信前に一言感謝
-$("#my-form").submit(function(e) {
-  alert("Thank you!");
-});
-</script>
-</body>
-</html>
