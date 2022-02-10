@@ -274,34 +274,12 @@ $$
         
     </div>
 
-
-
-<div class="contact_form">
-    <p>コメントを書く</p>
-<form id="my-form" action="https://sucre-stat.com/" name="sampleCommentForm" method="post" netlify-honeypot="bot-field" netlify>
-    <label>お名前：<input type="text" name="name" /></label>
-    <label>Email(任意)： <input type="email" name="email" /></label>
-    <label>コメント： <textarea name="content"></textarea></label>
-  <p style="display:none;">
-    <label>Bot Field(ここに値が入るとスパム判定する): <input name="bot-field"/></label>
-  </p>
-  <div>
-    <button type="submit" value="Send">送信</button>
-    <p><br>※ コメントは承認されると表示されます<br></p>
-    <input type="hidden" name="path" value="/2021/04/savage-dickey-method/index.html" />
-    <p>承認されたコメント一覧</p>
-    <ul class="comment" id="approvalCommentsList"></ul>
-
-  </div>
-</form>
-</div>
-
-<div class="contact_form">
+    <div class="contact_form">
+        <p>コメントを書く</p>
     <form id="my-form" action="https://sucre-stat.com/" name="sampleCommentForm" method="post" netlify-honeypot="bot-field" netlify>
-    <p>コメントを書く</p>
-        <label>お名前: <input type="text" name="name" /></label>
-        <label>Email(任意): <input type="email" name="email" /></label>
-        <label>コメント: <textarea name="content"></textarea></label>
+        <label>お名前：<input type="text" name="name" /></label>
+        <label>Email(任意)： <input type="email" name="email" /></label>
+        <label>コメント： <textarea name="content"></textarea></label>
       <p style="display:none;">
         <label>Bot Field(ここに値が入るとスパム判定する): <input name="bot-field"/></label>
       </p>
@@ -314,28 +292,58 @@ $$
     
       </div>
     </form>
+    </div>
+
+    <div class="contact_form">
+        <form
+                className='sampleCommentForm'
+                name="sampleCommentForm"
+                method="POST"
+                action="thank-you"
+                data-netlify-recaptcha="true"
+                data-netlify="true"
+                action=""
+          netlify>
+        <p>コメントを書く</p>
+            <label>お名前: <input type="text" name="name" /></label>
+            <label>Email(任意): <input type="email" name="email" /></label>
+            <label>コメント: <textarea name="content"></textarea></label>
+          <p style="display:none;">
+            <label>Bot Field(ここに値が入るとスパム判定する): <input name="bot-field"/></label>
+          </p>
+          <div data-netlify-recaptcha="true"></div>
+          <div>
+            <button type="submit" value="Send">送信</button>
+            <p><br>※ コメントは承認されると表示されます<br></p>
+            <input type="hidden" name="path" value="/2021/04/savage-dickey-method/index.html" />
+            <p>承認されたコメント一覧</p>
+            <ul class="comment" id="approvalCommentsList"></ul>
+        
+          </div>
+        </form>
+    </div>
+
+    
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script language="javascript" type="text/javascript">
+    
+    const url = '/comment/_data/sampleApprovedComments_submissions.json'
+    $.getJSON(url, (json) => {
+      for (let i = 0; i < json.length; i++) {
+        if (json[i].data.path !== '\/2021\/04\/savage-dickey-method\/index.html') {
+          continue
+        }
+        $('#approvalCommentsList').append(`<li>お名前　： ${json[i].data.name}<br>コメント： ${json[i].data.content}</li>`)
+      }
+    })
+
+    // 送信前に一言感謝
+    $("#my-form").submit(function(e) {
+      alert("Thank you!");
+    });
+    </script>
 </div>
-
-
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<script language="javascript" type="text/javascript">
-
-const url = '/comment/_data/sampleApprovedComments_submissions.json'
-$.getJSON(url, (json) => {
-  for (let i = 0; i < json.length; i++) {
-    if (json[i].data.path !== '\/2021\/04\/savage-dickey-method\/index.html') {
-      continue
-    }
-    $('#approvalCommentsList').append(`<li>お名前　： ${json[i].data.name}<br>コメント： ${json[i].data.content}</li>`)
-  }
-})
-
-// 送信前に一言感謝
-$("#my-form").submit(function(e) {
-  alert("Thank you!");
-});
-</script>
 
 <div class="main-profile">
     <div class="main-profile__avatar">
