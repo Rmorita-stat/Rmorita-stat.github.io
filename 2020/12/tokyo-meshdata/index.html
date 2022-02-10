@@ -612,10 +612,10 @@ $\rho$を微妙に大きく1.2にして、いびつさをもう少し和らげ�
 
 <div class="contact_form">
     <p>コメントを書く</p>
-<form className='contact_form' id="my-form" action="https://sucre-stat.com/" name="sampleCommentForm" method="post" netlify-honeypot="bot-field" netlify>
-    <label>お名前：<input type="text" className="contact__field" name="name" /></label>
-    <label>Email(任意)： <input type="email" className="contact__field" name="email" /></label>
-    <label>コメント： <textarea name="content" className="contact__field"></textarea></label>
+<form id="my-form" action="https://sucre-stat.com/" name="sampleCommentForm" method="post" netlify-honeypot="bot-field" netlify>
+    <label>お名前：<input type="text" name="name" /></label>
+    <label>Email(任意)： <input type="email" name="email" /></label>
+    <label>コメント： <textarea name="content"></textarea></label>
   <p style="display:none;">
     <label>Bot Field(ここに値が入るとスパム判定する): <input name="bot-field"/></label>
   </p>
