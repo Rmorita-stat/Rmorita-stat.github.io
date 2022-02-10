@@ -459,6 +459,26 @@ $$
 </form>
 </div>
 
+<div class="contact_form">
+    <form id="my-form" action="https://sucre-stat.com/" name="sampleCommentForm" method="post" netlify-honeypot="bot-field" netlify>
+    <p>コメントを書く</p>
+        <label>お名前: <input type="text" name="name" /></label>
+        <label>Email(任意): <input type="email" name="email" /></label>
+        <label>コメント: <textarea name="content"></textarea></label>
+      <p style="display:none;">
+        <label>Bot Field(ここに値が入るとスパム判定する): <input name="bot-field"/></label>
+      </p>
+      <div>
+        <button type="submit" value="Send">送信</button>
+        <p><br>※ コメントは承認されると表示されます<br></p>
+        <input type="hidden" name="path" value="/2020/12/regularization/index.html" />
+        <p>承認されたコメント一覧</p>
+        <ul class="comment" id="approvalCommentsList"></ul>
+    
+      </div>
+    </form>
+</div>
+
 
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
