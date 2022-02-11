@@ -148,6 +148,15 @@ div.table.type06 td {
   color: #fff;
 }
 
+.contact_form ul {
+  width: 100%;
+  box-sizing: border-box;
+  background: none;
+  outline: none;
+  resize: none;
+  font-family: 'Montserrat', sans-serif;
+}
+
 /*
 コメント一覧の装飾
 */
@@ -167,5 +176,3 @@ ul.comment li{
   padding: 0.5em;
   list-style-type: none!important;/*ポチ消す*/
 }
-
-
