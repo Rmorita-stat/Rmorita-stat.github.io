@@ -6,7 +6,7 @@
     <description>Recent content in Tags on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sun, 19 Dec 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 08 Aug 2022 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://sucre-stat.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,9 +14,18 @@
     <item>
       <title>ベイズファクター</title>
       <link>https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/</link>
-      <pubDate>Sun, 19 Dec 2021 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 08 Aug 2022 00:00:00 +0000</pubDate>
       
       <guid>https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>レプリカ交換法</title>
+      <link>https://sucre-stat.com/tags/%E3%83%AC%E3%83%97%E3%83%AA%E3%82%AB%E4%BA%A4%E6%8F%9B%E6%B3%95/</link>
+      <pubDate>Mon, 08 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/tags/%E3%83%AC%E3%83%97%E3%83%AA%E3%82%AB%E4%BA%A4%E6%8F%9B%E6%B3%95/</guid>
       <description></description>
     </item>
     

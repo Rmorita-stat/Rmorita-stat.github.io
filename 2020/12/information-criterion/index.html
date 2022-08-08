@@ -102,7 +102,7 @@
 <p>$y$を目的変数、$x$を説明変数とする。
 カルバック・ライブラー情報量基準は、$y$についての2つの生成分布に比の対数について、真のデータ生成分布で期待値をとったものとみなすことができる。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>カルバック・ライブラー(KL)情報量基準</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>カルバック・ライブラー(KL)情報量基準</strong></legend>
 <p>$q(x)$を真のデータ生成分布、$f(x)$をデータ予測モデルとしたとき、カルバック・ライブラー情報量基準は以下で定義される。</p>
 <!-- raw HTML omitted -->
 <p>$$
@@ -110,7 +110,8 @@
 $$</p>
 <!-- raw HTML omitted -->
 
-</fieldset></p>
+</fieldset>
+</p>
 <h3 id="12-性質">1.2. 性質</h3>
 <p>KL情報量基準は以下のような性質を持つ。これらの性質は2つのデータ生成分布の差としてイメージしやすいと思う。</p>
 <ul>
@@ -174,13 +175,14 @@ $$
 </div>
 <p>と近似する。さらに母数の数についてバイアス補正し、$-2N$倍することにより、下記AICが導出される。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>AIC</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>AIC</strong></legend>
 AICは下記式で定義される。
 $$
 -2\log L_{max}(\boldsymbol{x}|\hat{\theta}) + 2p \tag{7}
 $$
 ただし、$p$はモデル中の未制約母数の数。
-</fieldset><br>
+</fieldset>
+<br>
 <br>
 AICの値が小さい程よいモデルであるとみなす。$(7)$式は対数尤度が高いモデルをなるべく少ない母数の数で達成しようとするものであるとみなすことが出来る。</p>
 <h3 id="23-aicの適用制限">2.3. AICの適用制限</h3>
@@ -242,7 +244,7 @@ $$
 <p>を$(8)$式の推定量として計算できる。ここで右上の$(-k)$は$k$番目の標本をテストデータとして推定から除外した状態を意味する。</p>
 <p>あとはすべての$k$について$(12)$式を足し上げればよい。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>LOOCVによる平均対数尤度の推定量（対数点別予測密度）</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>LOOCVによる平均対数尤度の推定量（対数点別予測密度）</strong></legend>
 <p>LOOCVにおける候補モデルのデータに対する予測精度は、</p>
 <!-- raw HTML omitted -->
 <p>$$
@@ -251,7 +253,8 @@ $$</p>
 <!-- raw HTML omitted -->
 <p>で与えられる。これを対数点別予測密度という。</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <h1 id="4-waic">4. WAIC</h1>
 <p>WAIC(Widely Applicable Information Criterion)は、2010年に東京工業大学の渡辺先生が考案した情報量基準。
 LOOCVと同様に、将来得られるデータに対する平均対数尤度（$(8)$式）を推定することを目的とする。</p>
@@ -290,12 +293,13 @@ $$
 </div>
 <p>以上を踏まえ、また式の形をAICに合わせることで、WAICは下記の通り定義される。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>WAIC</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>WAIC</strong></legend>
 Waicは下記式で定義される。
 $$
 WAIC = -2\sum_{i=1}^{N} \log\left[\cfrac{1}{T}\sum_{t=1}^{T}f(x_{i} | \theta^{(t)})\right] + 2\sum_{i=1}^{N} V_{post}\left[\log f(x_{i}|\theta)\right] \tag{18}
 $$
-</fieldset><br>
+</fieldset>
+<br>
 <br>
 WAICは、事後分布が正規分布で近似できないような多くのベイジアンモデルにおいても適用可能な情報量基準量である。</p>
 
@@ -450,7 +454,7 @@ WAICは、事後分布が正規分布で近似できないような多くのベ�
         <p class="copyright u-font">
             
             &#169;
-            2021
+            2022
             
             <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
             Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;

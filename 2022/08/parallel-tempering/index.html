@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="google-site-verification" content="qrt5G5NouQQVS-0Ss9qHlEuMYt3uKuifbUIOkPd4cPc" />
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://sucre-stat.com/images/favicon.png" />
+    <link rel="apple-touch-icon" href="https://sucre-stat.com/images/favicon.png"><link rel="stylesheet" href="https://sucre-stat.com/scss/style.css">
+    
+    <link rel="stylesheet" href="https://sucre-stat.com/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <script src="https://sucre-stat.com/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /><link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+</head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://sucre-stat.com/"><img src="https://sucre-stat.com/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="https://sucre-stat.com/stat" >STAT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="https://sucre-stat.com/r" >With R</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="https://sucre-stat.com/julia" >With Julia</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="https://sucre-stat.com/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="https://sucre-stat.com/tags/" >TAGS</a>
+    </div>
+    
+<div class="site-nav__wrap">
+<a class="site-nav__el current-page" href="https://sucre-stat.com/search/" ><i class="fas fa-search my_small"></i>SEARCH</a>
+</div>
+<div class="site-nav__wrap">
+<a class="site-nav__el current-page" href="https://sucre-stat.com/contact/" >CONTACT</a>
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2022.08.08 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">レプリカ交換法を使ってベイズファクターを計算する～相関の検定～</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <p>本記事では、前回の記事で失敗に終わった相関係数の検定を、<strong>レプリカ交換法</strong>を使って解決していきたいと思います。</p>
+<p>レプリカ交換法の部分は、松浦健太郎氏が運営されていたはてなブログに掲載されていたコードを流用しています。今現在そのブログが見当たらないですが、<a href="https://www.slideshare.net/berobero11/replica-exchange-mcmc-62730929">こちらのスライド</a>でその内容が確認できるようです。</p>
+<p>レプリカ交換法自体の詳細な説明は省きます。イメージは、MCMCサンプルを抽出するメインのchainとは別に、複数のchainを用意しておき、さらにそれらのchainでは対数尤度の変化が通常よりも小さく設定されており、値の移動が柔軟に（ランダムにより近く）なっていると。そして、時々メインのchainとその他のchainを交換することで、対数尤度が極端に小さくなる範囲があっても、それをMCMCが越えられるように工夫したMCMC法になっています。</p>
+<p>前回、相関の検定で帰無仮説を
+$$
+H_{0_1}: \rho=0
+$$
+、対立仮説を
+$$
+H_{1_3}: \rho &lt; -0.3 ~~~~ 0.3 &lt; \rho
+$$</p>
+<p>としたとき、実際のデータは$\rho = 0.75$あたりが正解にもかかわらず、初期値をマイナスにすると以下のMCMCサンプルがえられたことから、
+$-0.3$から$0.3$の間の対数尤度$-∞$のエリアをMCMCchainが越えられなかったこと失敗の原因があったと伺えます。</p>
+<p><img src="https://sucre-stat.com/r/parallel-tempering/plot03.png" alt="plot03"></p>
+<p>まずは、レプリカ交換法を実行する関数を定義していきます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">replica.exchange.mcmc</span> <span class="o">&lt;-</span> <span class="nf">function </span><span class="p">(</span><span class="n">inv_T</span><span class="p">,</span> <span class="n">n_ex</span><span class="p">,</span> <span class="n">stanmodel</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">par_list</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">iter</span><span class="p">,</span> <span class="n">warmup</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">n_rep</span> <span class="o">&lt;-</span> <span class="nf">length</span><span class="p">(</span><span class="n">inv_T</span><span class="p">)</span>
+  <span class="n">len</span> <span class="o">&lt;-</span> <span class="n">iter</span> <span class="o">-</span> <span class="n">warmup</span>
+  <span class="n">n_param</span> <span class="o">&lt;-</span> <span class="nf">sum</span><span class="p">(</span><span class="nf">unlist</span><span class="p">(</span><span class="nf">lapply</span><span class="p">(</span><span class="n">par_list</span><span class="p">,</span> <span class="n">prod</span><span class="p">)))</span> <span class="o">+</span> <span class="m">2</span>  <span class="c1"># number of parameters included E and lp__</span>
+  <span class="n">ms_T1</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">len</span><span class="o">*</span><span class="n">n_ex</span><span class="p">,</span> <span class="n">n_param</span><span class="p">)</span>               <span class="c1"># MCMC samples at inv_T=1</span>
+  <span class="n">idx_tbl</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">n_ex</span><span class="p">,</span> <span class="n">n_rep</span><span class="p">)</span>                   <span class="c1"># index table of (exchange time, replica)</span>
+  <span class="n">E_tbl</span>   <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">n_ex</span><span class="p">,</span> <span class="n">n_rep</span><span class="p">)</span>                   <span class="c1"># E table along idx_tbl</span>
+  <span class="n">init_list</span> <span class="o">&lt;-</span> <span class="nf">rep</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">init</span><span class="p">),</span> <span class="n">n_rep</span><span class="p">)</span>
+
+  <span class="n">idx4ex</span> <span class="o">&lt;-</span> <span class="nf">function </span><span class="p">(</span><span class="n">n_rep</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="nf">if </span><span class="p">(</span><span class="n">e</span> <span class="o">%%</span> <span class="m">2</span> <span class="o">==</span> <span class="m">0</span><span class="p">)</span> <span class="m">1</span><span class="o">:</span><span class="nf">floor</span><span class="p">(</span><span class="n">n_rep</span><span class="o">/</span><span class="m">2</span><span class="p">)</span> <span class="o">*</span> <span class="m">2</span> <span class="o">-</span> <span class="m">1</span> <span class="n">else</span> <span class="m">1</span><span class="o">:</span><span class="p">(</span><span class="nf">floor</span><span class="p">(</span><span class="n">n_rep</span><span class="o">/</span><span class="m">2</span><span class="p">)</span><span class="m">-1</span><span class="p">)</span> <span class="o">*</span> <span class="m">2</span>
+
+  <span class="n">pb</span> <span class="o">&lt;-</span> <span class="nf">txtProgressBar</span><span class="p">(</span><span class="n">min</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">max</span><span class="o">=</span><span class="n">n_ex</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="m">3</span><span class="p">)</span>
+
+  <span class="nf">for </span><span class="p">(</span><span class="n">e</span> <span class="n">in</span> <span class="nf">seq_len</span><span class="p">(</span><span class="n">n_ex</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nf">setTxtProgressBar</span><span class="p">(</span><span class="n">pb</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+    <span class="n">fit_list</span> <span class="o">&lt;-</span> <span class="nf">foreach</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="nf">seq_len</span><span class="p">(</span><span class="n">n_rep</span><span class="p">),</span> <span class="n">.packages</span><span class="o">=</span><span class="s">&#39;rstan&#39;</span><span class="p">)</span> <span class="o">%dopar%</span> <span class="p">{</span>
+      <span class="n">data</span><span class="o">$</span><span class="n">Inv_T</span> <span class="o">&lt;-</span> <span class="n">inv_T[r]</span>
+      <span class="nf">sampling</span><span class="p">(</span>
+        <span class="n">stanmodel</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="nf">names</span><span class="p">(</span><span class="n">par_list</span><span class="p">),</span> <span class="s">&#39;E&#39;</span><span class="p">),</span> <span class="n">init</span><span class="o">=</span><span class="nf">list</span><span class="p">(</span><span class="n">init_list[[r]]</span><span class="p">),</span>
+        <span class="n">iter</span><span class="o">=</span><span class="n">iter</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="n">warmup</span><span class="p">,</span> <span class="n">chains</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">refresh</span><span class="o">=</span><span class="m">-1</span>
+      <span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">ms_T1</span><span class="nf">[</span><span class="p">((</span><span class="n">e</span><span class="m">-1</span><span class="p">)</span><span class="o">*</span><span class="n">len</span><span class="m">+1</span><span class="p">)</span><span class="o">:</span><span class="p">(</span><span class="n">e</span><span class="o">*</span><span class="n">len</span><span class="p">),</span> <span class="n">]</span> <span class="o">&lt;-</span> <span class="nf">extract</span><span class="p">(</span><span class="n">fit_list[[1]]</span><span class="p">,</span> <span class="n">permuted</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span> <span class="n">inc_warmup</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span><span class="n">[</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="n">]</span>
+
+    <span class="c1"># exchange replicas</span>
+    <span class="n">E</span> <span class="o">&lt;-</span> <span class="nf">sapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="n">n_rep</span><span class="p">,</span> <span class="nf">function</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="nf">extract</span><span class="p">(</span><span class="n">fit_list[[r]]</span><span class="p">,</span> <span class="n">permuted</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="s">&#39;E&#39;</span><span class="p">)</span><span class="n">[len</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="n">]</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">&lt;-</span> <span class="m">1</span><span class="o">:</span><span class="n">n_rep</span>
+    <span class="nf">for </span><span class="p">(</span><span class="n">r</span> <span class="n">in</span> <span class="nf">idx4ex</span><span class="p">(</span><span class="n">n_rep</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">w</span> <span class="o">&lt;-</span> <span class="nf">exp</span><span class="p">((</span><span class="n">inv_T[r]</span> <span class="o">-</span> <span class="n">inv_T[r</span><span class="m">+1</span><span class="n">]</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">E[r]</span> <span class="o">-</span> <span class="n">E[r</span><span class="m">+1</span><span class="n">]</span><span class="p">))</span>
+      <span class="nf">if </span><span class="p">(</span><span class="nf">runif</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">w</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">idx[r]</span>   <span class="o">&lt;-</span> <span class="n">r</span><span class="m">+1</span>
+        <span class="n">idx[r</span><span class="m">+1</span><span class="n">]</span> <span class="o">&lt;-</span> <span class="n">r</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">E_tbl[e</span><span class="p">,</span><span class="n">]</span> <span class="o">&lt;-</span> <span class="n">E</span>
+    <span class="n">idx_tbl[e</span><span class="p">,</span><span class="n">]</span> <span class="o">&lt;-</span> <span class="n">idx</span>
+
+    <span class="c1"># update init_list</span>
+    <span class="n">init_list</span> <span class="o">&lt;-</span> <span class="nf">lapply</span><span class="p">(</span><span class="nf">seq_len</span><span class="p">(</span><span class="n">n_rep</span><span class="p">),</span> <span class="nf">function</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">ms</span> <span class="o">&lt;-</span> <span class="nf">extract</span><span class="p">(</span><span class="n">fit_list[[idx_tbl[e</span><span class="p">,</span><span class="n">r]]]</span><span class="p">,</span> <span class="n">permuted</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span> <span class="n">pars</span><span class="o">=</span><span class="nf">names</span><span class="p">(</span><span class="n">par_list</span><span class="p">))</span><span class="n">[len</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="n">]</span>
+      <span class="n">init</span> <span class="o">&lt;-</span> <span class="nf">lapply</span><span class="p">(</span><span class="nf">names</span><span class="p">(</span><span class="n">par_list</span><span class="p">),</span> <span class="nf">function</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">pos</span> <span class="o">&lt;-</span> <span class="nf">grep</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="s">&#39;^&#39;</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="s">&#39;(\\[.*\\])?$&#39;</span><span class="p">),</span> <span class="nf">names</span><span class="p">(</span><span class="n">ms</span><span class="p">))</span>
+        <span class="nf">if </span><span class="p">(</span><span class="nf">identical</span><span class="p">(</span><span class="n">par_list[[p]]</span><span class="p">,</span> <span class="m">1</span><span class="p">))</span> <span class="nf">unname</span><span class="p">(</span><span class="n">ms[pos]</span><span class="p">)</span> <span class="n">else</span> <span class="nf">array</span><span class="p">(</span><span class="n">ms[pos]</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">par_list[[p]]</span><span class="p">)</span>
+      <span class="p">})</span>
+      <span class="nf">names</span><span class="p">(</span><span class="n">init</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">names</span><span class="p">(</span><span class="n">par_list</span><span class="p">)</span>
+      <span class="n">init</span>
+    <span class="p">})</span>
+  <span class="p">}</span>
+  <span class="nf">colnames</span><span class="p">(</span><span class="n">ms_T1</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">names</span><span class="p">(</span><span class="n">fit_list[[1]]</span><span class="p">)</span>
+  <span class="nf">return</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">ms_T1</span><span class="o">=</span><span class="n">ms_T1</span><span class="p">,</span> <span class="n">idx_tbl</span><span class="o">=</span><span class="n">idx_tbl</span><span class="p">,</span> <span class="n">E_tbl</span><span class="o">=</span><span class="n">E_tbl</span><span class="p">))</span>
+<span class="p">}</span>
+
+</code></pre></div><p>次に、レプリカ交換法のベースとなるStanコードです。現状では、cmdstanではうまくレプリカ交換法を実行できなかったので、<code>rsta::stan()</code>を使って実行することを想定してコードを書きます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">functions</span><span class="p">{</span>
+  <span class="n">real</span> <span class="n">stretched_symmetric_beta_lpdf</span><span class="p">(</span><span class="n">real</span> <span class="n">y</span><span class="p">,</span> <span class="n">real</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">real</span> <span class="n">lower_rho</span><span class="p">,</span> <span class="n">real</span> <span class="n">upper_rho</span><span class="p">,</span> <span class="kt">int</span> <span class="n">model_type</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">model_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="k">if</span><span class="p">(</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="n">lower_rho</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">upper_rho</span> <span class="p">)</span>
+        <span class="k">return</span>
+          <span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="n">inc_beta</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper_rho</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="n">inc_beta</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">lower_rho</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span> <span class="o">+</span>
+          <span class="p">((</span><span class="n">kappa</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">lbeta</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">kappa</span><span class="p">)</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">square</span><span class="p">(</span><span class="n">y</span><span class="p">)));</span>
+      <span class="k">else</span>
+        <span class="k">return</span> <span class="nf">negative_infinity</span><span class="p">();</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">model_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="k">if</span><span class="p">(</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">lower_rho</span> <span class="o">||</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="n">upper_rho</span> <span class="p">)</span>
+        <span class="k">return</span>
+          <span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">inc_beta</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper_rho</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="n">inc_beta</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">lower_rho</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span> <span class="o">+</span>
+          <span class="p">((</span><span class="n">kappa</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">lbeta</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">kappa</span><span class="p">)</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">square</span><span class="p">(</span><span class="n">y</span><span class="p">)));</span>
+      <span class="k">else</span>
+        <span class="k">return</span> <span class="nf">negative_infinity</span><span class="p">();</span>
+    <span class="k">else</span>
+      <span class="k">return</span> <span class="nf">negative_infinity</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">data</span> <span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">N</span><span class="p">;</span> <span class="c1">// sample size
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">D</span><span class="p">[</span><span class="n">N</span><span class="p">];</span> <span class="c1">// Data consists of X and Y
+</span><span class="c1"></span>  <span class="n">real</span> <span class="n">kappa</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">Jeffreys_alpha</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">Jeffreys_beta</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">lower_rho</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">upper_rho</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">model_type</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">Inv_T</span><span class="p">;</span>
+  <span class="c1">//kappa : prior scale of rho
+</span><span class="c1"></span>  <span class="c1">//Jeffreys_alpha : mean of prior(sigma^2) (sufficiently small values)
+</span><span class="c1"></span>  <span class="c1">//Jeffreys_beta : variance of prior(sigma^2) (sufficiently small values)
+</span><span class="c1"></span>  <span class="c1">//model_type
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">parameters</span> <span class="p">{</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">sigma_X</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">sigma_Y</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">rho</span><span class="p">;</span>
+  <span class="n">vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">mu</span><span class="p">;</span>
+  <span class="c1">// mu consists of mu_X, mu_Y
+</span><span class="c1"></span>  <span class="c1">// mu_X, mu_Y : mean of X and Y, respecttively
+</span><span class="c1"></span>  <span class="c1">// sigma_X, sigma_Y : standard deviation of X and Y, respectively
+</span><span class="c1"></span>  <span class="c1">// rho : correlation of X and Y
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">transformed</span> <span class="n">parameters</span><span class="p">{</span>
+  <span class="n">matrix</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="n">cov</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">E</span><span class="p">;</span>
+  <span class="n">cov</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">square</span><span class="p">(</span><span class="n">sigma_X</span><span class="p">);</span>
+  <span class="n">cov</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma_X</span> <span class="o">*</span> <span class="n">sigma_Y</span> <span class="o">*</span> <span class="n">rho</span><span class="p">;</span>
+  <span class="n">cov</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma_X</span> <span class="o">*</span> <span class="n">sigma_Y</span> <span class="o">*</span> <span class="n">rho</span><span class="p">;</span>
+  <span class="n">cov</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">square</span><span class="p">(</span><span class="n">sigma_Y</span><span class="p">);</span>
+
+  <span class="p">{</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+      <span class="n">E</span> <span class="o">=</span> <span class="n">E</span> <span class="o">-</span> <span class="n">multi_normal_lpdf</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">|</span> <span class="n">mu</span><span class="p">,</span> <span class="n">cov</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="n">E</span> <span class="o">-</span> <span class="n">stretched_symmetric_beta_lpdf</span><span class="p">(</span><span class="n">rho</span> <span class="o">|</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">lower_rho</span><span class="p">,</span> <span class="n">upper_rho</span><span class="p">,</span> <span class="n">model_type</span><span class="p">);</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="n">E</span> <span class="o">-</span> <span class="n">gamma_lpdf</span><span class="p">(</span><span class="n">square</span><span class="p">(</span><span class="n">sigma_X</span><span class="p">)</span> <span class="o">|</span> <span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="p">);</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="n">E</span> <span class="o">-</span> <span class="n">gamma_lpdf</span><span class="p">(</span><span class="n">square</span><span class="p">(</span><span class="n">sigma_Y</span><span class="p">)</span> <span class="o">|</span> <span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="p">);</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="n">E</span> <span class="o">-</span> <span class="n">normal_lpdf</span><span class="p">(</span><span class="n">mu</span> <span class="o">|</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+  <span class="p">}</span>
+
+<span class="p">}</span>
+
+<span class="n">model</span> <span class="p">{</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="o">-</span><span class="n">Inv_T</span> <span class="o">*</span> <span class="n">E</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div><p>これらを使って、レプリカ交換法を実行します。はじめに定義している<code>log_density()</code>関数は、後で自由エネルギーの計算に使う対数尤度関数です。今回、レプリカ交換法を使う理由でStanファイルを<code>bridge_sampler()</code>に引数として指定することができません。かわりに<code>bridge_sampler()</code>関数にはMCMCサンプルの行列と対数尤度関数、そして各パラメーターの定義域を指定するためのベクトルを与えてやれば自由エネルギーを計算するオプションがついているので、これを使用しています。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r">
+<span class="n">log_density</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">samples.row</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">lp</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">()</span>
+
+  <span class="n">lp</span> <span class="o">&lt;-</span> <span class="nf">stretched_symmetric_beta_lpdf</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">samples.row[3]</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa</span><span class="p">,</span> <span class="n">lower_rho</span> <span class="o">=</span> <span class="n">lower_rho</span><span class="p">,</span>
+                                      <span class="n">upper_rho</span> <span class="o">=</span> <span class="n">upper_rho</span><span class="p">,</span> <span class="n">model_type</span> <span class="o">=</span> <span class="n">model_type</span><span class="p">)</span> <span class="o">+</span>
+    <span class="nf">dgamma</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">samples.row[1]^2</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="m">1</span> <span class="o">/</span> <span class="n">Jeffreys_beta</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">TRUE</span> <span class="p">)</span> <span class="o">+</span>
+    <span class="nf">dgamma</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">samples.row[2]^2</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="m">1</span> <span class="o">/</span> <span class="n">Jeffreys_beta</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">TRUE</span> <span class="p">)</span> <span class="o">+</span>
+    <span class="nf">dnorm</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">samples.row[4]</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">100</span><span class="p">,</span> <span class="n">log</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span> <span class="o">+</span>
+    <span class="nf">dnorm</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">samples.row[5]</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">100</span><span class="p">,</span> <span class="n">log</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+
+  <span class="nf">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">data</span><span class="p">)){</span>
+    <span class="n">lp</span> <span class="o">&lt;-</span> <span class="n">lp</span> <span class="o">+</span> <span class="nf">dmvnorm</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">data[n</span><span class="p">,</span><span class="n">]</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="n">samples.row[4</span><span class="o">:</span><span class="m">5</span><span class="n">]</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">samples.row[1]^2</span><span class="p">,</span><span class="n">samples.row[1]</span><span class="o">*</span><span class="n">samples.row[2]</span><span class="o">*</span><span class="n">samples.row[3]</span><span class="p">,</span><span class="n">samples.row[1]</span><span class="o">*</span><span class="n">samples.row[2]</span><span class="o">*</span><span class="n">samples.row[3]</span><span class="p">,</span><span class="n">samples.row[2]^2</span><span class="p">),</span> <span class="n">nrow</span><span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="m">2</span><span class="p">),</span>
+                       <span class="n">log</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nf">return</span><span class="p">(</span><span class="n">lp</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nf">library</span><span class="p">(</span><span class="n">doParallel</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">rstan</span><span class="p">)</span>
+<span class="n">model_informative_rstan</span> <span class="o">&lt;-</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">stan_model</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="nf">paste0</span><span class="p">(</span><span class="nf">getwd</span><span class="p">(),</span><span class="s">&#34;/model/model_informative_E.stan&#34;</span><span class="p">))</span>
+
+<span class="n">kappa</span> <span class="o">&lt;-</span> <span class="m">3</span>
+<span class="n">Jeffreys_alpha</span> <span class="o">&lt;-</span> <span class="m">1e-5</span>
+<span class="n">Jeffreys_beta</span> <span class="o">&lt;-</span> <span class="m">1e-5</span>
+
+<span class="c1"># Informative2</span>
+<span class="n">lower_rho</span> <span class="o">&lt;-</span> <span class="m">-0.3</span>
+<span class="n">upper_rho</span> <span class="o">&lt;-</span> <span class="m">0.3</span>
+<span class="n">model_type</span> <span class="o">&lt;-</span> <span class="m">1</span>
+
+<span class="n">init</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">rho</span> <span class="o">=</span> <span class="m">-0.5</span><span class="p">)</span>
+
+<span class="n">N_rep</span> <span class="o">&lt;-</span> <span class="m">10</span>    <span class="c1"># number of replicas</span>
+<span class="n">N_ex</span> <span class="o">&lt;-</span> <span class="m">100</span>    <span class="c1"># number of exchanges</span>
+<span class="n">Inv_T</span> <span class="o">&lt;-</span> <span class="m">0.5</span><span class="nf">^seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="o">-</span><span class="nf">log</span><span class="p">(</span><span class="m">0.02</span><span class="p">)</span><span class="o">/</span><span class="nf">log</span><span class="p">(</span><span class="m">2</span><span class="p">),</span> <span class="n">len</span><span class="o">=</span><span class="n">N_rep</span><span class="p">)</span>
+
+
+<span class="n">data_informative</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">D</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">Jeffreys_alpha</span><span class="o">=</span><span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="o">=</span><span class="n">Jeffreys_beta</span><span class="p">,</span>
+                         <span class="n">upper_rho</span> <span class="o">=</span> <span class="n">upper_rho</span><span class="p">,</span> <span class="n">lower_rho</span><span class="o">=</span> <span class="n">lower_rho</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="n">model_type</span><span class="p">)</span>
+
+
+<span class="nf">registerDoParallel</span><span class="p">(</span><span class="nf">detectCores</span><span class="p">())</span>
+<span class="n">res</span> <span class="o">&lt;-</span> <span class="nf">replica.exchange.mcmc</span><span class="p">(</span><span class="n">inv_T</span><span class="o">=</span><span class="n">Inv_T</span><span class="p">,</span> <span class="n">n_ex</span><span class="o">=</span><span class="n">N_ex</span><span class="p">,</span>
+                             <span class="n">stanmodel</span> <span class="o">=</span> <span class="n">model_informative_rstan</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data_informative</span><span class="p">,</span> <span class="n">par_list</span><span class="o">=</span><span class="nf">list</span><span class="p">(</span><span class="n">sigma_X</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">sigma_Y</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">rho</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="m">2</span><span class="p">),</span> <span class="n">init</span><span class="o">=</span><span class="n">init</span><span class="p">,</span> <span class="n">iter</span><span class="o">=</span><span class="m">600</span><span class="p">,</span> <span class="n">warmup</span><span class="o">=</span><span class="m">100</span><span class="p">)</span>
+
+<span class="c1"># Matrixを使ったBridgesampling</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">zipfR</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">mvtnorm</span><span class="p">)</span>
+<span class="n">posterior</span> <span class="o">&lt;-</span> <span class="nf">as.matrix</span><span class="p">(</span><span class="n">res</span><span class="o">$</span><span class="n">ms_T1</span><span class="p">)</span><span class="n">[10000</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">res</span><span class="o">$</span><span class="n">ms_T1</span><span class="p">),</span><span class="m">1</span><span class="o">:</span><span class="m">5</span><span class="n">]</span>
+
+<span class="n">lb</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">-1</span><span class="p">,</span><span class="o">-</span><span class="kc">Inf</span><span class="p">,</span><span class="o">-</span><span class="kc">Inf</span><span class="p">)</span>
+<span class="n">ub</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="kc">Inf</span><span class="p">,</span><span class="kc">Inf</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="kc">Inf</span><span class="p">,</span><span class="kc">Inf</span><span class="p">)</span>
+
+<span class="nf">names</span><span class="p">(</span><span class="n">lb</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">names</span><span class="p">(</span><span class="n">ub</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">colnames</span><span class="p">(</span><span class="n">posterior</span><span class="p">)</span>
+<span class="n">free_energy_alt</span> <span class="o">&lt;-</span>
+  <span class="n">bridgesampling</span><span class="o">::</span><span class="nf">bridge_sampler</span><span class="p">(</span><span class="n">samples</span> <span class="o">=</span> <span class="n">posterior</span><span class="p">,</span> <span class="n">log_posterior</span> <span class="o">=</span> <span class="n">log_density</span><span class="p">,</span>
+                                 <span class="n">lb</span> <span class="o">=</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">=</span> <span class="n">ub</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">d</span><span class="p">)</span><span class="o">$</span><span class="n">logml</span>
+
+<span class="nf">exp</span><span class="p">(</span><span class="n">free_energy_alt</span> <span class="o">-</span> <span class="n">free_energy_null</span><span class="p">)</span>
+<span class="c1"># [1] 3.38101</span>
+</code></pre></div><p>計算の結果推定されたベイズファクターは、</p>
+<p>$$
+BF_{10_3} ≒ 3.38
+$$</p>
+<p>でした。BayesFactor関数の結果とは少し値が離れていますね…どこか間違えているのかもしれませんが、事後分布を見る限り問題は見受けられません。レプリカ交換法でも初期値は負の値にしていましたが、対数尤度$-∞$のエリアを越えて正の値にいけていたようです。</p>
+<p><img src="https://sucre-stat.com/r/parallel-tempering/plot04.png" alt="plot04"></p>
+<p>レプリカの交換状況を図化してみましたが、レプリカ同士の交換は問題なくできているようです。</p>
+<p><img src="https://sucre-stat.com/r/parallel-tempering/exchange-invT.png" alt="exchange-invT"></p>
+<p>次にレプリカ交換タイムでのレプリカ毎のエネルギーを描画しましたが、レプリカ間の交換には支障なさそうなエネルギーであることが確認できます。</p>
+<p><img src="https://sucre-stat.com/r/parallel-tempering/energy-whole.png" alt="energy-whole"></p>
+<p>最後にトレースプロットの確認です。イテレーション50の段階で、$\rho$の値が負の値から脱却出来ていることが確認できました。</p>
+<p><img src="https://sucre-stat.com/r/parallel-tempering/traceplot.png" alt="traceplot"></p>
+<p>最終的に計算されたベイズファクターの値は解析解とは異なり、違和感がありましたが、レプリカ交換法自体はうまくいっていたようなので、よしとしましょう。</p>
+<p>以上。</p>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
+        
+        <span><a href="https://sucre-stat.com/tags/%E3%83%AC%E3%83%97%E3%83%AA%E3%82%AB%E4%BA%A4%E6%8F%9B%E6%B3%95">レプリカ交換法</a></span>
+        
+        
+    </div>
+
+    <div class="contact_form">
+        <form
+                className='sampleCommentForm'
+                name="sampleCommentForm"
+                method="POST"
+                action="thank-you"
+                data-netlify-recaptcha="true"
+                data-netlify="true"
+                action=""
+          netlify>
+        <p>コメントを書く</p>
+            <label>お名前: <input type="text" name="name" /></label>
+            <label>Email(任意): <input type="email" name="email" /></label>
+            <label>コメント: <textarea name="content"></textarea></label>
+          <p style="display:none;">
+            <label>Bot Field(ここに値が入るとスパム判定する): <input name="bot-field"/></label>
+          </p>
+          <div data-netlify-recaptcha="true"></div>
+          <div>
+            <button type="submit" value="Send">送信</button>
+            <p><br>※ コメントは承認されると表示されます<br></p>
+            <input type="hidden" name="path" value="/2022/08/parallel-tempering/index.html" />
+          </div>
+        </form>
+        <p>承認されたコメント一覧</p>
+        
+        <ul class="comment" id="approvalCommentsList"></ul>
+    </div>
+
+    
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script language="javascript" type="text/javascript">
+    
+    const url = '/comment/_data/sampleApprovedComments_submissions.json'
+    $.getJSON(url, (json) => {
+      for (let i = 0; i < json.length; i++) {
+        if (json[i].data.path !== '\/2022\/08\/parallel-tempering\/index.html') {
+          continue
+        }
+        $('#approvalCommentsList').append(`<li>お名前　： ${json[i].data.name}<br>コメント： ${json[i].data.content}</li>`)
+      }
+    })
+
+    // 送信前に一言感謝
+    $("#my-form").submit(function(e) {
+      alert("Thank you!");
+    });
+    </script>
+</div>
+
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+            <img src="https://sucre-stat.com/images/avatar.JPG">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 得意なのは統一された洋服とダンスのステップです </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://sucre-stat.com/2022/08/bayesian-hypothesis-testing-4/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2022.08.07 00:00 </div>
+            <div class="pn-el__2"> ベイズファクターを用いた仮説検定を実践する～相関の検定～ </div>
+        </div>
+    </a>
+    
+    
+</div>
+
+<footer>
+  <script type="text/javascript">
+ MathJax = {
+   tex: {
+     inlineMath: [['$','$'], ['\\(','\\)']],
+     processEscapes: true,
+     tags: "ams",
+     autoload: {
+       color: [],
+       colorV2: ['color']
+     },
+     packages: {'[+]': ['noerrors']}
+   },
+   chtml: {
+     matchFontHeight: true,
+     displayAlign: "left",
+     displayIndent: "2em"
+   },
+   options: {
+     skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+     renderActions: {
+        
+       find_script_mathtex: [10, function (doc) {
+         for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+           const display = !!node.type.match(/; *mode=display/);
+           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+           const text = document.createTextNode('');
+           node.parentNode.replaceChild(text, node);
+           math.start = {node: text, delim: '', n: 0};
+           math.end = {node: text, delim: '', n: 0};
+           doc.math.push(math);
+         }
+       }, '']
+     }
+   },
+   loader: {
+     load: ['[tex]/noerrors']
+   }
+ };
+</script>
+<script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2022
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://sucre-stat.com/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+

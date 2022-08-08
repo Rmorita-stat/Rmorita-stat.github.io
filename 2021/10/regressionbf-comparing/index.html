@@ -110,7 +110,7 @@ p(\boldsymbol{Y}) = \mathrm{Normal}\left(\boldsymbol{\mu}, \sigma^2 \boldsymbol{
 $$</p>
 <p>事前分布は客観ベイズの考えに基づきZellner-Siow&rsquo;s Priorsを採用します。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Zellner-Siow&#39;s Priors</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Zellner-Siow&#39;s Priors</strong></legend>
 <p>$(1)$、$(2)$式の$\boldsymbol{\beta}_\boldsymbol{{\gamma}}$、$\alpha$、$\sigma^2$に対する事前分布である下記$(8)$～$(10)$式を、Zellner-Siow&rsquo;s Priorsとよぶ。</p>
 <p>$$
 \alpha,\sigma^2 \propto \cfrac{1}{\sigma^2} \tag{2}
@@ -122,19 +122,21 @@ $$</p>
 g \sim \mathrm{InvGamma}\left( \cfrac{1}{2}, \cfrac{r}{2} \right) \tag{4}
 $$</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <h1 id="ガウス求積法">ガウス求積法</h1>
 <p>これは解析的にベイズファクターを求める手法です。算出には  <code>BayesFactor::regressionBF()</code>を使います。</p>
 <p>この関数では下記の積分を含む式を、ガウス求積法を使って高精度に推定することでベイズファクターを算出します。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆1変数積分近似による推定方法</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆1変数積分近似による推定方法</strong></legend>
 <p>ベイズファクター$BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack$ は下記の通り計算できる。</p>
 <p>$$
 BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack = \int _{0} ^{∞}(1 + g)^{(N - 1 - p _\boldsymbol{\gamma})/2} \left( 1 + \left( 1 - R _\boldsymbol{\gamma}^2 \right) g \right)^{-(n-1)/2} \pi(g) dg \tag{5}
 $$</p>
 <p>ここで、$\pi(g)$は$g$の事前分布を、$R_ \boldsymbol{\gamma}^2$は$\mathcal{\boldsymbol{M}}_ \boldsymbol{\gamma}$での通常の線形回帰における残差の平方和、決定係数を示す。</p>
 
-</fieldset><br>
+</fieldset>
+<br>
 <br>
 スクリプトは以下の通り。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r">
@@ -225,7 +227,7 @@ $$</p>
 </code></pre></div><h1 id="savage-dickey法">Savage-Dickey法</h1>
 <p>これはMCMCを使った推定手法のひとつです。Savage-Dickey法については<a href="https://sucre-stat.com/2021/04/savage-dickey-method/">こちら</a>を参照のこと。ネストされたモデルに対してのみ有効な手法です。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Zellner-Siow&#39;s Priors</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Zellner-Siow&#39;s Priors</strong></legend>
 <p>$(1)$、$(2)$式の$\boldsymbol{\beta}_\boldsymbol{{\gamma}}$、$\alpha$、$\sigma^2$に対する事前分布である下記$(8)$～$(10)$式を、Zellner-Siow&rsquo;s Priorsとよぶ。</p>
 <p>$$
 \alpha,\sigma^2 \propto \cfrac{1}{\sigma^2} \tag{10}
@@ -238,7 +240,8 @@ g \sim \mathrm{InvGamma}\left( \cfrac{1}{2}, \cfrac{r}{2} \right) \tag{12}
 $$</p>
 <p>ここで、$\bar{\boldsymbol{X}_ \boldsymbol{{\gamma}}}$は$\gamma_{i}=1$である$\boldsymbol{X}_i$における平均値で構成された$N$×$\sum{\boldsymbol{\gamma}}$行列である。</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <p><br>
 stanコードは以下のとおり。</p>
 <div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="c1">// for Savage-Dickey method with cmdstanr
@@ -711,6 +714,14 @@ stanコードは以下のとおり。</p>
     </a>
     
     
+    <a class="next" href="https://sucre-stat.com/2022/08/bayesian-hypothesis-testing-4/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2022.08.07 00:00 </div>
+            <div class="pn-el__2"> ベイズファクターを用いた仮説検定を実践する～相関の検定～ </div>
+        </div>
+    </a>
+    
 </div>
 
 <footer>
@@ -762,7 +773,7 @@ stanコードは以下のとおり。</p>
         <p class="copyright u-font">
             
             &#169;
-            2021
+            2022
             
             <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
             Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;

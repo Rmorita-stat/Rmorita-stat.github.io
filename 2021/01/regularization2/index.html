@@ -176,7 +176,7 @@
 </code></pre></div><h2 id="lasso回帰">Lasso回帰</h2>
 <p><a href="https://sucre-stat.com/2020/12/regularization/">以前の記事</a>と同様に記号を定義したとき、
 <code>glmnet::glmnet(alpha, lambda)</code>は下記式に基づいて係数パラメータ$\boldsymbol{w}$を最適化するようです<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。</p>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆glmnetにおけるパラメータの最適化方法</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆glmnetにおけるパラメータの最適化方法</strong></legend>
 <p>係数パラメータ$\boldsymbol{w}$の解は、</p>
 <p>$$
 \newcommand{\argmin}{\mathop{\rm arg~min}\limits}
@@ -192,6 +192,7 @@ $$</p>
 <p>である。</p>
 
 </fieldset>
+
 <p><code>glmnet::glmnet(alpha=1)</code>で$(2)$式が$P_{\alpha}(\boldsymbol{w}) = ||\boldsymbol{w}||_1^1$となることにより、Lasso回帰をすることができます。引数の<code>lambda</code>は$\boldsymbol{w}$が大きくなることによるペナルティ$P_\alpha(\boldsymbol{w})$の重みになり、大きくなるほど係数パラメータは小さくなる傾向にあります。<code>lambda</code>の値は交差検証法を行う<code>glmet::cv.glmet()</code>で<code>nfolds=nrow(BostonHousing)</code>とすることにより1個抜き交差検証法を行い決定します。</p>
 <p>簡単にRスクリプトと結果だけ。</p>
 <div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r">
@@ -685,7 +686,7 @@ $$
         <p class="copyright u-font">
             
             &#169;
-            2021
+            2022
             
             <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
             Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;

@@ -125,7 +125,7 @@
 <h2 id="期待値">期待値</h2>
 <p>まず、確率変数$X$の<strong>期待値</strong>について定義します。 以下、慣例に従い確率変数は大文字（例：$X$）、確率変数からの実現値は同じアルファベットの小文字（例：$x$）で、$A$という事象が起こる確率を$P(A)$で表します。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆確率変数の期待値</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆確率変数の期待値</strong></legend>
 <p>離散型の確率変数$X$が確率質量関数$p_{X}(x_k)$$(k = 1,2,\ldots)$をもつとき、$X$の期待値は下記で定義される。</p>
 <p>$$
 \mathbb{E}[X] = \sum_{k=1}^{∞}x_kP(X = x_k) = \sum_{k=1}^{∞}x_k p_{X}(x_k) \tag{1}
@@ -135,12 +135,13 @@ $$
 \mathbb{E}[X] = \int_{-∞}^{∞} xf_{X}(x)dx \tag{2}
 $$</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <p>感覚的には$(1)$式$(2)$式ともに$X$がとりうる値についてその値をとる確率で重みづけしたものが期待値になります。通常の平均と同じ考えかたですね。</p>
 <h2 id="積率">積率</h2>
 <p><strong>積率</strong>（moment）は、期待値にまつわる重要な概念です。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆積率</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆積率</strong></legend>
 確率変数$X$及び自然数$k$について、
 $X^k$の期待値
 $$
@@ -148,7 +149,8 @@ $$
 $$
 を確率変数$X$の$k$次の積率（moment）という。
 特に$X$の1次の積率は平均($\mathbb{E}[X]$)である。
-</fieldset></p>
+</fieldset>
+</p>
 <p>上の定義だけでは積率をわざわざ定義する意味が分からないと思いますが、のちのち紹介するように分散や歪度、尖度の計算に2次、3次、4次の積率が利用されます。</p>
 <p>試しにガンマ分布の積率を導出し、ガンマ分布に従う確率変数の期待値を求めてみましょう。<br>
 <br>
@@ -200,17 +202,18 @@ $$
 <h2 id="分散">分散</h2>
 <p>次に確率変数の<strong>分散</strong>について定義します。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆分散</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆分散</strong></legend>
 確率変数$X$の分散は下記で定義される。ここで$X$の平均を$\mu_X$とする。
 $$
 \mathbb{V}[X] = \mathbb{E}[(X - \mu_X)^2] \tag{4}
 $$
-</fieldset></p>
+</fieldset>
+</p>
 <p>確率変数の平均も分散も、通常のデータに対する平均と分散と同じ考え方で定義されています。</p>
 <h2 id="中心積率">中心積率</h2>
 <p>積率に関連した概念として、<strong>中心積率</strong>について定義します。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆中心積率</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆中心積率</strong></legend>
 確率変数$X$とその平均$\mu_X$及び自然数$k$について、$(X-\mu_X)^k$の期待値を確率変数$X$の$k$次の中心積率（central moment）といい、$\mu_{X,k}$であらわす。特に2次の中心積率は分散である。
 $$
 \mu_{X,k} = \mathbb{E}[(X-\mu_X)^k] \tag{5}
@@ -218,7 +221,8 @@ $$
 $$
 \mu_{X,2} = \mathbb{E}[(X-\mu_X)^2] = \mathbb{V}[X] \tag{6}
 $$
-</fieldset></p>
+</fieldset>
+</p>
 <p>このように、確率変数の分散は中心積率を用いて計算することができます。</p>
 <p>試しに、ガンマ分布の分散を求めてみましょう。</p>
 <div style="overflow-x:auto;">
@@ -250,12 +254,13 @@ $$
 </div>
 <p>さらに、分散の非負平方根は<strong>標準偏差</strong>と呼びます。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆標準偏差</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆標準偏差</strong></legend>
 標準偏差$\sigma_X$は下記式で定義される。
 $$
 \sigma_X = \sqrt{\mu_{X,2}} \tag{7}
 $$
-</fieldset></p>
+</fieldset>
+</p>
 <h1 id="標準化積率と歪度尖度">標準化積率と歪度・尖度</h1>
 <h2 id="標準化積率">標準化積率</h2>
 <p>平均$\mu_X$、標準偏差$\sigma_X$である確率変数$X$に対する標準化は</p>
@@ -263,16 +268,17 @@ $$
 Z = \cfrac{X - \mu_X}{\sigma_X} \tag{8}
 $$</p>
 <p>となりますが、これに関連して<strong>標準化積率</strong>が定義されます。</p>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆標準化積率</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆標準化積率</strong></legend>
 <p>平均$\mu_X$、標準偏差$\sigma_X$である確率変数$X$および自然数$k$に対して、$\left(\cfrac{X - \mu_X}{\sigma_X}\right)^k$の期待値を標準化積率と呼び、$\alpha_{X,k}$であらわす。</p>
 <p>$$
 \alpha_{X,k} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^k \right] \tag{9}
 $$</p>
 
 </fieldset>
+
 <h2 id="歪度と尖度">歪度と尖度</h2>
 <p>確率分布の形状を把握するための量に<strong>歪度</strong>と<strong>尖度</strong>があり、これらは上記の標準化積率を用いて定義されます。</p>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆歪度と尖度</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆歪度と尖度</strong></legend>
 3次の標準化積率を歪度とよび確率変数$X$の歪度を$\gamma_{X,1}$とあらわす。
 $$
 \gamma_{X,1} = \alpha_{X,3} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^3 \right] \tag{10}
@@ -282,6 +288,7 @@ $$
 \gamma_{X,2} = \alpha_{X,4} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^4 \right] \tag{11}
 $$
 </fieldset>
+
 <p>歪度は確率分布の対称性・非対称性の指標となります。<br>
 歪度が$\gamma_{X,1} = 0$となるとき、その確率変数の確率分布は左右対称であるといえます。<br>
 一方、歪度$\gamma_{X,1}&gt; 0$となるとき、$X$は平均以上の値をとることが多いことから、分布の形状は平均より正の方向に長い右歪分布となります。<br>
@@ -316,7 +323,7 @@ $$
 </div>
 <h1 id="積率母関数">積率母関数</h1>
 <p>次に積率母関数を定義します。積率母関数は、積率を生成する関数であることからこのような名前がついています。
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆積率母関数</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆積率母関数</strong></legend>
 <p>確率変数$X$及び実数$t$に対して、$e^{tX}$の期待値を積率母関数といい、$\mathrm{M}_{X}(t)$であらわす。</p>
 <p>$$
 \mathrm{M}_{X}(t) = \mathbb{E}\left[e^{tX}\right] \tag{12}
@@ -327,6 +334,7 @@ $$</p>
 $$</p>
 
 </fieldset>
+
 <br>
 <div style="overflow-x:auto;">
   
@@ -549,7 +557,7 @@ $$
         <p class="copyright u-font">
             
             &#169;
-            2021
+            2022
             
             <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
             Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;

@@ -87,7 +87,7 @@
     </div>
     <div class="main-content__article">
         <article id="content">
-            <fieldset style="border: #d9c68c 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆この記事のテーマ</strong></legend>
+            <fieldset style="border: #d9c68c 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆この記事のテーマ</strong></legend>
 <p>ベイズファクターを使って平均値の差を検定する方法を整理します。
 この手法は、例えば下図のようなシーンに適用できます。下図左側では、交通事故対策Aの実施前と実施後の単位時間あたり事故発生件数のデータを蓄積し、対策前後で事故発生件数の平均値に差があるかを検定しています。また、下図右側では交通事故対策Aが実施された交差点と実施されていない交差点の単位時間あたり事故発生件数の平均値に差があるかを検定しています。</p>
 <p><img src="https://sucre-stat.com/stat/bayesian-hypothesis-testing-2/image.jpg" alt=""></p>
@@ -95,6 +95,7 @@
 <p>※左側は対応のある（one-sample）グループ間の検定、右側は対応のない（two-sampe）グループ間の検定です。設定上、後者の設計では対策実施効果以外の要因（異なる交差点を比較に用いることによるランダム効果）が結果に絡む可能性が高くなるので、対策Aの効果を確かめることが分析の目的であれば前者の対応のある検定の設計がより望ましいといえます。</p>
 
 </fieldset>
+
 <p>参考文献は以下の通り。ベイズファクターを使って平均値の差の検定が英語なら文献が多い。</p>
 <ul>
 <li><a href="https://www.ejwagenmakers.com/2010/WagenmakersEtAlCogPsy2010.pdf">Byesian hypothesis testing for psychologists: A tutorial on the Savage-Dickey method</a></li>
@@ -123,11 +124,12 @@ $$
 </div>
 <p>これでようやくスケールが単位あたりに調整されたeffect size$\delta$に着目すれば良いことになり、以降の議論を一般的な形で記述できるようになりました。</p>
 <p><br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆$X_i$及び$Y_i$と$\delta$の関係のモデル化（対応のある場合）</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆$X_i$及び$Y_i$と$\delta$の関係のモデル化（対応のある場合）</strong></legend>
 $$
 X_i - Y_i \sim \mathrm{Normal}(\delta \sigma, \sigma^2), ~~~ i=1,\ldots,n \tag{3}
 $$
-</fieldset></p>
+</fieldset>
+</p>
 <h2 id="対応のない場合">対応のない場合</h2>
 <p>グループ1、グループ2に所属する対象からの観測値をそれぞれ確率変数$X_i$、$Y_i$からの観測値$x_i$、$y_i$とおき、独立同分布の確率変数の組$X^n=(X_1,X_2,\ldots,X_n)$、$Y^m=(Y_1,Y_2,\ldots,Y_m)$から観測値$x^n=(x_1,x_2,\ldots,x_n)$、$y^m=(y_1,y_2,\ldots,y_m)$を得たとします。</p>
 <p>まずは、$X_i$、$Y_j$がともに分散$\sigma$の正規分布に従い、また2つの分布の平均が$\alpha$だけ離れているとおきます。</p>
@@ -151,14 +153,15 @@ $$
 </div>
 <p>とおいてやれば、ようやくスケールが単位あたりに調整されたeffect size$\delta$に着目すれば検定が可能になり、こちらも以降の議論を一般的な形で記述できるようになります。</p>
 <p><br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆$X_i$及び$Y_i$と$\delta$の関係のモデル化（対応のない場合）</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆$X_i$及び$Y_i$と$\delta$の関係のモデル化（対応のない場合）</strong></legend>
 $$
 \begin{cases}
 X_i \sim \mathrm{Normal}\left(\mu - \cfrac{\delta \sigma}{2}, \sigma^2\right),~~~i=1,\ldots,n \\<br>
 Y_j \sim \mathrm{Normal}\left(\mu + \cfrac{\delta \sigma}{2}, \sigma^2\right),~~~j=1,\ldots,m
 \end{cases} \tag{6}
 $$
-</fieldset></p>
+</fieldset>
+</p>
 <h1 id="仮説の設定">仮説の設定</h1>
 <p>$(3)$、$(6)$式の$\delta$に着目し、従来通りに帰無仮説と対立仮説を設定します。</p>
 <p><br>
@@ -195,7 +198,7 @@ $$
 この考え方は<strong>主観ベイズ</strong>（<em>subjective Bayes</em>）と呼ばれており、間違ってはいません。しかし今回の目的は検定です。それもベイズファクターを用いた検定であり、事前分布の設定が検定結果に大きく左右されることからも、なるべく事前分布に主観を与えたくありません。このような態度を、<strong>客観ベイズ</strong>（<em>objective Bayes</em>）と呼び、ベイズファクターを用いた仮説検定の場合は客観ベイズの立場で事を考えることが重要になってきます（Rouder et al.(2009)）。</p>
 <p>古今東西、客観ベイズの分野（それもなぜか心理学研究分野）では、研究者の間で合意のとれた検定のための汎用性のある事前分布の設定方法が盛んに研究されてきました。平均値の差の検定のための汎用的な事前分布もいくつか開発されています。ここでは天下り的に、<strong>JZSの事前分布</strong>（<em>JZS proir</em>）と<strong>単位情報事前分布</strong>（<em>unit information proir</em>）について整理します。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆JZSの事前分布</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆JZSの事前分布</strong></legend>
 <p>JZSの事前分布は検定対象のパラメータ$\delta$まわりの事前分布を以下のように設定する。</p>
 <p>$$
 \begin{cases}
@@ -218,7 +221,8 @@ $$</p>
 \pi(\mu) ∝ 1 \tag{9}
 $$</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <p><br>
 <div style="overflow-x:auto;">
   
@@ -250,7 +254,7 @@ $$
 
 </div>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆単位情報事前分布</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆単位情報事前分布</strong></legend>
 <p>単位情報事前分布は検定対象のパラメータ$\alpha$まわりの事前分布を以下のように設定する。</p>
 <p>$$
 \begin{cases}
@@ -263,7 +267,8 @@ $$</p>
 \pi(\mu) ∝ 1 \tag{11}
 $$</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <p>JZSの事前分布と単位情報事前分布の唯一の違いはeffect size $\delta$の事前分布（正規分布）の分散の設定です。JZSの事前分布は分散$g$が逆カイ二乗分布に従うとした一方、単位情報事前分布は分散固定です。その意味では、単位情報事前分布の方がモデルに与える事前情報が多いことになります。また$r=1$のとき、2つの設定は$\delta$の事前分布を標準正規分布にするか、標準コーシー分布にするかの違いに帰着することが分かります。</p>
 <p>標準正規分布と標準コーシー分布を比較した図が以下です。</p>
 <figure class="left"><a href="https://sucre-stat.com/stat/bayesian-hypothesis-testing-2/image2.png">
@@ -280,7 +285,7 @@ $$</p>
 <h2 id="mcmc法で近似的に求める">MCMC法で近似的に求める</h2>
 <p>本記事と<a href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/">実践編</a>の本題はこちらです。これにはネストされたモデル同士の比較で有効なSavage-Dickey法を使ってベイズファクターを計算します。Savage-Dickey法の概要を以下に示します。詳細は<a href="https://sucre-stat.com/2021/04/savage-dickey-method/">以前の記事</a>を参照のこと。</p>
 <p><br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Savage-Dickey法</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Savage-Dickey法</strong></legend>
 <p>モデル$M_0$と$M_1$に共通のパラメータ$\boldsymbol{\delta}=(\delta_1, \ldots, \delta_m)$があるとき、$M_0$と$M_1$が</p>
 <p>$$
 p(\mathcal{D} | M_0) = p(\mathcal{D} | \boldsymbol{\delta} = \boldsymbol{\delta}_0, M_1) \tag{12}
@@ -291,7 +296,8 @@ BF_{01} = \cfrac{p(\boldsymbol{\delta}=\boldsymbol{\delta}_0 | \mathcal{D}, M_1)
 $$</p>
 <p>ここで、$\mathcal{D}$は全データセットである。</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <p>$(11)$、$(12)$式において、$H_0$、$H_1$にそれぞれ対応するモデルを$M_0$、$M_1$と読み替えれば、$H_1$に対応するモデル$M_1$における対象パラメータの事前分布と事後分布の一点比較をするだけでベイズファクター$BF_{01}$を求められることが分かります。</p>
 <p>事前分布$p(\boldsymbol{\delta}=\boldsymbol{\delta}_0 |M_1)$の方は、MCMCの結果からではなく、設定したモデルから値を算出します。たとえば、従来通りの仮説検定の枠組みでは、JZSの事前分布、単位情報事前分布の双方ともに$\delta=0$が帰無仮説に対応するパラメータ空間上の点ですから、</p>
 <div style="overflow-x:auto;">
@@ -337,7 +343,7 @@ $$
 </div>
 <p>$(17)$式は、条件付き事後分布$p(\delta|\boldsymbol{\psi},\mathcal{D},M_1)$の関数形が明らかであれば解析的に計算可能です。そこで、JZSの事前分布、単位情報事前分布それぞれの場合の条件付き事後分布$p(\delta|\boldsymbol{\psi},\mathcal{D},M_1)$及びその導出過程を、対応のある場合とない場合に分けて提示します。</p>
 <p><br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆対応のある平均値の差の検定におけるCMDE</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆対応のある平均値の差の検定におけるCMDE</strong></legend>
 <p>JZSの事前分布を設定したときの条件付き事後分布$p(\delta | \boldsymbol{\psi}=(\sigma,g), \mathcal{D}=(x^n,y^n), M_1)$は以下のとおりである。</p>
 <p>$$
 p(\delta | \boldsymbol{\psi},\mathcal{D}, M_1) = \mathrm{Normal}\left(\cfrac{\sum_{i=1}^{n}(x_i-y_i)}{\sigma\left(n + \cfrac{1}{g}\right)}, \cfrac{1}{n + \cfrac{1}{g}}\right) \tag{18}
@@ -347,7 +353,8 @@ $$</p>
 p(\delta | \boldsymbol{\psi},\mathcal{D}, M_1) = \mathrm{Normal}\left(\cfrac{\sum_{i=1}^{n}(x_i-y_i)}{\sigma\left(n + \cfrac{1}{r^2}\right)}, \cfrac{1}{n + \cfrac{1}{r^2}}\right) \tag{19}
 $$</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <p><br>
 <div style="overflow-x:auto;">
   
@@ -393,7 +400,7 @@ $(19)$式は$(3)$、$(10)$式を用いるので、上述の導出で$g$を$r^2$�
 
 </div></p>
 <p><br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆対応のない平均値の差の検定におけるCMDE</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆対応のない平均値の差の検定におけるCMDE</strong></legend>
 <p>JZSの事前分布を設定したときの条件付き事後分布$p(\delta | \boldsymbol{\psi}=(\sigma,g,\mu), \mathcal{D}=(x^n,y^m), M_1)$は以下のとおりである。</p>
 <p>$$
 p(\delta | \boldsymbol{\psi},\mathcal{D}, M_1) = \mathrm{Normal}\left(\cfrac{2g\left( \sum_{j=1}^{m}y_j - \sum_{i=1}^{n} x_i + (n-m)\mu \right)}{\left(4 + (n+m)g \right)\sigma }, \cfrac{4g}{4+(n+m)g}\right) \tag{20}
@@ -403,7 +410,8 @@ $$</p>
 p(\delta | \boldsymbol{\psi},\mathcal{D}, M_1) = \mathrm{Normal}\left(\cfrac{2r^2\left( \sum_{j=1}^{m}y_j - \sum_{i=1}^{n} x_i + (n-m)\mu \right)}{\left(4 + (n+m)r^2 \right)\sigma }, \cfrac{4r^2}{4+(n+m)r^2}\right)  \tag{21}
 $$</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <p><br>
 <div style="overflow-x:auto;">
   
@@ -449,7 +457,7 @@ $(21)$式は$(6)$、$(10)$式を用いるので、上述の導出で$g$を$r^2$�
 <p>これでベイズファクターを使って平均値の差の検定をする準備が整いました。実践編は<a href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2practice/">実践編</a>で！</p>
 <h1 id="appendix">Appendix</h1>
 <h2 id="jaffrayの事前分布">Jaffrayの事前分布</h2>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Jeffreysの事前分布</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Jeffreysの事前分布</strong></legend>
 <p>Jeffreysの事前分布$p_J(\theta)$は、下記のとおり定義される。</p>
 <p>$$
 P_J(\theta) = \sqrt{I(\theta)} \tag{22}
@@ -460,6 +468,7 @@ I(\theta) = \mathbb{E}\left[ \left. \left( \cfrac{\partial}{\partial \theta} \ma
 $$</p>
 
 </fieldset>
+
 <p><br>
 この定義に沿って正規分布の平均・分散に対するJeffreysの事前分布を導出する。</p>
 <p><br>
@@ -716,7 +725,7 @@ $$
         <p class="copyright u-font">
             
             &#169;
-            2021
+            2022
             
             <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
             Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;

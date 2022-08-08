@@ -3,28 +3,43 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://sucre-stat.com/stat/</loc>
-    <lastmod>2021-12-19T00:00:00+00:00</lastmod>
+    <loc>https://sucre-stat.com/r/</loc>
+    <lastmod>2022-08-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://sucre-stat.com/tags/</loc>
-    <lastmod>2021-12-19T00:00:00+00:00</lastmod>
+    <lastmod>2022-08-08T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/</loc>
+    <lastmod>2022-08-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sucre-stat.com/tags/%E3%83%AC%E3%83%97%E3%83%AA%E3%82%AB%E4%BA%A4%E6%8F%9B%E6%B3%95/</loc>
+    <lastmod>2022-08-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sucre-stat.com/2022/08/parallel-tempering/</loc>
+    <lastmod>2022-08-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sucre-stat.com/2022/08/bayesian-hypothesis-testing-4/</loc>
+    <lastmod>2022-08-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://sucre-stat.com/stat/</loc>
     <lastmod>2021-12-19T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://sucre-stat.com/2021/12/bayesian-hypothesis-testing-4theory/</loc>
     <lastmod>2021-12-19T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://sucre-stat.com/r/</loc>
-    <lastmod>2021-10-23T00:00:00+00:00</lastmod>
   </url>
   
   <url>

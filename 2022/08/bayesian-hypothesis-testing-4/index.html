@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="google-site-verification" content="qrt5G5NouQQVS-0Ss9qHlEuMYt3uKuifbUIOkPd4cPc" />
+    <meta charset="utf-8">
+    <title>
+        
+        SUCRE HECACHA
+        
+    </title>
+    <meta name="viewport" id="viewport" content="width=device-width, initial-scale=1">
+    <link rel='icon' type='image/x-icon' href="https://sucre-stat.com/images/favicon.png" />
+    <link rel="apple-touch-icon" href="https://sucre-stat.com/images/favicon.png"><link rel="stylesheet" href="https://sucre-stat.com/scss/style.css">
+    
+    <link rel="stylesheet" href="https://sucre-stat.com/css/syntax.css">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <script src="https://sucre-stat.com/js/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/highlight.css">
+    
+    <link rel="stylesheet" href="https://sucre-stat.com/scss/custom.css">
+    
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        ga('create', 'Your Google Analytics tracking id', 'auto');
+        ga('send', 'pageview');
+    </script>
+    
+    
+    <meta name="generator" content="Hugo 0.71.0" /><link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+</head>
+
+
+<body>
+<div class="header">
+    <div class="site-logo__wrap">
+        <div id="site-button">
+            <div></div>
+        </div>
+        
+        <div class=' site-logo '>
+            <a href="https://sucre-stat.com/"><img src="https://sucre-stat.com/images/logo.png" /></a>
+        </div>
+    </div>
+    
+<div class=' site-nav u-font ' id="nav-bar">
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="https://sucre-stat.com/stat" >STAT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="https://sucre-stat.com/r" >With R</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="https://sucre-stat.com/julia" >With Julia</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="https://sucre-stat.com/about" >ABOUT</a>
+    </div>
+    
+    <div class="site-nav__wrap">
+        <a class="site-nav__el" href="https://sucre-stat.com/tags/" >TAGS</a>
+    </div>
+    
+<div class="site-nav__wrap">
+<a class="site-nav__el current-page" href="https://sucre-stat.com/search/" ><i class="fas fa-search my_small"></i>SEARCH</a>
+</div>
+<div class="site-nav__wrap">
+<a class="site-nav__el current-page" href="https://sucre-stat.com/contact/" >CONTACT</a>
+</div>
+
+</div>
+<div class="main">
+
+<div class="main-content">
+    <div class="main-content__date">
+        <h4 id="date"> 2022.08.07 00:00 </h4>
+    </div>
+    <div class="main-content__title">
+        <h1 id="title">ベイズファクターを用いた仮説検定を実践する～相関の検定～</h1>
+    </div>
+    <div class="main-content__article">
+        <article id="content">
+            <p>ベイズファクターを使って相関の検定をやっていきます。</p>
+<p>理論編は<a href="https://sucre-stat.com/2021/12/bayesian-hypothesis-testing-4theory/">こちら</a>を参照のこと。</p>
+<h1 id="サンプルデータの準備">サンプルデータの準備</h1>
+<p>本練習でつかうデータは、$\boldsymbol{\mu} = \left( 0, 0 \right)^T $、$\boldsymbol{\Sigma} = \left( \begin{array}{ccc} 4 &amp; 3 \\ 3 &amp; 4 \end{array} \right)$の二次元正規分布から10コ乱数を生成したものです。</p>
+<p>よって$\rho = 0.75$ですね。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">mvtnorm</span><span class="p">)</span>
+<span class="n">d</span> <span class="o">&lt;-</span> <span class="nf">rmvnorm</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">10</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> <span class="n">sigma</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">4</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="m">2</span><span class="p">),</span><span class="n">method</span><span class="o">=</span><span class="s">&#34;chol&#34;</span><span class="p">)</span>
+<span class="m">2</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="m">4</span><span class="p">)</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="m">2</span><span class="p">)</span>
+</code></pre></div><p><img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-4/plot01.png" alt="plot01"></p>
+<h1 id="事前分布の設定">事前分布の設定</h1>
+<p>相関パラメータに対する理想的な事前分布の設定方法をおさらいします。</p>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Jeffreysの理論に則った相関パラメータの事前分布</strong></legend>
+<p>Jeffreysの理論に従い、相関パラメータ$\rho$の事前分布$\pi(\rho)$を、伸長した対称ベータ分布(stretched symmetric beta function)とする。</p>
+<p>$$
+\pi(\rho | \kappa) = \cfrac{2^{\cfrac{\kappa - 2}{\kappa}}}{\mathrm{B}\left(\cfrac{1}{\kappa},\cfrac{1}{\kappa}\right)}\left( 1 - \rho ^ 2\right)^\cfrac{1-\kappa}{\kappa}
+\tag{3}
+$$</p>
+<p>ここで、$\kappa$が$2$以上の値をとるとき、理想的な性質をもつ事前分布となる。</p>
+
+</fieldset>
+
+<p>後で使うBayesFactorパッケージが推奨するデフォルトの設定は、$\kappa=3$です。</p>
+<p>描画するとこんな感じです。</p>
+<p><img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-4/plot02.png" alt="plot02"></p>
+<h1 id="帰無仮説の設定">帰無仮説の設定</h1>
+<p>ここでは帰無仮説を複数設定して検定をしていきます。$H_{0_1}$は通常の統計学的検定で設定される帰無仮説と同じ設定です。相関がない場合を帰無仮説とします。</p>
+<p>$$
+H_{0_1}: \rho=0
+$$</p>
+<p>対立仮説は3つ用意します。</p>
+<div style="overflow-x:auto;">
+  
+$$
+\begin{cases}
+H_{1_1}: -1 <\rho < 1
+ \\\\
+H_{1_2}: 0 < \rho < 1
+\\\\
+H_{1_3}: \rho < -0.3 ~~~~ 0.3 < \rho
+\end{cases}
+$$
+
+</div>
+<p>Hoijtink先生は、無制約仮説という、検定したいパラメータが定義される全領域を許容してやる仮説を設定することも推奨していますが、ここでは設定しません。詳細は<a href="https://www.routledge.com/Informative-Hypotheses-Theory-and-Practice-for-Behavioral-and-Social-Scientists/Hoijtink/p/book/9780367382223">この本</a>を参照のこと。</p>
+<h1 id="bayesfactor関数を使って計算">BayesFactor関数を使って計算</h1>
+<p>いつものごとく、誰でも簡単に解析的にベイズファクターを計算できることを目的に開発された、BayesFactorパッケージを使って計算してみます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">correlationBF</span><span class="p">(</span><span class="n">d[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span><span class="p">,</span> <span class="n">d[</span><span class="p">,</span><span class="m">2</span><span class="n">]</span><span class="p">,</span> <span class="n">rscale</span> <span class="o">=</span> <span class="s">&#34;medium&#34;</span><span class="p">)</span>
+<span class="c1"># Bayes factor analysis</span>
+<span class="c1"># --------------</span>
+<span class="c1">#   [1] Alt., r=0.333 : 3.549771 ±0%</span>
+<span class="c1">#</span>
+<span class="c1"># Against denominator:</span>
+<span class="c1">#   Null, rho = 0</span>
+<span class="c1"># ---</span>
+<span class="c1">#   Bayes factor type: BFcorrelation, Jeffreys-beta*</span>
+
+<span class="nf">correlationBF</span><span class="p">(</span><span class="n">d[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span><span class="p">,</span> <span class="n">d[</span><span class="p">,</span><span class="m">2</span><span class="n">]</span><span class="p">,</span> <span class="n">rscale</span> <span class="o">=</span> <span class="s">&#34;medium&#34;</span><span class="p">,</span> <span class="n">nullInterval</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">-1</span><span class="p">,</span><span class="m">0</span><span class="p">))</span>
+<span class="c1"># Bayes factor analysis</span>
+<span class="c1"># --------------</span>
+<span class="c1">#   [1] Alt., r=0.333 -1&lt;rho&lt;0    : 0.2557948 ±NA%</span>
+<span class="c1">#   [2] Alt., r=0.333 !(-1&lt;rho&lt;0) : 6.809117  ±NA%</span>
+<span class="c1">#</span>
+<span class="c1"># Against denominator:</span>
+<span class="c1">#   Null, rho = 0</span>
+<span class="c1"># ---</span>
+<span class="c1">#   Bayes factor type: BFcorrelation, Jeffreys-beta*</span>
+
+<span class="nf">correlationBF</span><span class="p">(</span><span class="n">d[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span><span class="p">,</span> <span class="n">d[</span><span class="p">,</span><span class="m">2</span><span class="n">]</span><span class="p">,</span> <span class="n">rscale</span> <span class="o">=</span> <span class="s">&#34;medium&#34;</span><span class="p">,</span> <span class="n">nullInterval</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">-0.3</span><span class="p">,</span><span class="m">0.3</span><span class="p">))</span>
+<span class="c1"># Bayes factor analysis</span>
+<span class="c1"># --------------</span>
+<span class="c1">#   [1] Alt., r=0.333 -0.3&lt;rho&lt;0.3    : 1.506277 ±NA%</span>
+<span class="c1">#   [2] Alt., r=0.333 !(-0.3&lt;rho&lt;0.3) : 5.814191 ±NA%</span>
+<span class="c1">#</span>
+<span class="c1"># Against denominator:</span>
+<span class="c1">#   Null, rho = 0</span>
+<span class="c1"># ---</span>
+<span class="c1">#   Bayes factor type: BFcorrelation, Jeffreys-beta*</span>
+</code></pre></div><p>対立仮説$H_{1_1}$のときのベイズファクター（対立仮説が正しいエビデンス / 帰無仮説が正しいエビデンス）を$BF_{10_{1}}$と表現すると、それぞれのベイズファクターは下記の値となりました。</p>
+<div style="overflow-x:auto;">
+  
+$$
+\begin{cases}
+BF_{10_1} ≒ 3.55
+ \\\\
+BF_{10_2} ≒ 6.81
+\\\\
+BF_{10_3} ≒ 5.81
+\end{cases}
+$$
+
+</div>
+<p>乱数生成したときの設定（$\rho = 0.75$）を考えるとそうおかしな結果ではなさそうです。</p>
+<h1 id="bridgesamplingを使って計算">Bridgesamplingを使って計算</h1>
+<p>今度は<strong>ブリッジサンプリング</strong>と呼ばれる手法を使ってベイズファクターを計算していきます。ここで使用する<code>Bridgesampling::bridge_sampler()</code>関数は、ブリッジサンプリング方により、モデルの自由エネルギーや周辺尤度をMCMC結果から直接推定することができる便利な道具です。</p>
+<p><code>bridge_sampler()</code>を使う場合も、stanでモデルを組む必要があります。</p>
+<p>まずは帰無仮説$H_{0_1}$を表現したstanコードです。</p>
+<div class="highlight"><pre class="chroma"><code class="language-C" data-lang="C"><span class="n">data</span> <span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">N</span><span class="p">;</span> <span class="c1">// sample size
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">D</span><span class="p">[</span><span class="n">N</span><span class="p">];</span> <span class="c1">// Data consists of X and Y
+</span><span class="c1"></span>  <span class="n">real</span> <span class="n">Jeffreys_alpha</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">Jeffreys_beta</span><span class="p">;</span>
+  <span class="c1">//kappa : prior scale of rho
+</span><span class="c1"></span>  <span class="c1">//Jeffreys_alpha : mean of prior(sigma^2) (sufficiently small values)
+</span><span class="c1"></span>  <span class="c1">//Jeffreys_beta : variance of prior(sigma^2) (sufficiently small values)
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">parameters</span> <span class="p">{</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">sigma_X</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">sigma_Y</span><span class="p">;</span>
+  <span class="n">vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">mu</span><span class="p">;</span>
+  <span class="c1">// mu consists of mu_X, mu_Y
+</span><span class="c1"></span>  <span class="c1">// mu_X, mu_Y : mean of X and Y, respecttively
+</span><span class="c1"></span>  <span class="c1">// sigma_X, sigma_Y : standard deviation of X and Y, respectively
+</span><span class="c1"></span>  <span class="c1">// rho : correlation of X and Y
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">transformed</span> <span class="n">parameters</span><span class="p">{</span>
+  <span class="n">matrix</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="n">cov</span><span class="p">;</span>
+  <span class="n">cov</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">square</span><span class="p">(</span><span class="n">sigma_X</span><span class="p">);</span>
+  <span class="n">cov</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">cov</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">cov</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">square</span><span class="p">(</span><span class="n">sigma_Y</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">model</span> <span class="p">{</span>
+
+  <span class="c1">//model
+</span><span class="c1"></span>  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+    <span class="n">target</span> <span class="o">+=</span> <span class="n">multi_normal_lpdf</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">|</span> <span class="n">mu</span><span class="p">,</span> <span class="n">cov</span> <span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="c1">//prior
+</span><span class="c1"></span>  <span class="n">target</span> <span class="o">+=</span> <span class="n">gamma_lpdf</span><span class="p">(</span><span class="n">square</span><span class="p">(</span><span class="n">sigma_X</span><span class="p">)</span> <span class="o">|</span> <span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="p">);</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">gamma_lpdf</span><span class="p">(</span><span class="n">square</span><span class="p">(</span><span class="n">sigma_Y</span><span class="p">)</span> <span class="o">|</span> <span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="p">);</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">normal_lpdf</span><span class="p">(</span><span class="n">mu</span> <span class="o">|</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+<span class="p">}</span>
+
+</code></pre></div><p>$\rho$に不等式制約を課した仮説（以降、情報仮説と呼びます）を表現するStanコードは以下。</p>
+<p><code>data{}</code>ブロックで<code>int model_type</code>というものを導入しています。これは、表現したい仮説に合わせて$0$または$1$を設定するもので、$0$を選択した場合、仮説によって相関パラメータの空間が分割されないモデル（例えば、$-0.3 &lt; \rho &lt; 0.3$）を表現します。逆に$1$を選択した場合、仮説によって相関パラメータの空間が2つに分割されてしまうモデル（例えば、$\rho &lt; -0.3$、$\rho &gt; 0.3$）を表現します。入力した<code>int model_type</code>の値に対応して、<code>function()</code>ブロックで定義した事前分布のための関数<code>stretched_symmetric_beta_lpdf()</code>の機能がスイッチされることとなります。</p>
+<div class="highlight"><pre class="chroma"><code class="language-c" data-lang="c"><span class="n">functions</span><span class="p">{</span>
+  <span class="n">real</span> <span class="n">stretched_symmetric_beta_lpdf</span><span class="p">(</span><span class="n">real</span> <span class="n">y</span><span class="p">,</span> <span class="n">real</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">real</span> <span class="n">lower_rho</span><span class="p">,</span> <span class="n">real</span> <span class="n">upper_rho</span><span class="p">,</span> <span class="kt">int</span> <span class="n">model_type</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">model_type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="k">if</span><span class="p">(</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="n">lower_rho</span> <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">upper_rho</span> <span class="p">)</span>
+        <span class="k">return</span>
+          <span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="n">inc_beta</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper_rho</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-</span> <span class="n">inc_beta</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">lower_rho</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span> <span class="o">+</span>
+          <span class="p">((</span><span class="n">kappa</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">lbeta</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">kappa</span><span class="p">)</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">square</span><span class="p">(</span><span class="n">y</span><span class="p">)));</span>
+      <span class="k">else</span>
+        <span class="k">return</span> <span class="nf">negative_infinity</span><span class="p">();</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">model_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="k">if</span><span class="p">(</span> <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">lower_rho</span> <span class="o">||</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="n">upper_rho</span> <span class="p">)</span>
+        <span class="k">return</span>
+          <span class="o">-</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">inc_beta</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper_rho</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="n">inc_beta</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">lower_rho</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span> <span class="o">+</span>
+          <span class="p">((</span><span class="n">kappa</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">lbeta</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">kappa</span><span class="p">)</span><span class="o">/</span><span class="n">kappa</span><span class="p">)</span> <span class="o">*</span> <span class="n">log</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">square</span><span class="p">(</span><span class="n">y</span><span class="p">)));</span>
+      <span class="k">else</span>
+        <span class="k">return</span> <span class="nf">negative_infinity</span><span class="p">();</span>
+    <span class="k">else</span>
+      <span class="k">return</span> <span class="nf">negative_infinity</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">data</span> <span class="p">{</span>
+  <span class="kt">int</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">N</span><span class="p">;</span> <span class="c1">// sample size
+</span><span class="c1"></span>  <span class="n">vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">D</span><span class="p">[</span><span class="n">N</span><span class="p">];</span> <span class="c1">// Data consists of X and Y
+</span><span class="c1"></span>  <span class="n">real</span> <span class="n">kappa</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">Jeffreys_alpha</span><span class="p">;</span>
+  <span class="n">real</span> <span class="n">Jeffreys_beta</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">lower_rho</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">upper_rho</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">model_type</span><span class="p">;</span>
+  <span class="c1">//kappa : prior scale of rho
+</span><span class="c1"></span>  <span class="c1">//Jeffreys_alpha : mean of prior(sigma^2) (sufficiently small values)
+</span><span class="c1"></span>  <span class="c1">//Jeffreys_beta : variance of prior(sigma^2) (sufficiently small values)
+</span><span class="c1"></span>  <span class="c1">//model_type
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">parameters</span> <span class="p">{</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">sigma_X</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">sigma_Y</span><span class="p">;</span>
+  <span class="n">real</span><span class="o">&lt;</span><span class="n">lower</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="o">&gt;</span> <span class="n">rho</span><span class="p">;</span>
+  <span class="n">vector</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">mu</span><span class="p">;</span>
+  <span class="c1">// mu consists of mu_X, mu_Y
+</span><span class="c1"></span>  <span class="c1">// mu_X, mu_Y : mean of X and Y, respecttively
+</span><span class="c1"></span>  <span class="c1">// sigma_X, sigma_Y : standard deviation of X and Y, respectively
+</span><span class="c1"></span>  <span class="c1">// rho : correlation of X and Y
+</span><span class="c1"></span><span class="p">}</span>
+
+<span class="n">transformed</span> <span class="n">parameters</span><span class="p">{</span>
+  <span class="n">matrix</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="n">cov</span><span class="p">;</span>
+  <span class="n">cov</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">square</span><span class="p">(</span><span class="n">sigma_X</span><span class="p">);</span>
+  <span class="n">cov</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma_X</span> <span class="o">*</span> <span class="n">sigma_Y</span> <span class="o">*</span> <span class="n">rho</span><span class="p">;</span>
+  <span class="n">cov</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma_X</span> <span class="o">*</span> <span class="n">sigma_Y</span> <span class="o">*</span> <span class="n">rho</span><span class="p">;</span>
+  <span class="n">cov</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">square</span><span class="p">(</span><span class="n">sigma_Y</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">model</span> <span class="p">{</span>
+
+  <span class="c1">//prior
+</span><span class="c1"></span>  <span class="n">target</span> <span class="o">+=</span> <span class="n">stretched_symmetric_beta_lpdf</span><span class="p">(</span><span class="n">rho</span> <span class="o">|</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">lower_rho</span><span class="p">,</span> <span class="n">upper_rho</span><span class="p">,</span> <span class="n">model_type</span><span class="p">);</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">gamma_lpdf</span><span class="p">(</span><span class="n">square</span><span class="p">(</span><span class="n">sigma_X</span><span class="p">)</span> <span class="o">|</span> <span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="p">);</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">gamma_lpdf</span><span class="p">(</span><span class="n">square</span><span class="p">(</span><span class="n">sigma_Y</span><span class="p">)</span> <span class="o">|</span> <span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="p">);</span>
+  <span class="n">target</span> <span class="o">+=</span> <span class="n">normal_lpdf</span><span class="p">(</span><span class="n">mu</span> <span class="o">|</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+
+  <span class="c1">//model
+</span><span class="c1"></span>  <span class="k">for</span><span class="p">(</span><span class="n">n</span> <span class="n">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">N</span><span class="p">){</span>
+    <span class="n">target</span> <span class="o">+=</span> <span class="n">multi_normal_lpdf</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">|</span> <span class="n">mu</span><span class="p">,</span> <span class="n">cov</span><span class="p">);</span>  
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+
+</code></pre></div><p>これら2つのstanコードを使って、まずは帰無仮説$H_{0_1}$設定したときのベイズファクターを推定してみましょう。</p>
+<h2 id="h_1_1のときのベイズファクターを推定">$H_{1_1}$のときのベイズファクターを推定</h2>
+<p>分析の流れは、「帰無仮説（$H_{0_1}$）の場合の自由エネルギー推定」、「対立仮説の自由エネルギー推定」、「両者の自由エネルギーを比較」です。
+今回、cmdstanを使っている環境上、<code>bridge_sampler()</code>の引数には<code>rstan::read_stan_csv()</code>よりcmdstan結果から抽出したMCMCサンプルと、<code>rstan::stan()</code>でコンパイルしなおしたstanファイルを入れます。このひと手間がないと現状cmdstanでブリッジサンプリングしてくれません。</p>
+<p>最後の計算では、</p>
+<div style="overflow-x:auto;">
+  
+$$
+BF_{10} = \cfrac{p(x^n | M_1)}{p(x^n | M_0)} = \exp\left( \log \cfrac{p(x^n | M_1)}{p(x^n | M_0)} \right) = \exp\left( \log\left(p(x^n | M_1)\right) - \log\left(p(x^n | M_0)\right) \right)
+$$
+
+</div>
+<p>という変換をかませています。周辺尤度の対数$\log\left(p(x^n | M)\right)$は<code>bridge_sampler()$logml</code>で抽出することができます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># null model の自由エネルギーを推定 --------------------------------------------------</span>
+
+<span class="c1"># Global variable : kappa, lower_rho, upper_rho, model_type, Jeffreys_alpha, Jeffreys_beta</span>
+
+<span class="n">kappa</span> <span class="o">&lt;-</span> <span class="m">3</span>
+<span class="n">Jeffreys_alpha</span> <span class="o">&lt;-</span> <span class="m">1e-5</span>
+<span class="n">Jeffreys_beta</span> <span class="o">&lt;-</span> <span class="m">1e-5</span>
+
+<span class="n">data_null</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">D</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">Jeffreys_alpha</span><span class="o">=</span><span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="o">=</span><span class="n">Jeffreys_beta</span><span class="p">)</span>
+
+<span class="n">fit_null</span> <span class="o">&lt;-</span> <span class="n">model_null</span><span class="o">$</span><span class="nf">sample</span><span class="p">(</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">data_null</span><span class="p">,</span>
+  <span class="n">parallel_chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+  <span class="n">chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+  <span class="n">iter_warmup</span> <span class="o">=</span> <span class="m">1000</span><span class="p">,</span>
+  <span class="n">iter_sampling</span> <span class="o">=</span> <span class="m">10000</span><span class="p">,</span>
+  <span class="n">refresh</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span>
+  <span class="n">save_warmup</span> <span class="o">=</span> <span class="kc">TRUE</span>
+<span class="p">)</span>
+
+<span class="n">fit_cmdstan_null</span> <span class="o">&lt;-</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">read_stan_csv</span><span class="p">(</span><span class="n">fit_null</span><span class="o">$</span><span class="nf">output_files</span><span class="p">())</span>
+<span class="n">fit_rstan_null</span> <span class="o">&lt;-</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">stan</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="nf">getwd</span><span class="p">(),</span><span class="s">&#34;/model/model_null.stan&#34;</span><span class="p">),</span><span class="n">data</span><span class="o">=</span><span class="n">data_null</span><span class="p">,</span><span class="n">iter</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
+<span class="n">free_energy_null</span> <span class="o">&lt;-</span> <span class="n">bridgesampling</span><span class="o">::</span><span class="nf">bridge_sampler</span><span class="p">(</span><span class="n">fit_cmdstan_null</span><span class="p">,</span><span class="n">fit_rstan_null</span><span class="p">)</span><span class="o">$</span><span class="n">logml</span>
+
+<span class="c1"># 対立仮説（-1 &lt; rho &lt; 1）の自由エネルギーを推定 ------------------------------------------------------------------</span>
+
+
+<span class="c1"># Global variable : kappa, lower_rho, upper_rho, model_type, Jeffreys_alpha, Jeffreys_beta</span>
+
+<span class="n">kappa</span> <span class="o">&lt;-</span> <span class="m">3</span>
+<span class="n">Jeffreys_alpha</span> <span class="o">&lt;-</span> <span class="m">1e-5</span>
+<span class="n">Jeffreys_beta</span> <span class="o">&lt;-</span> <span class="m">1e-5</span>
+
+<span class="c1"># Alternative</span>
+<span class="n">lower_rho</span> <span class="o">&lt;-</span> <span class="m">-1</span>
+<span class="n">upper_rho</span> <span class="o">&lt;-</span> <span class="m">1</span>
+<span class="n">model_type</span> <span class="o">&lt;-</span> <span class="m">0</span>
+
+<span class="n">data_alt</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">D</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa</span><span class="p">,</span>
+                 <span class="n">Jeffreys_alpha</span><span class="o">=</span><span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="o">=</span><span class="n">Jeffreys_beta</span><span class="p">,</span>
+                 <span class="n">upper_rho</span><span class="o">=</span><span class="n">upper_rho</span><span class="p">,</span> <span class="n">lower_rho</span><span class="o">=</span><span class="n">lower_rho</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="n">model_type</span><span class="p">)</span>
+
+<span class="n">fit_alt</span> <span class="o">&lt;-</span> <span class="n">model_informative</span><span class="o">$</span><span class="nf">sample</span><span class="p">(</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">data_alt</span><span class="p">,</span>
+  <span class="n">parallel_chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+  <span class="n">chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+  <span class="n">iter_warmup</span> <span class="o">=</span> <span class="m">1000</span><span class="p">,</span>
+  <span class="n">iter_sampling</span> <span class="o">=</span> <span class="m">10000</span><span class="p">,</span>
+  <span class="n">refresh</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span>
+  <span class="n">save_warmup</span> <span class="o">=</span> <span class="kc">TRUE</span>
+<span class="p">)</span>
+
+<span class="c1"># caluculate the free energy of H_alternative</span>
+<span class="n">fit_cmdstan_alt</span> <span class="o">&lt;-</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">read_stan_csv</span><span class="p">(</span><span class="n">fit_alt</span><span class="o">$</span><span class="nf">output_files</span><span class="p">())</span>
+<span class="n">fit_rstan_alt</span> <span class="o">&lt;-</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">stan</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="nf">getwd</span><span class="p">(),</span><span class="s">&#34;/model/model_informative.stan&#34;</span><span class="p">),</span><span class="n">data</span><span class="o">=</span><span class="n">data_alt</span><span class="p">,</span><span class="n">iter</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
+<span class="n">free_energy_alt</span> <span class="o">&lt;-</span> <span class="n">bridgesampling</span><span class="o">::</span><span class="nf">bridge_sampler</span><span class="p">(</span><span class="n">fit_cmdstan_alt</span><span class="p">,</span><span class="n">stanfit_model</span> <span class="o">=</span> <span class="n">fit_rstan_alt</span><span class="p">)</span><span class="o">$</span><span class="n">logml</span>
+
+<span class="c1"># 自由エネルギーを比較 --------------------------------------------------------------</span>
+
+<span class="nf">exp</span><span class="p">(</span><span class="n">free_energy_alt</span> <span class="o">-</span> <span class="n">free_energy_null</span><span class="p">)</span>
+<span class="c1"># [1] 3.118342</span>
+</code></pre></div><p>推定されたベイズファクターは、</p>
+<p>$$
+BF_{10_1} ≒ 3.12
+$$</p>
+<p>でした。BayesFactorパッケージの結果と少し違いますが、許容でしょうか。</p>
+<p>$H_{0_2}$についても同様に推定してみましょう。</p>
+<h2 id="h_1_2のときのベイズファクターを推定">$H_{1_2}$のときのベイズファクターを推定</h2>
+<p>分析は先ほどとほぼ同じです。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># -1&lt;p&lt;0と0&lt;p&lt;1を比較 ---------------------------------------------------------</span>
+
+<span class="c1"># Global variable : kappa, lower_rho, upper_rho, model_type, Jeffreys_alpha, Jeffreys_beta</span>
+
+<span class="n">kappa</span> <span class="o">&lt;-</span> <span class="m">3</span>
+<span class="n">Jeffreys_alpha</span> <span class="o">&lt;-</span> <span class="m">1e-5</span>
+<span class="n">Jeffreys_beta</span> <span class="o">&lt;-</span> <span class="m">1e-5</span>
+
+<span class="c1"># Alternative</span>
+<span class="n">lower_rho</span> <span class="o">&lt;-</span> <span class="m">0</span>
+<span class="n">upper_rho</span> <span class="o">&lt;-</span> <span class="m">1</span>
+<span class="n">model_type</span> <span class="o">&lt;-</span> <span class="m">0</span>
+
+<span class="n">data_alt</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">D</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa</span><span class="p">,</span>
+                 <span class="n">Jeffreys_alpha</span><span class="o">=</span><span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="o">=</span><span class="n">Jeffreys_beta</span><span class="p">,</span>
+                 <span class="n">upper_rho</span><span class="o">=</span><span class="n">upper_rho</span><span class="p">,</span> <span class="n">lower_rho</span><span class="o">=</span><span class="n">lower_rho</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="n">model_type</span><span class="p">)</span>
+
+<span class="n">fit_alt</span> <span class="o">&lt;-</span> <span class="n">model_informative</span><span class="o">$</span><span class="nf">sample</span><span class="p">(</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">data_alt</span><span class="p">,</span>
+  <span class="n">parallel_chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+  <span class="n">chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+  <span class="n">iter_warmup</span> <span class="o">=</span> <span class="m">1000</span><span class="p">,</span>
+  <span class="n">iter_sampling</span> <span class="o">=</span> <span class="m">10000</span><span class="p">,</span>
+  <span class="n">refresh</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span>
+  <span class="n">save_warmup</span> <span class="o">=</span> <span class="kc">TRUE</span>
+<span class="p">)</span>
+
+<span class="c1"># caluculate the free energy of H_alternative</span>
+<span class="n">fit_cmdstan_alt</span> <span class="o">&lt;-</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">read_stan_csv</span><span class="p">(</span><span class="n">fit_alt</span><span class="o">$</span><span class="nf">output_files</span><span class="p">())</span>
+<span class="n">fit_rstan_alt</span> <span class="o">&lt;-</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">stan</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="nf">getwd</span><span class="p">(),</span><span class="s">&#34;/model/model_informative.stan&#34;</span><span class="p">),</span><span class="n">data</span><span class="o">=</span><span class="n">data_alt</span><span class="p">,</span><span class="n">iter</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
+<span class="n">free_energy_alt</span> <span class="o">&lt;-</span> <span class="n">bridgesampling</span><span class="o">::</span><span class="nf">bridge_sampler</span><span class="p">(</span><span class="n">fit_cmdstan_alt</span><span class="p">,</span><span class="n">stanfit_model</span> <span class="o">=</span> <span class="n">fit_rstan_alt</span><span class="p">)</span><span class="o">$</span><span class="n">logml</span>
+
+<span class="nf">exp</span><span class="p">(</span><span class="n">free_energy_alt</span> <span class="o">-</span> <span class="n">free_energy_null</span><span class="p">)</span>
+<span class="c1"># [1] 6.237172</span>
+
+</code></pre></div><p>推定されたベイズファクターは、</p>
+<p>$$
+BF_{10_2} ≒ 6.24
+$$</p>
+<p>でした。BayesFactorパッケージの結果と少し違いますが、これも許容でしょう。</p>
+<h2 id="h_1_3のときのベイズファクターを推定失敗版">$H_{1_3}$のときのベイズファクターを推定（失敗版）</h2>
+<p>最後に$H_{1_3}$のモデルの自由エネルギーを計算していこうと思うのですが、果たして$-0.3$から$0.3$の間に対数尤度マイナス無限大のエリアがあるモデルをうまくMCMCできるのでしょうか？</p>
+<p>試しにMCMCの初期値をマイナスにした上で、走らせてみます。</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># Global variable : kappa, lower_rho, upper_rho, model_type, Jeffreys_alpha, Jeffreys_beta</span>
+
+<span class="n">kappa</span> <span class="o">&lt;-</span> <span class="m">3</span>
+<span class="n">Jeffreys_alpha</span> <span class="o">&lt;-</span> <span class="m">1e-5</span>
+<span class="n">Jeffreys_beta</span> <span class="o">&lt;-</span> <span class="m">1e-5</span>
+
+<span class="c1"># Informative2</span>
+<span class="n">lower_rho</span> <span class="o">&lt;-</span> <span class="m">-0.3</span>
+<span class="n">upper_rho</span> <span class="o">&lt;-</span> <span class="m">0.3</span>
+<span class="n">model_type</span> <span class="o">&lt;-</span> <span class="m">1</span>
+
+<span class="n">init_list</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span>
+  <span class="nf">list</span><span class="p">(</span><span class="n">rho</span> <span class="o">=</span> <span class="m">-0.5</span><span class="p">),</span>
+  <span class="nf">list</span><span class="p">(</span><span class="n">rho</span> <span class="o">=</span> <span class="m">-0.4</span><span class="p">),</span>
+  <span class="nf">list</span><span class="p">(</span><span class="n">rho</span> <span class="o">=</span> <span class="m">-0.6</span><span class="p">),</span>
+  <span class="nf">list</span><span class="p">(</span><span class="n">rho</span> <span class="o">=</span> <span class="m">-0.7</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">data_informative</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">D</span> <span class="o">=</span> <span class="n">d</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">Jeffreys_alpha</span><span class="o">=</span><span class="n">Jeffreys_alpha</span><span class="p">,</span> <span class="n">Jeffreys_beta</span><span class="o">=</span><span class="n">Jeffreys_beta</span><span class="p">,</span>
+                         <span class="n">upper_rho</span> <span class="o">=</span> <span class="n">upper_rho</span><span class="p">,</span> <span class="n">lower_rho</span><span class="o">=</span> <span class="n">lower_rho</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="n">model_type</span><span class="p">)</span>
+
+
+<span class="n">fit_informative</span> <span class="o">&lt;-</span> <span class="n">model_informative</span><span class="o">$</span><span class="nf">sample</span><span class="p">(</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">data_informative</span><span class="p">,</span>
+  <span class="n">parallel_chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+  <span class="n">chains</span> <span class="o">=</span> <span class="m">4</span><span class="p">,</span>
+  <span class="n">iter_warmup</span> <span class="o">=</span> <span class="m">1000</span><span class="p">,</span>
+  <span class="n">iter_sampling</span> <span class="o">=</span> <span class="m">10000</span><span class="p">,</span>
+  <span class="n">refresh</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span>
+  <span class="n">save_warmup</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span>
+  <span class="n">adapt_delta</span> <span class="o">=</span> <span class="m">0.9</span><span class="p">,</span>
+  <span class="n">init</span> <span class="o">=</span> <span class="n">init_list</span>
+<span class="p">)</span>
+</code></pre></div><p>さらにMCMCサンプルを描画してみると…</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="n">fit_cmdstan_informative</span> <span class="o">&lt;-</span> <span class="n">rstan</span><span class="o">::</span><span class="nf">read_stan_csv</span><span class="p">(</span><span class="n">fit_informative</span><span class="o">$</span><span class="nf">output_files</span><span class="p">())</span>
+<span class="n">posterior</span> <span class="o">&lt;-</span> <span class="nf">as.matrix</span><span class="p">(</span><span class="n">fit_cmdstan_informative</span><span class="p">)</span>
+
+<span class="n">plot_title</span> <span class="o">&lt;-</span> <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;Posterior distributions&#34;</span><span class="p">,</span>
+                      <span class="s">&#34;with medians and 80% intervals&#34;</span><span class="p">)</span>
+<span class="nf">mcmc_areas</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span>
+           <span class="n">pars</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;rho&#34;</span><span class="p">),</span>
+           <span class="n">prob</span> <span class="o">=</span> <span class="m">0.8</span><span class="p">)</span> <span class="o">+</span> <span class="n">plot_title</span>
+</code></pre></div><p><img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-4/plot03.png" alt="plot03"></p>
+<p>サンプルデータの値より、正しく収束した場合の$\rho$のMCMCサンプルは正の値、特に0.75あたりをうろうろするはずなのですが、今回のMCMCは対数尤度$-∞$の壁を超えられず、そうは行っていないことがわかります。</p>
+<p>これを解決するためには、<strong>レプリカ交換MCMC法</strong>と呼ばれるアルゴリズムを実行してやる必要があるのですが、それについては<a href="https://sucre-stat.com/2022/08/parallel-tempering/">次の記事</a>で紹介したいと思います。</p>
+
+        </article>
+    </div>
+    <div class="main-content__tags u-font">
+        
+        
+        <span><a href="https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC">ベイズファクター</a></span>
+        
+        
+    </div>
+
+    <div class="contact_form">
+        <form
+                className='sampleCommentForm'
+                name="sampleCommentForm"
+                method="POST"
+                action="thank-you"
+                data-netlify-recaptcha="true"
+                data-netlify="true"
+                action=""
+          netlify>
+        <p>コメントを書く</p>
+            <label>お名前: <input type="text" name="name" /></label>
+            <label>Email(任意): <input type="email" name="email" /></label>
+            <label>コメント: <textarea name="content"></textarea></label>
+          <p style="display:none;">
+            <label>Bot Field(ここに値が入るとスパム判定する): <input name="bot-field"/></label>
+          </p>
+          <div data-netlify-recaptcha="true"></div>
+          <div>
+            <button type="submit" value="Send">送信</button>
+            <p><br>※ コメントは承認されると表示されます<br></p>
+            <input type="hidden" name="path" value="/2022/08/bayesian-hypothesis-testing-4/index.html" />
+          </div>
+        </form>
+        <p>承認されたコメント一覧</p>
+        
+        <ul class="comment" id="approvalCommentsList"></ul>
+    </div>
+
+    
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script language="javascript" type="text/javascript">
+    
+    const url = '/comment/_data/sampleApprovedComments_submissions.json'
+    $.getJSON(url, (json) => {
+      for (let i = 0; i < json.length; i++) {
+        if (json[i].data.path !== '\/2022\/08\/bayesian-hypothesis-testing-4\/index.html') {
+          continue
+        }
+        $('#approvalCommentsList').append(`<li>お名前　： ${json[i].data.name}<br>コメント： ${json[i].data.content}</li>`)
+      }
+    })
+
+    // 送信前に一言感謝
+    $("#my-form").submit(function(e) {
+      alert("Thank you!");
+    });
+    </script>
+</div>
+
+<div class="main-profile">
+    <div class="main-profile__avatar">
+        
+            <img src="https://sucre-stat.com/images/avatar.JPG">
+        
+    </div>
+    <div class="main-profile__body">
+        <div class="main-profile__author">
+            
+            <span> R.morita </span>
+            
+        </div>
+        <div class="main-profile__description">
+            
+            <p> 得意なのは統一された洋服とダンスのステップです </p>
+            
+        </div>
+    </div>
+</div>
+<div class="main-line"></div>
+<div class="main-pn">
+    
+    <a class="previous" href="https://sucre-stat.com/2021/10/regressionbf-comparing/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2021.10.23 00:00 </div>
+            <div class="pn-el__2"> 線形回帰モデルのベイズファクター計算手法を検討する </div>
+        </div>
+    </a>
+    
+    
+    <a class="next" href="https://sucre-stat.com/2022/08/parallel-tempering/">
+        <div class="pn-dec"></div>
+        <div class="pn-els">
+            <div class="pn-el__1"> 2022.08.08 00:00 </div>
+            <div class="pn-el__2"> レプリカ交換法を使ってベイズファクターを計算する～相関の検定～ </div>
+        </div>
+    </a>
+    
+</div>
+
+<footer>
+  <script type="text/javascript">
+ MathJax = {
+   tex: {
+     inlineMath: [['$','$'], ['\\(','\\)']],
+     processEscapes: true,
+     tags: "ams",
+     autoload: {
+       color: [],
+       colorV2: ['color']
+     },
+     packages: {'[+]': ['noerrors']}
+   },
+   chtml: {
+     matchFontHeight: true,
+     displayAlign: "left",
+     displayIndent: "2em"
+   },
+   options: {
+     skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+     renderActions: {
+        
+       find_script_mathtex: [10, function (doc) {
+         for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+           const display = !!node.type.match(/; *mode=display/);
+           const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+           const text = document.createTextNode('');
+           node.parentNode.replaceChild(text, node);
+           math.start = {node: text, delim: '', n: 0};
+           math.end = {node: text, delim: '', n: 0};
+           doc.math.push(math);
+         }
+       }, '']
+     }
+   },
+   loader: {
+     load: ['[tex]/noerrors']
+   }
+ };
+</script>
+<script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+</footer>
+
+</div>
+<div class="footer">
+    <div class="copyright-wrap">
+        <p class="copyright u-font">
+            
+            &#169;
+            2022
+            
+            <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
+            Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
+            Powered by Hugo&#46;
+            
+            
+        </p>
+    </div>
+</div>
+</body>
+<script src="https://sucre-stat.com/js/page.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+

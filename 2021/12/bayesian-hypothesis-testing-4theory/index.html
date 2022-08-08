@@ -101,29 +101,31 @@ $$</p>
 <p>$(1)$式より、相関係数$\rho$は$X$、$Y$に対する線形変換の影響を受けないことが確認できます。</p>
 <p>この性質により、<a href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2theory/">平均値の差の検定</a>や<a href="https://sucre-stat.com/2021/10/bayesian-hypothesis-testing-3theory/">線形回帰</a>のときとは異なり、モデル設計において$\rho$を他の平均・分散・共分散等のパラメータから独立させるための再パラメータ化の必要が無いことが、今回のトピックのひとつの特徴です。</p>
 <h1 id="相関を考慮した2変量発生過程のモデル化">相関を考慮した2変量発生過程のモデル化</h1>
-<p>では、相関を考慮して2変数の発生過程をモデル化します。<br>
-<br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆相関を考慮した2変量発生過程モデル</strong></legend>
+<p>では、相関を考慮して2変数の発生過程をモデル化します。</p>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆相関を考慮した2変量発生過程モデル</strong></legend>
 <p>確率変数$\boldsymbol{X}^n = \left( X_1, \ldots, X_n \right)$、$\boldsymbol{Y}^n = \left( Y_1, \ldots, Y_n \right)$について、$X_i$、$Y_i$$(i = 1,2,\ldots,n)$の同時確率分布が独立同分布の2変量正規分布であると仮定する。</p>
 <p>$$
 p\left( \boldsymbol{X}^n, \boldsymbol{Y}^n\right) = \prod_{i=1}^{n} \mathrm{Normal}\left( X_i,Y_i | \mathrm{\boldsymbol{\mu},\boldsymbol{\Sigma}}\right) \tag{2}
 $$</p>
 <p>ここで、$\boldsymbol{\mu} = \left( \mu_X, \mu_Y \right)^T $、$\boldsymbol{\Sigma} = \left( \begin{array}{ccc} \sigma_X^2 &amp; \rho\sigma_X\sigma_Y \\ \rho\sigma_X\sigma_Y &amp; \sigma_Y^2 \end{array} \right)$である。</p>
 
-</fieldset></p>
+</fieldset>
+
 <p>ここでは参考文献どおりに2変数の正規性を仮定したモデルのみを取り上げますが、ガンマ分布等他の分布でも同様に相関係数を組み込んだ2変量化で対応できそうですネ。誰かやってみてください。</p>
 <h1 id="事前分布">事前分布</h1>
-<p>周辺尤度、ベイズファクターはモデルの事前分布の影響を強く受けるので、例によって理想的な性質をもつ事前分布の取り方を紹介します。<br>
-<br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Jeffreysの理論に則った相関パラメータの事前分布</strong></legend>
+<p>周辺尤度、ベイズファクターはモデルの事前分布の影響を強く受けるので、例によって理想的な性質をもつ事前分布の取り方を紹介します。</p>
+<p>ここで紹介する事前分布は、<strong>Predictive matching</strong>（予測的整合性）、つまり、検定したいパラメータを計算することができないサンプルサイズのときに、ベイズファクターが1になること、及び、<strong>Information consistency</strong>（情報の一貫性）、つまり、検定したいパラメータが計算される最小サイズ$n_{min}$以上で極端な値が得られた状況で、ベイズファクターが0または$\infty$のうち正しい値に振れること、これらを条件として設定されたものになります。</p>
+<p>$\kappa$のとりかたによっては、上記の理想的な性質をみたさなくなってしまいます。例えば、$\kappa = 1$の場合、$n=3$で平面的に直線状に位置するデータが得られたときのベイズファクターは$2$となり、２つめの条件である<strong>Information consistency</strong>を満たさなくなってしまいます。</p>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Jeffreysの理論に則った相関パラメータの事前分布</strong></legend>
 <p>Jeffreysの理論に従い、相関パラメータ$\rho$の事前分布$\pi(\rho)$を、伸長した対称ベータ分布(stretched symmetric beta function)とする。</p>
 <p>$$
 \pi(\rho | \kappa) = \cfrac{2^{\cfrac{\kappa - 2}{\kappa}}}{\mathrm{B}\left(\cfrac{1}{\kappa},\cfrac{1}{\kappa}\right)}\left( 1 - \rho ^ 2\right)^\cfrac{1-\kappa}{\kappa}
 \tag{3}
 $$</p>
+<p>ここで、$\kappa$が$2$以上の値をとるとき、理想的な性質をもつ事前分布となる。</p>
 
-</fieldset></p>
-<p><br>
+</fieldset>
+
 <div style="overflow-x:auto;">
   
 <fieldset style = "padding: 6px; background-color: #ffffff"><legend><strong>伸長した対称ベータ分布の導出</strong></legend>
@@ -176,46 +178,53 @@ $$
 \begin{split}
 \gamma_{X,1} &= \alpha_{X,3} = \mathbb{E} \left[ \left(\cfrac{X - \mu_X}{\sigma_X}\right)^3 \right] \\\\
 &= \cfrac{\mu_{X,3}^{'} - 3\mu_X \mu_{X,2}^{'} + 2\mu_X^3}{\sigma_X^3} \\\\
-&= \cfrac{\left(\alpha + \beta\right)^2\left(\alpha + \beta + 1\right)}{\alpha\beta} \left( \cfrac{\alpha(\alpha+2)(\alpha+1)}{(\alpha+\beta+2)(\alpha+\beta+1)(\alpha+\beta)} -3\cfrac{\alpha}{\alpha+\beta}\cfrac{\alpha(\alpha+1)}{(\alpha+\beta+1)(\alpha+\beta)} + 2\cfrac{\alpha^2}{(\alpha+\beta)^2} \right) \\\\
-&= \cfrac{\left(\alpha + \beta\right)\left(\alpha + \beta + 1\right)}{\beta} \left( \cfrac{(\alpha+2)(\alpha+1)}{(\alpha+\beta+2)(\alpha+\beta+1)}-3\cfrac{\alpha(\alpha+1)}{(\alpha+\beta+1)(\alpha+\beta)} + 2\cfrac{\alpha}{\alpha+\beta} \right)
+&= (略) \\\\
+&= \cfrac{2(\beta - \alpha)\sqrt{\alpha + \beta + 1}}{\left( \alpha + \beta + 2 \right)\sqrt{\alpha\beta}}
 \end{split}
 $$
 
+よって、$\alpha=\beta$のとき歪度0となるため、$X$の分布は左右対称（対称ベータ分布）となる。
+
 また$\alpha = \beta = \cfrac{1}{\kappa}$の対称ベータ分布を台$[-1,1]$に変換しなおした拡張分布への変換には、下記定理を用いる。
 
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>確率変数の変換公式</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>確率変数の変換公式</strong></legend>
 <p>確率密度$f_{X}$の確率変数$X$に一対一の写像$\phi$で$X = \phi(Y)$と対応付けされる確率変数$Y$の確率密度$g_{Y}$は、</p>
 <p>$$
-g_{Y}(y) = f_{X}(\phi(y),\ldots,\phi_n(y_1,\ldots,y_n)) || J_{\phi} ||
+g_{Y}(y) = f_{X}(\phi(y)) || J_{\phi} ||
 $$</p>
-<p>ここで、$|| J_{\phi} ||$はヤコビアンであり</p>
+<p>ここで、$| J_{\phi} |$はヤコビアンであり$|| J_{\phi} ||$はヤコビアンの絶対値である。</p>
 <p>$$
-|| J_{\phi} || = \cfrac{dy}{dx}
+| J_{\phi} | = \cfrac{dx}{dy}
 $$</p>
-<p>である。</p>
 
-</fieldset>  
+</fieldset>
 
 
-いま、$\phi : X = \cfrac{Y + 1}{2}$とすると
+
+いま、$\alpha = \beta = \cfrac{1}{\kappa}$をパラメータにもつ対称ベータ分布に従う確率変数$X$について、$\phi : X = \cfrac{Y + 1}{2}$とすると、
 
 $$
-|| J_{\phi} || = \cfrac{dy}{dx} = \cfrac{1}{2}
+| J_{\phi} | = \cfrac{dx}{dy} = \cfrac{1}{2}
 $$
 
 だから、
 
 $$
-g_{Y}(y) = \cfrac{x^{\alpha - 1}\left(1 - x\right)^{\beta - 1}}{\mathrm{B}\left(\alpha, \beta\right)}
+\begin{split}
+g_{Y}(y) &= \cfrac{1}{2\mathrm{B}\left(\cfrac{1}{\kappa}, \cfrac{1}{\kappa}\right)} \left(\cfrac{y+1}{2}\right)^{\cfrac{1}{\kappa}-1} \left(1 - \cfrac{y+1}{2}\right)^{\cfrac{1}{\kappa}-1} \\\\
+&= \cfrac{2^{\cfrac{\kappa - 2}{\kappa}}}{\mathrm{B}\left(\cfrac{1}{\kappa},\cfrac{1}{\kappa}\right)}\left( 1 - y ^ 2\right)^\cfrac{1-\kappa}{\kappa}
+\end{split}
 $$
+
+ここで、確率変数$Y$の定義域は$-1\leq y\leq 1$であり、相関係数の定義域と一致する。よって上式において$y$を$\rho$に置き換えてやれば$(3)$式となる。
 
 
 </fieldset>
 
-</div></p>
+</div>
 <p>その他のパラメータ$\mu_X$、$\mu_Y$、$\sigma_X$、$\sigma_Y$は比較するモデルに共通して存在するパラメータなので、それらの事前分布の設定が$\rho$に対する周辺尤度の値にほとんど影響しませんが、<a href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2theory/# Appendix ">平均値の差の検定</a>のときと同様に、Jeffreysの事前分布を設定します。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆平均パラメータ、分散パラメータの事前分布</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆平均パラメータ、分散パラメータの事前分布</strong></legend>
 <p>平均パラメータ$\mu_X$、$\mu_Y$、分散パラメータ$\sigma_X^2$、$\sigma_Y^2$の事前分布$\pi(\mu_X)$、$\pi(\mu_Y)$、$\pi(\sigma_X^2)$、$\pi(\sigma_Y^2)$はJeffreysの事前分布を適用する。</p>
 <p>$$
 \pi(\mu_X) \propto 1 \tag{4}
@@ -230,7 +239,8 @@ $$</p>
 \pi(\sigma_Y^2) \propto  \cfrac{1}{\sigma_Y^2} \tag{7}
 $$</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <h1 id="まとめ">まとめ</h1>
 <p>本記事では以下の内容について整理しました。</p>
 <ul>
@@ -244,8 +254,7 @@ $$</p>
 <p>相関パラメータの事前分布は拡張対称ベータ分布</p>
 </li>
 </ul>
-<p>実践編はこちらです。ベイズファクターを実際に算出し、モデルをどのように評価できるのか見ていきます。
-さらにこちらの記事ではベイズファクターを推定するための手法を複数実践しているので、読んでみてください。</p>
+<p>実践編は<a href="https://sucre-stat.com/2022/08/bayesian-hypothesis-testing-4/">こちら</a>です。複数の方法を使ってベイズファクターを実際に計算してみたいと思います。</p>
 
         </article>
     </div>
@@ -390,7 +399,7 @@ $$</p>
         <p class="copyright u-font">
             
             &#169;
-            2021
+            2022
             
             <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
             Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;

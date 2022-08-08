@@ -87,7 +87,7 @@
     </div>
     <div class="main-content__article">
         <article id="content">
-            <fieldset style="border: #d9c68c 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆この記事のテーマ</strong></legend>
+            <fieldset style="border: #d9c68c 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆この記事のテーマ</strong></legend>
 <p>ベイズファクターを使って比率の差を検定する方法を実践します。
 この手法は、例えば下図のようなシーンに適用できます。下図では異なる交差点の危険挙動発生割合を比較しています。
 <img src="https://sucre-stat.com/r/bayesian-hypothesis-testing-1/picture_twosample.JPG" alt=""></p>
@@ -96,6 +96,7 @@
 <p>※一つ目の例は対応のない（two-sampe）グループ間の検定、二つ目の例は対応のある（one-sample）グループ間の検定ですが、どちらの検定も一つのモデルで包括して説明されます。</p>
 
 </fieldset>
+
 <h1 id="モデルの確認">モデルの確認</h1>
 <p>本検定のためのモデルについては<a href="https://sucre-stat.com/2021/04/bayesian-hypothesis-testing-1/">こちらの姉妹記事</a>で詳細を説明していますので、ここでは要点だけ記載しておくことにします。</p>
 <p>$n_1$、$n_2$はそれぞれ交差点1、交差点2における車両毎の危険挙動に関するデータ（0=「危険挙動無し」 OR 1「危険挙動あり」）の標本数、$s_1$、$s_2$はそれぞれ交差点1、交差点2において危険挙動をした車両の台数です。交差点ごとに、独立の二項分布に従い危険挙動をした車両が観測されたと仮定し、発生確率を$\theta_1$、$\theta_2$とおきモデル化します。<br>
@@ -474,7 +475,7 @@ $$</p>
         <p class="copyright u-font">
             
             &#169;
-            2021
+            2022
             
             <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
             Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;

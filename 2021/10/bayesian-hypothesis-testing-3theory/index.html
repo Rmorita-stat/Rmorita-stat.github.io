@@ -168,7 +168,7 @@ $$</p>
 <h2 id="zellner-siows-priors">Zellner-Siow&rsquo;s Priors</h2>
 <p>前節で挙げた事前分布の望ましい性質を満たす線形回帰分析におけるパラメータの事前分布として、<strong>Zellner-Siow&rsquo;s Priors</strong>が提案されています。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Zellner-Siow&#39;s Priors</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Zellner-Siow&#39;s Priors</strong></legend>
 <p>$(1)$、$(2)$式の$\boldsymbol{\beta}_\boldsymbol{{\gamma}}$、$\alpha$、$\sigma^2$に対する事前分布である下記$(8)$～$(10)$式を、Zellner-Siow&rsquo;s Priorsとよぶ。</p>
 <p>$$
 \alpha,\sigma^2 \propto \cfrac{1}{\sigma^2} \tag{10}
@@ -180,7 +180,8 @@ $$</p>
 g \sim \mathrm{InvGamma}\left( \cfrac{1}{2}, \cfrac{r}{2} \right) \tag{12}
 $$</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <p>$(10)$、$(11)$式はZellner(1986)が提案した事前分布で、<strong>Zellner&rsquo;s g-Priors</strong>と呼ばれます。この事前分布は次元のペナルティとしての役割を持つパラメータ$g$について特定の値を与える必要があり、それが前述のConsistencyを満たせない要因となっていました。一方、ZellnerとSiow(1980)が提案したZellner-Siow&rsquo;s Priorsは、パラメータgについて事前分布を与えることで、事前分布の望ましい性質を満たすことに成功しています。</p>
 <p>また、下記$(11)$式に示すように、$(10)$、$(11)$式は$\boldsymbol{\beta}_\boldsymbol{{\gamma}}$の事前分布としてコーシー分布を採用することと等価です。これは$g$について積分することで確認できます（筆者未導出）。</p>
 <p>$$
@@ -198,20 +199,21 @@ $$</p>
 <h2 id="1変数積分近似による推定">1変数積分近似による推定</h2>
 <p>概要を以下に示します。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆1変数積分近似による推定方法</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆1変数積分近似による推定方法</strong></legend>
 <p>ベイズファクター$BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack$ は下記の通り計算できる。</p>
 <p>$$
 BF\lbrack \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}} : \mathcal{\boldsymbol{M}}_ {N} \rbrack = \int _{0} ^{∞}(1 + g)^{(N - 1 - p _\boldsymbol{\gamma})/2} \left( 1 + \left( 1 - R _\boldsymbol{\gamma}^2 \right) g \right)^{-(n-1)/2} \pi(g) dg \tag{14}
 $$</p>
 <p>ここで、$\pi(g)$は$g$の事前分布を、$R_ \boldsymbol{\gamma}^2$は$\mathcal{\boldsymbol{M}}_ \boldsymbol{\gamma}$での通常の線形回帰における残差の平方和、決定係数を示す。</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <p>$(14)$式の$\pi(g)$以外の部分は、$(10)$$(11)$式で表現されるZellner&rsquo;s g-Priorsにおける周辺尤度を解析的に求めることで算出されたものです。但し、Zellner&rsquo;s g-Priorsはパラメータ$g$については固定値を想定していたようで、さらに$g$の事前分布$(10)$式が加わったZellner-Siow&rsquo;s Priorsについては、$g$についてのみ解析的な計算が不可能となってしまっています。そのため、$(14)$式は$g$についての一変数積分が残っていますが、これは<strong>ガウス求積法</strong>などの手法を使って高精度に推定することが可能です。</p>
 <p>ちなみに、本手法を使ったベイズファクターの計算はRichard D. Morey氏らが開発しているBayesFactorパッケージの<code>regressionBF()</code>関数で可能です。</p>
 <h2 id="savage-dickey法による推定">Savage-Dickey法による推定</h2>
 <p>Savage-Dickey法の概要を以下に示します。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Savage-Dickey法による推定方法</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆Savage-Dickey法による推定方法</strong></legend>
 <p>モデル$\mathcal{\boldsymbol{M}}_ {N}$と$\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}$は</p>
 <p>$$
 p(\boldsymbol{Y} | \mathcal{\boldsymbol{M}}_ {N} ) = p( \boldsymbol{Y} | \boldsymbol{\beta}_{\boldsymbol{\gamma}} = \boldsymbol{0}, \mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}) \tag{15}
@@ -223,7 +225,8 @@ $$</p>
 <p>ここで、$p(\boldsymbol{\beta} _{\boldsymbol{\gamma}} = \boldsymbol{0} |\mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}})$はモデル$\mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}}$における$\boldsymbol{\beta} _{\boldsymbol{\gamma}}$の事前分布の$\boldsymbol{\beta} _{\boldsymbol{\gamma}}=\boldsymbol{0}$での確率密度を示す。
 同様に$p(\boldsymbol{\beta} _{\boldsymbol{\gamma}} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}})$はモデル$\mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}}$における$\boldsymbol{\beta} _{\boldsymbol{\gamma}}$の事後分布の$\boldsymbol{\beta} _{\boldsymbol{\gamma}}=\boldsymbol{0}$での確率密度を示す。</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <p>$(11)$式より、
 $$
 p(\boldsymbol{\beta}_ {\boldsymbol{\gamma}} = \boldsymbol{0} |\mathcal{\boldsymbol{M}}_ {\boldsymbol{\gamma}}) = \cfrac{\Gamma\left(\cfrac{p_\boldsymbol{\gamma}+1}{2}\right)}{ \pi^{\cfrac{p_\boldsymbol{\gamma}+1}{2}} \left| N r \sigma^2 \left( \boldsymbol{X}_ \boldsymbol{\gamma}^T \boldsymbol{X}_ \boldsymbol{\gamma}\right) ^{-1} \right|^{-\cfrac{1}{2}}}
@@ -231,7 +234,7 @@ $$</p>
 <p>であることは明らかですから、あとは、$p(\boldsymbol{\beta} _\boldsymbol{\gamma} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}} _\boldsymbol{\gamma})$をどうやって求めるかが問題です。</p>
 <p>ここでは、<a href="https://sucre-stat.com/2021/06/bayesian-hypothesis-testing-2theory/">以前の記事</a>でも採用したConditional Marginal Density Estimator(<strong>CMDE</strong>) を使って$p(\boldsymbol{\beta} _{\boldsymbol{\gamma}} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}})$を推定する方法を提案します。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆線形回帰分析のCMDE</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆線形回帰分析のCMDE</strong></legend>
 <p>条件付事後分布$p(\boldsymbol{\beta} _{\boldsymbol{\gamma}} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}})$は以下である。</p>
 <p>$$
 p(\boldsymbol{\beta} _{\boldsymbol{\gamma}} = \boldsymbol{0} | \boldsymbol{Y}, \mathcal{\boldsymbol{M}} _{\boldsymbol{\gamma}}) =
@@ -242,7 +245,8 @@ $$</p>
 \Sigma = \cfrac{\sigma^2}{1+\cfrac{1}{g}} \left(\boldsymbol{X}_ {\boldsymbol{\gamma}}^{T}\boldsymbol{X}_ {\boldsymbol{\gamma}} \right)^{-1} \tag{18}
 $$</p>
 
-</fieldset></p>
+</fieldset>
+</p>
 <p>※上記の証明はストレートかつ冗長なので割愛します。自分で導出したい人は<a href="https://www.iwanttobeacat.com/entry/2018/02/17/000815">こちら</a>が大いに参考になります。</p>
 <h1 id="まとめ">まとめ</h1>
 <p>本記事では以下の内容について整理しました。</p>
@@ -413,7 +417,7 @@ $$</p>
         <p class="copyright u-font">
             
             &#169;
-            2021
+            2022
             
             <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
             Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;

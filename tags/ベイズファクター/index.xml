@@ -6,10 +6,28 @@
     <description>Recent content in ベイズファクター on SUCRE HECACHA</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
-    <lastBuildDate>Sun, 19 Dec 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 08 Aug 2022 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://sucre-stat.com/tags/%E3%83%99%E3%82%A4%E3%82%BA%E3%83%95%E3%82%A1%E3%82%AF%E3%82%BF%E3%83%BC/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>レプリカ交換法を使ってベイズファクターを計算する～相関の検定～</title>
+      <link>https://sucre-stat.com/2022/08/parallel-tempering/</link>
+      <pubDate>Mon, 08 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/2022/08/parallel-tempering/</guid>
+      <description>本記事では、前回の記事で失敗に終わった相関係数の検定を、レプリカ交換法を使って解決していきたいと思います。 レプリカ交換法の部分は、松浦健太郎</description>
+    </item>
+    
+    <item>
+      <title>ベイズファクターを用いた仮説検定を実践する～相関の検定～</title>
+      <link>https://sucre-stat.com/2022/08/bayesian-hypothesis-testing-4/</link>
+      <pubDate>Sun, 07 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/2022/08/bayesian-hypothesis-testing-4/</guid>
+      <description>ベイズファクターを使って相関の検定をやっていきます。 理論編はこちらを参照のこと。 サンプルデータの準備 本練習でつかうデータは、$\boldsy</description>
+    </item>
     
     <item>
       <title>ベイズファクターを用いた仮説検定～相関の検定～</title>

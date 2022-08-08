@@ -87,7 +87,7 @@
     </div>
     <div class="main-content__article">
         <article id="content">
-            <fieldset style="border: #d9c68c 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆この記事のテーマ</strong></legend>
+            <fieldset style="border: #d9c68c 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆この記事のテーマ</strong></legend>
 <p>ベイズファクターを使って比率の差を検定する方法を整理します。
 この手法は、例えば下図のようなシーンに適用できます。下図では異なる交差点の危険挙動発生割合を比較しています。
 <img src="https://sucre-stat.com/stat/bayesian-hypothesis-testing-1/picture_twosample.JPG" alt=""></p>
@@ -96,6 +96,7 @@
 <p>※一つ目の例は対応のない（two-sampe）グループ間の検定、二つ目の例は対応のある（one-sample）グループ間の検定ですが、どちらの検定も一つのモデルで包括して説明されます。</p>
 
 </fieldset>
+
 <h1 id="モデル">モデル</h1>
 <p><a href="https://www.sciencedirect.com/science/article/abs/pii/S0010028509000826">参考文献</a>に掲載されたグラフィカルモデルを拝借して以下に示します。またここでは、一つ目の例の対応の無い交差点間の危険挙動割合の比較に着目して考えます。 <br>
 <br>
@@ -158,7 +159,7 @@ $$</p>
 <p>この節では本モデルにおける$\delta$の事前分布、事後分布について考え、ベイズファクターを解析的に求めてみます。</p>
 <p>まずは$\delta$の事前分布です。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆$\delta$の事前分布</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆$\delta$の事前分布</strong></legend>
 $\delta$の事前分布$p(\delta | H_1)$は重心0の三角分布となる。
 $$
 p(\delta | H_1) = \begin{cases}
@@ -166,7 +167,8 @@ p(\delta | H_1) = \begin{cases}
 1-\delta ~~~ \mathrm{for} ~ \delta &gt; 0
 \end{cases} \tag{6}
 $$
-</fieldset></p>
+</fieldset>
+</p>
 <p><br>
 証明は以下を参照のこと。証明では確率変数の変換公式を応用して確率変数の和（差）の分布を求めるテクニックを用います。</p>
 <p><br>
@@ -281,12 +283,13 @@ $$
 <p>事前分布について$p(\delta=0 |H_1)=1$であることがわかりました。よって、$BF_{01} = p(\delta=0 | D, H_1)$となります。
 これを求めた結果を示します。<br>
 <br>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆比率の差の検定におけるベイズファクター</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆比率の差の検定におけるベイズファクター</strong></legend>
 比率の差を検定するためのベイズファクター$BF_{01}$は
 $$
 BF_{01} = \cfrac{{}_{n_{1}} C _ {s_{1}} {}_ {n_{2}} C _ {s_{2}}}{{}_ {n_1+n_2} C _ {s_1+s_2}}\cfrac{(n_1+1)(n_2+1)}{n_1+n_2+1} \tag{7}
 $$
-</fieldset></p>
+</fieldset>
+</p>
 <p><br>
 証明は以下を参照のこと。周辺尤度を無視した事後分布の計算と、確率変数の変換公式を応用して確率変数の和（差）の分布を求めるテクニックを用います。</p>
 <p><br>
@@ -531,7 +534,7 @@ $$
         <p class="copyright u-font">
             
             &#169;
-            2021
+            2022
             
             <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
             Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;

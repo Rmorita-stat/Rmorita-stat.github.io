@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>レプリカ交換法 on SUCRE HECACHA</title>
+    <link>https://sucre-stat.com/tags/%E3%83%AC%E3%83%97%E3%83%AA%E3%82%AB%E4%BA%A4%E6%8F%9B%E6%B3%95/</link>
+    <description>Recent content in レプリカ交換法 on SUCRE HECACHA</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Mon, 08 Aug 2022 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://sucre-stat.com/tags/%E3%83%AC%E3%83%97%E3%83%AA%E3%82%AB%E4%BA%A4%E6%8F%9B%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>レプリカ交換法を使ってベイズファクターを計算する～相関の検定～</title>
+      <link>https://sucre-stat.com/2022/08/parallel-tempering/</link>
+      <pubDate>Mon, 08 Aug 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://sucre-stat.com/2022/08/parallel-tempering/</guid>
+      <description>本記事では、前回の記事で失敗に終わった相関係数の検定を、レプリカ交換法を使って解決していきたいと思います。 レプリカ交換法の部分は、松浦健太郎</description>
+    </item>
+    
+  </channel>
+</rss>

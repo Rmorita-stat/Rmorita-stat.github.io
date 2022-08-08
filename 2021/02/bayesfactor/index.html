@@ -115,12 +115,13 @@ $$
 $(2)$式は、2つの事象を1回の試行で同時に得るようなときと、それらの事象を2回の試行で一つひとつ得るようなときの情報量が同じになることを意味する条件です。<br>
 $(3)$式は、ある事象が起きる確率が1のとき、情報量が0であることを意味する条件です。</p>
 <p>これらの条件を満たす関数として、以下の情報量が導出されます。</p>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆情報量</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆情報量</strong></legend>
 連続型の確率変数$X$から実現値$x$が得られたときの情報量は、以下で定義される。
 $$
 I(X = x) = -\log{P(X = x)}　\tag{4}
 $$
 </fieldset>
+
 <p><br>
 <div style="overflow-x:auto;">
   
@@ -154,7 +155,7 @@ $$
 </div></p>
 <h1 id="エントロピー">エントロピー</h1>
 <p><strong>エントロピー</strong>は、前節で定義した情報量の期待値です。そのため平均情報量とも呼ばれます。</p>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆エントロピー</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆エントロピー</strong></legend>
 <p>$A ∈ \mathbb{R}$上で定義された確率密度関数$f(x)$をもつ連続型の確率変数$x$の<strong>エントロピー</strong>$H(X)$を情報量の期待値として下記のとおり定義する。
 $$
 H(X) = - \int_{A} f(x)\log{f(x)}dx \tag{5}
@@ -165,6 +166,7 @@ H(X) = \sum_{i=1}^{n}-g(x_i)\log{g(x_i)} \tag{6}
 $$</p>
 
 </fieldset>
+
 <p>エントロピーは、情報量の期待値ですから、確率分布の分散が大きいような、不確実性の大きな条件下でより大きな値を取ることが想定されます。これをガンマ分布を例に確認してみましょう。</p>
 <p>shapeパラメータ$a$、rateパラメータ$b$をもつガンマ分布</p>
 <div style="overflow-x:auto;">
@@ -229,13 +231,14 @@ $$
 <p>以上、分布のばらつきが大きくなるほどエントロピーが大きくなる例を確認しました。エントロピーを通して、情報量が何をはかろうとしているのかイメージしてもらえるかなと思います。</p>
 <h1 id="ベイズ自由エネルギー">ベイズ自由エネルギー</h1>
 <p>(逆温度$\beta = -1$の)ベイズ自由エネルギーは、はじめに述べた情報量について、複数の確率変数$X^n = (X_1, X_2,\ldots,X_n)$の同時確率分布の場合の拡張について考え、さらにパラメータの事前分布を想定し、パラメータを周辺化消去したものになります。</p>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆ベイズ自由エネルギー</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆ベイズ自由エネルギー</strong></legend>
 確率変数$X^n=(X_1, X_2,\ldots,X_n)$とそれらの同時確率分布$f(x^n)$が与えられたとき、<strong>ベイズ自由エネルギー</strong>$F_n$は以下のとおり定義される。
 $$
 F_n = -logf(x^n) = -\log\int_S f(x^n | \theta)\varphi(\theta) d\theta \tag{8}
 $$
 ここで$\theta$は$S ∈ \mathbb{R}$で定義されるパラメータ、$\varphi(\theta)$はパラメータの事前分布、$x^n = (x_1, x_2, \ldots, x_n)$は$X^n$の実現値である。
 </fieldset>
+
 <p>特に、$X^n$が独立同分布($\mathrm{i.i.d}$)であるとき、その確率関数を$g(x)$とすると、$(8)$式は</p>
 <div style="overflow-x:auto;">
   
@@ -248,7 +251,7 @@ $$
 <p>これまで見てきた内容を踏まえると、ベイズ自由エネルギーは、確率変数の実現値（複数）がどれくらい驚きが大きい値かを示す指標であることから、<strong>その値が小さいほど、想定したモデルがデータをうまく説明できることを意味している</strong>と理解できます。</p>
 <h1 id="周辺尤度">周辺尤度</h1>
 <p>実は、$(9)$式は、ベイズに触れたことのある人ならばまず一回は触れたことのある関数とも関連しています。その関数とは、ベイズの定理における正規化定数、すなわち周辺尤度です。</p>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆事後分布と周辺尤度</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆事後分布と周辺尤度</strong></legend>
 標本空間$A ∈ \mathbb{R}$で定義される確率変数$X^n$に関する確率モデル$p(x^n|\theta)$と、$S ∈ \mathbb{R}$で定義されるパラメータ$\theta$の事前分布$\varphi(\theta)$を考えたとき、パラメータの事後分布$p(\theta|x^n)$は下記で定義される。
 $$
 p(\theta|x^n) = \cfrac{p(x^n|\theta)\varphi(\theta)}{Z_n} \tag{10}
@@ -258,6 +261,7 @@ $$
 Z_n = \int_{S} p(x^n|\theta)\varphi(\theta) d\theta \tag{11}
 $$
 </fieldset>
+
 <p>特に、$x^n = (x_1,\ldots,x_n)$が独立同分布（$\mathrm{i.i.d}$）の確率変数からの実現値であるとき、その確率関数を$f(x)$とすると、</p>
 <div style="overflow-x:auto;">
   
@@ -289,16 +293,17 @@ $$
 </div>
 <p>よって、$Z_n$は実現値$x^n$が得られる同時確率の$\theta$に関する周辺分布($\theta$について周辺化した後の分布)であり、0から1の値をとります。つまり$Z_n$は確率モデル$p(x^n|\theta)$と事前分布$\varphi(\theta)$でデータをうまく説明できているかの指標になります。</p>
 <p>$(9)$式と$(12)$式を比較すると、自由エネルギーと周辺尤度の関係が見えてきます。</p>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆自由エネルギーと周辺尤度の関係</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆自由エネルギーと周辺尤度の関係</strong></legend>
 自由エネルギー$F_n$と周辺尤度$Z_n$は以下の関係にある。
 $$
 F_n = - \log{Z_n} \tag{13}
 $$
 </fieldset>
+
 <p>情報量から導かれた自由エネルギー$F_n$は結局のところ$X^n$の同時確率の対数符号反転になることが分かります。</p>
 <h1 id="ベイズファクター">ベイズファクター</h1>
 <p>ベイズファクターは、2つのモデルを考えたとき、どちらの方が優勢かをはかる指標となります。</p>
-<fieldset style="border: #b0e0e6 5px double; padding: 6px; background-color: #ffffff; margin: 0px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆ベイズファクター</strong></legend>
+<fieldset style="border: #b0e0e6 5px double; padding: 5px; background-color: #ffffff; margin: 10px; color: #333333; border-radius: 10px; box-shadow: 5px 5px 5px #AAAAAA"><legend><strong>◆ベイズファクター</strong></legend>
 2つの異なるモデル$M_0$、$M_1$を考えたとき、<strong>ベイズファクター</strong>$BF_{10}$は2つの異なるモデルの周辺尤度の比として定義される。
 $$
 BF_{10} = \cfrac{p(x^n | M_1)}{p(x^n |M_0)} \tag{14}
@@ -309,6 +314,7 @@ BF_{10} = \exp{(F_{M_0} - F_{M_1})} \tag{15}
 $$
 ここで、$F_M$はモデル$M$における自由エネルギーである。
 </fieldset>
+
 <p>定義より、$BF_{10}$はモデル$M_0$に比べてモデル$M_1$がどの程度うまくデータを説明できているかを表しており、1より大きい値をとるにつれて$M_1$の方が優勢になっていくことが分かります。</p>
 <p>ベイズファクターの評価基準には以下のよく知られたものがあります。</p>
 <p><strong>Jeffreys(1961)</strong>
@@ -825,7 +831,7 @@ $$
         <p class="copyright u-font">
             
             &#169;
-            2021
+            2022
             
             <a href="https://github.com/Rmorita-stat/doc" target="_blank">R.morita&#46;</a>
             Theme <a href="https://github.com/iCyris/hugo-theme-yuki" target="_blank">yuki</a>&#46;
